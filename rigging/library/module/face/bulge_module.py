@@ -13,242 +13,264 @@ reload (au)
 
 class Bulge:
     def __init__(self,
-                 faceUtilsGrp,
-                 faceAnimCtrlGrp,
-                 cheekBulgeLFTJnt,
-                 cheekBulgePrefix,
-                 browInBulgePrefix,
-                 browOutBulgePrefix,
-                 cornerMouthBulgePrefix,
-                 noseBulgePrefix,
-                 chinBulgePrefix,
-                 cheekBulgeRGTJnt,
-                 browInBulgeLFTJnt,
-                 browInBulgeRGTJnt,
-                 browOutBulgeLFTJnt,
-                 browOutBulgeRGTJnt,
-                 cornerMouthBulgeLFTJnt,
-                 cornerMouthBulgeRGTJnt,
-                 noseBulgeJnt,
-                 chinBulgeJnt,
-                 bulgeMesh,
-                 sideLFT,
-                 sideRGT,
-                 headUpCtrlGimbal,
-                 headLowCtrlGimbal,
-                 noseDrv03ctrl,
-                 chinCtrl,
-                 cornerMouthLFTCtrl,
-                 cornerMouthRGTCtrl,
+                 face_utils_grp,
+                 face_anim_ctrl_grp,
+                 cheek_bulge_jnt_LFT,
+                 cheek_bulge_prefix,
+                 brow_in_bulge_prefix,
+                 brow_out_bulge_prefix,
+                 corner_mouth_bulge_prefix,
+                 nose_bulge_prefix,
+                 chin_bulge_prefix,
+                 cheek_bulge_jnt_RGT,
+                 brow_in_bulge_jnt_LFT,
+                 brow_in_bulge_jnt_RGT,
+                 brow_out_bulge_jnt_LFT,
+                 brow_out_bulge_jnt_RGT,
+                 corner_mouth_bulge_jnt_LFT,
+                 corner_mouth_bulge_jnt_RGT,
+                 nose_bulge_jnt,
+                 chin_bulge_jnt,
+                 bulge_mesh,
+                 side_LFT,
+                 side_RGT,
+                 head_up_ctrl_gimbal,
+                 head_low_ctrl_gimbal,
+                 nose_drv03_ctrl,
+                 chin_ctrl,
+                 corner_mouth_ctrl_LFT,
+                 corner_mouth_ctrl_RGT,
                  scale,
-                 addSet):
+                 add_set):
 
-        bulgeGrp = mc.group(em=1, n='bulgeHandle_grp')
-        mc.parent(bulgeGrp, faceUtilsGrp)
+        bulge_grp = mc.group(em=1, n='bulgeHandle_grp')
+        mc.parent(bulge_grp, face_utils_grp)
 
-        cheekBulgeLFTCtrl = self.bulgeCtrl(bulgePos=cheekBulgeLFTJnt, bulgePrefix=cheekBulgePrefix,
-                                            side=sideLFT, scale=scale)
+        cheek_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=cheek_bulge_jnt_LFT, bulge_prefix=cheek_bulge_prefix,
+                                               side=side_LFT, scale=scale)
 
-        cheekBulgeRGTCtrl = self.bulgeCtrl(bulgePos=cheekBulgeRGTJnt, bulgePrefix=cheekBulgePrefix,
-                                            side=sideRGT, scale=scale)
+        cheek_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=cheek_bulge_jnt_RGT, bulge_prefix=cheek_bulge_prefix,
+                                               side=side_RGT, scale=scale)
 
-        browInBulgeLFTCtrl = self.bulgeCtrl(bulgePos=browInBulgeLFTJnt, bulgePrefix=browInBulgePrefix,
-                                            side=sideLFT, scale=scale)
+        brow_in_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=brow_in_bulge_jnt_LFT,
+                                                 bulge_prefix=brow_in_bulge_prefix,
+                                                 side=side_LFT, scale=scale)
 
-        browInBulgeRGTCtrl = self.bulgeCtrl(bulgePos=browInBulgeRGTJnt, bulgePrefix=browInBulgePrefix,
-                                            side=sideRGT, scale=scale)
+        brow_in_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=brow_in_bulge_jnt_RGT,
+                                                 bulge_prefix=brow_in_bulge_prefix,
+                                                 side=side_RGT, scale=scale)
 
-        browOutBulgeLFTCtrl = self.bulgeCtrl(bulgePos=browOutBulgeLFTJnt, bulgePrefix=browOutBulgePrefix,
-                                            side=sideLFT, scale=scale)
+        brow_out_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=brow_out_bulge_jnt_LFT,
+                                                  bulge_prefix=brow_out_bulge_prefix,
+                                                  side=side_LFT, scale=scale)
 
-        browOutBulgeRGTCtrl = self.bulgeCtrl(bulgePos=browOutBulgeRGTJnt, bulgePrefix=browOutBulgePrefix,
-                                            side=sideRGT, scale=scale)
+        brow_out_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=brow_out_bulge_jnt_RGT,
+                                                  bulge_prefix=brow_out_bulge_prefix,
+                                                  side=side_RGT, scale=scale)
 
-        cornerMouthBulgeLFTCtrl = self.bulgeCtrl(bulgePos=cornerMouthBulgeLFTJnt, bulgePrefix=cornerMouthBulgePrefix,
-                                            side=sideLFT, scale=scale)
+        corner_mouth_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=corner_mouth_bulge_jnt_LFT,
+                                                      bulge_prefix=corner_mouth_bulge_prefix,
+                                                      side=side_LFT, scale=scale)
 
-        cornerMouthBulgeRGTCtrl = self.bulgeCtrl(bulgePos=cornerMouthBulgeRGTJnt, bulgePrefix=cornerMouthBulgePrefix,
-                                            side=sideRGT, scale=scale)
+        corner_mouth_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=corner_mouth_bulge_jnt_RGT,
+                                                      bulge_prefix=corner_mouth_bulge_prefix,
+                                                      side=side_RGT, scale=scale)
 
-        noseBulgeCtrl = self.bulgeCtrl(bulgePos=noseBulgeJnt, bulgePrefix=noseBulgePrefix,
-                                       side=sideLFT, scale=scale)
+        nose_bulge_ctrl = self.bulge_ctrl(bulge_position=nose_bulge_jnt, bulge_prefix=nose_bulge_prefix,
+                                          side=side_LFT, scale=scale)
 
-        chinBulgeCtrl = self.bulgeCtrl(bulgePos=chinBulgeJnt, bulgePrefix=chinBulgePrefix,
-                                            side=sideRGT, scale=scale)
+        chin_bulge_ctrl = self.bulge_ctrl(bulge_position=chin_bulge_jnt, bulge_prefix=chin_bulge_prefix,
+                                          side=side_RGT, scale=scale)
 
-        self.cheekBulgeLFTCtrlGrp = cheekBulgeLFTCtrl[2]
-        self.cheekBulgeRGTCtrlGrp = cheekBulgeRGTCtrl[2]
-        self.browInBulgeLFTCtrlGrp = browInBulgeLFTCtrl[2]
-        self.browInBulgeRGTCtrlGrp = browInBulgeRGTCtrl[2]
-        self.browOutBulgeLFTCtrlGrp = browOutBulgeLFTCtrl[2]
-        self.browOutBulgeRGTCtrlGrp = browOutBulgeRGTCtrl[2]
-        self.cornerMouthBulgeLFTCtrlGrp = cornerMouthBulgeLFTCtrl[2]
-        self.cornerMouthBulgeRGTCtrlGrp = cornerMouthBulgeRGTCtrl[2]
-        self.noseBulgeCtrlGrp = noseBulgeCtrl[2]
-        self.chinBulgeCtrlGrp = chinBulgeCtrl[2]
+        self.cheek_bulge_ctrl_LFT_grp = cheek_bulge_ctrl_LFT[2]
+        self.cheek_bulge_ctrl_RGT_grp = cheek_bulge_ctrl_RGT[2]
+        self.brow_in_bulge_ctrl_LFT_grp = brow_in_bulge_ctrl_LFT[2]
+        self.brow_in_bulge_ctrl_RGT_grp = brow_in_bulge_ctrl_RGT[2]
+        self.brow_out_bulge_ctrl_LFT_grp = brow_out_bulge_ctrl_LFT[2]
+        self.brow_out_bulge_ctrl_RGT_grp = brow_out_bulge_ctrl_RGT[2]
+        self.corner_mouth_bulge_ctrl_LFT_grp = corner_mouth_bulge_ctrl_LFT[2]
+        self.corner_mouth_bulge_ctrl_RGT_grp = corner_mouth_bulge_ctrl_RGT[2]
+        self.nose_bulge_ctrl_grp = nose_bulge_ctrl[2]
+        self.chin_bulge_ctrl_grp = chin_bulge_ctrl[2]
 
         # SOFT NODE
 
-        self.softModNode(bulgeJnt=cheekBulgeLFTJnt, bulgePrefix=cheekBulgePrefix, bulgeSlideCtrlParent=cheekBulgeLFTCtrl[2],
-                         bulgeSlideCtrl=cheekBulgeLFTCtrl[1], bulgeSoftModCtrl=cheekBulgeLFTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideLFT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=cheek_bulge_jnt_LFT, bulge_prefix=cheek_bulge_prefix,
+                           bulge_slide_ctrl_parent=cheek_bulge_ctrl_LFT[2],
+                           bulge_slide_ctrl=cheek_bulge_ctrl_LFT[1], bulge_soft_mod_ctrl=cheek_bulge_ctrl_LFT[0],
+                           bulge_mesh=bulge_mesh, side=side_LFT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=cheekBulgeRGTJnt, bulgePrefix=cheekBulgePrefix, bulgeSlideCtrlParent=cheekBulgeRGTCtrl[2],
-                         bulgeSlideCtrl=cheekBulgeRGTCtrl[1], bulgeSoftModCtrl=cheekBulgeRGTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideRGT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=cheek_bulge_jnt_RGT, bulge_prefix=cheek_bulge_prefix,
+                           bulge_slide_ctrl_parent=cheek_bulge_ctrl_RGT[2],
+                           bulge_slide_ctrl=cheek_bulge_ctrl_RGT[1], bulge_soft_mod_ctrl=cheek_bulge_ctrl_RGT[0],
+                           bulge_mesh=bulge_mesh, side=side_RGT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=browInBulgeLFTJnt, bulgePrefix=browInBulgePrefix, bulgeSlideCtrlParent=browInBulgeLFTCtrl[2],
-                         bulgeSlideCtrl=browInBulgeLFTCtrl[1], bulgeSoftModCtrl=browInBulgeLFTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideLFT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=brow_in_bulge_jnt_LFT, bulge_prefix=brow_in_bulge_prefix,
+                           bulge_slide_ctrl_parent=brow_in_bulge_ctrl_LFT[2],
+                           bulge_slide_ctrl=brow_in_bulge_ctrl_LFT[1], bulge_soft_mod_ctrl=brow_in_bulge_ctrl_LFT[0],
+                           bulge_mesh=bulge_mesh, side=side_LFT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=browInBulgeRGTJnt, bulgePrefix=browInBulgePrefix, bulgeSlideCtrlParent=browInBulgeRGTCtrl[2],
-                         bulgeSlideCtrl=browInBulgeRGTCtrl[1], bulgeSoftModCtrl=browInBulgeRGTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideRGT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=brow_in_bulge_jnt_RGT, bulge_prefix=brow_in_bulge_prefix,
+                           bulge_slide_ctrl_parent=brow_in_bulge_ctrl_RGT[2],
+                           bulge_slide_ctrl=brow_in_bulge_ctrl_RGT[1], bulge_soft_mod_ctrl=brow_in_bulge_ctrl_RGT[0],
+                           bulge_mesh=bulge_mesh, side=side_RGT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=browOutBulgeLFTJnt, bulgePrefix=browOutBulgePrefix, bulgeSlideCtrlParent=browOutBulgeLFTCtrl[2],
-                         bulgeSlideCtrl=browOutBulgeLFTCtrl[1], bulgeSoftModCtrl=browOutBulgeLFTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideLFT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=brow_out_bulge_jnt_LFT, bulge_prefix=brow_out_bulge_prefix,
+                           bulge_slide_ctrl_parent=brow_out_bulge_ctrl_LFT[2],
+                           bulge_slide_ctrl=brow_out_bulge_ctrl_LFT[1], bulge_soft_mod_ctrl=brow_out_bulge_ctrl_LFT[0],
+                           bulge_mesh=bulge_mesh, side=side_LFT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=browOutBulgeRGTJnt, bulgePrefix=browOutBulgePrefix, bulgeSlideCtrlParent=browOutBulgeRGTCtrl[2],
-                         bulgeSlideCtrl=browOutBulgeRGTCtrl[1], bulgeSoftModCtrl=browOutBulgeRGTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideRGT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=brow_out_bulge_jnt_RGT, bulge_prefix=brow_out_bulge_prefix,
+                           bulge_slide_ctrl_parent=brow_out_bulge_ctrl_RGT[2],
+                           bulge_slide_ctrl=brow_out_bulge_ctrl_RGT[1], bulge_soft_mod_ctrl=brow_out_bulge_ctrl_RGT[0],
+                           bulge_mesh=bulge_mesh, side=side_RGT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=cornerMouthBulgeLFTJnt, bulgePrefix=cornerMouthBulgePrefix, bulgeSlideCtrlParent=cornerMouthBulgeLFTCtrl[2],
-                         bulgeSlideCtrl=cornerMouthBulgeLFTCtrl[1], bulgeSoftModCtrl=cornerMouthBulgeLFTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideLFT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=corner_mouth_bulge_jnt_LFT, bulge_prefix=corner_mouth_bulge_prefix,
+                           bulge_slide_ctrl_parent=corner_mouth_bulge_ctrl_LFT[2],
+                           bulge_slide_ctrl=corner_mouth_bulge_ctrl_LFT[1],
+                           bulge_soft_mod_ctrl=corner_mouth_bulge_ctrl_LFT[0],
+                           bulge_mesh=bulge_mesh, side=side_LFT, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=cornerMouthBulgeRGTJnt, bulgePrefix=cornerMouthBulgePrefix, bulgeSlideCtrlParent=cornerMouthBulgeRGTCtrl[2],
-                         bulgeSlideCtrl=cornerMouthBulgeRGTCtrl[1], bulgeSoftModCtrl=cornerMouthBulgeRGTCtrl[0],
-                         bulgeMesh=bulgeMesh, side=sideRGT, addSet=addSet, bulgeGrp=bulgeGrp)
+        self.soft_mod_node(bulge_jnt=corner_mouth_bulge_jnt_RGT, bulge_prefix=corner_mouth_bulge_prefix,
+                           bulge_slide_ctrl_parent=corner_mouth_bulge_ctrl_RGT[2],
+                           bulge_slide_ctrl=corner_mouth_bulge_ctrl_RGT[1],
+                           bulge_soft_mod_ctrl=corner_mouth_bulge_ctrl_RGT[0],
+                           bulge_mesh=bulge_mesh, side=side_RGT, add_set=add_set, bulge_grp=bulge_grp)
 
+        self.soft_mod_node(bulge_jnt=nose_bulge_jnt, bulge_prefix=nose_bulge_prefix,
+                           bulge_slide_ctrl_parent=nose_bulge_ctrl[2],
+                           bulge_slide_ctrl=nose_bulge_ctrl[1], bulge_soft_mod_ctrl=nose_bulge_ctrl[0],
+                           bulge_mesh=bulge_mesh, add_set=add_set, bulge_grp=bulge_grp)
 
-        self.softModNode(bulgeJnt=noseBulgeJnt, bulgePrefix=noseBulgePrefix, bulgeSlideCtrlParent=noseBulgeCtrl[2],
-                         bulgeSlideCtrl=noseBulgeCtrl[1], bulgeSoftModCtrl=noseBulgeCtrl[0],
-                         bulgeMesh=bulgeMesh, addSet=addSet, bulgeGrp=bulgeGrp)
-
-        self.softModNode(bulgeJnt=chinBulgeJnt, bulgePrefix=chinBulgePrefix, bulgeSlideCtrlParent=chinBulgeCtrl[2],
-                         bulgeSlideCtrl=chinBulgeCtrl[1], bulgeSoftModCtrl=chinBulgeCtrl[0],
-                         bulgeMesh=bulgeMesh, addSet=addSet, bulgeGrp=bulgeGrp)
-
+        self.soft_mod_node(bulge_jnt=chin_bulge_jnt, bulge_prefix=chin_bulge_prefix,
+                           bulge_slide_ctrl_parent=chin_bulge_ctrl[2],
+                           bulge_slide_ctrl=chin_bulge_ctrl[1], bulge_soft_mod_ctrl=chin_bulge_ctrl[0],
+                           bulge_mesh=bulge_mesh, add_set=add_set, bulge_grp=bulge_grp)
 
         # PARENT CONSTRAINT
-        cheekBulgeLFT = mc.parentConstraint(headUpCtrlGimbal, headLowCtrlGimbal, cheekBulgeLFTCtrl[2], mo=1)[0]
-        cheekBulgeRGT = mc.parentConstraint(headUpCtrlGimbal, headLowCtrlGimbal, cheekBulgeRGTCtrl[2], mo=1)[0]
-        mc.setAttr(cheekBulgeLFT+'.interpType', 2)
-        mc.setAttr(cheekBulgeRGT+'.interpType', 2)
-        sclCheekBulgeLFT = mc.scaleConstraint(headUpCtrlGimbal, headLowCtrlGimbal, cheekBulgeLFTCtrl[3], mo=1)
-        sclCheekBulgeRGT = mc.scaleConstraint(headUpCtrlGimbal, headLowCtrlGimbal, cheekBulgeRGTCtrl[3], mo=1)
+        cheek_bulge_LFT = mc.parentConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_LFT[2], mo=1)[
+            0]
+        cheek_bulge_RGT = mc.parentConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_RGT[2], mo=1)[
+            0]
+        mc.setAttr(cheek_bulge_LFT + '.interpType', 2)
+        mc.setAttr(cheek_bulge_RGT + '.interpType', 2)
+        scale_cheek_bulge_LFT = mc.scaleConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_LFT[3],
+                                                   mo=1)
+        scale_cheek_bulge_RGT = mc.scaleConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_RGT[3],
+                                                   mo=1)
 
         # PARENT
-        mc.parent(cheekBulgeLFTCtrl[2], cheekBulgeRGTCtrl[2], faceAnimCtrlGrp)
-        mc.parent(browInBulgeLFTCtrl[2], browInBulgeRGTCtrl[2], browOutBulgeLFTCtrl[2], browOutBulgeRGTCtrl[2], headUpCtrlGimbal)
-        mc.parent(noseBulgeCtrl[2], noseDrv03ctrl)
-        mc.parent(chinBulgeCtrl[2], chinCtrl)
-        mc.parent(cornerMouthBulgeLFTCtrl[2], cornerMouthLFTCtrl)
-        mc.parent(cornerMouthBulgeRGTCtrl[2], cornerMouthRGTCtrl)
+        mc.parent(cheek_bulge_ctrl_LFT[2], cheek_bulge_ctrl_RGT[2], face_anim_ctrl_grp)
+        mc.parent(brow_in_bulge_ctrl_LFT[2], brow_in_bulge_ctrl_RGT[2], brow_out_bulge_ctrl_LFT[2],
+                  brow_out_bulge_ctrl_RGT[2], head_up_ctrl_gimbal)
+        mc.parent(nose_bulge_ctrl[2], nose_drv03_ctrl)
+        mc.parent(chin_bulge_ctrl[2], chin_ctrl)
+        mc.parent(corner_mouth_bulge_ctrl_LFT[2], corner_mouth_ctrl_LFT)
+        mc.parent(corner_mouth_bulge_ctrl_RGT[2], corner_mouth_ctrl_RGT)
 
         # constraint rename
-        au.constraint_rename([cheekBulgeLFT, cheekBulgeRGT, sclCheekBulgeLFT[0], sclCheekBulgeRGT[0]])
+        au.constraint_rename([cheek_bulge_LFT, cheek_bulge_RGT, scale_cheek_bulge_LFT[0], scale_cheek_bulge_RGT[0]])
 
-    def softModNode(self, bulgeJnt, bulgePrefix, bulgeSlideCtrl, bulgeSoftModCtrl, bulgeSlideCtrlParent,
-                    bulgeGrp, bulgeMesh, addSet, side='',
-                    ):
+    def soft_mod_node(self, bulge_jnt, bulge_prefix, bulge_slide_ctrl, bulge_soft_mod_ctrl, bulge_slide_ctrl_parent,
+                      bulge_grp, bulge_mesh, add_set, side='',
+                      ):
 
-        self.posX = mc.xform(bulgeJnt, q=1, ws=1, t=1)[0]
-        self.posY = mc.xform(bulgeJnt, q=1, ws=1, t=1)[1]
-        self.posZ = mc.xform(bulgeJnt, q=1, ws=1, t=1)[2]
+        self.posX = mc.xform(bulge_jnt, q=1, ws=1, t=1)[0]
+        self.posY = mc.xform(bulge_jnt, q=1, ws=1, t=1)[1]
+        self.posZ = mc.xform(bulge_jnt, q=1, ws=1, t=1)[2]
 
-        reverseSlideTransMdn = mc.createNode('multiplyDivide', n=bulgePrefix + 'BulgeRevSlide' + side + '_mdn')
-        reverseSoftModTransMdn = mc.createNode('multiplyDivide', n=bulgePrefix + 'BulgeRevSoftMod' + side + '_mdn')
+        reverse_slide_trans_mdn = mc.createNode('multiplyDivide', n=bulge_prefix + 'BulgeRevSlide' + side + '_mdn')
+        reverse_soft_mod_trans_mdn = mc.createNode('multiplyDivide', n=bulge_prefix + 'BulgeRevSoftMod' + side + '_mdn')
 
-        pma = mc.createNode('plusMinusAverage', n=bulgePrefix+'Bulge' + side + '_pma')
+        pma_node = mc.createNode('plusMinusAverage', n=bulge_prefix + 'Bulge' + side + '_pma')
 
-        softMod = mc.softMod(bulgeMesh, n=bulgePrefix+'Bulge'+ side +'_mod', fc=[self.posX,self.posY,self.posZ])
+        soft_mod = mc.softMod(bulge_mesh, n=bulge_prefix + 'Bulge' + side + '_mod',
+                              fc=[self.posX, self.posY, self.posZ])
 
-        if self.posX<0:
-            mc.setAttr(bulgeSlideCtrlParent + '.scaleX', -1)
+        if self.posX < 0:
+            mc.setAttr(bulge_slide_ctrl_parent + '.scaleX', -1)
 
-            mc.setAttr(reverseSlideTransMdn + '.input2X', -1)
-            mc.setAttr(reverseSlideTransMdn + '.input2Y', 1)
-            mc.setAttr(reverseSlideTransMdn + '.input2Z', 1)
+            mc.setAttr(reverse_slide_trans_mdn + '.input2X', -1)
+            mc.setAttr(reverse_slide_trans_mdn + '.input2Y', 1)
+            mc.setAttr(reverse_slide_trans_mdn + '.input2Z', 1)
 
-            mc.setAttr(reverseSoftModTransMdn + '.input2X', -1)
-            mc.setAttr(reverseSoftModTransMdn + '.input2Y', 1)
-            mc.setAttr(reverseSoftModTransMdn + '.input2Z', 1)
+            mc.setAttr(reverse_soft_mod_trans_mdn + '.input2X', -1)
+            mc.setAttr(reverse_soft_mod_trans_mdn + '.input2Y', 1)
+            mc.setAttr(reverse_soft_mod_trans_mdn + '.input2Z', 1)
 
         else:
-            mc.setAttr(reverseSlideTransMdn + '.input2X', 1)
-            mc.setAttr(reverseSlideTransMdn + '.input2Y', 1)
-            mc.setAttr(reverseSlideTransMdn + '.input2Z', 1)
+            mc.setAttr(reverse_slide_trans_mdn + '.input2X', 1)
+            mc.setAttr(reverse_slide_trans_mdn + '.input2Y', 1)
+            mc.setAttr(reverse_slide_trans_mdn + '.input2Z', 1)
 
-            mc.setAttr(reverseSoftModTransMdn + '.input2X', 1)
-            mc.setAttr(reverseSoftModTransMdn + '.input2Y', 1)
-            mc.setAttr(reverseSoftModTransMdn + '.input2Z', 1)
+            mc.setAttr(reverse_soft_mod_trans_mdn + '.input2X', 1)
+            mc.setAttr(reverse_soft_mod_trans_mdn + '.input2Y', 1)
+            mc.setAttr(reverse_soft_mod_trans_mdn + '.input2Z', 1)
 
+        mc.connectAttr(bulge_slide_ctrl + '.translate', reverse_slide_trans_mdn + '.input1')
+        mc.connectAttr(reverse_slide_trans_mdn + '.output', pma_node + '.input3D[0]')
 
-        mc.connectAttr(bulgeSlideCtrl + '.translate', reverseSlideTransMdn + '.input1')
-        mc.connectAttr(reverseSlideTransMdn + '.output', pma + '.input3D[0]')
+        mc.setAttr(pma_node + '.input3D[1].input3Dx', self.posX)
+        mc.setAttr(pma_node + '.input3D[1].input3Dy', self.posY)
+        mc.setAttr(pma_node + '.input3D[1].input3Dz', self.posZ)
 
-        mc.setAttr(pma+'.input3D[1].input3Dx', self.posX)
-        mc.setAttr(pma+'.input3D[1].input3Dy', self.posY)
-        mc.setAttr(pma+'.input3D[1].input3Dz', self.posZ)
-
-        mc.connectAttr(pma+'.output3D', softMod[0]+'.falloffCenter')
-        mc.connectAttr(bulgeSoftModCtrl + '.%s' % self.wide, softMod[0] + '.falloffRadius')
-        mc.connectAttr(bulgeSoftModCtrl + '.%s' % self.bulge, softMod[0] + '.envelope')
+        mc.connectAttr(pma_node + '.output3D', soft_mod[0] + '.falloffCenter')
+        mc.connectAttr(bulge_soft_mod_ctrl + '.%s' % self.wide, soft_mod[0] + '.falloffRadius')
+        mc.connectAttr(bulge_soft_mod_ctrl + '.%s' % self.bulge, soft_mod[0] + '.envelope')
 
         # CONNECT CTRL TO HANDLE
-        mc.connectAttr(bulgeSoftModCtrl + '.translate', reverseSoftModTransMdn + '.input1')
+        mc.connectAttr(bulge_soft_mod_ctrl + '.translate', reverse_soft_mod_trans_mdn + '.input1')
 
-        mc.connectAttr(reverseSoftModTransMdn+'.output', softMod[1]+'.translate')
+        mc.connectAttr(reverse_soft_mod_trans_mdn + '.output', soft_mod[1] + '.translate')
 
         # HIDE
-        mc.hide(softMod[1])
+        mc.hide(soft_mod[1])
 
         # ADD SET LIST OBJECT
-        if addSet:
-            for i in addSet:
-                setObj = mc.listConnections(softMod[0], type='objectSet')[0]
+        if add_set:
+            for i in add_set:
+                setObj = mc.listConnections(soft_mod[0], type='objectSet')[0]
                 mc.sets(i, add=setObj)
 
         # PARENT TO THE GRP
-        mc.parent(softMod[1], bulgeGrp)
+        mc.parent(soft_mod[1], bulge_grp)
 
-        return softMod[1]
+        return soft_mod[1]
 
-    def bulgeCtrl(self, bulgePos,
-                  bulgePrefix,
-                  scale,
-                  side=''):
+    def bulge_ctrl(self, bulge_position,
+                   bulge_prefix,
+                   scale,
+                   side=''):
 
         # SOFT MOD BULGE
-        bulgeSoftModCtrl = ct.Control(prefix=bulgePrefix+'Bulge',
-                                      shape=ct.LOCATOR, groups_ctrl=[''], ctrl_size=scale * 0.12,
-                                      ctrl_color='turquoiseBlue', lock_channels=['v', 's', 'r'], side=side
-                                      )
+        bulge_soft_mod_ctrl = ct.Control(prefix=bulge_prefix + 'Bulge',
+                                         shape=ct.LOCATOR, groups_ctrl=[''], ctrl_size=scale * 0.12,
+                                         ctrl_color='turquoiseBlue', lock_channels=['v', 's', 'r'], side=side
+                                         )
         # POSITION
 
         # ADD ATTRIBUTE
-        au.add_attribute(objects=[bulgeSoftModCtrl.control], long_name=['setup'], nice_name=[' '], at="enum",
+        au.add_attribute(objects=[bulge_soft_mod_ctrl.control], long_name=['setup'], nice_name=[' '], at="enum",
                          en='Setup', channel_box=True)
 
-        self.wide = au.add_attribute(objects=[bulgeSoftModCtrl.control], long_name=['wide'],
+        self.wide = au.add_attribute(objects=[bulge_soft_mod_ctrl.control], long_name=['wide'],
                                      attributeType="float", min=0, dv=0.25, keyable=True)
 
-        self.bulge = au.add_attribute(objects=[bulgeSoftModCtrl.control], long_name=['bulge'],
+        self.bulge = au.add_attribute(objects=[bulge_soft_mod_ctrl.control], long_name=['bulge'],
                                       attributeType="float", min=0, max=1, dv=1, keyable=True)
 
 
         # SLIDE BULGE
-        bulgeSlideCtrl = ct.Control(prefix=bulgePrefix+'BulgeSlide',
-                                    shape=ct.JOINT, groups_ctrl=['', 'Offset'], ctrl_size=scale * 0.1,
-                                    ctrl_color='yellow', lock_channels=['v', 's', 'r'], side=side
-                                    )
+        bulge_slide_ctrl = ct.Control(prefix=bulge_prefix + 'BulgeSlide',
+                                      shape=ct.JOINT, groups_ctrl=['', 'Offset'], ctrl_size=scale * 0.1,
+                                      ctrl_color='yellow', lock_channels=['v', 's', 'r'], side=side
+                                      )
 
         # PARENT
         # mc.parent(bulgeSlideCtrl.parentControl[0], bulgeSoftModCtrl.control)
-        mc.parent(bulgeSoftModCtrl.parent_control[0], bulgeSlideCtrl.control)
+        mc.parent(bulge_soft_mod_ctrl.parent_control[0], bulge_slide_ctrl.control)
 
-        mc.delete(mc.pointConstraint(bulgePos, bulgeSlideCtrl.parent_control[0]))
+        mc.delete(mc.pointConstraint(bulge_position, bulge_slide_ctrl.parent_control[0]))
 
-        return bulgeSoftModCtrl.control, bulgeSlideCtrl.control, bulgeSlideCtrl.parent_control[0], bulgeSlideCtrl.parent_control[1]
+        return bulge_soft_mod_ctrl.control, bulge_slide_ctrl.control, bulge_slide_ctrl.parent_control[0], \
+               bulge_slide_ctrl.parent_control[1]

@@ -236,8 +236,8 @@ class Build:
                   self.controllerBind01LFT.parent_control[0], self.controllerBind02LFT.parent_control[0], self.grpDrvCtrl)
 
         # connect group parent bind joint 01 and 02 to the controller grp parent 01 and 02
-        au.connectAttrTransRot(self.jointBind02GrpRGT[0], self.controllerBind02RGT.parent_control[0])
-        au.connectAttrTransRot(self.jointBind02GrpLFT[0], self.controllerBind02LFT.parent_control[0])
+        au.connect_attr_translate_rotate(self.jointBind02GrpRGT[0], self.controllerBind02RGT.parent_control[0])
+        au.connect_attr_translate_rotate(self.jointBind02GrpLFT[0], self.controllerBind02LFT.parent_control[0])
 
         # flipping controller
         if controllerLipDown:
@@ -308,13 +308,13 @@ class Build:
             mc.connectAttr(self.controllerBind01RGT.control + '.rotate', self.jnt01RGT + '.rotate')
 
             # left side 02 translate and rotate
-            au.connectAttrTransRot(self.controllerBind02LFT.control, self.jnt02LFT)
+            au.connect_attr_translate_rotate(self.controllerBind02LFT.control, self.jnt02LFT)
 
             # left side 01 translate and rotate
-            au.connectAttrTransRot(self.controllerBind01LFT.control, self.jnt01LFT)
+            au.connect_attr_translate_rotate(self.controllerBind01LFT.control, self.jnt01LFT)
 
             # mid translate and rotate
-            au.connectAttrTransRot(self.controllerBindMid.control, self.jntMid)
+            au.connect_attr_translate_rotate(self.controllerBindMid.control, self.jntMid)
 
 
         # SCALING THE CTRL

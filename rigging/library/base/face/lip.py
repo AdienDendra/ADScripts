@@ -1,706 +1,661 @@
-import re
 from __builtin__ import reload
-from string import digits
 
-import maya.OpenMaya as om
 import maya.cmds as mc
 
-from rigging.library.utils import controller as ct
-from rigging.library.utils import transform as tf
+from rigging.library.utils import controller as ct, transform as tf, core as cr
 from rigging.tools import AD_utils as au
 
 reload (ct)
 reload (tf)
 reload (au)
+reload (cr)
 
 # load Plug-ins
-matrixNode = mc.pluginInfo('matrixNodes.mll', query=True, loaded=True)
-quatNode = mc.pluginInfo('quatNodes.mll', query=True, loaded=True)
 
-if not matrixNode:
-    mc.loadPlugin( 'matrixNodes.mll' )
-
-if not quatNode:
-    mc.loadPlugin( 'quatNodes.mll' )
+cr.load_matrix_quad_plugin()
 
 class Build:
-    def __init__(self, crvLip,
-                 crvLipRoll,
-                 offsetJnt02BindPos,
+    def __init__(self, curve_lip_template,
+                 curve_lip_roll_template,
+                 offset_jnt02_bind_position,
                  scale,
-                 directionLip01Cheek,
-                 directionLip02Cheek,
-                 sideLFT,
-                 sideRGT,
-                 mouthJnt,
-                 ctrlColor,
-                 controllerLowLip,
-                 suffixController):
+                 lip01_cheek_direction,
+                 lip02_cheek_direction,
+                 side_LFT,
+                 side_RGT,
+                 mouth_jnt,
+                 ctrl_color,
+                 low_lip_controller,
+                 suffix_controller,
+                 base_module_nonTransform,
+                 parent_skin):
 
-        self.prefixNameCrv = au.prefix_name(crvLip)
-        self.vtxCrv = mc.ls('%s.cv[0:*]' % crvLip, fl=True)
+        # DUPLICATE CURVE THEN RENAME
+        curve_lip_new = au.obj_duplicate_then_rename(obj_duplicate=curve_lip_template, suffix='crv')[1]
+        curve_lip = curve_lip_new[0]
 
-        self.createJointLip(crv=crvLip, scale=scale, ctrlColor=ctrlColor,suffixController=suffixController)
+        curve_lip_roll_new = au.obj_duplicate_then_rename(obj_duplicate=curve_lip_roll_template, suffix='crv')[1]
+        curve_lip_roll = curve_lip_roll_new[0]
 
-        self.createResetMouthPositionGrp(mouthBaseJnt=mouthJnt)
+        mc.parent(curve_lip, curve_lip_roll, base_module_nonTransform)
+
+        self.prefix_name_curve = au.prefix_name(curve_lip)
+        self.curve_vertex = mc.ls('%s.cv[0:*]' % curve_lip, fl=True)
+
+        self.create_joint_lip(curve=curve_lip, scale=scale, ctrl_color=ctrl_color, suffix_controller=suffix_controller,
+                              parent_skin=parent_skin)
+
+        self.create_reset_mouth_position_grp(mouth_base_jnt=mouth_jnt)
 
 
-        self.wireBindCurve(crvLip=crvLip, offsetJnt02BindPos=offsetJnt02BindPos, scale=scale,
-                           sideLFT=sideLFT, sideRGT=sideRGT, directionLip01=directionLip01Cheek,
-                           directionLip02=directionLip02Cheek)
+        self.wire_bind_curve(lip_curve=curve_lip, offset_jnt02_bind_position=offset_jnt02_bind_position, scale=scale,
+                             side_LFT=side_LFT, side_RGT=side_RGT, lip01_direction=lip01_cheek_direction,
+                             lip02_direction=lip02_cheek_direction)
 
-        self.setDriverLocator(sideLFT=sideLFT, sideRGT=sideRGT)
+        self.set_driver_locator(side_LFT=side_LFT, side_RGT=side_RGT)
 
-        self.stickyLip(crvLip=crvLip, scale=scale)
+        self.sticky_lip(lip_curve=curve_lip, scale=scale)
 
-        self.rollLocator(crvRoll=crvLipRoll, scale=scale, crv=crvLip)
+        self.roll_locator(roll_curve=curve_lip_roll, scale=scale, curve=curve_lip)
 
-        self.allControllerLip(scale=scale, controllerLipLow=controllerLowLip, suffixController=suffixController)
+        self.all_controller_lip(scale=scale, controller_lip_low=low_lip_controller, suffix_controller=suffix_controller)
 
-        self.controllerLip(scale=scale, sideLFT=sideLFT, sideRGT=sideRGT,
-                           controllerLipLow=controllerLowLip, ctrlColor=ctrlColor, suffixController=suffixController)
+        self.controller_lip(scale=scale, side_LFT=side_LFT, side_RGT=side_RGT,
+                            controller_lip_low=low_lip_controller, ctrl_color=ctrl_color, suffix_controller=suffix_controller)
 
 
         # ==============================================================================================================
         #                                             CREATE GRP AND PARENT GRP
         # ==============================================================================================================
 
-        self.ctrlGrp = mc.group(em=1, n=self.prefixNameCrv+'Controller_grp')
-        self.stickyGrp = mc.group(em=1, n=self.prefixNameCrv+'Sticky_grp')
+        self.ctrl_grp = mc.group(em=1, n=self.prefix_name_curve + 'Controller_grp')
+        self.sticky_grp = mc.group(em=1, n=self.prefix_name_curve + 'Sticky_grp')
 
         # UTILITIES GRP
-        self.utilsGrp = mc.createNode('transform', n=self.prefixNameCrv + 'Utils_grp')
-        mc.parent(self.curvesGrp, self.grpDrvLocator, self.locatorGrp, self.bindJntGrp,
-                  self.resetAllMouthCtrlGrp, self.utilsGrp)
+        self.utils_grp = mc.createNode('transform', n=self.prefix_name_curve + 'Utils_grp')
+        mc.parent(self.curves_grp, self.grp_drv_locator, self.locator_grp, self.bind_jnt_grp,
+                  self.reset_all_mouth_ctrl_grp, self.utils_grp)
 
         # CTRL GRP
-        mc.parent(self.mouthCtrlGrp, self.grpDrvCtrl,  self.ctrlGrp)
+        mc.parent(self.mouth_ctrl_grp, self.grp_drive_ctrl, self.ctrl_grp)
 
-        mc.parent(self.stickyCrvGrp, self.stickyClsHdlGrp, self.originLocGrp, self.midLocGrp, self.stickyGrp)
+        mc.parent(self.sticky_curve_grp, self.sticky_cluster_hdl_grp, self.origin_locator_grp, self.mid_locator_grp, self.sticky_grp)
 
-    def controllerLip(self, scale, sideLFT, sideRGT, controllerLipLow, ctrlColor, suffixController):
+        self.curve_lip = curve_lip
+        self.curve_lip_roll = curve_lip_roll
+
+
+    def controller_lip(self, scale, side_LFT, side_RGT, controller_lip_low, ctrl_color, suffix_controller):
 
         # CONTROLLER MID
-        self.controllerBindMid = ct.Control(match_obj_first_position=self.jntMid, prefix=self.prefixNameCrv + 'Drv',
-                                            shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 0.1,
-                                            ctrl_color=ctrlColor, lock_channels=['v', 's'], suffix=suffixController
-                                            )
-        # CONTROLLER RGT 01
-        self.controllerBind01RGT = ct.Control(match_obj_first_position=self.jnt01RGT, prefix=self.prefixNameCrv + 'Drv01',
-                                              shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset', 'All'], ctrl_size=scale * 0.05,
-                                              ctrl_color=ctrlColor, lock_channels=['v', 'r', 's'], side=sideRGT, suffix=suffixController
+        self.controller_bind_mid = ct.Control(match_obj_first_position=self.jnt_mid, prefix=self.prefix_name_curve + 'Drv',
+                                              shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 0.1,
+                                              ctrl_color=ctrl_color, lock_channels=['v', 's'], suffix=suffix_controller
                                               )
+        # CONTROLLER RGT 01
+        self.controller_bind01_RGT = ct.Control(match_obj_first_position=self.jnt01_RGT, prefix=self.prefix_name_curve + 'Drv01',
+                                                shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset', 'All'], ctrl_size=scale * 0.05,
+                                                ctrl_color=ctrl_color, lock_channels=['v', 'r', 's'], side=side_RGT, suffix=suffix_controller
+                                                )
 
         # CONTROLLER RGT 02
-        self.controllerBind02RGT = ct.Control(match_obj_first_position=self.jnt02RGT, prefix=self.prefixNameCrv + 'Drv02',
-                                              shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 0.07,
-                                              ctrl_color=ctrlColor, lock_channels=['v', 's'], side=sideRGT, suffix=suffixController
-                                              )
+        self.controller_bind02_RGT = ct.Control(match_obj_first_position=self.jnt02_RGT, prefix=self.prefix_name_curve + 'Drv02',
+                                                shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 0.07,
+                                                ctrl_color=ctrl_color, lock_channels=['v', 's'], side=side_RGT, suffix=suffix_controller
+                                                )
         # CONTROLLER LFT 01
-        self.controllerBind01LFT = ct.Control(match_obj_first_position=self.jnt01LFT, prefix=self.prefixNameCrv + 'Drv01',
-                                              shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset', 'All'], ctrl_size=scale * 0.05,
-                                              ctrl_color=ctrlColor, lock_channels=['v', 'r', 's'], side=sideLFT, suffix=suffixController
-                                              )
+        self.controller_bind01_LFT = ct.Control(match_obj_first_position=self.jnt01_LFT, prefix=self.prefix_name_curve + 'Drv01',
+                                                shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset', 'All'], ctrl_size=scale * 0.05,
+                                                ctrl_color=ctrl_color, lock_channels=['v', 'r', 's'], side=side_LFT, suffix=suffix_controller
+                                                )
         # CONTROLLER LFT 02
-        self.controllerBind02LFT = ct.Control(match_obj_first_position=self.jnt02LFT, prefix=self.prefixNameCrv + 'Drv02',
-                                              shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 0.07,
-                                              ctrl_color=ctrlColor, lock_channels=['v', 's'], side=sideLFT, suffix=suffixController
-                                              )
+        self.controller_bind02_LFT = ct.Control(match_obj_first_position=self.jnt02_LFT, prefix=self.prefix_name_curve + 'Drv02',
+                                                shape=ct.SQUAREPLUS, groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 0.07,
+                                                ctrl_color=ctrl_color, lock_channels=['v', 's'], side=side_LFT, suffix=suffix_controller
+                                                )
 
         # CREATE GRP CONTROLLER AND PARENT INTO IT
-        self.grpDrvCtrl = mc.createNode('transform', n=self.prefixNameCrv + 'Ctrl' + '_grp')
-        mc.parent(self.controllerBindMid.parent_control[0], self.controllerBind01RGT.parent_control[0], self.controllerBind02RGT.parent_control[0],
-                  self.controllerBind01LFT.parent_control[0], self.controllerBind02LFT.parent_control[0], self.jointGrp, self.grpDrvCtrl)
+        self.grp_drive_ctrl = mc.createNode('transform', n=self.prefix_name_curve + 'Ctrl' + '_grp')
+        mc.parent(self.controller_bind_mid.parent_control[0], self.controller_bind01_RGT.parent_control[0], self.controller_bind02_RGT.parent_control[0],
+                  self.controller_bind01_LFT.parent_control[0], self.controller_bind02_LFT.parent_control[0], self.joint_grp, self.grp_drive_ctrl)
 
         # CONNECT GROUP PARENT BIND JOINT 01 AND 02 TO THE CONTROLLER GRP PARENT 01 AND 02
-        au.connectAttrTransRot(self.jointBind02GrpRGT[0], self.controllerBind02RGT.parent_control[0])
-        au.connectAttrTransRot(self.jointBind02GrpLFT[0], self.controllerBind02LFT.parent_control[0])
+        au.connect_attr_translate_rotate(self.joint_bind02_RGT_grp[0], self.controller_bind02_RGT.parent_control[0])
+        au.connect_attr_translate_rotate(self.joint_bind02_LFT_grp[0], self.controller_bind02_LFT.parent_control[0])
 
         # FLIPPING CONTROLLER
-        if controllerLipLow:
-            mc.setAttr(self.controllerBind01RGT.parent_control[0] + '.scaleX', -1)
-            mc.setAttr(self.controllerBind02RGT.parent_control[0] + '.scaleX', -1)
+        if controller_lip_low:
+            mc.setAttr(self.controller_bind01_RGT.parent_control[0] + '.scaleX', -1)
+            mc.setAttr(self.controller_bind02_RGT.parent_control[0] + '.scaleX', -1)
 
-            mc.setAttr(self.controllerBind01RGT.parent_control[0] + '.scaleY', -1)
-            mc.setAttr(self.controllerBind02RGT.parent_control[0] + '.scaleY', -1)
+            mc.setAttr(self.controller_bind01_RGT.parent_control[0] + '.scaleY', -1)
+            mc.setAttr(self.controller_bind02_RGT.parent_control[0] + '.scaleY', -1)
 
-            mc.setAttr(self.controllerBind01LFT.parent_control[0] + '.scaleY', -1)
-            mc.setAttr(self.controllerBind02LFT.parent_control[0] + '.scaleY', -1)
+            mc.setAttr(self.controller_bind01_LFT.parent_control[0] + '.scaleY', -1)
+            mc.setAttr(self.controller_bind02_LFT.parent_control[0] + '.scaleY', -1)
 
-            mc.setAttr(self.controllerBindMid.parent_control[0] + '.scaleY', -1)
+            mc.setAttr(self.controller_bind_mid.parent_control[0] + '.scaleY', -1)
 
 
             # CONNECT TRANSLATE CONTROLLER TO JOINT
             # RIGHT SIDE 02 TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBind02RGT.control,
+            tf.bind_translate_reverse(control=self.controller_bind02_RGT.control,
                                       input_2X=-1, input_2Y=-1, input_2Z=1,
-                                      joint_bind_target=self.jnt02RGT, side_RGT=sideRGT, side_LFT=sideLFT, side='RGT')
+                                      joint_bind_target=self.jnt02_RGT, side_RGT=side_RGT, side_LFT=side_LFT, side='RGT')
 
-            au.connect_attr_rotate(self.controllerBind02RGT.control, self.jnt02RGT)
+            au.connect_attr_rotate(self.controller_bind02_RGT.control, self.jnt02_RGT)
 
             # RIGHT SIDE 01 TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBind01RGT.control,
+            tf.bind_translate_reverse(control=self.controller_bind01_RGT.control,
                                       input_2X=-1, input_2Y=-1, input_2Z=1,
-                                      joint_bind_target=self.jnt01RGT, side_RGT=sideRGT, side_LFT=sideLFT, side='RGT')
+                                      joint_bind_target=self.jnt01_RGT, side_RGT=side_RGT, side_LFT=side_LFT, side='RGT')
 
-            au.connect_attr_rotate(self.controllerBind01RGT.control, self.jnt01RGT)
+            au.connect_attr_rotate(self.controller_bind01_RGT.control, self.jnt01_RGT)
 
             # LEFT SIDE 02 TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBind02LFT.control,
+            tf.bind_translate_reverse(control=self.controller_bind02_LFT.control,
                                       input_2X=1, input_2Y=-1, input_2Z=1,
-                                      joint_bind_target=self.jnt02LFT, side_RGT=sideRGT, side_LFT=sideLFT, side='LFT')
+                                      joint_bind_target=self.jnt02_LFT, side_RGT=side_RGT, side_LFT=side_LFT, side='LFT')
 
-            au.connect_attr_rotate(self.controllerBind02LFT.control, self.jnt02LFT)
+            au.connect_attr_rotate(self.controller_bind02_LFT.control, self.jnt02_LFT)
 
             # LEFT SIDE 01 TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBind01LFT.control,
+            tf.bind_translate_reverse(control=self.controller_bind01_LFT.control,
                                       input_2X=1, input_2Y=-1, input_2Z=1,
-                                      joint_bind_target=self.jnt01LFT, side_RGT=sideRGT, side_LFT=sideLFT, side='LFT')
+                                      joint_bind_target=self.jnt01_LFT, side_RGT=side_RGT, side_LFT=side_LFT, side='LFT')
 
-            au.connect_attr_rotate(self.controllerBind01LFT.control, self.jnt01LFT)
+            au.connect_attr_rotate(self.controller_bind01_LFT.control, self.jnt01_LFT)
 
             # MID TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBindMid.control,
+            tf.bind_translate_reverse(control=self.controller_bind_mid.control,
                                       input_2X=1, input_2Y=-1, input_2Z=1,
-                                      joint_bind_target=self.jntMid, side_RGT=sideRGT, side_LFT=sideLFT, side='')
+                                      joint_bind_target=self.jnt_mid, side_RGT=side_RGT, side_LFT=side_LFT, side='')
 
-            tf.bind_rotate_reverse(control=self.controllerBindMid.control,
+            tf.bind_rotate_reverse(control=self.controller_bind_mid.control,
                                    input_2X=-1, input_2Y=1, input_2Z=-1,
-                                   joint_bind_target=self.jntMid, side_RGT=sideRGT, side_LFT=sideLFT, side='')
+                                   joint_bind_target=self.jnt_mid, side_RGT=side_RGT, side_LFT=side_LFT, side='')
 
         else:
-            mc.setAttr(self.controllerBind01RGT.parent_control[0] + '.scaleX', -1)
-            mc.setAttr(self.controllerBind02RGT.parent_control[0] + '.scaleX', -1)
+            mc.setAttr(self.controller_bind01_RGT.parent_control[0] + '.scaleX', -1)
+            mc.setAttr(self.controller_bind02_RGT.parent_control[0] + '.scaleX', -1)
 
             # RIGHT SIDE 02 TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBind02RGT.control,
+            tf.bind_translate_reverse(control=self.controller_bind02_RGT.control,
                                       input_2X=-1, input_2Y=1, input_2Z=1,
-                                      joint_bind_target=self.jnt02RGT, side_RGT=sideRGT, side_LFT=sideLFT, side='RGT')
+                                      joint_bind_target=self.jnt02_RGT, side_RGT=side_RGT, side_LFT=side_LFT, side='RGT')
 
-            mc.connectAttr(self.controllerBind02RGT.control + '.rotate', self.jnt02RGT + '.rotate')
+            mc.connectAttr(self.controller_bind02_RGT.control + '.rotate', self.jnt02_RGT + '.rotate')
 
             # RIGHT SIDE 01 TRANSLATE AND ROTATE
-            tf.bind_translate_reverse(control=self.controllerBind01RGT.control,
+            tf.bind_translate_reverse(control=self.controller_bind01_RGT.control,
                                       input_2X=-1, input_2Y=1, input_2Z=1,
-                                      joint_bind_target=self.jnt01RGT, side_RGT=sideRGT, side_LFT=sideLFT, side='RGT')
+                                      joint_bind_target=self.jnt01_RGT, side_RGT=side_RGT, side_LFT=side_LFT, side='RGT')
 
-            mc.connectAttr(self.controllerBind01RGT.control + '.rotate', self.jnt01RGT + '.rotate')
+            mc.connectAttr(self.controller_bind01_RGT.control + '.rotate', self.jnt01_RGT + '.rotate')
 
             # LEFT SIDE 02 TRANSLATE AND ROTATE
-            au.connectAttrTransRot(self.controllerBind02LFT.control, self.jnt02LFT)
+            au.connect_attr_translate_rotate(self.controller_bind02_LFT.control, self.jnt02_LFT)
 
             # LEFT SIDE 01 TRANSLATE AND ROTATE
-            au.connectAttrTransRot(self.controllerBind01LFT.control, self.jnt01LFT)
+            au.connect_attr_translate_rotate(self.controller_bind01_LFT.control, self.jnt01_LFT)
 
             # MID TRANSLATE AND ROTATE
-            au.connectAttrTransRot(self.controllerBindMid.control, self.jntMid)
+            au.connect_attr_translate_rotate(self.controller_bind_mid.control, self.jnt_mid)
 
         # SCALING THE CTRL
-        listSecondGrp = [self.controllerBindMid.parent_control[1], self.controllerBind01RGT.parent_control[1],
-                         self.controllerBind02RGT.parent_control[1], self.controllerBind01LFT.parent_control[1],
-                         self.controllerBind02LFT.parent_control[1]]
-        for i in listSecondGrp:
-            au.connect_attr_scale(self.mouthCtrlGrp, i)
+        list_second_grp = [self.controller_bind_mid.parent_control[1], self.controller_bind01_RGT.parent_control[1],
+                           self.controller_bind02_RGT.parent_control[1], self.controller_bind01_LFT.parent_control[1],
+                           self.controller_bind02_LFT.parent_control[1]]
+        for item in list_second_grp:
+            au.connect_attr_scale(self.mouth_ctrl_grp, item)
 
 
-    def allControllerLip(self, scale, controllerLipLow, suffixController):
+    def all_controller_lip(self, scale, controller_lip_low, suffix_controller):
 
         # controller
-        controllerAll= ct.Control(match_obj_first_position=self.jntMid, prefix=self.prefixNameCrv + 'DrvAll',
-                                  shape=ct.CIRCLE, groups_ctrl=[''], ctrl_size=scale * 0.15,
-                                  ctrl_color='blue', lock_channels=['v', 's'], suffix=suffixController)
+        controller_all= ct.Control(match_obj_first_position=self.jnt_mid, prefix=self.prefix_name_curve + 'DrvAll',
+                                   shape=ct.CIRCLE, groups_ctrl=[''], ctrl_size=scale * 0.15,
+                                   ctrl_color='blue', lock_channels=['v', 's'], suffix=suffix_controller)
 
-        self.controllerAllZroGrp = controllerAll.parent_control[0]
-        self.controllerAll = controllerAll.control
+        self.controller_all_grp_zro = controller_all.parent_control[0]
+        self.controller_all = controller_all.control
 
-        showDtlCtrl = au.add_attribute(objects=[controllerAll.control], long_name=['showDetailCtrl'],
-                                       attributeType="long", min=0, max=1, dv=0, keyable=True)
+        show_detail_ctrl = au.add_attribute(objects=[controller_all.control], long_name=['showDetailCtrl'],
+                                            attributeType="long", min=0, max=1, dv=0, keyable=True)
 
-        for i in self.parentJntGrpOffset:
-            mc.connectAttr( self.controllerAll+'.%s' % showDtlCtrl, i+'.visibility')
+        for item in self.control_group_offset:
+            mc.connectAttr(self.controller_all + '.%s' % show_detail_ctrl, item + '.visibility')
 
 
-        if controllerLipLow:
-            mc.setAttr(self.controllerAllZroGrp+ '.scaleY', -1)
+        if controller_lip_low:
+            mc.setAttr(self.controller_all_grp_zro + '.scaleY', -1)
 
         # PARENT TO RESPECTIVE OBJECT
-        mc.parent(self.controllerAllZroGrp, self.mouthOffsetCtrlGrp)
+        mc.parent(self.controller_all_grp_zro, self.mouth_ctrl_grp_offset)
 
-    def rollLocator(self, crvRoll, crv, scale):
-        joint = self.allJoint
-        lenJnt = len(joint)
-        right = joint[0:((lenJnt - 1) / 2)]
-        left = joint[((lenJnt + 1) / 2):]
-        left = left[::-1]
-        mid = joint[(lenJnt - 1)/2]
+    def roll_locator(self, roll_curve, curve, scale):
+        joint = self.all_joint
+        length_joint = len(joint)
+        right_position_length = joint[0:((length_joint - 1) / 2)]
+        left_position_length = joint[((length_joint + 1) / 2):]
+        left_position_length = left_position_length[::-1]
+        mid_joint_position = joint[(length_joint - 1) / 2]
 
-        div = (1.000 / ((lenJnt / 2.000)-1.000))
+        divide = (1.000 / ((length_joint / 2.000) - 1.000))
 
-        self.mdlLipRoll = mc.createNode('multDoubleLinear', n=self.prefixNameCrv + 'Roll' + '_mdl')
+        self.lip_roll_mdl = mc.createNode('multDoubleLinear', n=self.prefix_name_curve + 'Roll' + '_mdl')
         # REBUILD THE CURVE
-        vtxRef = mc.ls('%s.cv[1:]' % crv, fl=True)
-        vtxRef = len(vtxRef)
+        vertex_list = mc.ls('%s.cv[1:]' % curve, fl=True)
+        vertex_list = len(vertex_list)
 
-        crvRbld = mc.rebuildCurve(crvRoll, rpo=1, rt=0, end=1, kr=0, kcp=0,
-                                  kep=0, kt=0, s=vtxRef, d=1, tol=0.01)
-        newName = mc.rename(crvRbld, self.prefixNameCrv + 'Roll_crv')
+        rebuild_curve = mc.rebuildCurve(roll_curve, rpo=1, rt=0, end=1, kr=0, kcp=0,
+                                        kep=0, kt=0, s=vertex_list, d=1, tol=0.01)
+        new_name = mc.rename(rebuild_curve, self.prefix_name_curve + 'Roll_crv')
 
-        vtx = mc.ls('%s.cv[0:*]' % newName, fl=True)
-        allLocatorRoll = []
-        multDouble=[]
+        vertex = mc.ls('%s.cv[0:*]' % new_name, fl=True)
+        all_locator_roll = []
+        mult_double=[]
         condition=[]
-        for i, v in enumerate(vtx):
-            pos = mc.xform(v, q=1, ws=1, t=1)
+        for index, object in enumerate(vertex):
+            position = mc.xform(object, q=1, ws=1, t=1)
             # CREATE LOCATOR
-            locatorRoll = mc.spaceLocator(n='%s%s%02d%s' % (self.prefixNameCrv, 'Roll', (i + 1), '_loc'))[0]
+            locator_roll = mc.spaceLocator(n='%s%s%02d%s' % (self.prefix_name_curve, 'Roll', (index + 1), '_loc'))[0]
             # GRPLOCATORROLL =
-            locRelatives = mc.listRelatives(locatorRoll, s=True)[0]
+            locator_list_relatives = mc.listRelatives(locator_roll, s=True)[0]
 
-            mc.setAttr(locRelatives + '.localScaleX', 0.1 * scale)
-            mc.setAttr(locRelatives + '.localScaleY', 0.1 * scale)
-            mc.setAttr(locRelatives + '.localScaleZ', 0.1 * scale)
+            mc.setAttr(locator_list_relatives + '.localScaleX', 0.1 * scale)
+            mc.setAttr(locator_list_relatives + '.localScaleY', 0.1 * scale)
+            mc.setAttr(locator_list_relatives + '.localScaleZ', 0.1 * scale)
 
-            mc.xform(locatorRoll, ws=1, t=pos)
+            mc.xform(locator_roll, ws=1, t=position)
 
             # CONNECT MDL NODE ROLL TO OBJECT LOCATOR
             # mc.connectAttr(self.mdlLipRoll + '.output', locatorRoll + '.rotateX')
-            allLocatorRoll.append(locatorRoll)
+            all_locator_roll.append(locator_roll)
 
-        for n, rgt, in enumerate(right):
-            prefixName, numberName = self.reorderNumber(prefix=rgt, sideRGT='', sideLFT='')
-            mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefixName) + 'MulRoll' + numberName + '_mdl')
-            self.cndRGT = mc.createNode('condition', n=au.prefix_name(prefixName) + 'Roll' + numberName + '_cnd')
-            mc.setAttr(self.cndRGT+'.operation', 3)
-            mc.setAttr(self.cndRGT+'.colorIfTrueR', (div * n))
-            mc.setAttr(self.cndRGT+'.colorIfFalseR', 1)
+        for index, object_RGT, in enumerate(right_position_length):
+            prefix_name, number_name = tf.reorder_number(prefix=object_RGT, side_RGT='', side_LFT='')
+            mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefix_name) + 'MulRoll' + number_name + '_mdl')
+            self.cnd_RGT = mc.createNode('condition', n=au.prefix_name(prefix_name) + 'Roll' + number_name + '_cnd')
+            mc.setAttr(self.cnd_RGT + '.operation', 3)
+            mc.setAttr(self.cnd_RGT + '.colorIfTrueR', (divide * index))
+            mc.setAttr(self.cnd_RGT + '.colorIfFalseR', 1)
 
             # mc.setAttr(mdl + '.input2', (div * n))
-            mc.connectAttr(self.mdlLipRoll + '.output', mdl + '.input1')
-            mc.connectAttr(self.cndRGT + '.outColorR', mdl + '.input2')
-            multDouble.append(mdl)
-            condition.append(self.cndRGT)
+            mc.connectAttr(self.lip_roll_mdl + '.output', mdl + '.input1')
+            mc.connectAttr(self.cnd_RGT + '.outColorR', mdl + '.input2')
+            mult_double.append(mdl)
+            condition.append(self.cnd_RGT)
 
             # mc.connectAttr(mdl + '.output', locatorRoll + '.rotateX')
 
-        for n, lft, in enumerate(left):
-            prefixName, numberName = self.reorderNumber(prefix=lft, sideRGT='', sideLFT='')
-            mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefixName) + 'MulRoll' + numberName + '_mdl')
-            self.cndLFT = mc.createNode('condition', n=au.prefix_name(prefixName) + 'Roll' + numberName + '_cnd')
-            mc.setAttr(self.cndLFT+'.operation', 3)
-            mc.setAttr(self.cndLFT+'.colorIfTrueR', (div * n))
-            mc.setAttr(self.cndLFT+'.colorIfFalseR', 1)
+        for index, object_LFT, in enumerate(left_position_length):
+            prefix_name, number_name = tf.reorder_number(prefix=object_LFT, side_RGT='', side_LFT='')
+            mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefix_name) + 'MulRoll' + number_name + '_mdl')
+            self.cnd_LFT = mc.createNode('condition', n=au.prefix_name(prefix_name) + 'Roll' + number_name + '_cnd')
+            mc.setAttr(self.cnd_LFT + '.operation', 3)
+            mc.setAttr(self.cnd_LFT + '.colorIfTrueR', (divide * index))
+            mc.setAttr(self.cnd_LFT + '.colorIfFalseR', 1)
 
             # mc.setAttr(mdl + '.input2', (div * n))
-            mc.connectAttr(self.mdlLipRoll + '.output', mdl + '.input1')
-            mc.connectAttr(self.cndLFT + '.outColorR', mdl + '.input2')
+            mc.connectAttr(self.lip_roll_mdl + '.output', mdl + '.input1')
+            mc.connectAttr(self.cnd_LFT + '.outColorR', mdl + '.input2')
 
-            multDouble.append(mdl)
-            condition.append(self.cndLFT)
+            mult_double.append(mdl)
+            condition.append(self.cnd_LFT)
 
         # MID MUL ROLL
-        prefixName, numberName = self.reorderNumber(prefix=mid, sideRGT='', sideLFT='')
-        middleMdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefixName) + 'MulRoll' + numberName + '_mdl')
-        mc.setAttr(middleMdl + '.input2', 1)
-        mc.connectAttr(self.mdlLipRoll + '.output', middleMdl + '.input1')
-        multDouble.append(middleMdl)
+        prefix_name, number_name = tf.reorder_number(prefix=mid_joint_position, side_RGT='', side_LFT='')
+        middle_mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefix_name) + 'MulRoll' + number_name + '_mdl')
+        mc.setAttr(middle_mdl + '.input2', 1)
+        mc.connectAttr(self.lip_roll_mdl + '.output', middle_mdl + '.input1')
+        mult_double.append(middle_mdl)
 
-        for mdl, rollLoc, loc, joint in zip(sorted(multDouble), allLocatorRoll, self.parentLocGrpOffset, self.parentJntGrpOffset):
-            mc.parent(rollLoc, loc)
-            mc.connectAttr(mdl + '.output', rollLoc + '.rotateX')
-            mc.connectAttr(rollLoc + '.rotateX', joint + '.rotateX')
+        for mdl, roll_loc, loc, joint in zip(sorted(mult_double), all_locator_roll, self.locator_group_offset, self.control_group_offset):
+            mc.parent(roll_loc, loc)
+            mc.connectAttr(mdl + '.output', roll_loc + '.rotateX')
+            mc.connectAttr(roll_loc + '.rotateX', joint + '.rotateX')
 
-        self.allLocatorRoll = allLocatorRoll
+        self.allLocatorRoll = all_locator_roll
         self.condition=sorted(condition)
 
-        mc.delete(self.allLocator)
+        mc.delete(self.all_locator)
 
-    def stickyLip(self, crvLip, scale):
+    def sticky_lip(self, lip_curve, scale):
         # DUPLICATE THE CURVES
-        self.stickyMidCrv = mc.duplicate(crvLip, n=self.prefixNameCrv + 'StickyMid' + '_crv')[0]
-        self.bindStickyMidCrv = mc.duplicate(self.deformCrv, n=self.prefixNameCrv + 'BindStickyMid' + '_crv')[0]
-        self.stickyOriginCrv = mc.duplicate(crvLip, n=self.prefixNameCrv + 'StickyOrigin' + '_crv')[0]
-        self.stickyMoveCrv = mc.duplicate(crvLip, n=self.prefixNameCrv + 'StickyMove' + '_crv')[0]
+        self.sticky_mid_crv = mc.duplicate(lip_curve, n=self.prefix_name_curve + 'StickyMid' + '_crv')[0]
+        self.bind_sticky_mid_crv = mc.duplicate(self.deform_curve, n=self.prefix_name_curve + 'BindStickyMid' + '_crv')[0]
+        self.sticky_origin_crv = mc.duplicate(lip_curve, n=self.prefix_name_curve + 'StickyOrigin' + '_crv')[0]
+        self.sticky_move_crv = mc.duplicate(lip_curve, n=self.prefix_name_curve + 'StickyMove' + '_crv')[0]
 
         mc.select(cl=1)
         # WIRE DEFORM ON MID CURVES
-        stickyMidwireDef = mc.wire(self.stickyMidCrv, dds=(0, 100 * scale), wire=self.bindStickyMidCrv)
-        stickyMidwireDef[0] = mc.rename(stickyMidwireDef[0], (self.prefixNameCrv + 'StickyMid' + '_wireNode'))
-        mc.setAttr(stickyMidwireDef[0]+'.scale[0]', 0)
+        sticky_mid_wire_deformer = mc.wire(self.sticky_mid_crv, dds=(0, 100 * scale), wire=self.bind_sticky_mid_crv)
+        sticky_mid_wire_deformer[0] = mc.rename(sticky_mid_wire_deformer[0], (self.prefix_name_curve + 'StickyMid' + '_wireNode'))
+        mc.setAttr(sticky_mid_wire_deformer[0] + '.scale[0]', 0)
 
         # WIRE BIND CURVES TO ORIGIN CURVE
-        stickyOriginWireDef = mc.wire(self.stickyOriginCrv, dds=(0, 100 * scale), wire=self.deformCrv)
-        stickyOriginWireDef[0] = mc.rename(stickyOriginWireDef[0], (self.prefixNameCrv + 'StickyOrigin' + '_wireNode'))
-        mc.setAttr(stickyOriginWireDef[0]+'.scale[0]', 0)
+        sticky_origin_wire_deformer = mc.wire(self.sticky_origin_crv, dds=(0, 100 * scale), wire=self.deform_curve)
+        sticky_origin_wire_deformer[0] = mc.rename(sticky_origin_wire_deformer[0], (self.prefix_name_curve + 'StickyOrigin' + '_wireNode'))
+        mc.setAttr(sticky_origin_wire_deformer[0] + '.scale[0]', 0)
 
         # BLENDSHAPE STICKY MOVE TO CRV
-        mc.blendShape(self.stickyMoveCrv, crvLip, n=(self.prefixNameCrv + 'StickyMove' + '_bsn'), weight=[(0, 1)])
+        mc.blendShape(self.sticky_move_crv, lip_curve, n=(self.prefix_name_curve + 'StickyMove' + '_bsn'), weight=[(0, 1)])
 
         # LOCATOR ORIGIN
-        originLoc = self.duplicateLocAndAddPciNode(nameLoc='Origin', crv=self.stickyOriginCrv)
-        self.originLocGrp = originLoc[1]
+        origin_locator = self.duplicate_locator_and_add_pci_node(name_locator='Origin', curve=self.sticky_origin_crv)
+        self.origin_locator_grp = origin_locator[1]
         # LOCATOR MID
-        midLoc = self.duplicateLocAndAddPciNode(nameLoc='Mid', crv=self.stickyMidCrv)
-        self.midLocGrp = midLoc[1]
+        mid_locator = self.duplicate_locator_and_add_pci_node(name_locator='Mid', curve=self.sticky_mid_crv)
+        self.mid_locator_grp = mid_locator[1]
 
         # SET CLUSTER FOR STICKY MOVE
-        stickyMoveCrvVtx = mc.ls('%s.cv[0:*]' % self.stickyMoveCrv, fl=True)
+        sticky_move_curve_vertex = mc.ls('%s.cv[0:*]' % self.sticky_move_crv, fl=True)
         self.clsHandle=[]
-        for n, i in enumerate(stickyMoveCrvVtx):
-            cls = mc.cluster(i, n='%s%s%02d%s' % (self.prefixNameCrv, 'StickyMove', n + 1, '_cls'))
-            repName = cls[1].replace('Handle','Hdl')
-            self.clsHandle.append(mc.rename(cls[1], repName))
+        for index, object in enumerate(sticky_move_curve_vertex):
+            cluster = mc.cluster(object, n='%s%s%02d%s' % (self.prefix_name_curve, 'StickyMove', index + 1, '_cls'))
+            replace_name = cluster[1].replace('Handle', 'Hdl')
+            self.clsHandle.append(mc.rename(cluster[1], replace_name))
 
         # CONSTRAINING STICKY
-        self.clsConstraint=[]
-        for o, l, c in zip(originLoc[0], midLoc[0], self.clsHandle):
-            cons = mc.parentConstraint(o,l,c)
+        self.cluster_constraint=[]
+        for ori_loc, mid_loc, cls_hdl in zip(origin_locator[0], mid_locator[0], self.clsHandle):
+            constraint = mc.parentConstraint(ori_loc, mid_loc, cls_hdl)
             # RENAME CONSTRAINT
-            cons = au.constraint_rename(cons)[0]
-            self.clsConstraint.append(cons)
+            constraint = au.constraint_rename(constraint)[0]
+            self.cluster_constraint.append(constraint)
 
         # GROUPING THE CURVES
-        self.stickyCrvGrp = mc.createNode('transform', n=self.prefixNameCrv + 'StickyCurves' + '_grp')
-        mc.setAttr (self.stickyCrvGrp + '.it', 0, l=1)
-        mc.parent(self.stickyMidCrv, self.bindStickyMidCrv, self.stickyOriginCrv, self.stickyMoveCrv,
-                  mc.listConnections(stickyMidwireDef[0] + '.baseWire[0]')[0],
-                  mc.listConnections(stickyOriginWireDef[0] + '.baseWire[0]')[0], self.stickyCrvGrp)
-        mc.hide(self.stickyCrvGrp)
+        self.sticky_curve_grp = mc.createNode('transform', n=self.prefix_name_curve + 'StickyCurves' + '_grp')
+        mc.setAttr (self.sticky_curve_grp + '.it', 0, l=1)
+        mc.parent(self.sticky_mid_crv, self.bind_sticky_mid_crv, self.sticky_origin_crv, self.sticky_move_crv,
+                  mc.listConnections(sticky_mid_wire_deformer[0] + '.baseWire[0]')[0],
+                  mc.listConnections(sticky_origin_wire_deformer[0] + '.baseWire[0]')[0], self.sticky_curve_grp)
+        mc.hide(self.sticky_curve_grp)
 
         # GROUPING CLUSTER HANDLE
-        self.stickyClsHdlGrp = mc.createNode('transform', n=self.prefixNameCrv + 'StickyClusterHdl' + '_grp')
-        mc.parent(self.clsHandle, self.stickyClsHdlGrp)
-        mc.hide(self.stickyClsHdlGrp)
+        self.sticky_cluster_hdl_grp = mc.createNode('transform', n=self.prefix_name_curve + 'StickyClusterHdl' + '_grp')
+        mc.parent(self.clsHandle, self.sticky_cluster_hdl_grp)
+        mc.hide(self.sticky_cluster_hdl_grp)
 
-    def duplicateLocAndAddPciNode(self, nameLoc, crv):
+    def duplicate_locator_and_add_pci_node(self, name_locator, curve):
         # DUPLICATE LOCATOR FOR CURVE
-        stickyLoc = mc.duplicate(self.allLocator)
-        newStickyLoc = []
-        for n, i in enumerate(stickyLoc):
-            v= mc.rename(i, '%s%s%s%02d%s' % (self.prefixNameCrv, 'Sticky', nameLoc, n + 1, '_loc'))
+        sticky_locator = mc.duplicate(self.all_locator)
+        new_sticky_locator = []
+        for index, object in enumerate(sticky_locator):
+            rename= mc.rename(object, '%s%s%s%02d%s' % (self.prefix_name_curve, 'Sticky', name_locator, index + 1, '_loc'))
 
             # CREATE POINT ON CURVE NODE
-            pos = mc.xform(v, q=1, ws=1, t=1)
-            name = v.replace('loc', 'pci')
+            position = mc.xform(rename, q=1, ws=1, t=1)
+            rename_suffix_locator = rename.replace('loc', 'pci')
             # CONNECT CURVE TO LOCATOR GRP
-            curveRelatives = mc.listRelatives(crv, s=True)[0]
-            u = self.getUParam(pos, curveRelatives)
-            pci = mc.createNode("pointOnCurveInfo", n=name)
-            mc.connectAttr(curveRelatives + '.worldSpace', pci + '.inputCurve')
-            mc.setAttr(pci + '.parameter', u)
-            mc.connectAttr(pci + '.position', v + '.t')
-            newStickyLoc.append(v)
+            curve_list_relatives = mc.listRelatives(curve, s=True)[0]
+            uParam = cr.get_uParam(position, curve_list_relatives)
+            pci_node = mc.createNode("pointOnCurveInfo", n=rename_suffix_locator)
+            mc.connectAttr(curve_list_relatives + '.worldSpace', pci_node + '.inputCurve')
+            mc.setAttr(pci_node + '.parameter', uParam)
+            mc.connectAttr(pci_node + '.position', rename + '.t')
+            new_sticky_locator.append(rename)
 
         # GROUPING THE STICKY LOC
-        stickyLocGrp = mc.createNode('transform', n=self.prefixNameCrv + 'Sticky' + nameLoc + 'Loc' + '_grp')
-        mc.parent(newStickyLoc, stickyLocGrp)
-        mc.hide(stickyLocGrp)
+        sticky_locator_grp = mc.createNode('transform', n=self.prefix_name_curve + 'Sticky' + name_locator + 'Loc' + '_grp')
+        mc.parent(new_sticky_locator, sticky_locator_grp)
+        mc.hide(sticky_locator_grp)
 
-        return newStickyLoc, stickyLocGrp
+        return new_sticky_locator, sticky_locator_grp
 
-    def setDriverLocator(self, sideLFT, sideRGT):
+    def set_driver_locator(self, side_LFT, side_RGT):
         # CREATE LOCATOR
-        self.locatorSet01RGT = mc.spaceLocator(n=self.prefixNameCrv + 'Drv01' + sideRGT + '_set')[0]
-        self.locatorSet01LFT = mc.spaceLocator(n=self.prefixNameCrv + 'Drv01' + sideLFT + '_set')[0]
+        self.locator_set01_RGT = mc.spaceLocator(n=self.prefix_name_curve + 'Drv01' + side_RGT + '_set')[0]
+        self.locator_set01_LFT = mc.spaceLocator(n=self.prefix_name_curve + 'Drv01' + side_LFT + '_set')[0]
 
-        self.locatorSetMid = mc.spaceLocator(n=self.prefixNameCrv + 'Drv01' + '_set')[0]
+        self.locator_set_mid = mc.spaceLocator(n=self.prefix_name_curve + 'Drv01' + '_set')[0]
 
         # MATCH POSITION
-        mc.delete(mc.parentConstraint(self.jnt01RGT, self.locatorSet01RGT))
-        mc.delete(mc.parentConstraint(self.jnt01LFT, self.locatorSet01LFT))
-        mc.delete(mc.parentConstraint(self.jntMid, self.locatorSetMid))
+        mc.delete(mc.parentConstraint(self.jnt01_RGT, self.locator_set01_RGT))
+        mc.delete(mc.parentConstraint(self.jnt01_LFT, self.locator_set01_LFT))
+        mc.delete(mc.parentConstraint(self.jnt_mid, self.locator_set_mid))
 
         # CONNECT MOUTH RESET UTILS GRP TO SET DRIVER LOCATOR
-        listSetLocator = [self.locatorSet01RGT, self.locatorSet01LFT, self.locatorSetMid]
-        for i in listSetLocator:
-            au.connect_attr_scale(self.resetAllMouthCtrlGrp, i)
+        list_set_locator = [self.locator_set01_RGT, self.locator_set01_LFT, self.locator_set_mid]
+        for item in list_set_locator:
+            au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, item)
 
         # CREATE GRP CONTROLLER AND PARENT INTO IT
-        self.grpDrvLocator = mc.createNode('transform', n=self.prefixNameCrv + 'DrvSet' + '_grp')
-        mc.parent(self.locatorSet01RGT,  self.locatorSet01LFT, self.locatorSetMid, self.grpDrvLocator)
-        mc.hide(self.grpDrvLocator)
+        self.grp_drv_locator = mc.createNode('transform', n=self.prefix_name_curve + 'DrvSet' + '_grp')
+        mc.parent(self.locator_set01_RGT, self.locator_set01_LFT, self.locator_set_mid, self.grp_drv_locator)
+        mc.hide(self.grp_drv_locator)
 
-    def wireBindCurve(self, crvLip, offsetJnt02BindPos, directionLip01, directionLip02,
-                      scale, sideLFT, sideRGT):
+    def wire_bind_curve(self, lip_curve, offset_jnt02_bind_position, lip01_direction, lip02_direction,
+                        scale, side_LFT, side_RGT):
 
-        jointPosBind = len(self.allJoint)
+        joint_position_bind = len(self.all_joint)
 
         # QUERY POSITION OF BIND JOINT
-        joint01RGT =  self.allJoint[(jointPosBind * 0)]
+        joint01_RGT =  self.all_joint[(joint_position_bind * 0)]
 
-        joint02RGT =  self.allJoint[((jointPosBind / 4) + offsetJnt02BindPos)]
+        joint02_RGT =  self.all_joint[((joint_position_bind / 4) + offset_jnt02_bind_position)]
 
-        jointMid =  self.allJoint[int(jointPosBind / 2)]
+        joint_mid =  self.all_joint[int(joint_position_bind / 2)]
 
         # QUERY THE POSITION RIGHT SIDE
-        self.xformJnt01RGT = mc.xform(joint01RGT, ws=1, q=1, t=1)
-        self.xformJnt02RGT = mc.xform(joint02RGT, ws=1, q=1, t=1)
-        self.xformJntMid = mc.xform(jointMid, ws=1, q=1, t=1)
+        self.xform_jnt01_RGT = mc.xform(joint01_RGT, ws=1, q=1, t=1)
+        self.xform_jnt02_RGT = mc.xform(joint02_RGT, ws=1, q=1, t=1)
+        self.xform_jnt_mid = mc.xform(joint_mid, ws=1, q=1, t=1)
 
         mc.select(cl=1)
-        jnt01RGT   = mc.joint(n=self.prefixNameCrv + '01' + sideRGT + '_bind', p=self.xformJnt01RGT, rad=0.5 * scale)
-        jnt02RGT   = mc.duplicate(jnt01RGT, n=self.prefixNameCrv + '02' + sideRGT + '_bind')[0]
-        jntMid     = mc.duplicate(jnt01RGT, n=self.prefixNameCrv + '_bind')[0]
+        jnt01_RGT   = mc.joint(n=self.prefix_name_curve + '01' + side_RGT + '_bind', p=self.xform_jnt01_RGT, rad=0.5 * scale)
+        jnt02_RGT   = mc.duplicate(jnt01_RGT, n=self.prefix_name_curve + '02' + side_RGT + '_bind')[0]
+        jnt_mid     = mc.duplicate(jnt01_RGT, n=self.prefix_name_curve + '_bind')[0]
 
         # SET THE POSITION RGT JOINT
-        mc.xform(jnt02RGT, ws=1, t=self.xformJnt02RGT)
-        mc.xform(jntMid, ws=1, t=self.xformJntMid)
+        mc.xform(jnt02_RGT, ws=1, t=self.xform_jnt02_RGT)
+        mc.xform(jnt_mid, ws=1, t=self.xform_jnt_mid)
 
         # MIRROR BIND JOINT 02 AND 01
-        jnt01LFT = mc.mirrorJoint(jnt01RGT, mirrorYZ=True, searchReplace=(sideRGT, sideLFT))[0]
-        jnt02LFT = mc.mirrorJoint(jnt02RGT, mirrorYZ=True, searchReplace=(sideRGT, sideLFT))[0]
+        jnt01_LFT = mc.mirrorJoint(jnt01_RGT, mirrorYZ=True, searchReplace=(side_RGT, side_LFT))[0]
+        jnt02_LFT = mc.mirrorJoint(jnt02_RGT, mirrorYZ=True, searchReplace=(side_RGT, side_LFT))[0]
 
         # QUERY POSITION LFT JOINT
-        self.xformJnt02LFT = mc.xform(jnt02LFT, ws=1, q=1, t=1)
-        self.xformJnt01LFT = mc.xform(jnt01LFT, ws=1, q=1, t=1)
+        self.xform_jnt02_LFT = mc.xform(jnt02_LFT, ws=1, q=1, t=1)
+        self.xform_jnt01_LFT = mc.xform(jnt01_LFT, ws=1, q=1, t=1)
 
         # CREATE BIND CURVE
-        deformCrv = mc.curve(ep=[(self.xformJnt01RGT), (self.xformJnt02RGT), (self.xformJntMid),
-                                (self.xformJnt02LFT), (self.xformJnt01LFT)],
-                             degree=1)
-        deformCrv = mc.rename(deformCrv, (self.prefixNameCrv + 'Bind' + '_crv'))
+        deform_curve = mc.curve(ep=[(self.xform_jnt01_RGT), (self.xform_jnt02_RGT), (self.xform_jnt_mid),
+                                    (self.xform_jnt02_LFT), (self.xform_jnt01_LFT)],
+                                degree=1)
+        deform_curve = mc.rename(deform_curve, (self.prefix_name_curve + 'Bind' + '_crv'))
 
         # PARENT THE BIND JOINT
-        self.jointBindGrpMid = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jntMid,
-                                                          match_position=jntMid, prefix=self.prefixNameCrv + 'Drv',
-                                                          suffix='_bind')
+        self.joint_bind_mid_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt_mid,
+                                                             match_position=jnt_mid, prefix=self.prefix_name_curve + 'Drv',
+                                                             suffix='_bind')
 
-        self.jointBind01GrpRGT = tf.create_parent_transform(parent_list=['Zro', 'Offset', 'All'], object=jnt01RGT,
-                                                            match_position=jnt01RGT, prefix=self.prefixNameCrv + 'Drv01',
-                                                            suffix='_bind', side=sideRGT)
+        self.joint_bind01_RGT_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset', 'All'], object=jnt01_RGT,
+                                                               match_position=jnt01_RGT, prefix=self.prefix_name_curve + 'Drv01',
+                                                               suffix='_bind', side=side_RGT)
 
-        self.jointBind02GrpRGT = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt02RGT,
-                                                            match_position=jnt02RGT, prefix=self.prefixNameCrv + 'Drv02',
-                                                            suffix='_bind', side=sideRGT)
+        self.joint_bind02_RGT_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt02_RGT,
+                                                               match_position=jnt02_RGT, prefix=self.prefix_name_curve + 'Drv02',
+                                                               suffix='_bind', side=side_RGT)
 
-        self.jointBind01GrpLFT = tf.create_parent_transform(parent_list=['Zro', 'Offset', 'All'], object=jnt01LFT,
-                                                            match_position=jnt01LFT, prefix=self.prefixNameCrv + 'Drv01',
-                                                            suffix='_bind', side=sideLFT)
+        self.joint_bind01_LFT_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset', 'All'], object=jnt01_LFT,
+                                                               match_position=jnt01_LFT, prefix=self.prefix_name_curve + 'Drv01',
+                                                               suffix='_bind', side=side_LFT)
 
-        self.jointBind02GrpLFT = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt02LFT,
-                                                            match_position=jnt02LFT, prefix=self.prefixNameCrv + 'Drv02',
-                                                            suffix='_bind', side=sideLFT)
+        self.joint_bind02_LFT_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt02_LFT,
+                                                               match_position=jnt02_LFT, prefix=self.prefix_name_curve + 'Drv02',
+                                                               suffix='_bind', side=side_LFT)
 
         # ROTATION BIND JOINT FOLLOW THE MOUTH SHAPE
-        mc.setAttr(self.jointBind01GrpRGT[0] + '.rotateY', directionLip01 * -1)
-        mc.setAttr(self.jointBind02GrpRGT[0] + '.rotateY', directionLip02 * -1)
-        mc.setAttr(self.jointBind01GrpLFT[0] + '.rotateY', directionLip01)
-        mc.setAttr(self.jointBind02GrpLFT[0] + '.rotateY', directionLip02)
+        mc.setAttr(self.joint_bind01_RGT_grp[0] + '.rotateY', lip01_direction * -1)
+        mc.setAttr(self.joint_bind02_RGT_grp[0] + '.rotateY', lip02_direction * -1)
+        mc.setAttr(self.joint_bind01_LFT_grp[0] + '.rotateY', lip01_direction)
+        mc.setAttr(self.joint_bind02_LFT_grp[0] + '.rotateY', lip02_direction)
 
         # REBUILD THE CURVE
-        mc.rebuildCurve(deformCrv, rpo=1, rt=0, end=1, kr=0, kcp=0,
+        mc.rebuildCurve(deform_curve, rpo=1, rt=0, end=1, kr=0, kcp=0,
                         kep=1, kt=0, s=2, d=3, tol=0.01)
 
         # SKINNING THE JOINT TO THE BIND CURVE
-        skinCls = mc.skinCluster([jnt01LFT, jnt02LFT, jnt01RGT, jnt02RGT, jntMid], deformCrv,
-                                 n='%s%s%s'% ('wire', self.prefixNameCrv.capitalize(), 'SkinCluster'), tsb=True, bm=0, sm=0, nw=1, mi=3)
+        skin_cluster = mc.skinCluster([jnt01_LFT, jnt02_LFT, jnt01_RGT, jnt02_RGT, jnt_mid], deform_curve,
+                                      n='%s%s%s'% ('wire', self.prefix_name_curve.capitalize(), 'SkinCluster'), tsb=True, bm=0, sm=0, nw=1, mi=3)
 
         # Distribute the skin
-        skinPercent0 = '%s.cv[0]' % deformCrv
-        skinPercent1 = '%s.cv[1]' % deformCrv
-        skinPercent2 = '%s.cv[2]' % deformCrv
-        skinPercent3 = '%s.cv[3]' % deformCrv
-        skinPercent4 = '%s.cv[4]' % deformCrv
+        skin_percent_index0 = '%s.cv[0]' % deform_curve
+        skin_percent_index1 = '%s.cv[1]' % deform_curve
+        skin_percent_index2 = '%s.cv[2]' % deform_curve
+        skin_percent_index3 = '%s.cv[3]' % deform_curve
+        skin_percent_index4 = '%s.cv[4]' % deform_curve
 
-        mc.skinPercent(skinCls[0], skinPercent0, tv=[(jnt01RGT, 1.0)])
-        mc.skinPercent(skinCls[0], skinPercent1, tv=[(jnt02RGT, 1.0)])
-        mc.skinPercent(skinCls[0], skinPercent2, tv=[(jntMid, 1.0)])
-        mc.skinPercent(skinCls[0], skinPercent3, tv=[(jnt02LFT, 1.0)])
-        mc.skinPercent(skinCls[0], skinPercent4, tv=[(jnt01LFT, 1.0)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index0, tv=[(jnt01_RGT, 1.0)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index1, tv=[(jnt02_RGT, 1.0)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index2, tv=[(jnt_mid, 1.0)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index3, tv=[(jnt02_LFT, 1.0)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index4, tv=[(jnt01_LFT, 1.0)])
 
         # WIRE THE CURVE
-        wireDef = mc.wire(crvLip, dds=(0, 100 * scale), wire=deformCrv)
-        wireDef[0] = mc.rename(wireDef[0], (self.prefixNameCrv + '_wireNode'))
-        mc.setAttr(wireDef[0]+'.scale[0]', 0)
+        wire_deformer = mc.wire(lip_curve, dds=(0, 100 * scale), wire=deform_curve)
+        wire_deformer[0] = mc.rename(wire_deformer[0], (self.prefix_name_curve + '_wireNode'))
+        mc.setAttr(wire_deformer[0] + '.scale[0]', 0)
 
 
         # CONSTRAINT MID TO 02 LEFT AND RIGHT
-        jntMidLFTCons = mc.parentConstraint(jntMid, self.jointBind02GrpLFT[0], mo=1)
-        jntMidRGTCons = mc.parentConstraint(jntMid, self.jointBind02GrpRGT[0], mo=1)
+        jnt_mid_LFT_constraint = mc.parentConstraint(jnt_mid, self.joint_bind02_LFT_grp[0], mo=1)
+        jnt_mid_RGT_constraint = mc.parentConstraint(jnt_mid, self.joint_bind02_RGT_grp[0], mo=1)
 
         # CONSTRAINT RENAME
-        au.constraint_rename([jntMidLFTCons[0], jntMidRGTCons[0]])
+        au.constraint_rename([jnt_mid_LFT_constraint[0], jnt_mid_RGT_constraint[0]])
 
-        self.jntMid = jntMid
-        self.jnt01RGT = jnt01RGT
-        self.jnt02RGT = jnt02RGT
-        self.jnt01LFT = jnt01LFT
-        self.jnt02LFT = jnt02LFT
+        self.jnt_mid = jnt_mid
+        self.jnt01_RGT = jnt01_RGT
+        self.jnt02_RGT = jnt02_RGT
+        self.jnt01_LFT = jnt01_LFT
+        self.jnt02_LFT = jnt02_LFT
 
         # CREATE GRP CURVES
-        self.curvesGrp = mc.createNode('transform', n=self.prefixNameCrv + 'DrvCrv' + '_grp')
-        mc.setAttr (self.curvesGrp + '.it', 0, l=1)
-        mc.parent(deformCrv, mc.listConnections(wireDef[0] + '.baseWire[0]')[0], self.curvesGrp)
-        mc.hide(self.curvesGrp)
+        self.curves_grp = mc.createNode('transform', n=self.prefix_name_curve + 'DrvCrv' + '_grp')
+        mc.setAttr (self.curves_grp + '.it', 0, l=1)
+        mc.parent(deform_curve, mc.listConnections(wire_deformer[0] + '.baseWire[0]')[0], self.curves_grp)
+        mc.hide(self.curves_grp)
 
         # CONNECT MOUTH RESET UTILS GRP TO BIND SCALE PARENT GRP
-        listGrpParentBindJoint = [self.jointBindGrpMid[0], self.jointBind01GrpRGT[0], self.jointBind02GrpRGT[0],
-                                  self.jointBind01GrpLFT[0], self.jointBind02GrpLFT[0]]
-        for i in listGrpParentBindJoint:
-            au.connect_attr_scale(self.resetAllMouthCtrlGrp, i)
+        list_bind_joint_grp = [self.joint_bind_mid_grp[0], self.joint_bind01_RGT_grp[0], self.joint_bind02_RGT_grp[0],
+                               self.joint_bind01_LFT_grp[0], self.joint_bind02_LFT_grp[0]]
+        for item in list_bind_joint_grp:
+            au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, item)
 
         # CREATE GRP BIND
-        self.bindJntGrp = mc.createNode('transform', n=self.prefixNameCrv + 'DrvJntBind' + '_grp')
-        mc.parent(self.jointBindGrpMid[0], self.jointBind01GrpRGT[0], self.jointBind02GrpRGT[0],
-                  self.jointBind01GrpLFT[0], self.jointBind02GrpLFT[0], self.bindJntGrp)
-        mc.hide(self.bindJntGrp)
+        self.bind_jnt_grp = mc.createNode('transform', n=self.prefix_name_curve + 'DrvJntBind' + '_grp')
+        mc.parent(self.joint_bind_mid_grp[0], self.joint_bind01_RGT_grp[0], self.joint_bind02_RGT_grp[0],
+                  self.joint_bind01_LFT_grp[0], self.joint_bind02_LFT_grp[0], self.bind_jnt_grp)
+        mc.hide(self.bind_jnt_grp)
 
-        self.deformCrv = deformCrv
+        self.deform_curve = deform_curve
 
-    def createResetMouthPositionGrp(self, mouthBaseJnt):
-        jointPosBind = len(self.allJoint)
+    def create_reset_mouth_position_grp(self, mouth_base_jnt):
+        joint_position_bind = len(self.all_joint)
 
-        jointMids =  self.allJoint[int(jointPosBind / 2)]
-        jointMid =mc.xform(jointMids, ws=1, q=1, t=1)
+        joint_mid_all =  self.all_joint[int(joint_position_bind / 2)]
+        joint_mid =mc.xform(joint_mid_all, ws=1, q=1, t=1)
 
         # OFFSETTING TO MOUTH
-        posMouth = mc.xform(mouthBaseJnt, ws=1, q=1, t=1)
-        self.mouthCtrlGrp = mc.createNode('transform', n=self.prefixNameCrv + 'DrvAllCtrlMouth_grp')
-        self.mouthOffsetCtrlGrp = mc.group(em=1, n=self.prefixNameCrv + 'DrvAllCtrlMouthOffset_grp', p=self.mouthCtrlGrp)
-        mc.xform(self.mouthCtrlGrp, ws=1, t=posMouth)
+        position_mouth = mc.xform(mouth_base_jnt, ws=1, q=1, t=1)
+        self.mouth_ctrl_grp = mc.createNode('transform', n=self.prefix_name_curve + 'DrvAllCtrlMouth_grp')
+        self.mouth_ctrl_grp_offset = mc.group(em=1, n=self.prefix_name_curve + 'DrvAllCtrlMouthOffset_grp', p=self.mouth_ctrl_grp)
+        mc.xform(self.mouth_ctrl_grp, ws=1, t=position_mouth)
 
         # RESETTING TRANSFORM FOR SET
-        self.resetAllMouthCtrlGrp = mc.createNode('transform', n=self.prefixNameCrv+'DrvAllResetUtilMouth_grp')
-        self.resetAllMouthOffsetCtrlGrp = mc.group(em=1, n=self.prefixNameCrv+'DrvAllResetUtilMouthOffset_grp', p=self.resetAllMouthCtrlGrp)
-        mc.xform(self.resetAllMouthCtrlGrp, ws=1, t=posMouth)
+        self.reset_all_mouth_ctrl_grp = mc.createNode('transform', n=self.prefix_name_curve + 'DrvAllResetUtilMouth_grp')
+        self.reset_all_mouth_ctrl_grp_offset = mc.group(em=1, n=self.prefix_name_curve + 'DrvAllResetUtilMouthOffset_grp', p=self.reset_all_mouth_ctrl_grp)
+        mc.xform(self.reset_all_mouth_ctrl_grp, ws=1, t=position_mouth)
 
-        resetMouthCtrlGrp = mc.createNode('transform', n=self.prefixNameCrv+'DrvAllResetUtilOffset_grp')
-        self.resetMouthOffsetCtrlGrp = mc.spaceLocator(n=self.prefixNameCrv+'DrvAllResetUtil_loc')[0]
-        mc.parent(self.resetMouthOffsetCtrlGrp, resetMouthCtrlGrp)
-        mc.hide(self.resetMouthOffsetCtrlGrp)
+        reset_mouth_ctrl_grp = mc.createNode('transform', n=self.prefix_name_curve + 'DrvAllResetUtilOffset_grp')
+        self.reset_mouth_ctrl_grp_offset = mc.spaceLocator(n=self.prefix_name_curve + 'DrvAllResetUtil_loc')[0]
+        mc.parent(self.reset_mouth_ctrl_grp_offset, reset_mouth_ctrl_grp)
+        mc.hide(self.reset_mouth_ctrl_grp_offset)
 
-        mc.xform(resetMouthCtrlGrp, ws=1, t=jointMid)
+        mc.xform(reset_mouth_ctrl_grp, ws=1, t=joint_mid)
 
-        mc.parent(resetMouthCtrlGrp, self.resetAllMouthOffsetCtrlGrp)
+        mc.parent(reset_mouth_ctrl_grp, self.reset_all_mouth_ctrl_grp_offset)
 
         # CONNECT ATRIBUTE FROM MOUTH TO RESET MOUTH OFFSET AND RESET CONTROLLER MOUTH
-        au.connect_attr_rotate(mouthBaseJnt, self.resetAllMouthOffsetCtrlGrp)
-        au.connect_attr_rotate(mouthBaseJnt, self.mouthOffsetCtrlGrp)
+        au.connect_attr_rotate(mouth_base_jnt, self.reset_all_mouth_ctrl_grp_offset)
+        au.connect_attr_rotate(mouth_base_jnt, self.mouth_ctrl_grp_offset)
 
         # CONNECT DRIVE ALL RESET MOUTH TO  THE GRP PARENT JNT GRP LIP
-        for jntGrp, locOff in zip (self.parentJntGrpZro, self.parentLocGrpOffset):
-            au.connect_attr_scale(self.resetAllMouthCtrlGrp, jntGrp)
-            au.connect_attr_scale(self.resetAllMouthCtrlGrp, locOff)
+        for jnt_grp, loc_offset in zip (self.control_group_zro, self.locator_group_offset):
+            au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, jnt_grp)
+            au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, loc_offset)
 
-    def createJointLip(self, crv, scale, ctrlColor, suffixController):
-        self.allJoint =[]
-        self.parentLocGrpOffset=[]
-        self.parentLocGrpZro = []
-        self.allLocator=[]
-        self.parentJntGrpZro=[]
-        self.parentJntGrpOffset=[]
+    def create_joint_lip(self, curve, scale, ctrl_color, suffix_controller, parent_skin):
+        self.all_joint =[]
+        # self.all_skin=[]
+        self.locator_group_offset=[]
+        self.locator_group_zro = []
+        self.all_locator=[]
+        self.control_group_zro=[]
+        self.control_group_offset=[]
 
-        for i, v in enumerate(self.vtxCrv):
+        for index, object in enumerate(self.curve_vertex):
             # create joint
             mc.select(cl=1)
-            self.joint = mc.joint(n='%s%02d%s' % (self.prefixNameCrv, (i + 1), '_jnt'), rad=0.1 * scale)
+            self.joint = mc.joint(n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_skn'), rad=0.1 * scale)
             mc.setAttr(self.joint+'.visibility', 0)
-            pos = mc.xform(v, q=1, ws=1, t=1)
-            mc.xform(self.joint, ws=1, t=pos)
-            self.allJoint.append(self.joint)
+            position = mc.xform(object, q=1, ws=1, t=1)
+            mc.xform(self.joint, ws=1, t=position)
+            self.all_joint.append(self.joint)
 
-            # parentJntGrp = tf.createParentTransform(listparent=[''], object=self.joint,
-            #                                         matchPos=self.joint,
-            #                                         prefix=self.prefixNameCrv + str(i + 1).zfill(2),
-            #                                         suffix='_jnt')
-
-            parentJntGrp = ct.Control(match_obj_first_position=self.joint, prefix=self.prefixNameCrv + str(i + 1).zfill(2),
-                                      shape=ct.JOINT, groups_ctrl=['', 'Offset'], ctrl_size=scale * 0.1,
-                                      ctrl_color=ctrlColor, lock_channels=['v'], connection=['parent'], suffix=suffixController
-                                      )
-            self.parentJntGrpZro.append(parentJntGrp.parent_control[0])
-            self.parentJntGrpOffset.append(parentJntGrp.parent_control[1])
+            control_group = ct.Control(match_obj_first_position=self.joint, prefix=self.prefix_name_curve + str(index + 1).zfill(2),
+                                       shape=ct.JOINT, groups_ctrl=['', 'Offset'], ctrl_size=scale * 0.1,
+                                       ctrl_color=ctrl_color, lock_channels=['v'], connection=['parent'], suffix=suffix_controller
+                                       )
+            self.control_group_zro.append(control_group.parent_control[0])
+            self.control_group_offset.append(control_group.parent_control[1])
 
             # create locator
-            self.locator = mc.spaceLocator(n='%s%02d%s' % (self.prefixNameCrv, (i + 1), '_loc'))[0]
+            self.locator = mc.spaceLocator(n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_loc'))[0]
 
-            mc.xform(self.locator, ws=1, t=pos)
-            parentLocGrp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=self.locator,
-                                                      match_position=self.locator, prefix=self.prefixNameCrv + str(i + 1).zfill(2),
-                                                      suffix='_loc')
-            self.parentLocGrpOffset.append(parentLocGrp[1])
-            self.parentLocGrpZro.append(parentLocGrp[0])
-            self.allLocator.append(self.locator)
+            mc.xform(self.locator, ws=1, t=position)
+            locator_group = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=self.locator,
+                                                       match_position=self.locator, prefix=self.prefix_name_curve + str(index + 1).zfill(2),
+                                                       suffix='_loc')
+            self.locator_group_offset.append(locator_group[1])
+            self.locator_group_zro.append(locator_group[0])
+            self.all_locator.append(self.locator)
 
             # connect curve to locator grp
-            curveRelatives = mc.listRelatives(crv, s=True)[0]
-            u = self.getUParam(pos, curveRelatives)
-            pci = mc.createNode("pointOnCurveInfo", n='%s%02d%s' % (self.prefixNameCrv, (i + 1), '_pci'))
-            mc.connectAttr(curveRelatives + '.worldSpace', pci + '.inputCurve')
-            mc.setAttr(pci + '.parameter', u)
-            mc.connectAttr(pci + '.position', parentLocGrp[0] + '.t')
+            curveRelatives = mc.listRelatives(curve, s=True)[0]
+            uParam = cr.get_uParam(position, curveRelatives)
+            pci_node = mc.createNode("pointOnCurveInfo", n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_pci'))
+            mc.connectAttr(curveRelatives + '.worldSpace', pci_node + '.inputCurve')
+            mc.setAttr(pci_node + '.parameter', uParam)
+            mc.connectAttr(pci_node + '.position', locator_group[0] + '.t')
 
-            dMtx = mc.createNode('decomposeMatrix', n='%s%02d%s' % (self.prefixNameCrv, (i + 1), '_dmtx'))
-            mc.connectAttr(parentLocGrp[1] + '.worldMatrix[0]', dMtx + '.inputMatrix')
+            decompose_node = mc.createNode('decomposeMatrix', n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_dmtx'))
+            mc.connectAttr(locator_group[1] + '.worldMatrix[0]', decompose_node + '.inputMatrix')
 
-            mc.connectAttr(dMtx + '.outputTranslate', parentJntGrp.parent_control[0] + '.translate')
-            mc.connectAttr(dMtx + '.outputRotate', parentJntGrp.parent_control[0] + '.rotate')
+            mc.connectAttr(decompose_node + '.outputTranslate', control_group.parent_control[0] + '.translate')
+            mc.connectAttr(decompose_node + '.outputRotate', control_group.parent_control[0] + '.rotate')
             # mc.connectAttr(dMtx + '.outputScale', parentJntGrp[0] + '.scale')
             mc.setAttr(self.joint+'.visibility', 0)
 
+            # # CREATE SKINNING JOINT
+            # mc.select(cl=1)
+            # self.skin = mc.joint(n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_skn'), rad=0.1 * scale)
+            #
+            # # SKIN PARENT AND SCALE CONSTRAINT
+            # au.parent_scale_constraint(self.joint, self.skin)
+            # self.all_skin.append(self.skin)
+
         # grouping joint
-        self.jointGrp = mc.group(em=1, n=self.prefixNameCrv + 'JntCtr' + '_grp')
-        mc.parent(self.parentJntGrpZro, self.jointGrp)
+        self.joint_grp = mc.group(em=1, n=self.prefix_name_curve + 'JntCtr' + '_grp')
+        mc.parent(self.control_group_zro, self.joint_grp)
 
         # grouping locator
-        self.locatorGrp = mc.group(em=1, n=self.prefixNameCrv+'Loc'+'_grp')
-        mc.setAttr (self.locatorGrp + '.it', 0, l=1)
-        mc.parent(self.parentLocGrpZro, self.locatorGrp)
+        self.locator_grp = mc.group(em=1, n=self.prefix_name_curve + 'Loc' + '_grp')
+        mc.setAttr (self.locator_grp + '.it', 0, l=1)
+        mc.parent(self.locator_group_zro, self.locator_grp)
 
-    def getUParam(self, pnt=[], crv=None):
-        point = om.MPoint(pnt[0], pnt[1], pnt[2])
-        curveFn = om.MFnNurbsCurve(self.getDagPath(crv))
-        paramUtill = om.MScriptUtil()
-        paramPtr = paramUtill.asDoublePtr()
-        isOnCurve = curveFn.isPointOnCurve(point)
-        if isOnCurve == True:
-
-            curveFn.getParamAtPoint(point, paramPtr, 0.001, om.MSpace.kObject)
-        else:
-            point = curveFn.closestPoint(point, paramPtr, 0.001, om.MSpace.kObject)
-            curveFn.getParamAtPoint(point, paramPtr, 0.001, om.MSpace.kObject)
-
-        param = paramUtill.getDouble(paramPtr)
-        return param
-
-    def getDagPath(self, objectName):
-        if isinstance(objectName, list) == True:
-            oNodeList = []
-            for o in objectName:
-                selectionList = om.MSelectionList()
-                selectionList.add(o)
-                oNode = om.MDagPath()
-                selectionList.getDagPath(0, oNode)
-                oNodeList.append(oNode)
-            return oNodeList
-        else:
-            selectionList = om.MSelectionList()
-            selectionList.add(objectName)
-            oNode = om.MDagPath()
-            selectionList.getDagPath(0, oNode)
-            return oNode
-
-    def replacePosLFTRGT(self, crv, sideRGT, sideLFT):
-        if sideRGT in crv:
-            crvNewName = crv.replace(sideRGT, '')
-        elif sideLFT in crv:
-            crvNewName = crv.replace(sideLFT, '')
-        else:
-            crvNewName = crv
-
-        return crvNewName
-
-    def reorderNumber(self, prefix, sideRGT, sideLFT):
-        # get the number
-        newPrefix = self.replacePosLFTRGT(crv=prefix, sideRGT=sideRGT, sideLFT=sideLFT)
-        try:
-            patterns = [r'\d+']
-            prefixNumber = au.prefix_name(newPrefix)
-            for p in patterns:
-                prefixNumber = re.findall(p, prefixNumber)[0]
-        except:
-            prefixNumber=''
-
-        # get the prefix without number
-        prefixNoNumber = str(newPrefix).translate(None, digits)
-
-        return prefixNoNumber, prefixNumber
+        # # PARENT SKIN JOINT
+        # mc.parent(self.all_skin, parent_skin)

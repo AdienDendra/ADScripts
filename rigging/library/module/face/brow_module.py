@@ -14,228 +14,258 @@ reload (br)
 
 class Brows:
     def __init__(self,
-                 browTwJntLFT,
-                 browInJntLFT,
-                 browMidJntLFT,
-                 browOutJntLFT,
-                 browTipJntLFT,
-                 browTwJntRGT,
-                 browInJntRGT,
-                 browMidJntRGT,
-                 browOutJntRGT,
-                 browTipJntRGT,
-                 browCenterJnt,
-                 browTwPrefix,
-                 browInPrefix,
-                 browMidPrefix,
-                 browOutPrefix,
-                 browsPrefix,
-                 browTipPrefix,
-                 browCenterPrefix,
+                 brow_tweak_jnt_LFT,
+                 brow_in_jnt_LFT,
+                 brow_mid_jnt_LFT,
+                 brow_out_jnt_LFT,
+                 brow_tip_jnt_LFT,
+                 brow_tweak_jnt_RGT,
+                 brow_in_jnt_RGT,
+                 brow_mid_jnt_RGT,
+                 brow_out_jnt_RGT,
+                 brow_tip_jnt_RGT,
+                 brow_tweak_skin_LFT,
+                 brow_in_skin_LFT,
+                 brow_mid_skin_LFT,
+                 brow_out_skin_LFT,
+                 brow_tip_skin_LFT,
+                 brow_tweak_skin_RGT,
+                 brow_in_skin_RGT,
+                 brow_mid_skin_RGT,
+                 brow_out_skin_RGT,
+                 brow_tip_skin_RGT,
+                 brow_center_jnt,
+                 brow_tweak_prefix,
+                 brow_in_prefix,
+                 brow_mid_prefix,
+                 brow_out_prefix,
+                 brows_prefix,
+                 brow_tip_prefix,
+                 brow_center_prefix,
                  scale,
-                 sideRGT,
-                 sideLFT,
-                 browInGrpRotOffset,
-                 browMidGrpRotOffset,
-                 browOutGrpRotOffset,
-                 browTipGrpRotOffset,
-                 headUpCtrlGimbal,
-                 suffixController
+                 side_RGT,
+                 side_LFT,
+                 brow_in_rotate_grp_offset,
+                 brow_mid_rotate_grp_offset,
+                 brow_out_rotate_grp_offset,
+                 brow_tip_rotate_grp_offset,
+                 head_up_ctrl_gimbal,
+                 suffix_controller
                  ):
 
-        ctrlDriverGrp = mc.group(em=1, n='browCtrlAll' + '_grp')
-        mc.parent(ctrlDriverGrp, headUpCtrlGimbal)
-        self.browAllCtrl = ctrlDriverGrp
+        ctrl_driver_grp = mc.group(em=1, n='browCtrlAll' + '_grp')
+        mc.parent(ctrl_driver_grp, head_up_ctrl_gimbal)
+        self.brow_all_ctrl = ctrl_driver_grp
 
-    # ==================================================================================================================
-    #                                               BROWS CONTROLLER
-    # ==================================================================================================================
+        # ==================================================================================================================
+        #                                               BROWS CONTROLLER
+        # ==================================================================================================================
 
-        leftBrow = br.Build(browTwJnt=browTwJntLFT,
-                     browInJnt=browInJntLFT,
-                     browMidJnt=browMidJntLFT,
-                     browOutJnt=browOutJntLFT,
-                     browTipJnt=browTipJntLFT,
-                     browTwPrefix=browTwPrefix,
-                     browInPrefix=browInPrefix,
-                     browMidPrefix=browMidPrefix,
-                     browOutPrefix=browOutPrefix,
-                     browsPrefix=browsPrefix,
-                     browTipPrefix=browTipPrefix,
-                     scale=scale,
-                     sideRGT=sideRGT,
-                     sideLFT=sideLFT,
-                     side=sideLFT,
-                    browInGrpRotOffset=browInGrpRotOffset,
-                    browMidGrpRotOffset=browMidGrpRotOffset,
-                    browOutGrpRotOffset=browOutGrpRotOffset,
-                    browTipGrpRotOffset=browTipGrpRotOffset,
-                     suffixController=suffixController)
+        left_brow = br.Build(brow_tweak_jnt=brow_tweak_jnt_LFT,
+                             brow_in_jnt=brow_in_jnt_LFT,
+                             brow_mid_jnt=brow_mid_jnt_LFT,
+                             brow_out_jnt=brow_out_jnt_LFT,
+                             brow_tip_jnt=brow_tip_jnt_LFT,
+                             brow_tweak_skin=brow_tweak_skin_LFT,
+                             brow_in_skin=brow_in_skin_LFT,
+                             brow_mid_skin=brow_mid_skin_LFT,
+                             brow_out_skin=brow_out_skin_LFT,
+                             brow_tip_skin=brow_tip_skin_LFT,
+                             brow_tw_prefix=brow_tweak_prefix,
+                             brow_in_prefix=brow_in_prefix,
+                             brow_mid_prefix=brow_mid_prefix,
+                             brow_out_prefix=brow_out_prefix,
+                             brows_prefix=brows_prefix,
+                             brow_tip_prefix=brow_tip_prefix,
+                             scale=scale,
+                             side_RGT=side_RGT,
+                             side_LFT=side_LFT,
+                             side=side_LFT,
+                             brow_in_rotation_grp_offset=brow_in_rotate_grp_offset,
+                             brow_mid_rotation_grp_offset=brow_mid_rotate_grp_offset,
+                             brow_out_rotate_grp_offset=brow_out_rotate_grp_offset,
+                             brow_tip_rotate_grp_offset=brow_tip_rotate_grp_offset,
+                             suffix_controller=suffix_controller)
 
-        rightBrow = br.Build(browTwJnt=browTwJntRGT,
-                             browInJnt=browInJntRGT,
-                            browMidJnt=browMidJntRGT,
-                            browOutJnt=browOutJntRGT,
-                            browTipJnt=browTipJntRGT,
-                            browTwPrefix=browTwPrefix,
-                            browInPrefix=browInPrefix,
-                            browMidPrefix=browMidPrefix,
-                            browOutPrefix=browOutPrefix,
-                            browsPrefix=browsPrefix,
-                            browTipPrefix=browTipPrefix,
-                            scale=scale,
-                            sideRGT=sideRGT,
-                            sideLFT=sideLFT,
-                            side=sideRGT,
-                         browInGrpRotOffset=browInGrpRotOffset,
-                         browMidGrpRotOffset=browMidGrpRotOffset,
-                         browOutGrpRotOffset=browOutGrpRotOffset,
-                         browTipGrpRotOffset=browTipGrpRotOffset,
-                            suffixController=suffixController)
+        right_brow = br.Build(brow_tweak_jnt=brow_tweak_jnt_RGT,
+                              brow_in_jnt=brow_in_jnt_RGT,
+                              brow_mid_jnt=brow_mid_jnt_RGT,
+                              brow_out_jnt=brow_out_jnt_RGT,
+                              brow_tip_jnt=brow_tip_jnt_RGT,
+                              brow_tweak_skin=brow_tweak_skin_RGT,
+                              brow_in_skin=brow_in_skin_RGT,
+                              brow_mid_skin=brow_mid_skin_RGT,
+                              brow_out_skin=brow_out_skin_RGT,
+                              brow_tip_skin=brow_tip_skin_RGT,
+                              brow_tw_prefix=brow_tweak_prefix,
+                              brow_in_prefix=brow_in_prefix,
+                              brow_mid_prefix=brow_mid_prefix,
+                              brow_out_prefix=brow_out_prefix,
+                              brows_prefix=brows_prefix,
+                              brow_tip_prefix=brow_tip_prefix,
+                              scale=scale,
+                              side_RGT=side_RGT,
+                              side_LFT=side_LFT,
+                              side=side_RGT,
+                              brow_in_rotation_grp_offset=brow_in_rotate_grp_offset,
+                              brow_mid_rotation_grp_offset=brow_mid_rotate_grp_offset,
+                              brow_out_rotate_grp_offset=brow_out_rotate_grp_offset,
+                              brow_tip_rotate_grp_offset=brow_tip_rotate_grp_offset,
+                              suffix_controller=suffix_controller)
 
-        centerBrowCtrl =ct.Control(match_obj_first_position=browCenterJnt,
-                                   prefix=browCenterPrefix,
-                                   shape=ct.JOINT, groups_ctrl=['', 'Offset'],
-                                   ctrl_size=scale * 0.07, suffix=suffixController,
-                                   ctrl_color='blue', lock_channels=['v'],
-                                   )
+        center_brow_ctrl = ct.Control(match_obj_first_position=brow_center_jnt,
+                                      prefix=brow_center_prefix,
+                                      shape=ct.JOINT, groups_ctrl=['', 'Offset'],
+                                      ctrl_size=scale * 0.07, suffix=suffix_controller,
+                                      ctrl_color='blue', lock_channels=['v'],
+                                      )
 
-        browCenterGrp = tf.create_parent_transform(parent_list=['', 'Offset'], object=browCenterJnt, match_position=browCenterJnt,
-                                                   prefix=browCenterPrefix, suffix='_jnt')
+        brow_center_grp = tf.create_parent_transform(parent_list=['', 'Offset'], object=brow_center_jnt,
+                                                     match_position=brow_center_jnt,
+                                                     prefix=brow_center_prefix, suffix='_jnt')
 
-        au.connect_attr_object(centerBrowCtrl.control, browCenterJnt)
+        au.connect_attr_object(center_brow_ctrl.control, brow_center_jnt)
 
         # ==============================================================================================================
         #                                               BROWS CENTER SETUP
         # ==============================================================================================================
 
-        sumNodeBrow = self.sum(targetJnt=browCenterGrp[1] + '.translateY', sideRGT=sideRGT, sideLFT=sideLFT)
+        brow_sum_node = self.sum(target_jnt=brow_center_grp[1] + '.translateY', side_RGT=side_RGT, side_LFT=side_LFT)
 
-        sumNodeBrowIn = self.sum(targetJnt=sumNodeBrow + '.input1D[2]', sideRGT=sideRGT, sideLFT=sideLFT)
+        brow_in_sum_node = self.sum(target_jnt=brow_sum_node + '.input1D[2]', side_RGT=side_RGT, side_LFT=side_LFT)
 
-        self.dividedTwoItems(browFirstCtrl=leftBrow.browCtrl, browSecondCtrl=rightBrow.browCtrl,
-                         targetSum0=sumNodeBrow + '.input1D[0]',
-                         targetSum1=sumNodeBrow + '.input1D[1]',
-                         sideRGT=sideRGT, sideLFT=sideLFT, sideObjOne=sideLFT, sideObjTwo=sideRGT,
-                             addPrefixFirst='StCtr',
-                             addPrefixSecond='NdCtr')
+        self.divided_two_items(brow_first_ctrl=left_brow.brow_ctrl, brow_second_ctrl=right_brow.brow_ctrl,
+                               target_sum0=brow_sum_node + '.input1D[0]',
+                               target_sum1=brow_sum_node + '.input1D[1]',
+                               side_RGT=side_RGT, side_LFT=side_LFT, side_object_one=side_LFT, side_object_two=side_RGT,
+                               add_prefix_first='StCtr',
+                               add_prefix_second='NdCtr')
 
-        self.dividedTwoItems(browFirstCtrl=leftBrow.browInCtrl, browSecondCtrl=rightBrow.browInCtrl,
-                             targetSum0=sumNodeBrowIn + '.input1D[0]',
-                             targetSum1=sumNodeBrowIn + '.input1D[1]',
-                             sideRGT=sideRGT, sideLFT=sideLFT, sideObjOne=sideLFT, sideObjTwo=sideRGT,
-                             objectSecondOne=leftBrow.browInCtrl, attrSecondOne=leftBrow.browCenterInAttr,
-                             objectSecondTwo=rightBrow.browInCtrl, attrSecondTwo=rightBrow.browCenterInAttr,
-                             addAttr=True,
-                             addPrefixFirst='StIn',
-                             addPrefixSecond='NdIn')
+        self.divided_two_items(brow_first_ctrl=left_brow.brow_in_ctrl, brow_second_ctrl=right_brow.brow_in_ctrl,
+                               target_sum0=brow_in_sum_node + '.input1D[0]',
+                               target_sum1=brow_in_sum_node + '.input1D[1]',
+                               side_RGT=side_RGT, side_LFT=side_LFT, side_object_one=side_LFT, side_object_two=side_RGT,
+                               object_second_one=left_brow.brow_in_ctrl, attr_second_one=left_brow.brow_center_in_attr,
+                               object_second_two=right_brow.brow_in_ctrl,
+                               attr_second_two=right_brow.brow_center_in_attr,
+                               add_attr=True,
+                               add_prefix_first='StIn',
+                               add_prefix_second='NdIn')
 
-        mc.connectAttr(browCenterGrp[1] +'.translateY', centerBrowCtrl.parent_control[1] + '.translateY')
+        mc.connectAttr(brow_center_grp[1] + '.translateY', center_brow_ctrl.parent_control[1] + '.translateY')
 
         # ==============================================================================================================
         #                                               BROWS SETUP
         # ==============================================================================================================
 
-        sumBrowLFT = self.sum(targetJnt=leftBrow.browMidGrp[2] + '.translateY', sideRGT=sideRGT, sideLFT=sideLFT, side=sideLFT)
-        self.dividedTwoItems(browFirstCtrl=leftBrow.browInCtrl, browSecondCtrl=leftBrow.browOutCtrl,
-                             targetSum0=sumBrowLFT + '.input1D[0]',
-                             targetSum1=sumBrowLFT + '.input1D[1]', sideRGT=sideRGT, sideLFT=sideLFT,
-                             sideObjOne=sideLFT, sideObjTwo=sideLFT,
-                             objectSecondOne=leftBrow.browInCtrl, attrSecondOne=leftBrow.browMidInAttr,
-                             objectSecondTwo=leftBrow.browOutCtrl, attrSecondTwo=leftBrow.browMidOutAttr,
-                             addAttr=True,
-                             addPrefixFirst='StInOut',
-                             addPrefixSecond='NdInOut')
+        brow_LFT_sum = self.sum(target_jnt=left_brow.brow_mid_jnt_grp[2] + '.translateY', side_RGT=side_RGT,
+                                side_LFT=side_LFT, side=side_LFT)
+        self.divided_two_items(brow_first_ctrl=left_brow.brow_in_ctrl, brow_second_ctrl=left_brow.brow_out_ctrl,
+                               target_sum0=brow_LFT_sum + '.input1D[0]',
+                               target_sum1=brow_LFT_sum + '.input1D[1]', side_RGT=side_RGT, side_LFT=side_LFT,
+                               side_object_one=side_LFT, side_object_two=side_LFT,
+                               object_second_one=left_brow.brow_in_ctrl, attr_second_one=left_brow.brow_mid_in_attr,
+                               object_second_two=left_brow.brow_out_ctrl, attr_second_two=left_brow.brow_mid_out_attr,
+                               add_attr=True,
+                               add_prefix_first='StInOut',
+                               add_prefix_second='NdInOut')
 
-        mc.connectAttr(leftBrow.browMidGrp[2] + '.translateY', leftBrow.browMidCtrlOffset+ '.translateY')
+        mc.connectAttr(left_brow.brow_mid_jnt_grp[2] + '.translateY',
+                       left_brow.brow_mid_ctrl_grp_offset + '.translateY')
 
-        sumBrowRGT = self.sum(targetJnt=rightBrow.browMidGrp[2] + '.translateY', sideRGT=sideRGT, sideLFT=sideLFT, side=sideRGT)
-        self.dividedTwoItems(browFirstCtrl=rightBrow.browInCtrl, browSecondCtrl=rightBrow.browOutCtrl,
-                             targetSum0=sumBrowRGT + '.input1D[0]',
-                             targetSum1=sumBrowRGT + '.input1D[1]', sideRGT=sideRGT, sideLFT=sideLFT,
-                             sideObjOne=sideRGT, sideObjTwo=sideRGT,
-                             objectSecondOne=rightBrow.browInCtrl, attrSecondOne=rightBrow.browMidInAttr,
-                             objectSecondTwo=rightBrow.browOutCtrl, attrSecondTwo=rightBrow.browMidOutAttr,
-                             addAttr=True,
-                             addPrefixFirst='StInOut',
-                             addPrefixSecond='NdInOut')
+        brow_RGT_sum = self.sum(target_jnt=right_brow.brow_mid_jnt_grp[2] + '.translateY', side_RGT=side_RGT,
+                                side_LFT=side_LFT, side=side_RGT)
+        self.divided_two_items(brow_first_ctrl=right_brow.brow_in_ctrl, brow_second_ctrl=right_brow.brow_out_ctrl,
+                               target_sum0=brow_RGT_sum + '.input1D[0]',
+                               target_sum1=brow_RGT_sum + '.input1D[1]', side_RGT=side_RGT, side_LFT=side_LFT,
+                               side_object_one=side_RGT, side_object_two=side_RGT,
+                               object_second_one=right_brow.brow_in_ctrl, attr_second_one=right_brow.brow_mid_in_attr,
+                               object_second_two=right_brow.brow_out_ctrl, attr_second_two=right_brow.brow_mid_out_attr,
+                               add_attr=True,
+                               add_prefix_first='StInOut',
+                               add_prefix_second='NdInOut')
 
-        mc.connectAttr(rightBrow.browMidGrp[2] + '.translateY', rightBrow.browMidCtrlOffset + '.translateY')
+        mc.connectAttr(right_brow.brow_mid_jnt_grp[2] + '.translateY',
+                       right_brow.brow_mid_ctrl_grp_offset + '.translateY')
 
         # PARENT TO THE GROUP
-        mc.parent(centerBrowCtrl.parent_control[0], leftBrow.grpBrowAll, rightBrow.grpBrowAll, ctrlDriverGrp)
+        mc.parent(center_brow_ctrl.parent_control[0], left_brow.brow_all_ctrl_grp, right_brow.brow_all_ctrl_grp,
+                  ctrl_driver_grp)
 
+    def divided_two_items(self, brow_first_ctrl, brow_second_ctrl, target_sum0, target_sum1, side_RGT, side_LFT,
+                          side_object_one, side_object_two, object_second_one='', attr_second_one='',
+                          object_second_two='',
+                          attr_second_two='', add_attr=False, add_prefix_first='',
+                          add_prefix_second=''):
+        if add_attr:
+            item_first_divide = self.divide(object=brow_first_ctrl, side_RGT=side_RGT, side_LFT=side_LFT,
+                                            side=side_object_one, target=False, add_prefix=add_prefix_first)
+            item_second_divide = self.divide(object=brow_second_ctrl, side_RGT=side_RGT, side_LFT=side_LFT,
+                                             side=side_object_two, target=False, add_prefix=add_prefix_second)
+            self.multiply(object_first=item_first_divide, object_second=object_second_one, target=target_sum0,
+                          side_RGT=side_RGT, side_LFT=side_LFT,
+                          side=side_object_one, attr_first='outputY', attr_second=attr_second_one,
+                          add_prefix=add_prefix_first)
 
-    def dividedTwoItems(self, browFirstCtrl, browSecondCtrl, targetSum0, targetSum1, sideRGT, sideLFT, sideObjOne, sideObjTwo,
-                        objectSecondOne='', attrSecondOne='', objectSecondTwo='', attrSecondTwo='', addAttr=False, addPrefixFirst='',
-                        addPrefixSecond=''):
-        if addAttr:
-            itemFirstDiv = self.divide(object=browFirstCtrl, sideRGT=sideRGT, sideLFT=sideLFT,
-                                       side=sideObjOne, target=False, addPrefix=addPrefixFirst)
-            itemSecondDiv = self.divide(object=browSecondCtrl, sideRGT=sideRGT, sideLFT=sideLFT,
-                                        side=sideObjTwo, target=False, addPrefix=addPrefixSecond)
-            self.multiply(objectFirst=itemFirstDiv, objectSecond=objectSecondOne, target=targetSum0, sideRGT=sideRGT, sideLFT=sideLFT,
-                          side=sideObjOne, attrFirst='outputY', attrSecond=attrSecondOne,addPrefix=addPrefixFirst)
-
-            self.multiply(objectFirst=itemSecondDiv, objectSecond=objectSecondTwo, target=targetSum1, sideRGT=sideRGT, sideLFT=sideLFT,
-                          side=sideObjTwo, attrFirst='outputY', attrSecond=attrSecondTwo, addPrefix=addPrefixSecond)
+            self.multiply(object_first=item_second_divide, object_second=object_second_two, target=target_sum1,
+                          side_RGT=side_RGT, side_LFT=side_LFT,
+                          side=side_object_two, attr_first='outputY', attr_second=attr_second_two,
+                          add_prefix=add_prefix_second)
 
         else:
-            itemFirstDiv = self.divide(object=browFirstCtrl,  targetSum=targetSum0, sideRGT=sideRGT, sideLFT=sideLFT,
-                                       side=sideObjOne, addPrefix=addPrefixFirst)
-            itemSecondDiv = self.divide(object=browSecondCtrl, targetSum=targetSum1, sideRGT=sideRGT, sideLFT=sideLFT,
-                                        side=sideObjTwo, addPrefix=addPrefixSecond)
+            item_first_divide = self.divide(object=brow_first_ctrl, target_sum=target_sum0, side_RGT=side_RGT,
+                                            side_LFT=side_LFT,
+                                            side=side_object_one, add_prefix=add_prefix_first)
+            item_second_divide = self.divide(object=brow_second_ctrl, target_sum=target_sum1, side_RGT=side_RGT,
+                                             side_LFT=side_LFT,
+                                             side=side_object_two, add_prefix=add_prefix_second)
 
-    def divide(self, object,sideRGT, sideLFT, side, addPrefix, inputTrans2Y=2,  targetSum='', target=True):
-        if sideRGT in object:
-            newName = object.replace(sideRGT, '')
-        elif sideLFT in object:
-            newName = object.replace(sideLFT, '')
+    def divide(self, object, side_RGT, side_LFT, side, add_prefix, input_trans2Y=2, target_sum='', target=True):
+        if side_RGT in object:
+            new_name = object.replace(side_RGT, '')
+        elif side_LFT in object:
+            new_name = object.replace(side_LFT, '')
         else:
-            newName = object
+            new_name = object
 
-        div = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'TyDiv' + addPrefix + side + '_mdn')
-        mc.connectAttr(object +'.translateY', div + '.input1Y')
-        mc.setAttr(div + '.operation', 2)
-        mc.setAttr(div + '.input2Y', inputTrans2Y)
+        div_node = mc.createNode('multiplyDivide', n=au.prefix_name(new_name) + 'TyDiv' + add_prefix + side + '_mdn')
+        mc.connectAttr(object + '.translateY', div_node + '.input1Y')
+        mc.setAttr(div_node + '.operation', 2)
+        mc.setAttr(div_node + '.input2Y', input_trans2Y)
         if target:
-            mc.connectAttr(div+'.outputY', targetSum)
+            mc.connectAttr(div_node + '.outputY', target_sum)
         else:
-            return div
+            return div_node
 
-    def multiply(self, objectFirst, objectSecond, target, sideRGT, sideLFT, side, attrFirst, attrSecond, addPrefix):
-        if sideRGT in objectFirst:
-            newName = objectFirst.replace(sideRGT, '')
-        elif sideLFT in objectFirst:
-            newName = objectFirst.replace(sideLFT, '')
+    def multiply(self, object_first, object_second, target, side_RGT, side_LFT, side, attr_first, attr_second,
+                 add_prefix):
+        if side_RGT in object_first:
+            newName = object_first.replace(side_RGT, '')
+        elif side_LFT in object_first:
+            newName = object_first.replace(side_LFT, '')
         else:
-            newName = objectFirst
+            newName = object_first
 
-        div = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'TyMul' + addPrefix + side + '_mdn')
-        mc.connectAttr(objectFirst + '.%s'% attrFirst, div + '.input1Y')
-        mc.connectAttr(objectSecond + '.%s'% attrSecond, div + '.input2Y')
+        div_node = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'TyMul' + add_prefix + side + '_mdn')
+        mc.connectAttr(object_first + '.%s' % attr_first, div_node + '.input1Y')
+        mc.connectAttr(object_second + '.%s' % attr_second, div_node + '.input2Y')
 
-        mc.connectAttr(div +'.outputY', target)
-        return div
+        mc.connectAttr(div_node + '.outputY', target)
+        return div_node
 
     # connectAttr - f
     # noseWeightTransYCtrl_pma.output1D
     # noseWeightJawTransYCtrl_pma.input1D[0];
 
-    def sum(self, targetJnt, sideRGT, sideLFT, side=''):
-        if sideRGT in targetJnt:
-            newName = targetJnt.replace(sideRGT, '')
-        elif sideLFT in targetJnt:
-            newName = targetJnt.replace(sideLFT, '')
+    def sum(self, target_jnt, side_RGT, side_LFT, side=''):
+        if side_RGT in target_jnt:
+            newName = target_jnt.replace(side_RGT, '')
+        elif side_LFT in target_jnt:
+            newName = target_jnt.replace(side_LFT, '')
         else:
-            newName = targetJnt
+            newName = target_jnt
 
         sum = mc.createNode('plusMinusAverage', n=au.prefix_name(newName) + 'Ty' + side + '_pma')
-        mc.connectAttr(sum + '.output1D', targetJnt)
+        mc.connectAttr(sum + '.output1D', target_jnt)
 
         return sum
-
-
-
-
-

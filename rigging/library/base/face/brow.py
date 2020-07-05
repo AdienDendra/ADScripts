@@ -12,300 +12,306 @@ reload (tf)
 
 class Build:
     def __init__(self,
-                 browTwJnt,
-                 browInJnt,
-                 browMidJnt,
-                 browOutJnt,
-                 browTipJnt,
-                 browTwPrefix,
-                 browInPrefix,
-                 browMidPrefix,
-                 browOutPrefix,
-                 browsPrefix,
-                 browTipPrefix,
+                 brow_tweak_jnt,
+                 brow_in_jnt,
+                 brow_mid_jnt,
+                 brow_out_jnt,
+                 brow_tip_jnt,
+                 brow_tweak_skin,
+                 brow_in_skin,
+                 brow_mid_skin,
+                 brow_out_skin,
+                 brow_tip_skin,
+                 brow_tw_prefix,
+                 brow_in_prefix,
+                 brow_mid_prefix,
+                 brow_out_prefix,
+                 brows_prefix,
+                 brow_tip_prefix,
                  scale,
-                 sideRGT,
-                 sideLFT,
+                 side_RGT,
+                 side_LFT,
                  side,
-                 browInGrpRotOffset,
-                 browMidGrpRotOffset,
-                 browOutGrpRotOffset,
-                 browTipGrpRotOffset,
-                 suffixController
+                 brow_in_rotation_grp_offset,
+                 brow_mid_rotation_grp_offset,
+                 brow_out_rotate_grp_offset,
+                 brow_tip_rotate_grp_offset,
+                 suffix_controller
                  ):
         # create group brow
-        self.grpBrowAll = mc.group(em=1, n='brow' + side + '_grp')
+        self.brow_all_ctrl_grp = mc.group(em=1, n='browAllCtrl' + side + '_grp')
 
         # check position
-        pos = mc.xform(browMidJnt, ws=1, q=1, t=1)[0]
+        position_brow_mid = mc.xform(brow_mid_jnt, ws=1, q=1, t=1)[0]
 
-        browTwCtrl = ct.Control(match_obj_first_position=browTwJnt,
-                                prefix=browTwPrefix,
-                                shape=ct.ARROW4STRAIGHT, groups_ctrl=[''],
-                                ctrl_size=scale * 0.03, suffix=suffixController,
-                                ctrl_color='red', lock_channels=['v'],
-                                side=side)
+        brow_tweak_ctrl = ct.Control(match_obj_first_position=brow_tweak_jnt,
+                                     prefix=brow_tw_prefix,
+                                     shape=ct.ARROW4STRAIGHT, groups_ctrl=[''],
+                                     ctrl_size=scale * 0.03, suffix=suffix_controller,
+                                     ctrl_color='red', lock_channels=['v'],
+                                     side=side)
 
-        browInCtrl = ct.Control(match_obj_first_position=browInJnt,
-                                prefix=browInPrefix,
-                                shape=ct.CUBE, groups_ctrl=[''],
-                                ctrl_size=scale * 0.05, suffix=suffixController,
-                                ctrl_color='blue', lock_channels=['v'],
-                                side=side)
+        brow_in_ctrl = ct.Control(match_obj_first_position=brow_in_jnt,
+                                  prefix=brow_in_prefix,
+                                  shape=ct.CUBE, groups_ctrl=[''],
+                                  ctrl_size=scale * 0.05, suffix=suffix_controller,
+                                  ctrl_color='blue', lock_channels=['v'],
+                                  side=side)
 
-        browMidCtrl = ct.Control(match_obj_first_position=browMidJnt,
-                                 prefix=browMidPrefix,
-                                 shape=ct.CUBE, groups_ctrl=['', 'Offset'],
-                                 ctrl_size=scale * 0.05, suffix=suffixController,
-                                 ctrl_color='blue', lock_channels=['v'], side=side)
+        brow_mid_ctrl = ct.Control(match_obj_first_position=brow_mid_jnt,
+                                   prefix=brow_mid_prefix,
+                                   shape=ct.CUBE, groups_ctrl=['', 'Offset'],
+                                   ctrl_size=scale * 0.05, suffix=suffix_controller,
+                                   ctrl_color='blue', lock_channels=['v'], side=side)
 
-        browOutCtrl = ct.Control(match_obj_first_position=browOutJnt,
-                                 prefix=browOutPrefix,
-                                 shape=ct.CUBE, groups_ctrl=[''],
-                                 ctrl_size=scale * 0.05, suffix=suffixController,
-                                 ctrl_color='blue', lock_channels=['v'], side=side)
+        brow_out_ctrl = ct.Control(match_obj_first_position=brow_out_jnt,
+                                   prefix=brow_out_prefix,
+                                   shape=ct.CUBE, groups_ctrl=[''],
+                                   ctrl_size=scale * 0.05, suffix=suffix_controller,
+                                   ctrl_color='blue', lock_channels=['v'], side=side)
 
-        browTipCtrl = ct.Control(match_obj_first_position=browTipJnt,
-                                 prefix=browTipPrefix,
-                                 shape=ct.CUBE, groups_ctrl=[''],
-                                 ctrl_size=scale * 0.05, suffix=suffixController,
-                                 ctrl_color='blue', lock_channels=['v'], side=side)
+        brow_tip_ctrl = ct.Control(match_obj_first_position=brow_tip_jnt,
+                                   prefix=brow_tip_prefix,
+                                   shape=ct.CUBE, groups_ctrl=[''],
+                                   ctrl_size=scale * 0.05, suffix=suffix_controller,
+                                   ctrl_color='blue', lock_channels=['v'], side=side)
 
-        browCtrl = ct.Control(match_obj_first_position=browInJnt,
-                              match_obj_second_position=browOutJnt,
-                              prefix=browsPrefix,
-                              shape=ct.SQUAREPLUS, groups_ctrl=[''],
-                              ctrl_size=scale * 0.1, suffix=suffixController,
-                              ctrl_color='yellow', lock_channels=['v'], side=side)
+        brow_main_ctrl = ct.Control(match_obj_first_position=brow_in_jnt,
+                                    match_obj_second_position=brow_out_jnt,
+                                    prefix=brows_prefix,
+                                    shape=ct.SQUAREPLUS, groups_ctrl=[''],
+                                    ctrl_size=scale * 0.1, suffix=suffix_controller,
+                                    ctrl_color='yellow', lock_channels=['v'], side=side)
 
+        # ==================================================================================================================
+        #                                            ASSIGNING THE INSTANCE NAME
+        # ==================================================================================================================
+        self.brow_tweak_ctrl = brow_tweak_ctrl.control
+        self.brow_tweak_ctrl_grp = brow_tweak_ctrl.parent_control[0]
 
-    # ==================================================================================================================
-    #                                            ASSIGNING THE INSTANCE NAME
-    # ==================================================================================================================
-        self.browTwCtrl = browTwCtrl.control
-        self.browTwCtrlGrp = browTwCtrl.parent_control[0]
+        self.brow_in_ctrl = brow_in_ctrl.control
+        self.brow_in_ctrl_grp = brow_in_ctrl.parent_control[0]
 
-        self.browInCtrl = browInCtrl.control
-        self.browInCtrlGrp = browInCtrl.parent_control[0]
+        self.brow_mid_ctrl = brow_mid_ctrl.control
+        self.brow_mid_ctrl_grp = brow_mid_ctrl.parent_control[0]
+        self.brow_mid_ctrl_grp_offset = brow_mid_ctrl.parent_control[1]
 
-        self.browMidCtrl = browMidCtrl.control
-        self.browMidCtrlGrp = browMidCtrl.parent_control[0]
-        self.browMidCtrlOffset = browMidCtrl.parent_control[1]
+        self.brow_out_ctrl = brow_out_ctrl.control
+        self.brow_out_ctrl_grp = brow_out_ctrl.parent_control[0]
 
+        self.brow_tip_ctrl = brow_tip_ctrl.control
+        self.brow_tip_ctrl_grp = brow_tip_ctrl.parent_control[0]
 
-        self.browOutCtrl = browOutCtrl.control
-        self.browOutCtrlGrp = browOutCtrl.parent_control[0]
+        self.brow_ctrl = brow_main_ctrl.control
+        self.brow_ctrl_grp = brow_main_ctrl.parent_control[0]
 
-        self.browTipCtrl = browTipCtrl.control
-        self.browTipCtrlGrp = browTipCtrl.parent_control[0]
+        # ==================================================================================================================
+        #                                           EYEBROW CONTROLLER SETUP
+        # ==================================================================================================================
+        mc.parent(self.brow_tweak_ctrl_grp, self.brow_in_ctrl)
+        mc.parent(self.brow_in_ctrl_grp, self.brow_mid_ctrl_grp, self.brow_out_ctrl_grp, self.brow_tip_ctrl_grp,
+                  self.brow_ctrl)
 
-        self.browCtrl = browCtrl.control
-        self.browCtrlGrp = browCtrl.parent_control[0]
+        # GROUPING FOR OFFSET
+        self.brow_in_center_ctrl_grp = mc.group(em=1, n='browInCtrlCenter' + side + '_grp')
+        self.brow_in_center_ctrl_grp_offset = mc.group(em=1, n='browInCtrlOffsetCenter' + side + '_grp')
+        mc.parent(self.brow_in_center_ctrl_grp_offset, self.brow_in_center_ctrl_grp)
 
-    # ==================================================================================================================
-    #                                           EYEBROW CONTROLLER SETUP
-    # ==================================================================================================================
-        mc.parent(self.browTwCtrlGrp, self.browInCtrl)
-        mc.parent(self.browInCtrlGrp, self.browMidCtrlGrp, self.browOutCtrlGrp,  self.browTipCtrlGrp,
-                  self.browCtrl)
+        self.brow_mid_center_ctrl_grp = mc.group(em=1, n='browMidCtrlCenter' + side + '_grp')
+        self.brow_mid_center_ctrl_grp_offset = mc.group(em=1, n='browMidCtrlOffsetCenter' + side + '_grp')
+        mc.parent(self.brow_mid_center_ctrl_grp_offset, self.brow_mid_center_ctrl_grp)
 
-    # GROUPING FOR OFFSET
-        self.ctrlGrpBrowInCenter = mc.group(em=1, n='browInCtrlCenter' + side + '_grp')
-        self.ctrlOffsetGrpBrowInCenter = mc.group(em=1, n='browInCtrlOffsetCenter' + side + '_grp')
-        mc.parent(self.ctrlOffsetGrpBrowInCenter, self.ctrlGrpBrowInCenter)
+        self.brow_out_center_ctrl_grp = mc.group(em=1, n='browOutCtrlCenter' + side + '_grp')
+        self.brow_out_center_ctrl_grp_offset = mc.group(em=1, n='browOutCtrlOffsetCenter' + side + '_grp')
+        mc.parent(self.brow_out_center_ctrl_grp_offset, self.brow_out_center_ctrl_grp)
 
-        self.ctrlGrpBrowMidCenter = mc.group(em=1, n='browMidCtrlCenter' + side + '_grp')
-        self.ctrlOffsetGrpBrowMidCenter = mc.group(em=1, n='browMidCtrlOffsetCenter' + side + '_grp')
-        mc.parent(self.ctrlOffsetGrpBrowMidCenter, self.ctrlGrpBrowMidCenter)
+        self.brow_tip_center_ctrl_grp = mc.group(em=1, n='browTipCtrlCenter' + side + '_grp')
+        self.brow_tip_center_ctrl_grp_offset = mc.group(em=1, n='browTipCtrlOffsetCenter' + side + '_grp')
+        mc.parent(self.brow_tip_center_ctrl_grp_offset, self.brow_tip_center_ctrl_grp)
 
-        self.ctrlGrpBrowOutCenter = mc.group(em=1, n='browOutCtrlCenter' + side + '_grp')
-        self.ctrlOffsetGrpBrowOutCenter = mc.group(em=1, n='browOutCtrlOffsetCenter' + side + '_grp')
-        mc.parent(self.ctrlOffsetGrpBrowOutCenter, self.ctrlGrpBrowOutCenter)
+        # CREATE GROUP CORESPONDENT THE JOINTS
+        brow_tweak_jnt_grp = tf.create_parent_transform(parent_list=[''], object=brow_tweak_jnt,
+                                                        match_position=brow_tweak_jnt, prefix=brow_tw_prefix,
+                                                        suffix='_jnt', side=side)
+        brow_in_jnt_grp = tf.create_parent_transform(parent_list=['', 'Offset'], object=brow_in_jnt,
+                                                     match_position=brow_in_jnt, prefix=brow_in_prefix, suffix='_jnt',
+                                                     side=side)
+        brow_mid_jnt_grp = tf.create_parent_transform(parent_list=['', 'Offset', 'Avg'], object=brow_mid_jnt,
+                                                      match_position=brow_mid_jnt, prefix=brow_mid_prefix,
+                                                      suffix='_jnt', side=side)
+        brow_out_jnt_grp = tf.create_parent_transform(parent_list=['', 'Offset'], object=brow_out_jnt,
+                                                      match_position=brow_out_jnt, prefix=brow_out_prefix,
+                                                      suffix='_jnt', side=side)
+        brow_tip_jnt_grp = tf.create_parent_transform(parent_list=['', 'Offset'], object=brow_tip_jnt,
+                                                      match_position=brow_tip_jnt, prefix=brow_tip_prefix,
+                                                      suffix='_jnt', side=side)
 
-        self.ctrlGrpBrowTipCenter = mc.group(em=1, n='browTipCtrlCenter' + side + '_grp')
-        self.ctrlOffsetGrpBrowTipCenter = mc.group(em=1, n='browTipCtrlOffsetCenter' + side + '_grp')
-        mc.parent(self.ctrlOffsetGrpBrowTipCenter, self.ctrlGrpBrowTipCenter)
+        # EYBROW MAIN OFFSET GRP JOINT TRANSFORM
+        brow_in_main_grp = self.main_group_connection(name=brow_in_prefix, side=side, object_parent=brow_in_jnt_grp[0])
+        brow_mid_main_grp = self.main_group_connection(name=brow_mid_prefix, side=side,
+                                                       object_parent=brow_mid_jnt_grp[0])
+        brow_out_main_grp = self.main_group_connection(name=brow_out_prefix, side=side,
+                                                       object_parent=brow_out_jnt_grp[0])
+        browTipMain = self.main_group_connection(name=brow_tip_prefix, side=side, object_parent=brow_tip_jnt_grp[0])
 
-
-    # CREATE GROUP CORESPONDENT THE JOINTS
-        browTwGrp = tf.create_parent_transform(parent_list=[''], object=browTwJnt, match_position=browTwJnt, prefix=browTwPrefix, suffix='_jnt', side=side)
-        browInGrp = tf.create_parent_transform(parent_list=['', 'Offset'], object=browInJnt, match_position=browInJnt, prefix=browInPrefix, suffix='_jnt', side=side)
-        browMidGrp = tf.create_parent_transform(parent_list=['', 'Offset', 'Avg'], object=browMidJnt, match_position=browMidJnt, prefix=browMidPrefix, suffix='_jnt', side=side)
-        browOutGrp = tf.create_parent_transform(parent_list=['', 'Offset'], object=browOutJnt, match_position=browOutJnt, prefix=browOutPrefix, suffix='_jnt', side=side)
-        browTipGrp = tf.create_parent_transform(parent_list=['', 'Offset'], object=browTipJnt, match_position=browTipJnt, prefix=browTipPrefix, suffix='_jnt', side=side)
-
-    # EYBROW MAIN OFFSET GRP JOINT TRANSFORM
-        browInMain = self.mainGroupBindConnection(name=browInPrefix, side=side, objectParent=browInGrp[0])
-        browMidMain = self.mainGroupBindConnection(name=browMidPrefix, side=side, objectParent=browMidGrp[0])
-        browOutMain = self.mainGroupBindConnection(name=browOutPrefix, side=side, objectParent=browOutGrp[0])
-        browTipMain = self.mainGroupBindConnection(name=browTipPrefix, side=side, objectParent=browTipGrp[0])
-
-    # SHIFTING PARENT JOINT TO MAIN OFFSET GRP EYEBROW
-        mc.parent(browInGrp[1], browInMain)
-        mc.parent(browMidGrp[1], browMidMain)
-        mc.parent(browOutGrp[1], browOutMain)
-        mc.parent(browTipGrp[1], browTipMain)
-
+        # SHIFTING PARENT JOINT TO MAIN OFFSET GRP EYEBROW
+        mc.parent(brow_in_jnt_grp[1], brow_in_main_grp)
+        mc.parent(brow_mid_jnt_grp[1], brow_mid_main_grp)
+        mc.parent(brow_out_jnt_grp[1], brow_out_main_grp)
+        mc.parent(brow_tip_jnt_grp[1], browTipMain)
 
         # EYEBROW EXCEPTION PARENTING CTRL
-        mc.delete(mc.pointConstraint(self.browCtrl, self.ctrlGrpBrowInCenter))
-        mc.delete(mc.pointConstraint(self.browCtrl, self.ctrlGrpBrowMidCenter))
-        mc.delete(mc.pointConstraint(self.browCtrl, self.ctrlGrpBrowOutCenter))
-        mc.delete(mc.pointConstraint(self.browCtrl, self.ctrlGrpBrowTipCenter))
+        mc.delete(mc.pointConstraint(self.brow_ctrl, self.brow_in_center_ctrl_grp))
+        mc.delete(mc.pointConstraint(self.brow_ctrl, self.brow_mid_center_ctrl_grp))
+        mc.delete(mc.pointConstraint(self.brow_ctrl, self.brow_out_center_ctrl_grp))
+        mc.delete(mc.pointConstraint(self.brow_ctrl, self.brow_tip_center_ctrl_grp))
 
         # FLIPPING THE CONTROLLER
-        if pos <0:
-            mc.setAttr(self.browInCtrlGrp + '.scaleX', -1)
-            mc.setAttr(self.browMidCtrlGrp + '.scaleX', -1)
-            mc.setAttr(self.browOutCtrlGrp + '.scaleX', -1)
-            mc.setAttr(self.browTipCtrlGrp + '.scaleX', -1)
+        if position_brow_mid < 0:
+            mc.setAttr(self.brow_in_ctrl_grp + '.scaleX', -1)
+            mc.setAttr(self.brow_mid_ctrl_grp + '.scaleX', -1)
+            mc.setAttr(self.brow_out_ctrl_grp + '.scaleX', -1)
+            mc.setAttr(self.brow_tip_ctrl_grp + '.scaleX', -1)
 
             # mc.setAttr(self.browCtrlGrp + '.scaleX', -1)
 
-            mc.setAttr(self.browInCtrlGrp + '.rotateY', browInGrpRotOffset*-1)
-            mc.setAttr(self.browMidCtrlGrp + '.rotateY', browMidGrpRotOffset*-1)
-            mc.setAttr(self.browOutCtrlGrp + '.rotateY', browOutGrpRotOffset*-1)
-            mc.setAttr(self.browTipCtrlGrp + '.rotateY', browTipGrpRotOffset*-1)
+            mc.setAttr(self.brow_in_ctrl_grp + '.rotateY', brow_in_rotation_grp_offset * -1)
+            mc.setAttr(self.brow_mid_ctrl_grp + '.rotateY', brow_mid_rotation_grp_offset * -1)
+            mc.setAttr(self.brow_out_ctrl_grp + '.rotateY', brow_out_rotate_grp_offset * -1)
+            mc.setAttr(self.brow_tip_ctrl_grp + '.rotateY', brow_tip_rotate_grp_offset * -1)
 
-            mc.setAttr(browInGrp[1] + '.rotateY', browInGrpRotOffset*-1)
-            mc.setAttr(browMidGrp[1] + '.rotateY', browMidGrpRotOffset*-1)
-            mc.setAttr(browOutGrp[1] + '.rotateY', browOutGrpRotOffset*-1)
-            mc.setAttr(browTipGrp[1] + '.rotateY', browTipGrpRotOffset*-1)
+            mc.setAttr(brow_in_jnt_grp[1] + '.rotateY', brow_in_rotation_grp_offset * -1)
+            mc.setAttr(brow_mid_jnt_grp[1] + '.rotateY', brow_mid_rotation_grp_offset * -1)
+            mc.setAttr(brow_out_jnt_grp[1] + '.rotateY', brow_out_rotate_grp_offset * -1)
+            mc.setAttr(brow_tip_jnt_grp[1] + '.rotateY', brow_tip_rotate_grp_offset * -1)
 
-            self.reverseNode(self.browTwCtrl, browTwJnt, sideRGT, sideLFT, side)
-            self.reverseNode(self.browInCtrl, browInJnt, sideRGT, sideLFT, side)
-            self.reverseNode(self.browMidCtrl, browMidJnt, sideRGT, sideLFT, side)
-            self.reverseNode(self.browOutCtrl, browOutJnt, sideRGT, sideLFT, side)
-            self.reverseNode(self.browTipCtrl, browTipJnt, sideRGT, sideLFT, side)
+            self.reverse_node(self.brow_tweak_ctrl, brow_tweak_jnt, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_in_ctrl, brow_in_jnt, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_mid_ctrl, brow_mid_jnt, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_out_ctrl, brow_out_jnt, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_tip_ctrl, brow_tip_jnt, side_RGT, side_LFT, side)
 
-            self.reverseNode(self.browCtrl, browInMain, sideRGT, sideLFT, side)
-            self.reverseNode(self.browCtrl, browMidMain, sideRGT, sideLFT, side)
-            self.reverseNode(self.browCtrl, browOutMain, sideRGT, sideLFT, side)
+            self.reverse_node(self.brow_ctrl, brow_in_main_grp, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_ctrl, brow_mid_main_grp, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_ctrl, brow_out_main_grp, side_RGT, side_LFT, side)
             # self.reverseNode(self.browCtrl, browTipMain, sideRGT, sideLFT, side)
 
-            au.connect_attr_scale(self.browTwCtrl, browTwJnt)
-            au.connect_attr_scale(self.browInCtrl, browInJnt)
-            au.connect_attr_scale(self.browMidCtrl, browMidJnt)
-            au.connect_attr_scale(self.browOutCtrl, browOutJnt)
-            au.connect_attr_scale(self.browTipCtrl, browTipJnt)
+            au.connect_attr_scale(self.brow_tweak_ctrl, brow_tweak_jnt)
+            au.connect_attr_scale(self.brow_in_ctrl, brow_in_jnt)
+            au.connect_attr_scale(self.brow_mid_ctrl, brow_mid_jnt)
+            au.connect_attr_scale(self.brow_out_ctrl, brow_out_jnt)
+            au.connect_attr_scale(self.brow_tip_ctrl, brow_tip_jnt)
 
-            au.connect_attr_scale(self.browCtrl, browInMain)
-            au.connect_attr_scale(self.browCtrl, browMidMain)
-            au.connect_attr_scale(self.browCtrl, browOutMain)
+            au.connect_attr_scale(self.brow_ctrl, brow_in_main_grp)
+            au.connect_attr_scale(self.brow_ctrl, brow_mid_main_grp)
+            au.connect_attr_scale(self.brow_ctrl, brow_out_main_grp)
             # au.connectAttrScale(self.browCtrl, browTipMain)
 
             # connect attr
-            self.reverseNode(self.browCtrl, self.ctrlOffsetGrpBrowInCenter, sideRGT, sideLFT, side)
-            self.reverseNode(self.browCtrl, self.ctrlOffsetGrpBrowMidCenter, sideRGT, sideLFT, side)
-            self.reverseNode(self.browCtrl, self.ctrlOffsetGrpBrowOutCenter, sideRGT, sideLFT, side)
+            self.reverse_node(self.brow_ctrl, self.brow_in_center_ctrl_grp_offset, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_ctrl, self.brow_mid_center_ctrl_grp_offset, side_RGT, side_LFT, side)
+            self.reverse_node(self.brow_ctrl, self.brow_out_center_ctrl_grp_offset, side_RGT, side_LFT, side)
             # self.reverseNode(self.browCtrl, self.ctrlOffsetGrpBrowTipCenter, sideRGT, sideLFT, side)
 
-            # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowInCenter)
-            # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowMidCenter)
-            # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowOutCenter)
-            # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowTipCenter)
-
-
         else:
-            mc.setAttr(self.browInCtrlGrp + '.rotateY', browInGrpRotOffset)
-            mc.setAttr(self.browMidCtrlGrp + '.rotateY', browMidGrpRotOffset)
-            mc.setAttr(self.browOutCtrlGrp + '.rotateY', browOutGrpRotOffset)
-            mc.setAttr(self.browTipCtrlGrp + '.rotateY', browTipGrpRotOffset)
+            mc.setAttr(self.brow_in_ctrl_grp + '.rotateY', brow_in_rotation_grp_offset)
+            mc.setAttr(self.brow_mid_ctrl_grp + '.rotateY', brow_mid_rotation_grp_offset)
+            mc.setAttr(self.brow_out_ctrl_grp + '.rotateY', brow_out_rotate_grp_offset)
+            mc.setAttr(self.brow_tip_ctrl_grp + '.rotateY', brow_tip_rotate_grp_offset)
 
-            mc.setAttr(browInGrp[1] + '.rotateY', browInGrpRotOffset)
-            mc.setAttr(browMidGrp[1] + '.rotateY', browMidGrpRotOffset)
-            mc.setAttr(browOutGrp[1] + '.rotateY', browOutGrpRotOffset)
-            mc.setAttr(browTipGrp[1] + '.rotateY', browTipGrpRotOffset)
+            mc.setAttr(brow_in_jnt_grp[1] + '.rotateY', brow_in_rotation_grp_offset)
+            mc.setAttr(brow_mid_jnt_grp[1] + '.rotateY', brow_mid_rotation_grp_offset)
+            mc.setAttr(brow_out_jnt_grp[1] + '.rotateY', brow_out_rotate_grp_offset)
+            mc.setAttr(brow_tip_jnt_grp[1] + '.rotateY', brow_tip_rotate_grp_offset)
 
-            au.connect_attr_object(self.browTwCtrl, browTwJnt)
-            au.connect_attr_object(self.browInCtrl, browInJnt)
-            au.connect_attr_object(self.browMidCtrl, browMidJnt)
-            au.connect_attr_object(self.browOutCtrl, browOutJnt)
-            au.connect_attr_object(self.browTipCtrl, browTipJnt)
+            au.connect_attr_object(self.brow_tweak_ctrl, brow_tweak_jnt)
+            au.connect_attr_object(self.brow_in_ctrl, brow_in_jnt)
+            au.connect_attr_object(self.brow_mid_ctrl, brow_mid_jnt)
+            au.connect_attr_object(self.brow_out_ctrl, brow_out_jnt)
+            au.connect_attr_object(self.brow_tip_ctrl, brow_tip_jnt)
 
-            au.connect_attr_object(self.browCtrl, browInMain)
-            au.connect_attr_object(self.browCtrl, browMidMain)
-            au.connect_attr_object(self.browCtrl, browOutMain)
+            au.connect_attr_object(self.brow_ctrl, brow_in_main_grp)
+            au.connect_attr_object(self.brow_ctrl, brow_mid_main_grp)
+            au.connect_attr_object(self.brow_ctrl, brow_out_main_grp)
             # au.connectAttrObject(self.browCtrl, browTipMain)
 
-            au.connect_attr_object(self.browCtrl, self.ctrlOffsetGrpBrowInCenter)
-            au.connect_attr_object(self.browCtrl, self.ctrlOffsetGrpBrowMidCenter)
-            au.connect_attr_object(self.browCtrl, self.ctrlOffsetGrpBrowOutCenter)
+            au.connect_attr_object(self.brow_ctrl, self.brow_in_center_ctrl_grp_offset)
+            au.connect_attr_object(self.brow_ctrl, self.brow_mid_center_ctrl_grp_offset)
+            au.connect_attr_object(self.brow_ctrl, self.brow_out_center_ctrl_grp_offset)
             # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowTipCenter)
 
-        # grouping to follicle
-        # mc.parent(self.ctrlGrpEyebrowInCenter,  self.follicleTransformAll[3])
-        # mc.parent(self.ctrlGrpEyebrowMidCenter,  self.follicleTransformAll[4])
-        # mc.parent(self.ctrlGrpEyebrowOutCenter,  self.follicleTransformAll[5])
-
         # regrouping to offset grp
-        mc.parent(self.browInCtrlGrp, self.ctrlOffsetGrpBrowInCenter)
-        mc.parent(self.browMidCtrlGrp, self.ctrlOffsetGrpBrowMidCenter)
-        mc.parent(self.browOutCtrlGrp, self.ctrlOffsetGrpBrowOutCenter)
-        mc.parent(self.browTipCtrlGrp, self.ctrlOffsetGrpBrowTipCenter)
+        mc.parent(self.brow_in_ctrl_grp, self.brow_in_center_ctrl_grp_offset)
+        mc.parent(self.brow_mid_ctrl_grp, self.brow_mid_center_ctrl_grp_offset)
+        mc.parent(self.brow_out_ctrl_grp, self.brow_out_center_ctrl_grp_offset)
+        mc.parent(self.brow_tip_ctrl_grp, self.brow_tip_center_ctrl_grp_offset)
 
-        # # connect attr
-        # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowInCenter)
-        # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowMidCenter)
-        # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowOutCenter)
-        # au.connectAttrObject(self.browCtrl, self.ctrlOffsetGrpBrowTipCenter)
         #
-        if pos<0:
-            mc.setAttr(self.browCtrlGrp + '.scaleX', -1)
+        if position_brow_mid < 0:
+            mc.setAttr(self.brow_ctrl_grp + '.scaleX', -1)
 
-        self.browMidGrp = browMidGrp
+        self.brow_mid_jnt_grp = brow_mid_jnt_grp
 
         # ADD ATTRIBUTE BROW IN
-        au.add_attribute(objects=[self.browInCtrl], long_name=['weightSkinInfluence'], nice_name=[' '], at="enum",
+        au.add_attribute(objects=[self.brow_in_ctrl], long_name=['weightSkinInfluence'], nice_name=[' '], at="enum",
                          en='%s%s' % ('Weight ', 'Influence'), channel_box=True)
 
-        self.browCenterInAttr = au.add_attribute(objects=[self.browInCtrl], long_name=['browCenter'],
+        self.brow_center_in_attr = au.add_attribute(objects=[self.brow_in_ctrl], long_name=['browCenter'],
+                                                    attributeType="float", min=0, dv=1, keyable=True)
+        self.brow_mid_in_attr = au.add_attribute(objects=[self.brow_in_ctrl], long_name=['browMid'],
                                                  attributeType="float", min=0, dv=1, keyable=True)
-        self.browMidInAttr = au.add_attribute(objects=[self.browInCtrl], long_name=['browMid'],
-                                              attributeType="float", min=0, dv=1, keyable=True)
 
         # ADD ATTRIBUTE BROW OUT
-        au.add_attribute(objects=[self.browOutCtrl], long_name=['weightSkinInfluence'], nice_name=[' '], at="enum",
+        au.add_attribute(objects=[self.brow_out_ctrl], long_name=['weightSkinInfluence'], nice_name=[' '], at="enum",
                          en='%s%s' % ('Weight ', 'Influence'), channel_box=True)
 
-        self.browMidOutAttr = au.add_attribute(objects=[self.browOutCtrl], long_name=['browMid'],
-                                               attributeType="float", min=0, dv=1, keyable=True)
+        self.brow_mid_out_attr = au.add_attribute(objects=[self.brow_out_ctrl], long_name=['browMid'],
+                                                  attributeType="float", min=0, dv=1, keyable=True)
 
         # PARENT TO THE GROUP
-        mc.parent(self.ctrlGrpBrowInCenter, self.ctrlGrpBrowMidCenter, self.ctrlGrpBrowOutCenter,
-                  self.ctrlGrpBrowTipCenter, self.browCtrlGrp,
-                  self.grpBrowAll)
+        mc.parent(self.brow_in_center_ctrl_grp, self.brow_mid_center_ctrl_grp, self.brow_out_center_ctrl_grp,
+                  self.brow_tip_center_ctrl_grp, self.brow_ctrl_grp,
+                  self.brow_all_ctrl_grp)
 
-    def reverseNode(self, object, targetJnt, sideRGT, sideLFT, side, inputTrans2X=-1, inputTrans2Y=1, inputTrans2Z=1,
-                    inputRot2X=1, inputRot2Y=-1, inputRot2Z=-1):
-        if sideRGT in targetJnt:
-            newName = targetJnt.replace(sideRGT, '')
-        elif sideLFT in targetJnt:
-            newName = targetJnt.replace(sideLFT, '')
+        # CONSTRAINT SKIN
+
+        au.parent_scale_constraint(brow_tweak_jnt, brow_tweak_skin)
+        au.parent_scale_constraint(brow_in_jnt, brow_in_skin)
+        au.parent_scale_constraint(brow_mid_jnt, brow_mid_skin)
+        au.parent_scale_constraint(brow_out_jnt, brow_out_skin)
+        au.parent_scale_constraint(brow_tip_jnt, brow_tip_skin)
+
+    def reverse_node(self, object, target_jnt, side_RGT, side_LFT, side, input_trans2X=-1, input_trans2Y=1,
+                     input_trans2Z=1,
+                     input_rotate2X=1, input_rotate2Y=-1, input_rotate2Z=-1):
+        if side_RGT in target_jnt:
+            newName = target_jnt.replace(side_RGT, '')
+        elif side_LFT in target_jnt:
+            newName = target_jnt.replace(side_LFT, '')
         else:
-            newName = targetJnt
+            newName = target_jnt
 
-        transMdn = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'Trans' + side + '_mdn')
-        mc.connectAttr(object+'.translate', transMdn+'.input1')
-        mc.setAttr(transMdn+'.input2X', inputTrans2X)
-        mc.setAttr(transMdn+'.input2Y', inputTrans2Y)
-        mc.setAttr(transMdn+'.input2Z', inputTrans2Z)
+        translation_mdn = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'Trans' + side + '_mdn')
+        mc.connectAttr(object + '.translate', translation_mdn + '.input1')
+        mc.setAttr(translation_mdn + '.input2X', input_trans2X)
+        mc.setAttr(translation_mdn + '.input2Y', input_trans2Y)
+        mc.setAttr(translation_mdn + '.input2Z', input_trans2Z)
 
-        mc.connectAttr(transMdn+'.output', targetJnt +'.translate')
+        mc.connectAttr(translation_mdn + '.output', target_jnt + '.translate')
 
-        rotMdn = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'Rot' + side + '_mdn')
-        mc.connectAttr(object+'.rotate', rotMdn+'.input1')
-        mc.setAttr(rotMdn + '.input2X', inputRot2X)
-        mc.setAttr(rotMdn+'.input2Y', inputRot2Y)
-        mc.setAttr(rotMdn+'.input2Z', inputRot2Z)
-        mc.connectAttr(rotMdn+'.output', targetJnt+'.rotate')
+        rotation_mdn = mc.createNode('multiplyDivide', n=au.prefix_name(newName) + 'Rot' + side + '_mdn')
+        mc.connectAttr(object + '.rotate', rotation_mdn + '.input1')
+        mc.setAttr(rotation_mdn + '.input2X', input_rotate2X)
+        mc.setAttr(rotation_mdn + '.input2Y', input_rotate2Y)
+        mc.setAttr(rotation_mdn + '.input2Z', input_rotate2Z)
+        mc.connectAttr(rotation_mdn + '.output', target_jnt + '.rotate')
 
-    def mainGroupBindConnection(self, name, side, objectParent):
+    def main_group_connection(self, name, side, object_parent):
         # BROW MAIN OFFSET GRP JOINT TRANSFORM
-        eyebrowMainBindGrp = mc.group(em=1, n=name+'Main' + side + '_grp')
-        eyebrowMainBindOffset = mc.group(em=1, n=name+'MainOffset' + side + '_grp', p=eyebrowMainBindGrp)
-        mc.delete(mc.parentConstraint(self.browCtrl, eyebrowMainBindGrp))
+        eyebrow_main_bind_grp = mc.group(em=1, n=name + 'Main' + side + '_grp')
+        eyebrow_main_bind_offset = mc.group(em=1, n=name + 'MainOffset' + side + '_grp', p=eyebrow_main_bind_grp)
+        mc.delete(mc.parentConstraint(self.brow_ctrl, eyebrow_main_bind_grp))
 
-        mc.parent(eyebrowMainBindGrp, objectParent)
+        mc.parent(eyebrow_main_bind_grp, object_parent)
 
-        return eyebrowMainBindOffset
+        return eyebrow_main_bind_offset

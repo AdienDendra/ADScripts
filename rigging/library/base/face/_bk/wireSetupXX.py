@@ -62,8 +62,8 @@ def controllerWire(crv, scale, sideLFT, sideRGT, offsetJnt02BindPos, directionCt
               controllerBind01LFT.parent_control[0], controllerBind02LFT.parent_control[0], grpDrvCtrl)
 
     # connect group parent bind joint 01 and 02 to the controller grp parent 01 and 02
-    au.connectAttrTransRot(wireCrv['jointBind02GrpRGT[0]'], controllerBind02RGT.parent_control[0])
-    au.connectAttrTransRot(wireCrv['jointBind02GrpLFT[0]'], controllerBind02LFT.parent_control[0])
+    au.connect_attr_translate_rotate(wireCrv['jointBind02GrpRGT[0]'], controllerBind02RGT.parent_control[0])
+    au.connect_attr_translate_rotate(wireCrv['jointBind02GrpLFT[0]'], controllerBind02LFT.parent_control[0])
 
     # connect bind parent zro to ctrl zro parent
     au.connect_attr_translate(wireCrv['jointBind01GrpRGT[0]'], controllerBind01RGT.parent_control[0])
@@ -137,13 +137,13 @@ def controllerWire(crv, scale, sideLFT, sideRGT, offsetJnt02BindPos, directionCt
         mc.connectAttr(controllerBind01RGT.control + '.rotate', wireCrv['jnt01RGT'] + '.rotate')
 
         # left side 02 translate and rotate
-        au.connectAttrTransRot(controllerBind02LFT.control, wireCrv['jnt02LFT'])
+        au.connect_attr_translate_rotate(controllerBind02LFT.control, wireCrv['jnt02LFT'])
 
         # left side 01 translate and rotate
-        au.connectAttrTransRot(controllerBind01LFT.control, wireCrv['jnt01LFT'])
+        au.connect_attr_translate_rotate(controllerBind01LFT.control, wireCrv['jnt01LFT'])
 
         # mid translate and rotate
-        au.connectAttrTransRot(controllerBindMid.control, wireCrv['jntMid'])
+        au.connect_attr_translate_rotate(controllerBindMid.control, wireCrv['jntMid'])
 
         return {'grpDrvCtrl':grpDrvCtrl,
                 'curvesGrp':curvesGrp,

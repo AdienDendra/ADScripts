@@ -12,6 +12,21 @@ from rigging.tools import AD_utils as au
 
 reload(au)
 
+def reorder_number(prefix, side_RGT, side_LFT):
+    # get the number
+    new_prefix = reposition_side(object=prefix, side_RGT=side_RGT, side_LFT=side_LFT)
+    try:
+        patterns = [r'\d+']
+        prefix_number = au.prefix_name(new_prefix)
+        for p in patterns:
+            prefix_number = re.findall(p, prefix_number)[0]
+    except:
+        prefix_number = ''
+
+    # get the prefix without number
+    prefix_no_number = str(new_prefix).translate(None, digits)
+
+    return prefix_no_number, prefix_number
 
 def create_parent_transform(parent_list, object, match_position, prefix, suffix, side=''):
     list_relatives = mc.listRelatives(object, ap=1)
@@ -70,7 +85,7 @@ def create_parent_transform_two(parent_list, object, match_pos, prefix, suffix, 
 
 
 def bind_translate_reverse(control, input_2X, input_2Y, input_2Z, joint_bind_target, side_RGT, side_LFT, side):
-    control_new = replace_position_LFT_RGT(crv=control, side_RGT=side_RGT, side_LFT=side_LFT)
+    control_new = reposition_side(object=control, side_RGT=side_RGT, side_LFT=side_LFT)
     mdn_reverse = mc.createNode('multiplyDivide', n=au.prefix_name(control_new) + 'Trans' + side + '_mdn')
     mc.connectAttr(control + '.translate', mdn_reverse + '.input1')
 
@@ -85,7 +100,7 @@ def bind_translate_reverse(control, input_2X, input_2Y, input_2Z, joint_bind_tar
 
 
 def bind_rotate_reverse(control, input_2X, input_2Y, input_2Z, joint_bind_target, side_RGT, side_LFT, side):
-    control_new = replace_position_LFT_RGT(crv=control, side_RGT=side_RGT, side_LFT=side_LFT)
+    control_new = reposition_side(object=control, side_RGT=side_RGT, side_LFT=side_LFT)
     mdn_reverse = mc.createNode('multiplyDivide', n=au.prefix_name(control_new) + 'Rot' + side + '_mdn')
     mc.connectAttr(control + '.rotate', mdn_reverse + '.input1')
 
@@ -99,12 +114,14 @@ def bind_rotate_reverse(control, input_2X, input_2Y, input_2Z, joint_bind_target
     return mdn_reverse
 
 
-def replace_position_LFT_RGT(crv, side_RGT, side_LFT):
-    if side_RGT in crv:
-        crv_new_name = crv.replace(side_RGT, '')
-    elif side_LFT in crv:
-        crv_new_name = crv.replace(side_LFT, '')
+def reposition_side(object, side_RGT, side_LFT):
+    if side_RGT in object:
+        obj_new_name = object.replace(side_RGT, '')
+    elif side_LFT in object:
+        obj_new_name = object.replace(side_LFT, '')
     else:
-        crv_new_name = crv
+        obj_new_name = object
 
-    return crv_new_name
+    return obj_new_name
+
+

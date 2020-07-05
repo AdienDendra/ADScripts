@@ -964,7 +964,7 @@ def connect_attr_object(objBase, objTgt):
     return
 
 
-def connectAttrTransRot(objBase, objTgt):
+def connect_attr_translate_rotate(objBase, objTgt):
     connect_attr_translate(objBase, objTgt)
     connect_attr_rotate(objBase, objTgt)
 

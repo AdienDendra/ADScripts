@@ -4,131 +4,127 @@ from string import digits
 
 import maya.cmds as mc
 
-from rigging.library.utils import controller as ct
+from rigging.library.utils import controller as ct, transform as tf
 from rigging.tools import AD_utils as au
 
-reload (ct)
-reload (au)
+reload(ct)
+reload(au)
+reload(tf)
+
 
 class Build:
     def __init__(self,
-                 upLid01, lowLid01,
-                 upLid05, lowLid05,
-                 upLidjointBind01OffsetGrp,
-                 lowLidjointBind01OffsetGrp,
-                 upLidjointBind05OffsetGrp,
-                 lowLidjointBind05OffsetGrp,
+                 lid01_up, lid01_low,
+                 lid05_up, lid05_low,
+                 lid_up_joint_bind01_grp_offset,
+                 lid_low_joint_bind01_grp_offset,
+                 lid_up_joint_bind05_grp_offset,
+                 lid_low_joint_bind05_grp_offset,
                  scale,
-                 sideRGT,
-                 sideLFT,
-                 upLidControllerBindGrpZro01,
-                 lowLidControllerBindGrpZro01,
-                 upLidControllerBindGrpZro05,
-                 lowLidControllerBindGrpZro05,
-                 prefixNameIn,
-                 prefixNameOut,
+                 side_RGT,
+                 side_LFT,
+                 lid_up_ctrl_bind01_grp_zro,
+                 lid_low_ctrl_bind01_grp_zro,
+                 lid_up_ctrl_bind05_grp_zro,
+                 lid_low_ctrl_bind05_grp_zro,
+                 prefix_name_in,
+                 prefix_name_out,
                  side,
-                 ctrlShape,
-                 ctrlColor,
-                 suffixController,
-                 lidOut=False):
+                 ctrl_shape,
+                 ctrl_color,
+                 suffix_controller,
+                 lid_out=False):
 
         # ==================================================================================================================
         #                                                  CORNER CONTROLLER
         # ==================================================================================================================
         # controller in corner
-        lidCornerCtrlIn = self.cornerCtrl(matchPosOne=upLid01,
-                                          matchPosTwo=lowLid01,
-                                          prefix=prefixNameIn,
-                                          scale=scale,
-                                          side=side,
-                                          ctrlShape=ctrlShape,
-                                          ctrlColor=ctrlColor,
-                                          addAttr=lidOut,
-                                          suffixController=suffixController)
+        lid_corner_in_ctrl = self.lid_corner_ctrl(match_pos_one=lid01_up,
+                                                  match_pos_two=lid01_low,
+                                                  prefix=prefix_name_in,
+                                                  scale=scale,
+                                                  side=side,
+                                                  ctrl_shape=ctrl_shape,
+                                                  ctrl_color=ctrl_color,
+                                                  add_attr=lid_out,
+                                                  suffix_controller=suffix_controller)
 
         # controller in corner
-        lidCornerCtrlOut = self.cornerCtrl(matchPosOne=upLid05,
-                                           matchPosTwo=lowLid05,
-                                           prefix=prefixNameOut,
-                                           scale=scale,
-                                           side=side,
-                                           ctrlShape=ctrlShape,
-                                           ctrlColor=ctrlColor,
-                                           addAttr=lidOut,
-                                           suffixController=suffixController)
+        lid_corner_out_ctrl = self.lid_corner_ctrl(match_pos_one=lid05_up,
+                                                   match_pos_two=lid05_low,
+                                                   prefix=prefix_name_out,
+                                                   scale=scale,
+                                                   side=side,
+                                                   ctrl_shape=ctrl_shape,
+                                                   ctrl_color=ctrl_color,
+                                                   add_attr=lid_out,
+                                                   suffix_controller=suffix_controller)
 
-        self.inParentGrpZro = lidCornerCtrlIn[1]
-        self.outParentGrpZro = lidCornerCtrlOut[1]
-        self.inCtrl = lidCornerCtrlIn[0]
-        self.outCtrl = lidCornerCtrlOut[0]
+        self.lid_in_grp = lid_corner_in_ctrl[1]
+        self.lid_out_grp = lid_corner_out_ctrl[1]
+        self.lid_in_ctrl = lid_corner_in_ctrl[0]
+        self.lid_out_ctrl = lid_corner_out_ctrl[0]
 
-        pos = mc.xform(lidCornerCtrlOut[0], ws=1, q=1, t=1)[0]
-        if pos > 0:
+        position_lid_corner_out = mc.xform(lid_corner_out_ctrl[0], ws=1, q=1, t=1)[0]
+        if position_lid_corner_out > 0:
             # parent constraint corner grp bind jnt
-            au.connectAttrTransRot(lidCornerCtrlIn[0], upLidjointBind01OffsetGrp)
-            au.connectAttrTransRot(lidCornerCtrlIn[0], lowLidjointBind01OffsetGrp)
-            au.connectAttrTransRot(lidCornerCtrlOut[0], upLidjointBind05OffsetGrp)
-            au.connectAttrTransRot(lidCornerCtrlOut[0], lowLidjointBind05OffsetGrp)
+            au.connect_attr_translate_rotate(lid_corner_in_ctrl[0], lid_up_joint_bind01_grp_offset)
+            au.connect_attr_translate_rotate(lid_corner_in_ctrl[0], lid_low_joint_bind01_grp_offset)
+            au.connect_attr_translate_rotate(lid_corner_out_ctrl[0], lid_up_joint_bind05_grp_offset)
+            au.connect_attr_translate_rotate(lid_corner_out_ctrl[0], lid_low_joint_bind05_grp_offset)
         else:
-            self.cornerReverseNode(sideRGT, sideLFT, lidCornerCtrl=lidCornerCtrlOut[0], side=side,
-                                   lidCornerName=prefixNameOut,
-                                   targetUp=upLidjointBind05OffsetGrp, targetLow=lowLidjointBind05OffsetGrp)
+            self.corner_reverse_node(side_RGT, side_LFT, lidCornerCtrl=lid_corner_out_ctrl[0], side=side,
+                                     lidCornerName=prefix_name_out,
+                                     targetUp=lid_up_joint_bind05_grp_offset, targetLow=lid_low_joint_bind05_grp_offset)
 
-            self.cornerReverseNode(sideRGT, sideLFT, lidCornerCtrl=lidCornerCtrlIn[0], side=side,
-                                   lidCornerName=prefixNameIn,
-                                   targetUp=upLidjointBind01OffsetGrp, targetLow=lowLidjointBind01OffsetGrp)
+            self.corner_reverse_node(side_RGT, side_LFT, lidCornerCtrl=lid_corner_in_ctrl[0], side=side,
+                                     lidCornerName=prefix_name_in,
+                                     targetUp=lid_up_joint_bind01_grp_offset, targetLow=lid_low_joint_bind01_grp_offset)
 
         # SHOW AND HIDE CONTROLLER CORNER
-        if lidOut:
+        if lid_out:
             # ADD ATTRIBUTE FOR LID OUT CONTROLLER
-            mc.connectAttr(lidCornerCtrlIn[0]+'.%s' % lidCornerCtrlIn[3], upLidControllerBindGrpZro01+'.visibility')
-            mc.connectAttr(lidCornerCtrlIn[0]+'.%s' % lidCornerCtrlIn[3], lowLidControllerBindGrpZro01+'.visibility')
-            mc.connectAttr(lidCornerCtrlOut[0]+'.%s' % lidCornerCtrlOut[3], upLidControllerBindGrpZro05+'.visibility')
-            mc.connectAttr(lidCornerCtrlOut[0]+'.%s' % lidCornerCtrlOut[3], lowLidControllerBindGrpZro05+'.visibility')
+            mc.connectAttr(lid_corner_in_ctrl[0] + '.%s' % lid_corner_in_ctrl[3],
+                           lid_up_ctrl_bind01_grp_zro + '.visibility')
+            mc.connectAttr(lid_corner_in_ctrl[0] + '.%s' % lid_corner_in_ctrl[3],
+                           lid_low_ctrl_bind01_grp_zro + '.visibility')
+            mc.connectAttr(lid_corner_out_ctrl[0] + '.%s' % lid_corner_out_ctrl[3],
+                           lid_up_ctrl_bind05_grp_zro + '.visibility')
+            mc.connectAttr(lid_corner_out_ctrl[0] + '.%s' % lid_corner_out_ctrl[3],
+                           lid_low_ctrl_bind05_grp_zro + '.visibility')
 
         # OFFSET GRP CONTROLLER
-        self.lidCornerCtrlInOffset = lidCornerCtrlIn[2]
-        self.lidCornerCtrlOutOffset = lidCornerCtrlOut[2]
+        self.lid_corner_in_ctrl_grp_offset = lid_corner_in_ctrl[2]
+        self.lid_corner_out_ctrl_grp_offset = lid_corner_out_ctrl[2]
         # ==================================================================================================================
         #                                              PARENT TO GROUP
         # ==================================================================================================================
-        mc.parent(upLidControllerBindGrpZro01, lidCornerCtrlIn[0])
-        mc.parent(lowLidControllerBindGrpZro01, lidCornerCtrlIn[0])
-        mc.parent(upLidControllerBindGrpZro05, lidCornerCtrlOut[0])
-        mc.parent(lowLidControllerBindGrpZro05, lidCornerCtrlOut[0])
+        mc.parent(lid_up_ctrl_bind01_grp_zro, lid_corner_in_ctrl[0])
+        mc.parent(lid_low_ctrl_bind01_grp_zro, lid_corner_in_ctrl[0])
+        mc.parent(lid_up_ctrl_bind05_grp_zro, lid_corner_out_ctrl[0])
+        mc.parent(lid_low_ctrl_bind05_grp_zro, lid_corner_out_ctrl[0])
 
-    def reorderNumber(self, prefix, sideRGT, sideLFT):
+    def reorder_number(self, prefix, side_RGT, side_LFT):
         # get the number
-        newPrefix = self.replacePosLFTRGT(object=prefix, sideRGT=sideRGT, sideLFT=sideLFT)
+        new_prefix = tf.reposition_side(object=prefix, side_RGT=side_RGT, side_LFT=side_LFT)
         try:
             patterns = [r'\d+']
-            prefixNumber = au.prefix_name(newPrefix)
+            prefix_number = au.prefix_name(new_prefix)
             for p in patterns:
-                prefixNumber = re.findall(p, prefixNumber)[0]
+                prefix_number = re.findall(p, prefix_number)[0]
         except:
-            prefixNumber=''
+            prefix_number = ''
 
         # get the prefix without number
-        prefixNoNumber = str(newPrefix).translate(None, digits)
+        prefix_no_number = str(new_prefix).translate(None, digits)
 
-        return prefixNoNumber, prefixNumber
+        return prefix_no_number, prefix_number
 
-    def replacePosLFTRGT(self, object, sideRGT, sideLFT):
-        if sideRGT in object:
-            crvNewName = object.replace(sideRGT, '')
-        elif sideLFT in object:
-            crvNewName = object.replace(sideLFT, '')
-        else:
-            crvNewName = object
-
-        return crvNewName
-
-    def cornerReverseNode(self, sideRGT, sideLFT, lidCornerCtrl, side, lidCornerName='', targetUp='', targetLow=''):
-        newName, numberNew = self.reorderNumber(prefix=lidCornerName, sideRGT=sideRGT, sideLFT=sideLFT)
+    def corner_reverse_node(self, sideRGT, sideLFT, lidCornerCtrl, side, lidCornerName='', targetUp='', targetLow=''):
+        newName, numberNew = self.reorder_number(prefix=lidCornerName, side_RGT=sideRGT, side_LFT=sideLFT)
 
         transRev = mc.createNode('multiplyDivide', n=newName + 'Trans' + numberNew + side + '_mdn')
-        rotRev = mc.createNode('multiplyDivide', n=newName+ 'Rot' + numberNew + side + '_mdn')
+        rotRev = mc.createNode('multiplyDivide', n=newName + 'Rot' + numberNew + side + '_mdn')
         mc.connectAttr(lidCornerCtrl + '.translate', transRev + '.input1')
         mc.setAttr(transRev + '.input2X', -1)
 
@@ -141,30 +137,33 @@ class Build:
         mc.connectAttr(transRev + '.output', targetLow + '.translate')
         mc.connectAttr(rotRev + '.output', targetLow + '.rotate')
 
-    def cornerCtrl(self, matchPosOne, matchPosTwo, prefix, scale, side, ctrlShape, ctrlColor, suffixController, addAttr=False):
-        cornerCtrl = ct.Control(match_obj_first_position=matchPosOne, match_obj_second_position=matchPosTwo,
-                                prefix=prefix,
-                                shape=ctrlShape, groups_ctrl=['Zro', 'Offset'],
-                                ctrl_size=scale * 0.07, suffix=suffixController,
-                                ctrl_color=ctrlColor, lock_channels=['v', 's'], side=side)
+    def lid_corner_ctrl(self, match_pos_one, match_pos_two, prefix, scale, side, ctrl_shape, ctrl_color,
+                        suffix_controller,
+                        add_attr=False):
+        corner_ctrl = ct.Control(match_obj_first_position=match_pos_one, match_obj_second_position=match_pos_two,
+                                 prefix=prefix,
+                                 shape=ctrl_shape, groups_ctrl=['Zro', 'Offset'],
+                                 ctrl_size=scale * 0.07, suffix=suffix_controller,
+                                 ctrl_color=ctrl_color, lock_channels=['v', 's'], side=side)
 
         # check position
-        pos = mc.xform(cornerCtrl.control, ws=1, q=1, t=1)[0]
+        position_corner_ctrl = mc.xform(corner_ctrl.control, ws=1, q=1, t=1)[0]
 
         # flipping the controller
-        if pos < 0:
-            mc.setAttr(cornerCtrl.parent_control[0] + '.scaleX', -1)
+        if position_corner_ctrl < 0:
+            mc.setAttr(corner_ctrl.parent_control[0] + '.scaleX', -1)
 
-        self.control = cornerCtrl.control
-        self.parentControlZro = cornerCtrl.parent_control[0]
-        self.parentControlOffset = cornerCtrl.parent_control[1]
+        self.control = corner_ctrl.control
+        self.lid_corner_ctrl_grp = corner_ctrl.parent_control[0]
+        self.lid_corner_ctrl_grp_offset = corner_ctrl.parent_control[1]
 
         # ADD ATTRIBUTE
-        if addAttr:
-            self.showDtlCtrl = au.add_attribute(objects=[cornerCtrl.control], long_name=['showDetailCtrl'],
-                                                attributeType="long", min=0, max=1, dv=0, keyable=True)
+        if add_attr:
+            self.show_detail_ctrl = au.add_attribute(objects=[corner_ctrl.control], long_name=['showDetailCtrl'],
+                                                     attributeType="long", min=0, max=1, dv=0, keyable=True)
 
-            return cornerCtrl.control, cornerCtrl.parent_control[0], cornerCtrl.parent_control[1], self.showDtlCtrl
+            return corner_ctrl.control, corner_ctrl.parent_control[0], corner_ctrl.parent_control[
+                1], self.show_detail_ctrl
 
         else:
-            return cornerCtrl.control, cornerCtrl.parent_control[0], cornerCtrl.parent_control[1]
+            return corner_ctrl.control, corner_ctrl.parent_control[0], corner_ctrl.parent_control[1]

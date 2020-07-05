@@ -231,7 +231,7 @@ class Build:
             au.connect_attr_rotate(self.controllerBind05.control, self.jnt05)
 
             # mid translate and rotate
-            au.connectAttrTransRot(self.controllerBind03.control, self.jnt03)
+            au.connect_attr_translate_rotate(self.controllerBind03.control, self.jnt03)
 
     def bindTranslateReverse(self,  control, input2X, input2Y, input2Z, jointBindTarget):
         mdnReverse = mc.createNode('multiplyDivide', n=au.prefix_name(control) + '_mdn')

@@ -11,6 +11,52 @@ from rigging.tools import AD_utils as ut
 reload(ut)
 
 
+def get_uParam(point=[], curve=None):
+    point = om.MPoint(point[0], point[1], point[2])
+    curve_fn = om.MFnNurbsCurve(get_dag_path(curve))
+    param_utill = om.MScriptUtil()
+    param_ptr = param_utill.asDoublePtr()
+    is_on_curve = curve_fn.isPointOnCurve(point)
+    if is_on_curve == True:
+
+        curve_fn.getParamAtPoint(point, param_ptr, 0.001, om.MSpace.kObject)
+    else:
+        point = curve_fn.closestPoint(point, param_ptr, 0.001, om.MSpace.kObject)
+        curve_fn.getParamAtPoint(point, param_ptr, 0.001, om.MSpace.kObject)
+
+    param = param_utill.getDouble(param_ptr)
+    return param
+
+
+def get_dag_path(objectName):
+    if isinstance(objectName, list) == True:
+        o_node_list = []
+        for o in objectName:
+            selection_list = om.MSelectionList()
+            selection_list.add(o)
+            o_node = om.MDagPath()
+            selection_list.getDagPath(0, o_node)
+            o_node_list.append(o_node)
+        return o_node_list
+    else:
+        selection_list = om.MSelectionList()
+        selection_list.add(objectName)
+        o_node = om.MDagPath()
+        selection_list.getDagPath(0, o_node)
+        return o_node
+
+
+def load_matrix_quad_plugin():
+    # load Plug-ins
+    matrix_node = mc.pluginInfo('matrixNodes.mll', query=True, loaded=True)
+    quat_node = mc.pluginInfo('quatNodes.mll', query=True, loaded=True)
+
+    if not matrix_node:
+        mc.loadPlugin('matrixNodes.mll')
+
+    if not quat_node:
+        mc.loadPlugin('quatNodes.mll')
+
 def list_of_floats_matrix(axis_x, axis_y, axis_z, obj):
     obj_target = pm.ls(obj)
     getMatrix = obj_target[0].getMatrix()

@@ -151,44 +151,44 @@ class listSkeletonDuplicate:
         self.brow_center = sj['%s%s%s_%s' % ('browCenter', origin_prefix, key_prefix, suffix)]
 
         # CHEEK IN LFT SIDE
-        self.cheekInUp_LFT = sj['%s%s%s%s_%s' % ('cheekInUp', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.cheekInLow_LFT = sj['%s%s%s%s_%s' % ('cheekInLow', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_in_up_LFT = sj['%s%s%s%s_%s' % ('cheekInUp', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_in_low_LFT = sj['%s%s%s%s_%s' % ('cheekInLow', origin_prefix, key_prefix, side_LFT, suffix)]
 
         # CHEEK MID LFT SIDE
-        self.cheekUp_LFT = sj['%s%s%s%s_%s' % ('cheekUp', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.cheekMid_LFT = sj['%s%s%s%s_%s' % ('cheekMid', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.cheekLow_LFT = sj['%s%s%s%s_%s' % ('cheekLow', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_up_LFT = sj['%s%s%s%s_%s' % ('cheekUp', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_mid_LFT = sj['%s%s%s%s_%s' % ('cheekMid', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_low_LFT = sj['%s%s%s%s_%s' % ('cheekLow', origin_prefix, key_prefix, side_LFT, suffix)]
 
         # CHEEK OUT LFT SIDE
-        self.cheekOutUp_LFT = sj['%s%s%s%s_%s' % ('cheekOutUp', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.cheekOutLow_LFT = sj['%s%s%s%s_%s' % ('cheekOutLow', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_out_up_LFT = sj['%s%s%s%s_%s' % ('cheekOutUp', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_out_low_LFT = sj['%s%s%s%s_%s' % ('cheekOutLow', origin_prefix, key_prefix, side_LFT, suffix)]
 
         # CHEEK IN RGT SIDE
-        self.cheekInUp_RGT = sj['%s%s%s%s_%s' % ('cheekInUp', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.cheekInLow_RGT = sj['%s%s%s%s_%s' % ('cheekInLow', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_in_up_RGT = sj['%s%s%s%s_%s' % ('cheekInUp', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_in_low_RGT = sj['%s%s%s%s_%s' % ('cheekInLow', origin_prefix, key_prefix, side_RGT, suffix)]
 
         # CHEEK MID RGT SIDE
-        self.cheekUp_RGT = sj['%s%s%s%s_%s' % ('cheekUp', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.cheekMid_RGT = sj['%s%s%s%s_%s' % ('cheekMid', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.cheekLow_RGT = sj['%s%s%s%s_%s' % ('cheekLow', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_up_RGT = sj['%s%s%s%s_%s' % ('cheekUp', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_mid_RGT = sj['%s%s%s%s_%s' % ('cheekMid', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_low_RGT = sj['%s%s%s%s_%s' % ('cheekLow', origin_prefix, key_prefix, side_RGT, suffix)]
 
         # CHEEK OUT RGT SIDE
-        self.cheekOutUp_RGT = sj['%s%s%s%s_%s' % ('cheekOutUp', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.cheekOutLow_RGT = sj['%s%s%s%s_%s' % ('cheekOutLow', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_out_up_RGT = sj['%s%s%s%s_%s' % ('cheekOutUp', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_out_low_RGT = sj['%s%s%s%s_%s' % ('cheekOutLow', origin_prefix, key_prefix, side_RGT, suffix)]
 
         # BROW LFT SIDE
-        self.browTw_LFT = sj['%s%s%s%s_%s' % ('browTw', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.browIn_LFT = sj['%s%s%s%s_%s' % ('browIn', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.browMid_LFT = sj['%s%s%s%s_%s' % ('browMid', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.browOut_LFT = sj['%s%s%s%s_%s' % ('browOut', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.browTip_LFT = sj['%s%s%s%s_%s' % ('browTip', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.brow_tweak_LFT = sj['%s%s%s%s_%s' % ('browTw', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.brow_in_LFT = sj['%s%s%s%s_%s' % ('browIn', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.brow_mid_LFT = sj['%s%s%s%s_%s' % ('browMid', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.brow_out_LFT = sj['%s%s%s%s_%s' % ('browOut', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.brow_tip_LFT = sj['%s%s%s%s_%s' % ('browTip', origin_prefix, key_prefix, side_LFT, suffix)]
 
         # BROW RGT SIDE
-        self.browTw_RGT = sj['%s%s%s%s_%s' % ('browTw', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.browIn_RGT = sj['%s%s%s%s_%s' % ('browIn', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.browMid_RGT = sj['%s%s%s%s_%s' % ('browMid', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.browOut_RGT = sj['%s%s%s%s_%s' % ('browOut', origin_prefix, key_prefix, side_RGT, suffix)]
-        self.browTip_RGT = sj['%s%s%s%s_%s' % ('browTip', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.brow_tweak_RGT = sj['%s%s%s%s_%s' % ('browTw', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.brow_in_RGT = sj['%s%s%s%s_%s' % ('browIn', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.brow_mid_RGT = sj['%s%s%s%s_%s' % ('browMid', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.brow_out_RGT = sj['%s%s%s%s_%s' % ('browOut', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.brow_tip_RGT = sj['%s%s%s%s_%s' % ('browTip', origin_prefix, key_prefix, side_RGT, suffix)]
 
         # NOSE
         self.nose = sj['%s%s%s_%s' % ('nose', origin_prefix, key_prefix, suffix)]
@@ -225,126 +225,8 @@ class listSkeletonDuplicate:
         self.tongue04 = sj['%s%s%s_%s' % ('tongue04', origin_prefix, key_prefix, suffix)]
 
         # BULGE
-        self.cheekBulge_LFT = sj['%s%s%s%s_%s' % ('cheekBulge', origin_prefix, key_prefix, side_LFT, suffix)]
-        self.cheekBulge_RGT = sj['%s%s%s%s_%s' % ('cheekBulge', origin_prefix, key_prefix, side_RGT, suffix)]
+        self.cheek_bulge_LFT = sj['%s%s%s%s_%s' % ('cheekBulge', origin_prefix, key_prefix, side_LFT, suffix)]
+        self.cheek_bulge_RGT = sj['%s%s%s%s_%s' % ('cheekBulge', origin_prefix, key_prefix, side_RGT, suffix)]
 
         # DETAILS
         # mc.parent(self.root, 'tmpJnt_grp')
-
-# class listFaceSkeletonDuplicate:
-#     # HEAD PART AND FACE
-#     def __init__(self, objDuplicate,
-#                  valuePrefix,
-#                  keyPrefix,
-#                  suffix,
-#                  sideLFT,
-#                  sideRGT,
-#                  oriPrefix='',
-#                  ):
-#
-#         hide = mc.ls(type='joint')
-#         mc.hide(hide)
-#
-#         # DUPLICATE SKELETON
-#         sj = dt.listSkeletonDic(objDuplicate=objDuplicate,
-#                                 valuePrefix=valuePrefix,
-#                                 keyPrefix=keyPrefix,
-#                                 oriPrefix=oriPrefix,
-#                                 suffix=suffix)
-#
-#         # NECK AND HEAD
-#         self.neck       = sj['%s%s%s_%s' % ('neck', oriPrefix, keyPrefix, suffix)]
-#         self.neckInBtw  = sj['%s%s%s_%s' % ('neckInBtw', oriPrefix, keyPrefix, suffix)]
-#         self.head       = sj['%s%s%s_%s' % ('head', oriPrefix, keyPrefix, suffix)]
-#         self.headTip    = sj['%s%s%s_%s' % ('headTip', oriPrefix, keyPrefix, suffix)]
-#
-#         self.headUp      = sj['%s%s%s_%s' % ('headUp', oriPrefix, keyPrefix, suffix)]
-#         self.headLow     = sj['%s%s%s_%s' % ('headLow', oriPrefix, keyPrefix, suffix)]
-#         self.jaw         = sj['%s%s%s_%s' % ('jaw', oriPrefix, keyPrefix, suffix)]
-#         self.jawTip      = sj['%s%s%s_%s' % ('jawTip', oriPrefix, keyPrefix, suffix)]
-#         self.mouth       = sj['%s%s%s_%s' % ('mouth', oriPrefix, keyPrefix, suffix)]
-#
-#         self.mentolabial  = sj['%s%s%s_%s' % ('mentolabial', oriPrefix, keyPrefix, suffix)]
-#         self.chin         = sj['%s%s%s_%s' % ('chin', oriPrefix, keyPrefix, suffix)]
-#         self.browCenter   = sj['%s%s%s_%s' % ('browCenter', oriPrefix, keyPrefix, suffix)]
-#
-#         # CHEEK IN LFT SIDE
-#         self.cheekInUpLFT    = sj['%s%s%s%s_%s' % ('cheekInUp', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.cheekInLowLFT   = sj['%s%s%s%s_%s' % ('cheekInLow', oriPrefix, keyPrefix, sideLFT, suffix)]
-#
-#         # CHEEK MID LFT SIDE
-#         self.cheekUpLFT     = sj['%s%s%s%s_%s' % ('cheekUp', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.cheekMidLFT    = sj['%s%s%s%s_%s' % ('cheekMid', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.cheekLowLFT    = sj['%s%s%s%s_%s' % ('cheekLow', oriPrefix, keyPrefix, sideLFT, suffix)]
-#
-#         # CHEEK OUT LFT SIDE
-#         self.cheekOutUpLFT    = sj['%s%s%s%s_%s' % ('cheekOutUp', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.cheekOutLowLFT   = sj['%s%s%s%s_%s' % ('cheekOutLow', oriPrefix, keyPrefix, sideLFT, suffix)]
-#
-#         # CHEEK IN RGT SIDE
-#         self.cheekInUpRGT     = sj['%s%s%s%s_%s' % ('cheekInUp', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.cheekInLowRGT    = sj['%s%s%s%s_%s' % ('cheekInLow', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # CHEEK MID RGT SIDE
-#         self.cheekUpRGT     = sj['%s%s%s%s_%s' % ('cheekUp', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.cheekMidRGT    = sj['%s%s%s%s_%s' % ('cheekMid', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.cheekLowRGT    = sj['%s%s%s%s_%s' % ('cheekLow', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # CHEEK OUT RGT SIDE
-#         self.cheekOutUpRGT    = sj['%s%s%s%s_%s' % ('cheekOutUp', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.cheekOutLowRGT  = sj['%s%s%s%s_%s' % ('cheekOutLow', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # BROW LFT SIDE
-#         self.browTwLFT     = sj['%s%s%s%s_%s' % ('browTw', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.browInLFT     = sj['%s%s%s%s_%s' % ('browIn', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.browMidLFT    = sj['%s%s%s%s_%s' % ('browMid', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.browOutLFT   = sj['%s%s%s%s_%s' % ('browOut', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.browTipLFT   = sj['%s%s%s%s_%s' % ('browTip', oriPrefix, keyPrefix, sideLFT, suffix)]
-#
-#         # BROW RGT SIDE
-#         self.browTwRGT    = sj['%s%s%s%s_%s' % ('browTw', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.browInRGT     = sj['%s%s%s%s_%s' % ('browIn', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.browMidRGT    = sj['%s%s%s%s_%s' % ('browMid', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.browOutRGT   = sj['%s%s%s%s_%s' % ('browOut', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.browTipRGT   = sj['%s%s%s%s_%s' % ('browTip', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # NOSE
-#         self.nose    = sj['%s%s%s_%s' % ('nose', oriPrefix, keyPrefix, suffix)]
-#         self.noseUp    = sj['%s%s%s_%s' % ('noseUp', oriPrefix, keyPrefix, suffix)]
-#         self.columella  = sj['%s%s%s_%s' % ('columella', oriPrefix, keyPrefix, suffix)]
-#
-#         # EYEAIM
-#         self.eyeLFT = sj['%s%s%s%s_%s' % ('eye', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.eyeRGT = sj['%s%s%s%s_%s' % ('eye', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # EYEBALL
-#         self.eyeballLFT = sj['%s%s%s%s_%s' % ('eyeball', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.eyeballRGT = sj['%s%s%s%s_%s' % ('eyeball', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # PUPIL AND IRIS
-#         self.pupilLFT = sj['%s%s%s%s_%s' % ('pupil', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.irisLFT = sj['%s%s%s%s_%s' % ('iris', oriPrefix, keyPrefix, sideLFT, suffix)]
-#
-#         self.pupilRGT = sj['%s%s%s%s_%s' % ('pupil', oriPrefix, keyPrefix, sideRGT, suffix)]
-#         self.irisRGT = sj['%s%s%s%s_%s' % ('iris', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # EAR
-#         self.earLFT = sj['%s%s%s%s_%s' % ('ear', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.earRGT = sj['%s%s%s%s_%s' % ('ear', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#         # TEETH
-#         self.upperTeeth = sj['%s%s%s_%s' % ('upperTeeth', oriPrefix, keyPrefix, suffix)]
-#         self.lowerTeeth = sj['%s%s%s_%s' % ('lowerTeeth', oriPrefix, keyPrefix, suffix)]
-#
-#         # TOUNGE
-#         self.tongue01 = sj['%s%s%s_%s' % ('tongue01', oriPrefix, keyPrefix, suffix)]
-#         self.tongue02 = sj['%s%s%s_%s' % ('tongue02', oriPrefix, keyPrefix, suffix)]
-#         self.tongue03 = sj['%s%s%s_%s' % ('tongue03', oriPrefix, keyPrefix, suffix)]
-#         self.tongue04 = sj['%s%s%s_%s' % ('tongue04', oriPrefix, keyPrefix, suffix)]
-#
-#         # BULGE
-#         self.cheekBulgeLFT =  sj['%s%s%s%s_%s' % ('cheekBulge', oriPrefix, keyPrefix, sideLFT, suffix)]
-#         self.cheekBulgeRGT =  sj['%s%s%s%s_%s' % ('cheekBulge', oriPrefix, keyPrefix, sideRGT, suffix)]
-#
-#
-#         mc.parent(self.neck, world=True)

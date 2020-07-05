@@ -157,10 +157,10 @@ class Lid:
         pos = mc.xform(lidCornerCtrlOut[0], ws=1, q=1, t=1)[0]
         if pos > 0:
             # parent constraint corner grp bind jnt
-            au.connectAttrTransRot(lidCornerCtrlIn[0], self.upLid.jointBind01Grp[1])
-            au.connectAttrTransRot(lidCornerCtrlIn[0], self.lowLid.jointBind01Grp[1])
-            au.connectAttrTransRot(lidCornerCtrlOut[0], self.upLid.jointBind05Grp[1])
-            au.connectAttrTransRot(lidCornerCtrlOut[0], self.lowLid.jointBind05Grp[1])
+            au.connect_attr_translate_rotate(lidCornerCtrlIn[0], self.upLid.jointBind01Grp[1])
+            au.connect_attr_translate_rotate(lidCornerCtrlIn[0], self.lowLid.jointBind01Grp[1])
+            au.connect_attr_translate_rotate(lidCornerCtrlOut[0], self.upLid.jointBind05Grp[1])
+            au.connect_attr_translate_rotate(lidCornerCtrlOut[0], self.lowLid.jointBind05Grp[1])
         else:
             self.cornerReverseNode(sideRGT, sideLFT, lidCornerCtrl=lidCornerCtrlOut[0], side=side, lidCornerName='lidCornerOut',
                                    targetUp=self.upLid.jointBind05Grp[1], targetLow=self.lowLid.jointBind05Grp[1])
@@ -432,12 +432,12 @@ class Lid:
         upLidBsn = mc.blendShape(curveBlinkUp, crvUp, n=('lidBlinkUp' + side + '_bsn'),
                                  weight=[(0, 1)])[0]
 
-        mc.connectAttr(upLid.controllerBind03Ctrl + '.%s' % upLid.closeLid, upLidBsn + '.%s' % curveBlinkUp)
+        mc.connectAttr(upLid.controllerBind03Ctrl + '.%s' % upLid.close_lid, upLidBsn + '.%s' % curveBlinkUp)
 
         lowLidBsn = mc.blendShape(curveBlinkLow, crvLow, n=('lidBlinkLow' + side + '_bsn'),
                                   weight=[(0, 1)])[0]
 
-        mc.connectAttr(lowLid.controllerBind03Ctrl + '.%s' % lowLid.closeLid, lowLidBsn + '.%s' % curveBlinkLow)
+        mc.connectAttr(lowLid.controllerBind03Ctrl + '.%s' % lowLid.close_lid, lowLidBsn + '.%s' % curveBlinkLow)
 
         # parent eyeblink crve to face curve grp
         mc.parent(curveBlinkBindMid, mc.listConnections(stickyMidwireDefLow[0] + '.baseWire[0]')[0],

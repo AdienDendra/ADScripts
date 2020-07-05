@@ -120,8 +120,8 @@ class Lip:
         mc.parentConstraint(lowLip.locatorSet01LFT, upLip.locatorSet01LFT, self.cornerLipLocSet01LFT)
 
         # CONNECT CORNER LOCATOR TO CONTROLLER CORNER PARENT ZRO
-        au.connectAttrTransRot(self.cornerLipLocSet01RGT, cornerLipCtrlRGT.parentControlZro)
-        au.connectAttrTransRot(self.cornerLipLocSet01LFT, cornerLipCtrlLFT.parentControlZro)
+        au.connect_attr_translate_rotate(self.cornerLipLocSet01RGT, cornerLipCtrlRGT.parentControlZro)
+        au.connect_attr_translate_rotate(self.cornerLipLocSet01LFT, cornerLipCtrlLFT.parentControlZro)
 
         # CONNECT ALL MOUTH CTRL GRP (CENTER) TO CONTROLLER CORNER PARENT OFFSET
         au.connect_attr_scale(upLip.mouthCtrlGrp, cornerLipCtrlRGT.parentControlOffset)
@@ -167,7 +167,7 @@ class Lip:
         mc.setAttr(transMult + '.input2Y', -1)
         mc.connectAttr(transMult + '.output', lowLip.resetMouthOffsetCtrlGrp + '.translate')
         au.connect_attr_rotate(lowLip.controllerAll, lowLip.resetMouthOffsetCtrlGrp)
-        au.connectAttrTransRot(upLip.controllerAll, upLip.resetMouthOffsetCtrlGrp)
+        au.connect_attr_translate_rotate(upLip.controllerAll, upLip.resetMouthOffsetCtrlGrp)
 
         # EXPRESSION CORNER UP AND LOW LIP CONSTRAINT JAW AND LOW HEAD
         expressionJawLip = '{0}_parentConstraint1.{4}W0 = 1-{2}.{6}*0.1-((1-{2}.{6}*0.1)*{2}.{7}*0.1);' \
@@ -390,15 +390,15 @@ class Lip:
         mc.parentConstraint(lip.resetMouthOffsetCtrlGrp, lip.locatorSetMid, mo=1)
 
         # CONNECT SET LOCATOR TO JOINT BIND GRP ZRO AND CONTROLLER BIND GRP ZRO
-        au.connectAttrTransRot(lip.locatorSetMid, lip.controllerBindMid.parentControl[0])
-        au.connectAttrTransRot(lip.locatorSetMid, lip.jointBindGrpMid[0])
+        au.connect_attr_translate_rotate(lip.locatorSetMid, lip.controllerBindMid.parentControl[0])
+        au.connect_attr_translate_rotate(lip.locatorSetMid, lip.jointBindGrpMid[0])
 
         # CONNECT SET LOCATOR TO JOINT BIND GRP ZRO AND CONTROLLER BIND GRP ZRO
-        au.connectAttrTransRot(lip.locatorSet01RGT, lip.controllerBind01RGT.parentControl[0])
-        au.connectAttrTransRot(lip.locatorSet01RGT, lip.jointBind01GrpRGT[0])
+        au.connect_attr_translate_rotate(lip.locatorSet01RGT, lip.controllerBind01RGT.parentControl[0])
+        au.connect_attr_translate_rotate(lip.locatorSet01RGT, lip.jointBind01GrpRGT[0])
 
-        au.connectAttrTransRot(lip.locatorSet01LFT, lip.controllerBind01LFT.parentControl[0])
-        au.connectAttrTransRot(lip.locatorSet01LFT, lip.jointBind01GrpLFT[0])
+        au.connect_attr_translate_rotate(lip.locatorSet01LFT, lip.controllerBind01LFT.parentControl[0])
+        au.connect_attr_translate_rotate(lip.locatorSet01LFT, lip.jointBind01GrpLFT[0])
 
         # CONNECT CORNER CONTROLLER TO CONTROLLER 01 OFFSET GRP
         self.reverseDirectionCornerCtrl(cornerCtrl=cornerLipCtrlRGT, prefix=prefixCtrl, side=sideRGT,
@@ -506,7 +506,7 @@ class Lip:
             mc.connectAttr(mdnReverseRot+'.output', jntBindGrpOffset+'.rotate')
 
         else:
-            au.connectAttrTransRot(cornerCtrl.control, jntBindGrpOffset)
+            au.connect_attr_translate_rotate(cornerCtrl.control, jntBindGrpOffset)
 
     def reverseDirectionCornerCtrl(self, cornerCtrl, prefix, side, ctrlBindGrpOffset, conditionLowLip):
         # CHECK POSITION
@@ -533,4 +533,4 @@ class Lip:
             mc.connectAttr(mdnReverseTrans + '.output', ctrlBindGrpOffset + '.translate')
 
         else:
-            au.connectAttrTransRot(cornerCtrl.control, ctrlBindGrpOffset)
+            au.connect_attr_translate_rotate(cornerCtrl.control, ctrlBindGrpOffset)

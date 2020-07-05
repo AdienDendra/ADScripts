@@ -15,400 +15,413 @@ reload (wr)
 
 class Nose:
     def __init__(self,
-                 faceUtilsGrp,
-                 columellaJnt,
-                 columellaPrefix,
-                 crvNose,
-                 offsetJnt02BindPos,
-                 offsetJnt04BindPos,
-                 directionCtrl01,
-                 directionCtrl02,
-                 directionCtrl03,
-                 directionCtrl04,
-                 directionCtrl05,
-                 ctrlColor,
-                 noseJnt,
-                 noseUpJnt,
-                 positionMouthCtrl,
-                 headCtrlGimbal,
-                 headUpCtrlGimbal,
-                 headJnt,
+                 face_utils_grp,
+                 columella_jnt,
+                 columella_skn,
+                 columella_prefix,
+                 curve_template_nose,
+                 offset_jnt02_bind_position,
+                 offset_jnt04_bind_position,
+                 ctrl01_direction,
+                 ctrl02_direction,
+                 ctrl03_direction,
+                 ctrl04_direction,
+                 ctrl05_direction,
+                 ctrl_color,
+                 nose_jnt,
+                 nose_up_jnt,
+                 nose_up_skin,
+                 position_mouth_ctrl,
+                 head_ctrl_gimbal,
+                 head_up_ctrl_gimbal,
+                 head_jnt,
                  shape,
                  scale,
-                 sideRGT,
-                 sideLFT,
-                 lipCornerCtrlLFT,
-                 lipCornerCtrlRGT,
-                 nostrilAttrCtrlLFT,
-                 nostrilAttrCtrlRGT,
-                 upLipControllerAll,
-                 mouthCtrl,
-                 noseFollowMouthValue,
-                 upLipAllCtrlZroGrp,
-                 jawCtrl,
-                 suffixController
+                 side_RGT,
+                 side_LFT,
+                 lip_corner_ctrl_LFT,
+                 lip_corner_ctrl_RGT,
+                 nostril_attr_ctrl_LFT,
+                 nostril_attr_ctrl_RGT,
+                 up_lip_controller_all,
+                 mouth_ctrl,
+                 nose_follow_mouth_value,
+                 up_lip_all_ctrl_grp_ctrl,
+                 jaw_ctrl,
+                 suffix_controller,
+                 base_module_nonTransform,
+                 parent_skin_nose
                  ):
 
 
     # ==================================================================================================================
     #                                               NOSE CONTROLLER
     # ==================================================================================================================
-        columellaCtrl = ns.Build(columellaJnt, columellaPrefix, suffixController, scale)
+        columella_ctrl = ns.Build(columella_jnt, columella_prefix, suffix_controller, scale)
 
-        wire = wr.Build(crv=crvNose, posDirectionJnt=noseJnt, scale=scale, sideLFT=sideLFT, sideRGT=sideRGT, side='',
-                        offsetJnt02BindPos=offsetJnt02BindPos, offsetJnt04BindPos=offsetJnt04BindPos,
-                        directionCtrl01=directionCtrl01, directionCtrl02=directionCtrl02,
-                        directionCtrl03=directionCtrl03, directionCtrl04=directionCtrl04, directionCtrl05=directionCtrl05,
-                        ctrlColor=ctrlColor, controllerWireLow=False, shape=shape, faceUtilsGrp=faceUtilsGrp, connectWithCornerCtrl=False,
-                        suffixController=suffixController)
+        wire = wr.Build(curve_template=curve_template_nose, position_joint_direction=nose_jnt, scale=scale, side_LFT=side_LFT, side_RGT=side_RGT, side='',
+                        offset_jnt02_bind_position=offset_jnt02_bind_position, offset_jnt04_bind_position=offset_jnt04_bind_position,
+                        ctrl01_direction=ctrl01_direction, ctrl02_direction=ctrl02_direction,
+                        ctrl03_direction=ctrl03_direction, ctrl04_direction=ctrl04_direction, ctrl05_direction=ctrl05_direction,
+                        ctrl_color=ctrl_color, wire_low_controller=False, shape=shape, face_utils_grp=face_utils_grp, connect_with_corner_ctrl=False,
+                        suffix_controller=suffix_controller, base_module_nonTransform=base_module_nonTransform, parent_skin=parent_skin_nose)
 
 
-        self.controllerNose01LFT = wire.controllerBind05
-        self.controllerNose01RGT = wire.controllerBind01
-        self.controllerNose03 = wire.controllerBind03
+        self.controller_nose01_LFT = wire.controller_bind05
+        self.controller_nose01_RGT = wire.controller_bind01
+        self.controller_nose03 = wire.controller_bind03
 
-        controllerBind01LFT = wire.controllerBind05
-        controllerBind01RGT = wire.controllerBind01
-        self.allJoint = wire.allJoint
-        self.noseControllerGrp = wire.ctrlDriverGrp
+        controller_bind01_LFT = wire.controller_bind05
+        controller_bind01_RGT = wire.controller_bind01
+        self.all_joint = wire.all_joint
+        self.nose_controller_grp = wire.ctrl_driver_grp
 
         # ADD ATTRIBUTE LFT
-        au.add_attribute(objects=[controllerBind01LFT], long_name=['cheekUpSetup'], nice_name=[' '], at="enum",
+        au.add_attribute(objects=[controller_bind01_LFT], long_name=['cheekUpSetup'], nice_name=[' '], at="enum",
                          en='Cheek Up Setup', channel_box=True)
-        self.pullForwardLFT = au.add_attribute(objects=[controllerBind01LFT], long_name=['pullForward'],
-                                               attributeType="float", min=0.001, max=10, dv=1, keyable=True)
+        self.pull_forward_LFT = au.add_attribute(objects=[controller_bind01_LFT], long_name=['pullForward'],
+                                                 attributeType="float", min=0.001, max=10, dv=1, keyable=True)
 
-        self.pushUpwardLFT = au.add_attribute(objects=[controllerBind01LFT], long_name=['pushUpward'],
-                                              attributeType="float", min=0.001, max=10, dv=1, keyable=True)
+        self.push_upward_LFT = au.add_attribute(objects=[controller_bind01_LFT], long_name=['pushUpward'],
+                                                attributeType="float", min=0.001, max=10, dv=1, keyable=True)
 
         # ADD ATTRIBUTE RGT
-        au.add_attribute(objects=[controllerBind01RGT], long_name=['cheekUpSetup'], nice_name=[' '], at="enum",
+        au.add_attribute(objects=[controller_bind01_RGT], long_name=['cheekUpSetup'], nice_name=[' '], at="enum",
                          en='Cheek Up Setup', channel_box=True)
-        self.pullForwardRGT = au.add_attribute(objects=[controllerBind01RGT], long_name=['pullForward'],
-                                               attributeType="float", min=0.001, max=10, dv=1, keyable=True)
+        self.pull_forward_RGT = au.add_attribute(objects=[controller_bind01_RGT], long_name=['pullForward'],
+                                                 attributeType="float", min=0.001, max=10, dv=1, keyable=True)
 
-        self.pushUpwardRGT = au.add_attribute(objects=[controllerBind01RGT], long_name=['pushUpward'],
-                                              attributeType="float", min=0.001, max=10, dv=1, keyable=True)
+        self.push_upward_RGT = au.add_attribute(objects=[controller_bind01_RGT], long_name=['pushUpward'],
+                                                attributeType="float", min=0.001, max=10, dv=1, keyable=True)
 
 
         # ADD NOSE CONTROLLER
-        noseController = ct.Control(match_obj_first_position=noseJnt,
-                                    prefix='nose',
-                                    shape=ct.LOCATOR, groups_ctrl=['Zro', 'Offset'],
-                                    ctrl_size=scale * 0.25,
-                                    ctrl_color='turquoiseBlue', lock_channels=['v'])
+        nose_controller = ct.Control(match_obj_first_position=nose_jnt,
+                                     prefix='nose',
+                                     shape=ct.LOCATOR, groups_ctrl=['Zro', 'Offset'],
+                                     ctrl_size=scale * 0.25,
+                                     ctrl_color='turquoiseBlue', lock_channels=['v'])
 
-        self.noseCtrl = noseController.control
-        self.noseCtrlParentOffset = noseController.parent_control[1]
-        self.noseCtrlParentZro = noseController.parent_control[0]
+        self.nose_ctrl = nose_controller.control
+        self.nose_ctrl_grp_offset = nose_controller.parent_control[1]
+        self.nose_ctrl_grp_zro = nose_controller.parent_control[0]
 
         # ADD ATTRIBUTE NOSE
-        au.add_attribute(objects=[noseController.control], long_name=['weightSkinInfluence'], nice_name=[' '], at="enum",
+        au.add_attribute(objects=[nose_controller.control], long_name=['weightSkinInfluence'], nice_name=[' '], at="enum",
                          en='Weight Influence', channel_box=True)
 
-        self.mouthWeightUD = au.add_attribute(objects=[noseController.control], long_name=['upDown'],
-                                              attributeType="float", min=0, dv=1, keyable=True)
-        self.mouthWeightSS = au.add_attribute(objects=[noseController.control], long_name=['squashStretch'],
-                                              attributeType="float", min=0, dv=1, keyable=True)
-        self.mouthWeightLR = au.add_attribute(objects=[noseController.control], long_name=['leftRight'],
-                                              attributeType="float", min=0, dv=1, keyable=True)
+        self.mouth_weight_ud = au.add_attribute(objects=[nose_controller.control], long_name=['upDown'],
+                                                attributeType="float", min=0, dv=1, keyable=True)
+        self.mouth_weight_ss = au.add_attribute(objects=[nose_controller.control], long_name=['squashStretch'],
+                                                attributeType="float", min=0, dv=1, keyable=True)
+        self.mouth_weight_lr = au.add_attribute(objects=[nose_controller.control], long_name=['leftRight'],
+                                                attributeType="float", min=0, dv=1, keyable=True)
         # OFFSET POSITION PARENT GRP NOSE
-        tZValue = mc.getAttr(self.noseCtrlParentZro+'.translateZ')
-        mc.setAttr(self.noseCtrlParentZro+'.translateZ', tZValue+(positionMouthCtrl*0.5*scale))
+        tZ_value = mc.getAttr(self.nose_ctrl_grp_zro + '.translateZ')
+        mc.setAttr(self.nose_ctrl_grp_zro + '.translateZ', tZ_value + (position_mouth_ctrl * 0.5 * scale))
 
         # CREATE PMA FOR EXPRESSION
-        self.noseCtrlTransPMA = mc.createNode('plusMinusAverage', n='noseWeightToMouthTrans_pma')
-        self.noseCtrlRotPMA = mc.createNode('plusMinusAverage', n='noseWeightToMouthRot_pma')
-        self.noseCtrlSclPMA = mc.createNode('plusMinusAverage', n='noseWeightToMouthScl_pma')
+        self.nose_ctrl_translate_pma = mc.createNode('plusMinusAverage', n='noseWeightToMouthTrans_pma')
+        self.nose_ctrl_rotate_pma = mc.createNode('plusMinusAverage', n='noseWeightToMouthRot_pma')
+        self.nose_ctrl_scale_pma = mc.createNode('plusMinusAverage', n='noseWeightToMouthScl_pma')
 
         # CONNECT ATTRIBUTE NOSE CTRL TO GRP OFFSET JOINT DRIVEN AND CONTROLLER
-        mc.connectAttr(self.noseCtrl+'.translate', self.noseCtrlTransPMA +'.input3D[0]')
-        mc.connectAttr(self.noseCtrl+'.rotate', self.noseCtrlRotPMA +'.input3D[0]')
-        mc.connectAttr(self.noseCtrl+'.scale', self.noseCtrlSclPMA +'.input3D[0]')
+        mc.connectAttr(self.nose_ctrl + '.translate', self.nose_ctrl_translate_pma + '.input3D[0]')
+        mc.connectAttr(self.nose_ctrl + '.rotate', self.nose_ctrl_rotate_pma + '.input3D[0]')
+        mc.connectAttr(self.nose_ctrl + '.scale', self.nose_ctrl_scale_pma + '.input3D[0]')
 
 
-        mc.connectAttr(self.noseCtrlRotPMA+'.output3D', wire.wireGrpDrivenOffsetJnt+'.rotate')
+        mc.connectAttr(self.nose_ctrl_rotate_pma + '.output3D', wire.wire_driven_jnt_grp_offset + '.rotate')
         # au.connectAttrRot(self.noseCtrl, noseGrpDrivenOffsetJnt)
-        mc.connectAttr(self.noseCtrlSclPMA+'.output3D',  wire.wireGrpDrivenOffsetJnt+'.scale')
+        mc.connectAttr(self.nose_ctrl_scale_pma + '.output3D', wire.wire_driven_jnt_grp_offset + '.scale')
 
-        mc.connectAttr(self.noseCtrlTransPMA+'.output3D', wire.wireGrpDrivenOffsetCtrl+'.translate')
-        mc.connectAttr(self.noseCtrlRotPMA+'.output3D', wire.wireGrpDrivenOffsetCtrl+'.rotate')
+        mc.connectAttr(self.nose_ctrl_translate_pma + '.output3D', wire.wire_driven_ctrl_grp_offset + '.translate')
+        mc.connectAttr(self.nose_ctrl_rotate_pma + '.output3D', wire.wire_driven_ctrl_grp_offset + '.rotate')
         # au.connectAttrRot(self.noseCtrl, noseGrpDrivenOffsetCtrl)
-        mc.connectAttr(self.noseCtrlSclPMA+'.output3D', wire.wireGrpDrivenOffsetCtrl+'.scale')
+        mc.connectAttr(self.nose_ctrl_scale_pma + '.output3D', wire.wire_driven_ctrl_grp_offset + '.scale')
 
-        mc.connectAttr(self.noseCtrlTransPMA+'.output3D', columellaCtrl.grpColumellaJnt[1]+'.translate')
-        mc.connectAttr(self.noseCtrlRotPMA+'.output3D', columellaCtrl.grpColumellaJnt[1]+'.rotate')
+        mc.connectAttr(self.nose_ctrl_translate_pma + '.output3D', columella_ctrl.columella_jnt_grp[1] + '.translate')
+        mc.connectAttr(self.nose_ctrl_rotate_pma + '.output3D', columella_ctrl.columella_jnt_grp[1] + '.rotate')
         # au.connectAttrRot(self.noseCtrl, columellaCtrl.grpColumellaJnt[1])
-        mc.connectAttr(self.noseCtrlSclPMA+'.output3D', columellaCtrl.grpColumellaJnt[1]+'.scale')
+        mc.connectAttr(self.nose_ctrl_scale_pma + '.output3D', columella_ctrl.columella_jnt_grp[1] + '.scale')
 
 
         # CONNECT ALL PART NOSE JOINT
-        for i in wire.allJoint:
-            mc.connectAttr(self.noseCtrlTransPMA + '.output3D', i + '.translate')
-            mc.connectAttr(self.noseCtrlRotPMA + '.output3D', i + '.rotate')
+        for i in wire.all_joint:
+            mc.connectAttr(self.nose_ctrl_translate_pma + '.output3D', i + '.translate')
+            mc.connectAttr(self.nose_ctrl_rotate_pma + '.output3D', i + '.rotate')
             # au.connectAttrRot(self.noseCtrl, i)
-            mc.connectAttr(self.noseCtrlSclPMA + '.output3D', i + '.scale')
+            mc.connectAttr(self.nose_ctrl_scale_pma + '.output3D', i + '.scale')
             # au.connectAttrObject(self.noseCtrl, i)
 
         # PARENT INTO THE GROUP
-        mc.parent(columellaCtrl.columellaParentCtrlZro, wire.wireGrpDrivenOffsetCtrl)
-        mc.parent(wire.jointGrp, headJnt)
-        mc.parent(wire.ctrlDriverGrp,  self.noseCtrlParentZro, headCtrlGimbal)
+        mc.parent(columella_ctrl.columella_ctrl_grp_zro, wire.wire_driven_ctrl_grp_offset)
+        mc.parent(wire.joint_grp, head_jnt)
+        mc.parent(wire.ctrl_driver_grp, self.nose_ctrl_grp_zro, head_ctrl_gimbal)
 
         # SET THE VALUE FOR EXPRESSION
-        translateXMouth = noseFollowMouthValue*24.0
-        translateXLip = noseFollowMouthValue*24.0
-        translateXJaw = noseFollowMouthValue*6.0
-        translateYMouth = noseFollowMouthValue*12.0
-        translateYLip = noseFollowMouthValue*12.0
-        translateYJaw = noseFollowMouthValue*(-12.0)
+        translate_x_mouth = nose_follow_mouth_value * 24.0
+        translate_x_lip = nose_follow_mouth_value * 24.0
+        translate_x_jaw = nose_follow_mouth_value * 6.0
+        translate_y_mouth = nose_follow_mouth_value * 12.0
+        translate_y_lip = nose_follow_mouth_value * 12.0
+        translate_y_jaw = nose_follow_mouth_value * (-12.0)
 
-        scaleXMouth = noseFollowMouthValue*48.0
-        scaleXLip = noseFollowMouthValue*24.0
-        scaleXJaw = noseFollowMouthValue*(-6.0)
-        scaleYMouth = noseFollowMouthValue*48.0
-        scaleYLip = noseFollowMouthValue*(-24.0)
-        scaleYJaw = noseFollowMouthValue*(-6.0)
+        scale_x_mouth = nose_follow_mouth_value * 48.0
+        scale_x_lip = nose_follow_mouth_value * 24.0
+        scale_x_jaw = nose_follow_mouth_value * (-6.0)
+        scale_y_mouth = nose_follow_mouth_value * 48.0
+        scale_y_lip = nose_follow_mouth_value * (-24.0)
+        scale_y_jaw = nose_follow_mouth_value * (-6.0)
 
-        rotateYMouth = noseFollowMouthValue*12.0
-        rotateYLip = noseFollowMouthValue*24.0
-        rotateYJaw = noseFollowMouthValue*0.1
+        rotate_y_mouth = nose_follow_mouth_value * 12.0
+        rotate_y_lip = nose_follow_mouth_value * 24.0
+        rotate_y_jaw = nose_follow_mouth_value * 0.1
 
-        rotateZMouth = noseFollowMouthValue*12.0
-        rotateZLip = noseFollowMouthValue*12.0
-        rotateZJaw = noseFollowMouthValue*(-0.1)
+        rotate_z_mouth = nose_follow_mouth_value * 12.0
+        rotate_z_lip = nose_follow_mouth_value * 12.0
+        rotate_z_jaw = nose_follow_mouth_value * (-0.1)
 
         # ADD NOSE UP CONTROLLER
-        noseUpController = ct.Control(match_obj_first_position=noseUpJnt,
-                                      prefix='noseUp',
-                                      shape=ct.JOINT, groups_ctrl=['Zro'],
-                                      ctrl_size=scale * 0.05,
-                                      ctrl_color='turquoiseBlue', lock_channels=['v'])
+        nose_up_controller = ct.Control(match_obj_first_position=nose_up_jnt,
+                                        prefix='noseUp',
+                                        shape=ct.JOINT, groups_ctrl=['Zro'],
+                                        ctrl_size=scale * 0.05,
+                                        ctrl_color='turquoiseBlue', lock_channels=['v'])
 
-        self.noseUpControllerGrp = noseUpController.parent_control[0]
+        self.nose_up_controller_grp = nose_up_controller.parent_control[0]
 
-        grpNoseUpJnt = tf.create_parent_transform(parent_list=['Zro'], object=noseUpJnt, match_position=noseUpJnt,
-                                                  prefix='noseUp', suffix='_jnt')
+        grp_nose_up_jnt = tf.create_parent_transform(parent_list=['Zro'], object=nose_up_jnt, match_position=nose_up_jnt,
+                                                     prefix='noseUp', suffix='_jnt')
 
-        au.connect_attr_object(noseUpController.control, noseUpJnt)
-        mc.parent(noseUpController.parent_control[0], headUpCtrlGimbal)
+        au.connect_attr_object(nose_up_controller.control, nose_up_jnt)
+        mc.parent(nose_up_controller.parent_control[0], head_up_ctrl_gimbal)
 
         # ==============================================================================================================
         #                                            NOSTRIL SETUP
         # ==============================================================================================================
-        jointBind05Grp = wire.jointBindGrp05
-        jointBind01Grp = wire.jointBindGrp01
-        getAttrGrpZroBindNostrilLFT = mc.getAttr(jointBind05Grp + '.translate')[0]
-        getAttrGrpZroBindNostrilRGT = mc.getAttr(jointBind01Grp + '.translate')[0]
-        getAttrlipUpAllCtrlZroGrp = mc.getAttr(upLipAllCtrlZroGrp + '.translate')[0]
+        joint_bind05_grp = wire.joint_bind05_grp
+        joint_bind01_grp = wire.joint_bind01_grp
+        get_attr_grp_zro_bind_nostril_LFT = mc.getAttr(joint_bind05_grp + '.translate')[0]
+        get_attr_grp_zro_bind_nostril_RGT = mc.getAttr(joint_bind01_grp + '.translate')[0]
+        get_attr_lip_up_all_ctrl_zro_grp = mc.getAttr(up_lip_all_ctrl_grp_ctrl + '.translate')[0]
 
-        getAttrLipUpAllCtrlZroGrpTy = getAttrlipUpAllCtrlZroGrp[1]
+        get_attr_lip_up_all_ctrl_zro_grp_ty = get_attr_lip_up_all_ctrl_zro_grp[1]
         # NOSTRIL LEFT
-        self.nostrilSetup(side=sideLFT, controller=lipCornerCtrlLFT,
-                          attributeOffset=nostrilAttrCtrlLFT,
-                          noseBindParentZro=jointBind05Grp,
-                          getAttrTxCtrlGrpZroNostril=getAttrGrpZroBindNostrilLFT[0],
-                          lipUpAllCtrl=upLipControllerAll,
-                          mouthCtrl=mouthCtrl, multiplier=1,
-                          getAttrTyCtrlGrpZroNostril=getAttrGrpZroBindNostrilLFT[1],
-                          getAttrTzCtrlGrpZroNostril=getAttrGrpZroBindNostrilLFT[2],
-                          valueMouth=noseFollowMouthValue*24.0,
-                          valueMouthThreeTimes=noseFollowMouthValue * 36.0,
-                          valueUpperLip=noseFollowMouthValue*12.0,
-                          jawCtrl=jawCtrl,
-                          valueUpperLipMinHalf=noseFollowMouthValue * (-6.0),
-                          valueUpperLipMaxOrMinYHalf=noseFollowMouthValue * 6.0,
-                          valueCornerLip=noseFollowMouthValue * 6.0)
+        self.nostril_setup(side=side_LFT, controller=lip_corner_ctrl_LFT,
+                           attribute_offset=nostril_attr_ctrl_LFT,
+                           nose_bind_grp_zro=joint_bind05_grp,
+                           getAttr_tx_ctrl_grp_zro_nostril=get_attr_grp_zro_bind_nostril_LFT[0],
+                           lip_up_all_ctrl=up_lip_controller_all,
+                           mouth_ctrl=mouth_ctrl, multiplier=1,
+                           getAttr_ty_ctrl_grp_zro_nostril=get_attr_grp_zro_bind_nostril_LFT[1],
+                           getAttr_tz_ctrl_grp_zro_nostril=get_attr_grp_zro_bind_nostril_LFT[2],
+                           value_mouth=nose_follow_mouth_value * 24.0,
+                           value_mouth_three_times=nose_follow_mouth_value * 36.0,
+                           value_upper_lip=nose_follow_mouth_value * 12.0,
+                           jaw_ctrl=jaw_ctrl,
+                           value_upper_lip_min_half=nose_follow_mouth_value * (-6.0),
+                           value_upper_lip_max_or_min_y_half=nose_follow_mouth_value * 6.0,
+                           value_corner_lip=nose_follow_mouth_value * 6.0)
         # NOSTRIL RIGHT
-        self.nostrilSetup(side=sideRGT, controller=lipCornerCtrlRGT,
-                          attributeOffset=nostrilAttrCtrlRGT,
-                          noseBindParentZro=jointBind01Grp,
-                          getAttrTxCtrlGrpZroNostril=getAttrGrpZroBindNostrilRGT[0],
-                          lipUpAllCtrl=upLipControllerAll,
-                          mouthCtrl=mouthCtrl, multiplier=-1,
-                          getAttrTyCtrlGrpZroNostril=getAttrGrpZroBindNostrilRGT[1],
-                          getAttrTzCtrlGrpZroNostril=getAttrGrpZroBindNostrilRGT[2],
-                          valueMouth=noseFollowMouthValue*24.0,
-                          valueMouthThreeTimes=noseFollowMouthValue * 36.0,
-                          valueUpperLip=noseFollowMouthValue*12.0,
-                          jawCtrl=jawCtrl,
-                          valueUpperLipMinHalf=noseFollowMouthValue * 6.0,
-                          valueUpperLipMaxOrMinYHalf=noseFollowMouthValue * (-6.0),
-                          valueCornerLip=noseFollowMouthValue * 6.0)
+        self.nostril_setup(side=side_RGT, controller=lip_corner_ctrl_RGT,
+                           attribute_offset=nostril_attr_ctrl_RGT,
+                           nose_bind_grp_zro=joint_bind01_grp,
+                           getAttr_tx_ctrl_grp_zro_nostril=get_attr_grp_zro_bind_nostril_RGT[0],
+                           lip_up_all_ctrl=up_lip_controller_all,
+                           mouth_ctrl=mouth_ctrl, multiplier=-1,
+                           getAttr_ty_ctrl_grp_zro_nostril=get_attr_grp_zro_bind_nostril_RGT[1],
+                           getAttr_tz_ctrl_grp_zro_nostril=get_attr_grp_zro_bind_nostril_RGT[2],
+                           value_mouth=nose_follow_mouth_value * 24.0,
+                           value_mouth_three_times=nose_follow_mouth_value * 36.0,
+                           value_upper_lip=nose_follow_mouth_value * 12.0,
+                           jaw_ctrl=jaw_ctrl,
+                           value_upper_lip_min_half=nose_follow_mouth_value * 6.0,
+                           value_upper_lip_max_or_min_y_half=nose_follow_mouth_value * (-6.0),
+                           value_corner_lip=nose_follow_mouth_value * 6.0)
 
     # ==================================================================================================================
     #                                                   NOSE SETUP
     # ==================================================================================================================
 
-        rangeUD = self.noseCtrl+'.%s'%self.mouthWeightUD
-        rangeSS = self.noseCtrl+'.%s'%self.mouthWeightSS
-        rangeLR = self.noseCtrl+'.%s'%self.mouthWeightLR
+        range_ud = self.nose_ctrl + '.%s' % self.mouth_weight_ud
+        range_ss = self.nose_ctrl + '.%s' % self.mouth_weight_ss
+        range_lr = self.nose_ctrl + '.%s' % self.mouth_weight_lr
 
         # TRANSLATE
-        self.noseSetup(mouthCtrl, jawCtrl, upLipControllerAll,
-                       translateX='translateX', translateY='translateY',
-                       rotateXJaw='rotateY', rotateYJaw='rotateX',
-                       firstValueX=translateXLip, secondValueX=translateXMouth,
-                       firstValueY=translateYLip, secondValueY=translateYMouth,
-                       firstOperationX=2, secondOperationX=2,
-                       firstOperationY=2, secondOperationY=2,
-                       operationSumX=1, operationSumY=1,
-                       radValueX=0.0174533, radValueY=0.0174533,
-                       ctrlValueJawX=translateXJaw, ctrlValueJawY=translateYJaw,
-                       operationSumJawX=1, operationSumJawY=1, prefixX='TransX',
-                       prefixY='TransY', divide=True, range=rangeUD,
-                       prefix='Trans', targetObject=self.noseCtrlTransPMA,
-                       targetX='input3Dx', targetY='input3Dy')
+        self.nose_setup(mouth_ctrl, jaw_ctrl, up_lip_controller_all,
+                        translate_x='translateX', translate_y='translateY',
+                        rotate_x_jaw='rotateY', rotate_y_jaw='rotateX',
+                        first_value_x=translate_x_lip, second_value_x=translate_x_mouth,
+                        first_value_y=translate_y_lip, second_value_y=translate_y_mouth,
+                        first_operation_x=2, second_operation_x=2,
+                        first_operation_y=2, second_operation_y=2,
+                        operation_sum_x=1, operation_sum_y=1,
+                        radius_value_x=0.0174533, radius_value_y=0.0174533,
+                        ctrl_value_jaw_x=translate_x_jaw, ctrl_value_jaw_y=translate_y_jaw,
+                        operation_sum_jaw_x=1, operation_sum_jaw_y=1, prefix_x='TransX',
+                        prefix_y='TransY', divide=True, range=range_ud,
+                        prefix='Trans', target_object=self.nose_ctrl_translate_pma,
+                        target_x='input3Dx', target_y='input3Dy')
         # SCALE
-        self.noseSetup(mouthCtrl, jawCtrl, upLipControllerAll,
-                       translateX='translateY', translateY='translateY',
-                       rotateXJaw='rotateX', rotateYJaw='rotateX',
-                       firstValueX=scaleXLip, secondValueX=scaleXMouth,
-                       firstValueY=scaleYLip, secondValueY=scaleYMouth,
-                       firstOperationX=2, secondOperationX=2,
-                       firstOperationY=2, secondOperationY=2,
-                       operationSumX=1, operationSumY=2, radValueX=0.0174533, radValueY=0.0174533,
-                       ctrlValueJawX=scaleXJaw, ctrlValueJawY=scaleYJaw,
-                       operationSumJawX=1, operationSumJawY=2, prefixX='SclX',
-                       prefixY='SclY', divide=True, range=rangeSS,
-                       prefix='Scl', targetObject=self.noseCtrlSclPMA,
-                       targetX='input3Dx', targetY='input3Dy')
+        self.nose_setup(mouth_ctrl, jaw_ctrl, up_lip_controller_all,
+                        translate_x='translateY', translate_y='translateY',
+                        rotate_x_jaw='rotateX', rotate_y_jaw='rotateX',
+                        first_value_x=scale_x_lip, second_value_x=scale_x_mouth,
+                        first_value_y=scale_y_lip, second_value_y=scale_y_mouth,
+                        first_operation_x=2, second_operation_x=2,
+                        first_operation_y=2, second_operation_y=2,
+                        operation_sum_x=1, operation_sum_y=2, radius_value_x=0.0174533, radius_value_y=0.0174533,
+                        ctrl_value_jaw_x=scale_x_jaw, ctrl_value_jaw_y=scale_y_jaw,
+                        operation_sum_jaw_x=1, operation_sum_jaw_y=2, prefix_x='SclX',
+                        prefix_y='SclY', divide=True, range=range_ss,
+                        prefix='Scl', target_object=self.nose_ctrl_scale_pma,
+                        target_x='input3Dx', target_y='input3Dy')
         # ROTATE
-        self.noseSetup(mouthCtrl, jawCtrl, upLipControllerAll,
-                       translateX='translateX', translateY='translateX',
-                       rotateXJaw='rotateY', rotateYJaw='rotateY',
-                       firstValueX=rotateYLip, secondValueX=rotateYMouth,
-                       firstValueY=rotateZLip, secondValueY=rotateZMouth,
-                       firstOperationX=1, secondOperationX=1,
-                       firstOperationY=1, secondOperationY=1,
-                       operationSumX=1, operationSumY=1, radValueX=rotateYJaw, radValueY=rotateZJaw,
-                       ctrlValueJawX=None, ctrlValueJawY=None,
-                       operationSumJawX=1, operationSumJawY=1, prefixX='RotY',
-                       prefixY='RotZ', divide=False, range=rangeLR,
-                       prefix='Rot', targetObject=self.noseCtrlRotPMA,
-                       targetX='input3Dy', targetY='input3Dz')
+        self.nose_setup(mouth_ctrl, jaw_ctrl, up_lip_controller_all,
+                        translate_x='translateX', translate_y='translateX',
+                        rotate_x_jaw='rotateY', rotate_y_jaw='rotateY',
+                        first_value_x=rotate_y_lip, second_value_x=rotate_y_mouth,
+                        first_value_y=rotate_z_lip, second_value_y=rotate_z_mouth,
+                        first_operation_x=1, second_operation_x=1,
+                        first_operation_y=1, second_operation_y=1,
+                        operation_sum_x=1, operation_sum_y=1, radius_value_x=rotate_y_jaw, radius_value_y=rotate_z_jaw,
+                        ctrl_value_jaw_x=None, ctrl_value_jaw_y=None,
+                        operation_sum_jaw_x=1, operation_sum_jaw_y=1, prefix_x='RotY',
+                        prefix_y='RotZ', divide=False, range=range_lr,
+                        prefix='Rot', target_object=self.nose_ctrl_rotate_pma,
+                        target_x='input3Dy', target_y='input3Dz')
+
+        # SKIN PARENT AND SCALE CONSTRAINT
+        au.parent_scale_constraint(nose_up_jnt, nose_up_skin)
+        au.parent_scale_constraint(columella_jnt, columella_skn)
 
     # ==================================================================================================================
     #                                                 FUNCTION NOSE AND NOSTRIL
     # ==================================================================================================================
 
-    def noseSetup(self,mouthCtrl, jawCtrl, upLipControllerAll, translateX, translateY, rotateXJaw, rotateYJaw, firstValueX, secondValueX, firstValueY,
-                  secondValueY, firstOperationX, secondOperationX, firstOperationY, secondOperationY, operationSumX, operationSumY,
-                  radValueX, radValueY, ctrlValueJawX, ctrlValueJawY, operationSumJawX, operationSumJawY, prefixX, prefixY, divide, range, prefix,
-                  targetObject, targetX, targetY):
+    def nose_setup(self, mouth_ctrl, jaw_ctrl, upLip_controller_all, translate_x, translate_y, rotate_x_jaw, rotate_y_jaw,
+                   first_value_x, second_value_x, first_value_y, second_value_y, first_operation_x, second_operation_x,
+                   first_operation_y, second_operation_y, operation_sum_x, operation_sum_y,
+                   radius_value_x, radius_value_y, ctrl_value_jaw_x, ctrl_value_jaw_y, operation_sum_jaw_x,
+                   operation_sum_jaw_y, prefix_x, prefix_y, divide, range, prefix,
+                   target_object, target_x, target_y):
 
-        X = self.noseWeight(secondCtrl=mouthCtrl + '.%s' % translateX, firstCtrl=upLipControllerAll + '.%s' % translateX,
-                            secondValue=secondValueX, firstValue=firstValueX,
-                            secondOperation=secondOperationX, firstOperation=firstOperationX, operationSum=operationSumX,
-                            prefix=prefixX)
+        X = self.nose_weight(second_ctrl=mouth_ctrl + '.%s' % translate_x, first_ctrl=upLip_controller_all + '.%s' % translate_x,
+                             second_value=second_value_x, first_value=first_value_x,
+                             second_operation=second_operation_x, first_operation=first_operation_x, operation_sum=operation_sum_x,
+                             prefix=prefix_x)
 
-        jawX = self.noseAdditional(prefix='Jaw' + prefixX, ctrl=jawCtrl + '.%s' % rotateXJaw,
-                                   noseWeightPMA=X + '.output1D',
-                                   operationSum=operationSumJawX, radValue=radValueX, ctrlValue=ctrlValueJawX, divide=divide)
+        jaw_x = self.nose_additional(prefix='Jaw' + prefix_x, ctrl=jaw_ctrl + '.%s' % rotate_x_jaw,
+                                     nose_weight_pma=X + '.output1D',
+                                     operation_sum=operation_sum_jaw_x, radius_value=radius_value_x, ctrl_value=ctrl_value_jaw_x, divide=divide)
 
-        Y = self.noseWeight(secondCtrl=mouthCtrl + '.%s' % translateY, firstCtrl=upLipControllerAll + '.%s' % translateY,
-                            secondValue=secondValueY, firstValue=firstValueY,
-                            secondOperation=secondOperationY, firstOperation=firstOperationY, operationSum=operationSumY,
-                            prefix=prefixY)
+        Y = self.nose_weight(second_ctrl=mouth_ctrl + '.%s' % translate_y, first_ctrl=upLip_controller_all + '.%s' % translate_y,
+                             second_value=second_value_y, first_value=first_value_y,
+                             second_operation=second_operation_y, first_operation=first_operation_y, operation_sum=operation_sum_y,
+                             prefix=prefix_y)
 
-        jawY = self.noseAdditional(prefix='Jaw' + prefixY, ctrl=jawCtrl + '.%s' % rotateYJaw,
-                                   noseWeightPMA=Y + '.output1D',
-                                   operationSum=operationSumJawY, radValue=radValueY, ctrlValue=ctrlValueJawY, divide=divide)
+        jaw_y = self.nose_additional(prefix='Jaw' + prefix_y, ctrl=jaw_ctrl + '.%s' % rotate_y_jaw,
+                                     nose_weight_pma=Y + '.output1D',
+                                     operation_sum=operation_sum_jaw_y, radius_value=radius_value_y, ctrl_value=ctrl_value_jaw_y, divide=divide)
 
-        rangeGreat = self.multiplyToRange(range=range, nosePMAX=X + '.output1D',
-                                          nosePMAY=Y + '.output1D',
-                                          prefix=prefix, nameExpr='Great')
+        range_great = self.multiply_to_range(range=range, nose_pma_x=X + '.output1D',
+                                             nose_pma_y=Y + '.output1D',
+                                             prefix=prefix, nameExpr='Great')
 
-        rangeLess = self.multiplyToRange(range=range, nosePMAX=jawX + '.output1D',
-                                         nosePMAY=jawY + '.output1D',
-                                         prefix=prefix, nameExpr='Less')
+        range_less = self.multiply_to_range(range=range, nose_pma_x=jaw_x + '.output1D',
+                                            nose_pma_y=jaw_y + '.output1D',
+                                            prefix=prefix, nameExpr='Less')
 
         # CONDITION
-        self.conditionNoseWeight(jawCtrl=jawCtrl, rangeGreat=rangeGreat, rangeLess=rangeLess,
-                                 targetFirst= targetObject +'.input3D[1]'+'.%s' % targetX,
-                                 targetSecond=targetObject + '.input3D[1]'+'.%s' % targetY,
-                                 prefix=prefix)
+        self.condition_nose_weight(jaw_ctrl=jaw_ctrl, range_great=range_great, range_less=range_less,
+                                   target_first=target_object + '.input3D[1]' + '.%s' % target_x,
+                                   target_second=target_object + '.input3D[1]' + '.%s' % target_y,
+                                   prefix=prefix)
 
-    def nostrilSetup(self, side, controller, attributeOffset, noseBindParentZro,
-                     getAttrTxCtrlGrpZroNostril,
-                     lipUpAllCtrl, mouthCtrl, multiplier, getAttrTyCtrlGrpZroNostril,
-                     getAttrTzCtrlGrpZroNostril,
-                     valueMouth, valueMouthThreeTimes, valueUpperLip, jawCtrl, valueCornerLip, valueUpperLipMaxOrMinYHalf, valueUpperLipMinHalf):
+    def nostril_setup(self, side, controller, attribute_offset, nose_bind_grp_zro,
+                      getAttr_tx_ctrl_grp_zro_nostril,
+                      lip_up_all_ctrl, mouth_ctrl, multiplier, getAttr_ty_ctrl_grp_zro_nostril,
+                      getAttr_tz_ctrl_grp_zro_nostril,
+                      value_mouth, value_mouth_three_times, value_upper_lip, jaw_ctrl, value_corner_lip, value_upper_lip_max_or_min_y_half,
+                      value_upper_lip_min_half):
 
-        range = controller + '.%s' % attributeOffset
-        multRevNostrilTransX = self.mdlSetAttr(name='nostrilWeight', prefix='TransX', nameExpr='', side=side,
-                                               input1=controller + '.translateX ', input2Set=multiplier)
-        multRevNostrilTransXOut = multRevNostrilTransX + '.output'
+        range = controller + '.%s' % attribute_offset
+        mult_rev_nostril_trans_x = self.mdl_set_attr(name='nostrilWeight', prefix='TransX', name_expression='', side=side,
+                                                     input1=controller + '.translateX ', input2_set=multiplier)
+        mult_rev_nostril_trans_x_out = mult_rev_nostril_trans_x + '.output'
         # TRANS X
-        transXGreat, transXLess = self.nostril(range, mouthCtrl, lipUpAllCtrl,jawCtrl, valueMouthThreeTimes, valueUpperLip, valueCornerLip,
-                    valueUpperLipMinHalf=valueUpperLipMinHalf, side=side, controller= multRevNostrilTransXOut,
-                    translate='translateX', rotate='rotateX', prefix='TransX',
-                    prefixJaw='JawTransX', getAttrCtrlGrpZroNostril=getAttrTxCtrlGrpZroNostril,  operation=1)
+        trans_x_great, trans_x_less = self.nostril(range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl, value_mouth_three_times, value_upper_lip, value_corner_lip,
+                                                   value_upper_lip_min_half=value_upper_lip_min_half, side=side, controller= mult_rev_nostril_trans_x_out,
+                                                   translate='translateX', rotate='rotateX', prefix='TransX',
+                                                   prefix_jaw='JawTransX', get_attr_ctrl_grp_zro_nostril=getAttr_tx_ctrl_grp_zro_nostril, operation=1)
 
         # TRANS Y
-        transYGreat, transYLess = self.nostril(range, mouthCtrl, lipUpAllCtrl, jawCtrl, valueMouth, valueUpperLip, valueCornerLip,
-                    valueUpperLipMinHalf=valueUpperLipMaxOrMinYHalf, side=side, controller=controller+'.translateY',
-                    translate='translateY', rotate='rotateY', prefix='TransY',
-                    prefixJaw='JawTransY', getAttrCtrlGrpZroNostril=getAttrTyCtrlGrpZroNostril,  operation=1)
+        trans_y_great, trans_y_less = self.nostril(range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl, value_mouth, value_upper_lip, value_corner_lip,
+                                                   value_upper_lip_min_half=value_upper_lip_max_or_min_y_half, side=side, controller=controller + '.translateY',
+                                                   translate='translateY', rotate='rotateY', prefix='TransY',
+                                                   prefix_jaw='JawTransY', get_attr_ctrl_grp_zro_nostril=getAttr_ty_ctrl_grp_zro_nostril, operation=1)
 
         # TRANS Z
-        transZGreat, transZLess = self.nostril(range, mouthCtrl, lipUpAllCtrl, jawCtrl, valueMouth, valueUpperLip, valueCornerLip,
-                    valueUpperLipMinHalf=valueUpperLipMinHalf, side=side, controller=controller+'.translateZ',
-                    translate='translateZ', rotate='rotateZ', prefix='TransZ',
-                    prefixJaw='JawTransZ', getAttrCtrlGrpZroNostril=getAttrTzCtrlGrpZroNostril,  operation=1)
+        trans_z_great, trans_z_less = self.nostril(range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl, value_mouth, value_upper_lip, value_corner_lip,
+                                                   value_upper_lip_min_half=value_upper_lip_min_half, side=side, controller=controller + '.translateZ',
+                                                   translate='translateZ', rotate='rotateZ', prefix='TransZ',
+                                                   prefix_jaw='JawTransZ', get_attr_ctrl_grp_zro_nostril=getAttr_tz_ctrl_grp_zro_nostril, operation=1)
 
-        self.conditionNostrilWeight(jawCtrl,
-                                    rangeGreatX=transXGreat, rangeLessX=transXLess,
-                                    rangeGreatY=transYGreat, rangeLessY=transYLess,
-                                    rangeGreatZ=transZGreat, rangeLessZ=transZLess,
-                                    target=noseBindParentZro, side=side)
+        self.condition_nostril_weight(jaw_ctrl,
+                                      range_great_x=trans_x_great, range_less_x=trans_x_less,
+                                      range_great_y=trans_y_great, range_less_y=trans_y_less,
+                                      range_great_z=trans_z_great, range_less_z=trans_z_less,
+                                      target=nose_bind_grp_zro, side=side)
 
-    def nostril(self, range, mouthCtrl, lipUpAllCtrl, jawCtrl, valueMouth, valueUpperLip, valueCornerLip, valueUpperLipMinHalf, side, controller,
-                translate, rotate, prefix, prefixJaw, getAttrCtrlGrpZroNostril,  operation):
+    def nostril(self, range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl, value_mouth, value_upper_lip,
+                value_corner_lip, value_upper_lip_min_half, side, controller,
+                translate, rotate, prefix, prefix_jaw, get_attr_ctrl_grp_zro_nostril, operation):
 
-        transNostril = self.noseWeight(thirdCtrl=mouthCtrl + '.%s' % translate,
-                                       secondCtrl=lipUpAllCtrl + '.%s' % translate,
-                                       firstCtrl=controller,
-                                       thirdValue=valueMouth, secondValue=valueUpperLip, firstValue=valueCornerLip,
-                                       secondOperation=2, firstOperation=2, operationSum=1, name='nostrilWeight',
-                                       side=side,
-                                       prefix=prefix, noseTarget=False)
+        trans_nostril = self.nose_weight(third_ctrl=mouth_ctrl + '.%s' % translate,
+                                         second_ctrl=lip_up_all_ctrl + '.%s' % translate,
+                                         first_ctrl=controller,
+                                         third_value=value_mouth, second_value=value_upper_lip, first_value=value_corner_lip,
+                                         second_operation=2, first_operation=2, operation_sum=1, name='nostrilWeight',
+                                         side=side,
+                                         prefix=prefix, nose_target=False)
 
-        transJawNostril = self.noseAdditional(name='nostrilWeight', side=side, prefix=prefixJaw,
-                                              ctrl=jawCtrl + '.%s'% rotate, noseWeightPMA=transNostril + '.output1D',
-                                              operationSum=1, radValue=0.0174533, ctrlValue=valueUpperLipMinHalf,
-                                              divide=True)
+        trans_jaw_nostril = self.nose_additional(name='nostrilWeight', side=side, prefix=prefix_jaw,
+                                                 ctrl=jaw_ctrl + '.%s' % rotate, nose_weight_pma=trans_nostril + '.output1D',
+                                                 operation_sum=1, radius_value=0.0174533, ctrl_value=value_upper_lip_min_half,
+                                                 divide=True)
 
-        rangeTransNostrilGreat = self.multiplyToRange(name='nostrilWeight', side=side, range=range,
-                                                      nosePMAX=transNostril + '.output1D', prefix=prefix,
-                                                      nameExpr='Great', multRange=False)
+        range_trans_nostril_great = self.multiply_to_range(name='nostrilWeight', side=side, range=range,
+                                                           nose_pma_x=trans_nostril + '.output1D', prefix=prefix,
+                                                           nameExpr='Great', mult_range=False)
 
-        rangeTransNostrilLess = self.multiplyToRange(name='nostrilWeight', side=side, range=range,
-                                                     nosePMAX=transJawNostril + '.output1D', prefix=prefix,
-                                                     nameExpr='Less', multRange=False)
+        range_trans_nostril_less = self.multiply_to_range(name='nostrilWeight', side=side, range=range,
+                                                          nose_pma_x=trans_jaw_nostril + '.output1D', prefix=prefix,
+                                                          nameExpr='Less', mult_range=False)
 
-        addNostrilGreat = self.pmaSetAttr(name='nostrilWeight', valueInput0=getAttrCtrlGrpZroNostril,
-                                          input1=rangeTransNostrilGreat + '.outputX',
-                                          operation=operation, prefix=prefix, nameExpr='Great', side=side)
+        add_nostril_great = self.pma_set_attr(name='nostrilWeight', value_input0=get_attr_ctrl_grp_zro_nostril,
+                                              input1=range_trans_nostril_great + '.outputX',
+                                              operation=operation, prefix=prefix, name_expression='Great', side=side)
 
-        addNostrilLess = self.pmaSetAttr(name='nostrilWeight', valueInput0=getAttrCtrlGrpZroNostril,
-                                         input1=rangeTransNostrilLess + '.outputX',
-                                         operation=operation, prefix=prefix, nameExpr='Less', side=side)
+        add_nostril_less = self.pma_set_attr(name='nostrilWeight', value_input0=get_attr_ctrl_grp_zro_nostril,
+                                             input1=range_trans_nostril_less + '.outputX',
+                                             operation=operation, prefix=prefix, name_expression='Less', side=side)
 
-        return addNostrilGreat, addNostrilLess
+        return add_nostril_great, add_nostril_less
 
-    def conditionNostrilWeight(self, jawCtrl, rangeGreatX, rangeLessX, rangeGreatY, rangeLessY, rangeGreatZ, rangeLessZ, target, side, prefix='', nameExpr=''):
-        condition = mc.createNode('condition', n='nostrilWeight' + prefix + nameExpr + 'Ctrl' + side+ '_cnd')
+    def condition_nostril_weight(self, jaw_ctrl, range_great_x, range_less_x, range_great_y, range_less_y,
+                                 range_great_z, range_less_z, target, side, prefix='', name_expression=''):
+        condition = mc.createNode('condition', n='nostrilWeight' + prefix + name_expression + 'Ctrl' + side + '_cnd')
         mc.setAttr(condition + '.operation', 3)
-        mc.connectAttr(jawCtrl + '.rotateX', condition + '.firstTerm')
+        mc.connectAttr(jaw_ctrl + '.rotateX', condition + '.firstTerm')
 
-        mc.connectAttr(rangeGreatX + '.output1D', condition + '.colorIfTrueR')
-        mc.connectAttr(rangeGreatY + '.output1D', condition + '.colorIfTrueG')
-        mc.connectAttr(rangeGreatZ + '.output1D', condition + '.colorIfTrueB')
+        mc.connectAttr(range_great_x + '.output1D', condition + '.colorIfTrueR')
+        mc.connectAttr(range_great_y + '.output1D', condition + '.colorIfTrueG')
+        mc.connectAttr(range_great_z + '.output1D', condition + '.colorIfTrueB')
 
-        mc.connectAttr(rangeLessX + '.output1D', condition + '.colorIfFalseR')
-        mc.connectAttr(rangeLessY + '.output1D', condition + '.colorIfFalseG')
-        mc.connectAttr(rangeLessZ + '.output1D', condition + '.colorIfFalseB')
+        mc.connectAttr(range_less_x + '.output1D', condition + '.colorIfFalseR')
+        mc.connectAttr(range_less_y + '.output1D', condition + '.colorIfFalseG')
+        mc.connectAttr(range_less_z + '.output1D', condition + '.colorIfFalseB')
 
         mc.connectAttr(condition + '.outColorR', target+'.translateX')
         mc.connectAttr(condition + '.outColorG', target+'.translateY')
@@ -416,103 +429,103 @@ class Nose:
 
         return condition
 
-    def conditionNoseWeight(self, jawCtrl, rangeGreat, rangeLess, targetFirst, targetSecond, prefix='', nameExpr=''):
-        condition = mc.createNode('condition', n='noseWeight' + prefix + nameExpr + 'Ctrl' + '_cnd')
+    def condition_nose_weight(self, jaw_ctrl, range_great, range_less, target_first, target_second, prefix='', name_expression=''):
+        condition = mc.createNode('condition', n='noseWeight' + prefix + name_expression + 'Ctrl' + '_cnd')
         mc.setAttr(condition+'.operation', 3)
-        mc.connectAttr(jawCtrl+'.rotateX', condition+'.firstTerm')
+        mc.connectAttr(jaw_ctrl + '.rotateX', condition + '.firstTerm')
 
-        mc.connectAttr(rangeGreat+'.outputX', condition+'.colorIfTrueR')
-        mc.connectAttr(rangeGreat+'.outputY', condition+'.colorIfTrueG')
+        mc.connectAttr(range_great + '.outputX', condition + '.colorIfTrueR')
+        mc.connectAttr(range_great + '.outputY', condition + '.colorIfTrueG')
 
-        mc.connectAttr(rangeLess+'.outputX', condition+'.colorIfFalseR')
-        mc.connectAttr(rangeLess+'.outputY', condition+'.colorIfFalseG')
+        mc.connectAttr(range_less + '.outputX', condition + '.colorIfFalseR')
+        mc.connectAttr(range_less + '.outputY', condition + '.colorIfFalseG')
 
-        mc.connectAttr(condition+'.outColorR', targetFirst)
-        mc.connectAttr(condition+'.outColorG', targetSecond)
+        mc.connectAttr(condition +'.outColorR', target_first)
+        mc.connectAttr(condition +'.outColorG', target_second)
 
         return condition
 
-    def multiplyToRange(self, range, nosePMAX, nosePMAY='', side='',
-                      prefix='', nameExpr='Less', name='noseWeight', multRange=True):
-        if multRange:
-            rangeMult = self.multOrDivConnectTwoAttr(name=name, side=side,
-                                                  input1X=nosePMAX,
-                                                  input1Y=nosePMAY,
-                                                  input2X=range,
-                                                  input2Y=range,
-                                                  operation=1, prefix=prefix, nameExpr=nameExpr)
+    def multiply_to_range(self, range, nose_pma_x, nose_pma_y='', side='',
+                          prefix='', nameExpr='Less', name='noseWeight', mult_range=True):
+        if mult_range:
+            range_mult = self.mult_or_div_connect_two_attr(name=name, side=side,
+                                                           input_1X=nose_pma_x,
+                                                           input_1Y=nose_pma_y,
+                                                           input_2X=range,
+                                                           input_2Y=range,
+                                                           operation=1, prefix=prefix, name_expression=nameExpr)
         else:
-            rangeMult = self.multOrDivConnectAttr(name=name, side=side,
-                                                     input1X=nosePMAX,
-                                                     input2X=range,
-                                                     operation=1, prefix=prefix, nameExpr=nameExpr)
-        return rangeMult
+            range_mult = self.mult_or_div_connect_attr(name=name, side=side,
+                                                       input1X=nose_pma_x,
+                                                       input2X=range,
+                                                       operation=1, prefix=prefix, nameExpr=nameExpr)
+        return range_mult
 
-    def noseAdditional(self, prefix, ctrl, noseWeightPMA, operationSum, radValue=None, ctrlValue=None, side='',nameExpr='', name='noseWeight',
-                       divide=True):
+    def nose_additional(self, prefix, ctrl, nose_weight_pma, operation_sum, radius_value=None, ctrl_value=None, side='', name_expression='', name='noseWeight',
+                        divide=True):
 
-        jawCtrlMUL = self.multOrDivSetAttr(name=name, side=side,
-                                           input1X=ctrl, input2XSet=radValue,
-                                           operation=1, prefix=prefix+'JawRad', nameExpr=nameExpr)
+        jaw_ctrl_mul = self.multOrDivSetAttr(name=name, side=side,
+                                             input_1X=ctrl, input_2X_set=radius_value,
+                                             operation=1, prefix=prefix+'JawRad', name_expression=name_expression)
         if divide:
-            jawCtrlDIV = self.multOrDivSetAttr(name=name, side=side,
-                                               input1X=jawCtrlMUL + '.outputX', input2XSet=ctrlValue,
-                                               operation=2, prefix=prefix+'Jaw', nameExpr=nameExpr)
-            jawPMA = self.pmaAttr(name=name, side=side,
-                                  input0=noseWeightPMA,
-                                  input1=jawCtrlDIV + '.outputX',
-                                  operation=operationSum, prefix=prefix, nameExpr=nameExpr)
-            return jawPMA
+            jaw_ctrl_div = self.multOrDivSetAttr(name=name, side=side,
+                                                 input_1X=jaw_ctrl_mul + '.outputX', input_2X_set=ctrl_value,
+                                                 operation=2, prefix=prefix+'Jaw', name_expression=name_expression)
+            jaw_pma = self.pma_attr(name=name, side=side,
+                                    input0=nose_weight_pma,
+                                    input1=jaw_ctrl_div + '.outputX',
+                                    operation=operation_sum, prefix=prefix, name_expression=name_expression)
+            return jaw_pma
 
         else:
-            jawPMA = self.pmaAttr(name=name, side=side,
-                                  input0=noseWeightPMA,
-                                  input1=jawCtrlMUL + '.outputX',
-                                  operation=operationSum, prefix=prefix, nameExpr=nameExpr)
-            return jawPMA
+            jaw_pma = self.pma_attr(name=name, side=side,
+                                    input0=nose_weight_pma,
+                                    input1=jaw_ctrl_mul + '.outputX',
+                                    operation=operation_sum, prefix=prefix, name_expression=name_expression)
+            return jaw_pma
 
-    def noseWeight(self, secondCtrl, firstCtrl, firstValue,
-                   secondValue, secondOperation, firstOperation, operationSum,
-                   prefix, thirdCtrl='', thirdValue='', nameExpr='', side='', name='noseWeight', noseTarget=True):
+    def nose_weight(self, second_ctrl, first_ctrl, first_value,
+                    second_value, second_operation, first_operation, operation_sum,
+                    prefix, third_ctrl='', third_value='', name_expression='', side='', name='noseWeight', nose_target=True):
 
-        mouthDIV = self.multOrDivSetAttr(name=name, side=side,
-                                         input1X=secondCtrl, input2XSet=secondValue,
-                                         operation=secondOperation, prefix=prefix + 'Mouth', nameExpr=nameExpr)
+        mouth_div = self.multOrDivSetAttr(name=name, side=side,
+                                          input_1X=second_ctrl, input_2X_set=second_value,
+                                          operation=second_operation, prefix=prefix + 'Mouth', name_expression=name_expression)
 
-        lipUpDIV = self.multOrDivSetAttr(name=name, side=side,
-                                         input1X=firstCtrl, input2XSet=firstValue,
-                                         operation=firstOperation, prefix=prefix + 'UpLip', nameExpr=nameExpr)
+        lip_up_div = self.multOrDivSetAttr(name=name, side=side,
+                                           input_1X=first_ctrl, input_2X_set=first_value,
+                                           operation=first_operation, prefix=prefix + 'UpLip', name_expression=name_expression)
 
-        if not noseTarget:
-            cornerLipDIV = self.multOrDivSetAttr(name=name, side=side,
-                                             input1X=thirdCtrl, input2XSet=thirdValue,
-                                             operation=firstOperation, prefix=prefix + 'CornerLip', nameExpr=nameExpr)
+        if not nose_target:
+            corner_lip_div = self.multOrDivSetAttr(name=name, side=side,
+                                                   input_1X=third_ctrl, input_2X_set=third_value,
+                                                   operation=first_operation, prefix=prefix + 'CornerLip', name_expression=name_expression)
 
-            nosePMA = self.pmaAttr(name=name, side=side,
-                                   input0=lipUpDIV + '.outputX',
-                                   input1=mouthDIV + '.outputX',
-                                   input2= cornerLipDIV + '.outputX',
-                                   operation=operationSum, prefix=prefix, nameExpr=nameExpr, inputTwo=True)
+            nose_pma = self.pma_attr(name=name, side=side,
+                                     input0=lip_up_div + '.outputX',
+                                     input1=mouth_div + '.outputX',
+                                     input2=corner_lip_div + '.outputX',
+                                     operation=operation_sum, prefix=prefix, name_expression=name_expression, input_two=True)
         else:
-            nosePMA = self.pmaAttr(name=name, side=side,
-                                   input0=lipUpDIV + '.outputX',
-                                   input1=mouthDIV + '.outputX',
-                                   operation=operationSum, prefix=prefix, nameExpr=nameExpr)
-        return nosePMA
+            nose_pma = self.pma_attr(name=name, side=side,
+                                     input0=lip_up_div + '.outputX',
+                                     input1=mouth_div + '.outputX',
+                                     operation=operation_sum, prefix=prefix, name_expression=name_expression)
+        return nose_pma
 
-    def multOrDivConnectTwoAttr(self, name, input1X, input2X, input1Y, input2Y, operation=2, prefix='', nameExpr='', side=''):
-        ctrlDrvMDN = mc.createNode('multiplyDivide',
-                                   n=au.prefix_name(name) + prefix + nameExpr + 'Ctrl' + side + '_mdn')
-        mc.setAttr(ctrlDrvMDN + '.operation', operation)
-        mc.connectAttr(input1X , ctrlDrvMDN + '.input1X')
-        mc.connectAttr(input1Y , ctrlDrvMDN + '.input1Y')
+    def mult_or_div_connect_two_attr(self, name, input_1X, input_2X, input_1Y, input_2Y, operation=2, prefix='', name_expression='', side=''):
+        ctrl_drv_mdn = mc.createNode('multiplyDivide',
+                                     n=au.prefix_name(name) + prefix + name_expression + 'Ctrl' + side + '_mdn')
+        mc.setAttr(ctrl_drv_mdn + '.operation', operation)
+        mc.connectAttr(input_1X, ctrl_drv_mdn + '.input1X')
+        mc.connectAttr(input_1Y, ctrl_drv_mdn + '.input1Y')
 
-        mc.connectAttr(input2X, ctrlDrvMDN + '.input2X')
-        mc.connectAttr(input2Y, ctrlDrvMDN + '.input2Y')
+        mc.connectAttr(input_2X, ctrl_drv_mdn + '.input2X')
+        mc.connectAttr(input_2Y, ctrl_drv_mdn + '.input2Y')
 
-        return ctrlDrvMDN
+        return ctrl_drv_mdn
 
-    def multOrDivSetTwoAttr(self, name, input1X, input1Y, input2XSet, input2YSet, operation=2, prefix='', nameExpr='', side=''):
+    def mult_or_div_set_two_attr(self, name, input1X, input1Y, input2XSet, input2YSet, operation=2, prefix='', nameExpr='', side=''):
         ctrlDrvMDN = mc.createNode('multiplyDivide',
                                    n=au.prefix_name(name) + prefix + nameExpr + 'Ctrl' + side + '_mdn')
         mc.setAttr(ctrlDrvMDN + '.operation', operation)
@@ -524,7 +537,7 @@ class Nose:
 
         return ctrlDrvMDN
 
-    def multOrDivConnectAttr(self, name, input2X, input1X, operation=2, prefix='', nameExpr='', side=''):
+    def mult_or_div_connect_attr(self, name, input2X, input1X, operation=2, prefix='', nameExpr='', side=''):
         ctrlDrvMDN = mc.createNode('multiplyDivide',
                                    n=au.prefix_name(name) + prefix + nameExpr + 'Ctrl' + side + '_mdn')
         mc.setAttr(ctrlDrvMDN + '.operation', operation)
@@ -533,60 +546,60 @@ class Nose:
 
         return ctrlDrvMDN
 
-    def multOrDivSetAttr(self, name, input2XSet, input1X, operation=2, prefix='', nameExpr='', side=''):
-        ctrlDrvMDN = mc.createNode('multiplyDivide',
-                                   n=au.prefix_name(name) + prefix + nameExpr + 'Ctrl' + side + '_mdn')
-        mc.setAttr(ctrlDrvMDN + '.operation', operation)
-        mc.connectAttr(input1X , ctrlDrvMDN + '.input1X')
-        mc.setAttr(ctrlDrvMDN + '.input2X', input2XSet)
+    def multOrDivSetAttr(self, name, input_2X_set, input_1X, operation=2, prefix='', name_expression='', side=''):
+        ctrl_drv_mdn = mc.createNode('multiplyDivide',
+                                     n=au.prefix_name(name) + prefix + name_expression + 'Ctrl' + side + '_mdn')
+        mc.setAttr(ctrl_drv_mdn + '.operation', operation)
+        mc.connectAttr(input_1X, ctrl_drv_mdn + '.input1X')
+        mc.setAttr(ctrl_drv_mdn + '.input2X', input_2X_set)
 
-        return ctrlDrvMDN
+        return ctrl_drv_mdn
 
-    def pmaSetAttr(self, name, valueInput0, input1, operation, prefix='', nameExpr='', side=''):
+    def pma_set_attr(self, name, value_input0, input1, operation, prefix='', name_expression='', side=''):
         ctrlDrvPMA = mc.createNode('plusMinusAverage', n=au.prefix_name(name)
-                                                         + prefix + nameExpr + 'Ctrl' + side + '_pma')
+                                                         + prefix + name_expression + 'Ctrl' + side + '_pma')
         mc.setAttr(ctrlDrvPMA + '.operation', operation)
-        mc.setAttr(ctrlDrvPMA + '.input1D[0]', valueInput0)
+        mc.setAttr(ctrlDrvPMA + '.input1D[0]', value_input0)
         mc.connectAttr(input1, ctrlDrvPMA + '.input1D[1]')
 
         return ctrlDrvPMA
 
-    def pmaAttr(self, name, input0, input1, operation, input2='', prefix='', nameExpr='', side='', inputTwo=False):
-        ctrlDrvPMA = mc.createNode('plusMinusAverage', n=au.prefix_name(name)
-                                                         + prefix + nameExpr + 'Ctrl' + side + '_pma')
-        mc.setAttr(ctrlDrvPMA + '.operation', operation)
-        mc.connectAttr(input0, ctrlDrvPMA + '.input1D[0]')
-        mc.connectAttr(input1, ctrlDrvPMA + '.input1D[1]')
-        if inputTwo:
-            mc.connectAttr(input2, ctrlDrvPMA + '.input1D[2]')
-            return ctrlDrvPMA
+    def pma_attr(self, name, input0, input1, operation, input2='', prefix='', name_expression='', side='', input_two=False):
+        ctrl_drv_pma = mc.createNode('plusMinusAverage', n=au.prefix_name(name)
+                                                           + prefix + name_expression + 'Ctrl' + side + '_pma')
+        mc.setAttr(ctrl_drv_pma + '.operation', operation)
+        mc.connectAttr(input0, ctrl_drv_pma + '.input1D[0]')
+        mc.connectAttr(input1, ctrl_drv_pma + '.input1D[1]')
+        if input_two:
+            mc.connectAttr(input2, ctrl_drv_pma + '.input1D[2]')
+            return ctrl_drv_pma
         else:
-            return ctrlDrvPMA
+            return ctrl_drv_pma
 
-    def pmaTwoAttr(self, name, input0x, input1x, input2x, input0y, input1y, input2y, operation, prefix='', nameExpr='', side=''):
+    def pma_two_attr(self, name, input_0x, input_1x, input_2x, input_0y, input_1y, input_2y, operation, prefix='', name_expression='', side=''):
         ctrlDrvPMA = mc.createNode('plusMinusAverage', n=au.prefix_name(name)
-                                                         + prefix + nameExpr + 'Ctrl' + side + '_pma')
+                                                         + prefix + name_expression + 'Ctrl' + side + '_pma')
         mc.setAttr(ctrlDrvPMA + '.operation', operation)
-        mc.connectAttr(input0x, ctrlDrvPMA + '.input2D[0].input2Dx')
-        mc.connectAttr(input1x, ctrlDrvPMA + '.input2D[1].input2Dx')
-        mc.connectAttr(input2x, ctrlDrvPMA + '.input2D[2].input2Dx')
+        mc.connectAttr(input_0x, ctrlDrvPMA + '.input2D[0].input2Dx')
+        mc.connectAttr(input_1x, ctrlDrvPMA + '.input2D[1].input2Dx')
+        mc.connectAttr(input_2x, ctrlDrvPMA + '.input2D[2].input2Dx')
 
-        mc.connectAttr(input0y, ctrlDrvPMA + '.input2D[0].input2Dy')
-        mc.connectAttr(input1y, ctrlDrvPMA + '.input2D[1].input2Dy')
-        mc.connectAttr(input2y, ctrlDrvPMA + '.input2D[2].input2Dy')
+        mc.connectAttr(input_0y, ctrlDrvPMA + '.input2D[0].input2Dy')
+        mc.connectAttr(input_1y, ctrlDrvPMA + '.input2D[1].input2Dy')
+        mc.connectAttr(input_2y, ctrlDrvPMA + '.input2D[2].input2Dy')
 
         return ctrlDrvPMA
 
-    def mdlConnectAttr(self, name, prefix, nameExpr, side, input1, input2):
-        connectDrvMDL = mc.createNode('multDoubleLinear', n=au.prefix_name(name) + prefix + nameExpr + 'Ctrl' + side + '_mdl')
-        mc.connectAttr(input1, connectDrvMDL + '.input1')
-        mc.connectAttr(input2, connectDrvMDL + '.input2')
+    def mdl_connect_attr(self, name, prefix, name_expression, side, input1, input2):
+        connect_drv_mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(name) + prefix + name_expression + 'Ctrl' + side + '_mdl')
+        mc.connectAttr(input1, connect_drv_mdl + '.input1')
+        mc.connectAttr(input2, connect_drv_mdl + '.input2')
 
-        return connectDrvMDL
+        return connect_drv_mdl
 
-    def mdlSetAttr(self, name, prefix, nameExpr, side, input1, input2Set):
-        cornerLipRangeMDL = mc.createNode('multDoubleLinear', n=au.prefix_name(name) + prefix + nameExpr + 'Ctrl' + side + '_mdl')
-        mc.connectAttr(input1, cornerLipRangeMDL + '.input1')
-        mc.setAttr(cornerLipRangeMDL + '.input2', input2Set)
+    def mdl_set_attr(self, name, prefix, name_expression, side, input1, input2_set):
+        corner_lip_range_mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(name) + prefix + name_expression + 'Ctrl' + side + '_mdl')
+        mc.connectAttr(input1, corner_lip_range_mdl + '.input1')
+        mc.setAttr(corner_lip_range_mdl + '.input2', input2_set)
 
-        return cornerLipRangeMDL
+        return corner_lip_range_mdl

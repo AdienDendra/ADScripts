@@ -1,3 +1,5 @@
+from __builtin__ import reload
+
 import maya.cmds as mc
 
 from rigging.library.module import base_module as gm, template_module as sd
@@ -609,13 +611,13 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
     for i in unhide:
         mc.setAttr(i + '.visibility', 1)
         mc.setAttr(i + '.segmentScaleCompensate', 0)
-    mc.setAttr(sSkn.neck + '.visibility', 0)
 
     # PARENT TO GENERAL MODULE
     if mc.objExists('anim_grp'):
         mc.parent(base.anim_control, 'anim_grp')
 
-    mc.delete(sAdd.neck, sj.neck)
+    mc.delete(sAdd.neck, sSkn.neck, sj.neck)
+
     # PARENT TO ADD JOINT TO SKELETON GROUP
     selection =[sAdd.spine_list[0], sAdd.upLeg_LFT, sAdd.upLeg_RGT]
     list_relatives = mc.listRelatives(selection, c=1, ad=1)
@@ -628,77 +630,10 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 
     mc.parent(list(set(list_object)), base.skeleton_grp)
 
-    # # mc.parent(sAdd.clavLFT, sAdd.upArmLFT, sAdd.forearmLFT, sAdd.wristLFT, module.skeletonGrp)
-    # # mc.parent(sAdd.clavRGT, sAdd.upArmRGT, sAdd.forearmRGT, sAdd.wristRGT, module.skeletonGrp)
-    # # mc.parent(sAdd.upLegLFT, sAdd.lowLegLFT, sAdd.ankleLFT, sAdd.ballLFT, module.skeletonGrp)
-    # # mc.parent(sAdd.upLegRGT, sAdd.lowLegRGT, sAdd.ankleRGT, sAdd.ballRGT, module.skeletonGrp)
-    # # mc.parent(sAdd.thumb1LFT, sAdd.thumb1RGT, sAdd.palmLFT, sAdd.palmRGT, sAdd.handLFT, sAdd.handRGT,
-    # #           sAdd.thumb2LFT, sAdd.thumb2RGT, sAdd.index1LFT, sAdd.index1RGT,
-    # #           sAdd.index2LFT, sAdd.index2RGT, sAdd.middle1LFT, sAdd.middle1RGT, sAdd.middle2LFT, sAdd.middle2RGT,
-    # #           sAdd.ring1LFT, sAdd.ring1RGT, sAdd.pinky1LFT, sAdd.pinky1RGT,
-    # #           sAdd.ring2LFT, sAdd.ring2RGT, sAdd.pinky2LFT, sAdd.pinky2RGT, sAdd.thumb3LFT, sAdd.thumb3RGT,
-    # #           sAdd.index3LFT, sAdd.index3RGT, sAdd.middle3LFT, sAdd.middle3RGT,
-    # #           sAdd.ring3LFT, sAdd.ring3RGT, sAdd.pinky3LFT, sAdd.pinky3RGT, sAdd.index4LFT, sAdd.index4RGT,
-    # #           sAdd.middle4LFT, sAdd.middle4RGT,
-    # #           sAdd.ring4LFT, sAdd.ring4RGT, sAdd.pinky4LFT, sAdd.pinky4RGT, module.skeletonGrp)
-    #
-    # mc.parent(sAdd.neck, module.skeletonGrp)
-    #
-    # # DELETE ITEMS UNDER WRIST FK AND IK
-    # list = [sFk.wristLFT, sFk.wristRGT, sIk.wristLFT, sIk.wristRGT]
-    # listLRFkIk = mc.listRelatives(list, ad=1, c=1)
-    # for i in listLRFkIk:
-    #     mc.delete(i)
-    #
-    #
-    # # delete unused bones
-    # mc.delete(sFk.thumb1LFT, sFk.thumb1RGT)
-    # mc.delete(sIk.thumb1LFT, sIk.thumb1RGT)
-    # mc.delete(sFk.handLFT, sFk.handRGT)
-    # mc.delete(sIk.index1LFT, sIk.index1RGT)
-    # mc.delete(sIk.middle1LFT, sIk.middle1RGT)
-    # mc.delete(sIk.ring1LFT, sIk.ring1RGT)
-    # mc.delete(sIk.pinky1LFT, sIk.pinky1RGT)
-    # mc.delete(sFk.palmLFT, sFk.palmRGT)
-    # mc.delete(sIk.palmLFT, sIk.palmRGT)
-    #
-    # mc.delete(ss.upArmLFT, ss.upArmRGT)
-    # mc.delete(ss.heelLFT, ss.heelRGT)
-    # mc.delete(ss.footInLFT, ss.footInRGT)
-    # mc.delete(ss.footOutLFT, ss.footOutRGT)
-    # mc.delete(ss.toeLFT, ss.toeRGT)
-    #
-    #
-    # mc.delete(sj.heelLFT, sj.heelRGT)
-    # mc.delete(sj.footInLFT, sj.footInRGT)
-    # mc.delete(sj.footOutLFT, sj.footOutRGT)
-    #
-    # mc.delete(sFk.heelLFT, sFk.heelRGT)
-    # mc.delete(sFk.footInLFT, sFk.footInRGT)
-    # mc.delete(sFk.footOutLFT, sFk.footOutRGT)
-    # mc.delete(sIk.heelLFT, sIk.heelRGT)
-    # mc.delete(sIk.footInLFT, sIk.footInRGT)
-    # mc.delete(sIk.footOutLFT, sIk.footOutRGT)
-    #
-    # mc.delete(sAdd.palmLFT, sAdd.palmRGT)
-    # mc.delete(sAdd.heelLFT, sAdd.heelRGT)
-    # mc.delete(sAdd.footInLFT, sAdd.footInRGT)
-    # mc.delete(sAdd.footOutLFT, sAdd.footOutRGT)
-    # mc.delete(sAdd.toeLFT, sAdd.toeRGT)
-    # mc.delete(sTwistHelpJnt.wristLFT, sTwistHelpJnt.wristRGT)
-    # mc.delete(sTwistHelpJnt.ankleLFT, sTwistHelpJnt.ankleRGT)
-    # mc.delete(sAdd.thumb1LFT, sAdd.thumb1RGT, sAdd.thumb4LFT, sAdd.thumb4RGT, sAdd.index5LFT, sAdd.index5RGT, sAdd.middle5LFT, sAdd.middle5RGT,
-    #           sAdd.ring5LFT, sAdd.ring5RGT, sAdd.pinky5LFT, sAdd.pinky5RGT)
-    #
-    # mc.delete(sj.neck)
-    #
-    #
-    # mc.delete(sAdd.handLFT, sAdd.handRGT)
-    # mc.delete(sAdd.head)
     mc.delete(ss.root)
     mc.delete(sIk.root)
     mc.delete(sFk.root)
     mc.delete(sAdd.root)
     mc.delete(sTwistHelp.root)
-    #
-    # print('100% | clean up!')
+
+    print('100% | clean up!')

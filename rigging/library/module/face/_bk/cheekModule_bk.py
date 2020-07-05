@@ -566,7 +566,7 @@ class Cheek:
         # connect attribute cheek  joint parent to cheek parent controller
         au.connect_attr_object(cheekJointParentZro, cheekParentCtrlZro)
         # au.connectAttrScale(cheekJointParentZro, cheekParentCtrlOffset)
-        au.connectAttrTransRot(cheekJointParentOffset, cheekParentCtrlOffset)
+        au.connect_attr_translate_rotate(cheekJointParentOffset, cheekParentCtrlOffset)
 
         # connect attribute cheek controller to cheek  joint
         if not cheekInLow:
