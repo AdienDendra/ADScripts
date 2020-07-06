@@ -36,7 +36,7 @@ class Lip:
                  prefix_upLip_follow,
                  headLow_normal_rotationGrp,
                  base_module_nonTransform,
-                 parent_skin_mouth
+                 # parent_skin_mouth
                  ):
 
     # ==============================================================================================================
@@ -57,7 +57,8 @@ class Lip:
                          low_lip_controller=False,
                          suffix_controller=suffix_controller,
                          base_module_nonTransform=base_module_nonTransform,
-                         parent_skin=parent_skin_mouth)
+                         # parent_skin=parent_skin_mouth
+                         )
 
         # LOW LIP
         lowLip = lp.Build(curve_lip_template=curve_low_lip_template,
@@ -73,7 +74,7 @@ class Lip:
                           low_lip_controller=True,
                           suffix_controller=suffix_controller,
                           base_module_nonTransform=base_module_nonTransform,
-                          parent_skin=parent_skin_mouth
+                          # parent_skin=parent_skin_mouth
                           )
 
         self.low_bind_jnt = lowLip.jnt_mid

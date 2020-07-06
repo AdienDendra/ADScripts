@@ -17,8 +17,9 @@ class listSkeletonDuplicate:
                  origin_prefix='',
                  ):
 
-        hide = mc.ls(type='joint')
-        mc.hide(hide)
+        # hide = mc.ls(type='joint')
+        # mc.hide(hide)
+        mc.hide('tmpJnt_grp')
 
         # DUPLICATE SKELETON
         sj = ts.list_skeleton_dic(obj_duplicate='rootTmp_jnt',

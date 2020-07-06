@@ -19,7 +19,8 @@ class Build:
                  scale, side_LFT, side_RGT, side, offset_jnt02_position, offset_jnt04_position,
                  lid01_direction, lid02_direction, lid03_direction, lid04_direction, lid05_direction,
                  ctrl_color, lid_low_controller, upper_head_gimbal_ctrl, suffix_controller, base_module_nonTransform,
-                 parent_skin):
+                 # parent_skin
+                 ):
 
         self.position_eyeball_jnt = mc.xform(eyeball_jnt, q=1, ws=1, t=1)[0]
 
@@ -34,7 +35,8 @@ class Build:
         self.create_joint_lid(curve=curve, world_up_object=world_up_object, scale=scale, eye_jnt=eyeball_jnt,
                               side_LFT=side_LFT, side_RGT=side_RGT, side=side, ctrl_color=ctrl_color,
                               upper_head_gimbal_ctrl=upper_head_gimbal_ctrl, suffix_controller=suffix_controller,
-                              parent_skin=parent_skin)
+                              # parent_skin=parent_skin
+                              )
 
         self.wire_bind_curve(side_LFT=side_LFT, side_RGT=side_RGT, curve=curve, scale=scale, side=side,
                              lid01_direction=lid01_direction, eye_jnt=eyeball_jnt, lid03_direction=lid03_direction,
@@ -500,7 +502,8 @@ class Build:
 
     def create_joint_lid(self, curve, world_up_object, eye_jnt, scale, side_RGT, side_LFT, side, ctrl_color,
                          upper_head_gimbal_ctrl,
-                         suffix_controller, parent_skin
+                         suffix_controller,
+                         # parent_skin
                          ):
         self.all_joint_center = []
         self.all_joint = []

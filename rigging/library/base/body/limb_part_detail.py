@@ -234,7 +234,7 @@ class CreateDetail:
         self.follicle_grp_offset = []
         self.follicle_ctrl      = []
         self.follicle_joint_limb = []
-        self.joint_skin         = []
+        # self.joint_skin         = []
 
         for i, fol_s in enumerate(follicle_s['follicle']):
             mc.connectAttr(decompose_matrix_node + '.outputScale', fol_s + '.scale')
@@ -260,9 +260,9 @@ class CreateDetail:
             mc.select(clear=True)
 
             # Create joint for follicle
-            follicle_joint = mc.joint(name='%s_%s' % (au.prefix_name(fol_s), 'jnt'), radius=1.0)
+            follicle_joint = mc.joint(name='%s_%s' % (au.prefix_name(fol_s), 'skn'), radius=0.1*scale)
             self.follicle_joint_limb.append(follicle_joint)
-            mc.hide(follicle_joint)
+            # mc.hide(follicle_joint)
 
             # Create control for joint in follicle
             follicle_ctrl = ct.Control(prefix=prefix + ('%02d' % (i + 1)), groups_ctrl=['Zro', 'Twist', 'Offset']
@@ -287,12 +287,12 @@ class CreateDetail:
             # hide joint
             mc.setAttr(follicle_joint + '.visibility', 0)
 
-            # SKINNING JOINT
-            skinning_joint = mc.joint(name='%s_%s' % (au.prefix_name(fol_s), 'skn'), radius=0.1 * scale)
-            self.joint_skin.append(skinning_joint)
-
-            # COSNTRAINT SKIN
-            au.parent_scale_constraint(follicle_joint, skinning_joint)
+            # # SKINNING JOINT
+            # skinning_joint = mc.joint(name='%s_%s' % (au.prefix_name(fol_s), 'skn'), radius=0.1 * scale)
+            # self.joint_skin.append(skinning_joint)
+            #
+            # # COSNTRAINT SKIN
+            # au.parent_scale_constraint(follicle_joint, skinning_joint)
 
     # ==================================================================================================================
     #                                               TWIST DEFORM

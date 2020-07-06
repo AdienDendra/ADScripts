@@ -127,32 +127,39 @@ def build_rig(
     MidF = 'Mid'
     LowF = 'Low'
 
-    global base_controller
+    # global base_controller
     if not mc.objExists('animGmbl_ctrl'):
         base_controller = bs.Base(scale=scale)
         face_non_transform_grp = base_controller.face_non_transform_grp
         face_controller_grp = base_controller.face_controller_grp
+        face_joint_grp = base_controller.face_joint_grp
+
     else:
         face_non_transform_grp = 'faceNonTransform_grp'
         face_controller_grp = 'faceCtrl_grp'
+        face_joint_grp ='faceJoint_grp'
 
 # ======================================================================================================================
 #                                              DUPLICATE JOINTS AS DRIVER
 # ======================================================================================================================
     sj = tm.listSkeletonDuplicate(value_prefix='',
                                   key_prefix='Ori',
-                                  suffix=suffix_joint,
+                                  suffix='skn',
                                   side_LFT=side_LFT,
                                   side_RGT=side_RGT
                                   )
-    skn = tm.listSkeletonDuplicate(value_prefix='',
-                                  key_prefix='Skin',
-                                  suffix='skn',
-                                  side_LFT=side_LFT,
-                                  side_RGT=side_RGT)
+    # skn = tm.listSkeletonDuplicate(value_prefix='',
+    #                               key_prefix='Skin',
+    #                               suffix='skn',
+    #                               side_LFT=side_LFT,
+    #                               side_RGT=side_RGT)
 
-    mc.parent(sj.neck, skn.neck, world=True)
-    mc.delete(sj.root, skn.root)
+    mc.parent(sj.neck,
+              # skn.neck,
+              world=True)
+    mc.delete(sj.root,
+              # skn.root
+              )
 
     # ROTATE EYE JNT
     mc.setAttr(sj.eyeball_LFT + '.rotateY', eye_ctrl_direction)
@@ -201,18 +208,18 @@ def build_rig(
                    tongue04_jnt=sj.tongue04,
                    scale=scale,
                    suffix_controller=suffix_controller,
-                   neck_skn=skn.neck,
-                   neck_in_btw_skn=skn.neckIn_Btw,
-                   head_skn=skn.head,
-                   jaw_skn=skn.jaw,
-                   head_up_skn=skn.head_up,
-                   head_low_skn=skn.head_low,
-                   upper_teeth_skn=skn.upper_teeth,
-                   lower_teeth_skn=skn.lower_teeth,
-                   tongue01_skn=skn.tongue01,
-                   tongue02_skn=skn.tongue02,
-                   tongue03_skn=skn.tongue03,
-                   tongue04_skn=skn.tongue04
+                   # neck_skn=skn.neck,
+                   # neck_in_btw_skn=skn.neckIn_Btw,
+                   # head_skn=skn.head,
+                   # jaw_skn=skn.jaw,
+                   # head_up_skn=skn.head_up,
+                   # head_low_skn=skn.head_low,
+                   # upper_teeth_skn=skn.upper_teeth,
+                   # lower_teeth_skn=skn.lower_teeth,
+                   # tongue01_skn=skn.tongue01,
+                   # tongue02_skn=skn.tongue02,
+                   # tongue03_skn=skn.tongue03,
+                   # tongue04_skn=skn.tongue04
                    )
 
     print ('10% | head is done!')
@@ -240,7 +247,8 @@ def build_rig(
                  prefix_upLip_follow=head.attr_upLip_follow,
                  headLow_normal_rotationGrp=head.headLow_normal_rotationGrp,
                  base_module_nonTransform=face_non_transform_grp,
-                 parent_skin_mouth=skn.mouth)
+                 # parent_skin_mouth=skn.mouth
+                 )
 
     print ('15% | lip is done!')
     # ==================================================================================================================
@@ -248,10 +256,10 @@ def build_rig(
     # ==================================================================================================================
     nose = nm.Nose(face_utils_grp=face_non_transform_grp,
                    columella_jnt=sj.columella,
-                   columella_skn=skn.columella,
+                   # columella_skn=skn.columella,
                    nose_jnt=sj.nose,
                    nose_up_jnt=sj.nose_up,
-                   nose_up_skin=skn.nose_up,
+                   # nose_up_skin=skn.nose_up,
                    columella_prefix=columella_prefix,
                    curve_template_nose=curve_template_nose,
                    offset_jnt02_bind_position=offset_jnt02_bind_lip_nose_position,
@@ -281,7 +289,9 @@ def build_rig(
                    jaw_ctrl= head.jaw_ctrl,
                    suffix_controller=suffix_controller,
                    base_module_nonTransform=face_non_transform_grp,
-                   parent_skin_nose=skn.nose)
+                   # parent_skin_nose=skn.nose
+                   )
+
 
     print ('25% | nose is done!')
     # ==================================================================================================================
@@ -326,13 +336,13 @@ def build_rig(
                          head_up_ctrl=head.head_up_ctrl,
                          head_low_ctrl=head.head_low_ctrl,
                          suffix_controller=suffix_controller,
-                         cheek_low_skn=skn.cheek_low_LFT,
-                         cheek_mid_skn=skn.cheek_mid_LFT,
-                         cheek_up_skn=skn.cheek_up_LFT,
-                         cheek_in_up_skn=skn.cheek_in_up_LFT,
-                         cheek_in_low_skn=skn.cheek_in_low_LFT,
-                         cheek_out_up_skn=skn.cheek_out_up_LFT,
-                         cheek_out_low_skn=skn.cheek_out_low_LFT,
+                         # cheek_low_skn=skn.cheek_low_LFT,
+                         # cheek_mid_skn=skn.cheek_mid_LFT,
+                         # cheek_up_skn=skn.cheek_up_LFT,
+                         # cheek_in_up_skn=skn.cheek_in_up_LFT,
+                         # cheek_in_low_skn=skn.cheek_in_low_LFT,
+                         # cheek_out_up_skn=skn.cheek_out_up_LFT,
+                         # cheek_out_low_skn=skn.cheek_out_low_LFT,
                          )
 
     print ('30% | left cheek is done!')
@@ -375,13 +385,13 @@ def build_rig(
                           head_up_ctrl=head.head_up_ctrl,
                           head_low_ctrl=head.head_low_ctrl,
                           suffix_controller=suffix_controller,
-                          cheek_low_skn=skn.cheek_low_RGT,
-                          cheek_mid_skn=skn.cheek_mid_RGT,
-                          cheek_up_skn=skn.cheek_up_RGT,
-                          cheek_in_up_skn=skn.cheek_in_up_RGT,
-                          cheek_in_low_skn=skn.cheek_in_low_RGT,
-                          cheek_out_up_skn=skn.cheek_out_up_RGT,
-                          cheek_out_low_skn=skn.cheek_out_low_RGT,
+                          # cheek_low_skn=skn.cheek_low_RGT,
+                          # cheek_mid_skn=skn.cheek_mid_RGT,
+                          # cheek_up_skn=skn.cheek_up_RGT,
+                          # cheek_in_up_skn=skn.cheek_in_up_RGT,
+                          # cheek_in_low_skn=skn.cheek_in_low_RGT,
+                          # cheek_out_up_skn=skn.cheek_out_up_RGT,
+                          # cheek_out_low_skn=skn.cheek_out_low_RGT,
                           )
 
     print ('40% | right cheek is done!')
@@ -391,7 +401,7 @@ def build_rig(
     # ==================================================================================================================
     earLeft = er.Ear(scale=scale,
                      ear_jnt=sj.ear_LFT,
-                     ear_skn=skn.ear_LFT,
+                     # ear_skn=skn.ear_LFT,
                      ear_prefix=ear_prefix,
                      head_ctrl_gimbal=head.head_ctrl_gimbal,
                      side=side_LFT,
@@ -401,7 +411,7 @@ def build_rig(
 
     earRight = er.Ear(scale=scale,
                       ear_jnt=sj.ear_RGT,
-                      ear_skn=skn.ear_RGT,
+                      # ear_skn=skn.ear_RGT,
                       ear_prefix=ear_prefix,
                       head_ctrl_gimbal=head.head_ctrl_gimbal,
                       side=side_RGT,
@@ -414,8 +424,8 @@ def build_rig(
     chin = ch.Chin(mentolabial_jnt=sj.mentolabial,
                    mentolabial_prefix=mentolabial_prefix,
                    chin_jnt=sj.chin,
-                   chin_skn=skn.chin,
-                   mentolabial_skn=skn.mentolabial,
+                   # chin_skn=skn.chin,
+                   # mentolabial_skn=skn.mentolabial,
                    chin_prefix=chin_prefix,
                    scale=scale,
                    face_anim_ctrl_grp=face_controller_grp,
@@ -438,7 +448,7 @@ def build_rig(
                         offset_lid04_position=lid04_position_offset,
                         eyeball_jnt=sj.eyeball_LFT,
                         eye_jnt=sj.eye_LFT,
-                        eye_skin=skn.eye_LFT,
+                        # eye_skin=skn.eye_LFT,
                         suffix_controller=suffix_controller,
                         prefix_eye=eye_prefix,
                         prefix_eye_aim=eye_aim_prefix,
@@ -467,10 +477,10 @@ def build_rig(
                         iris_prefix=iris_prefix,
                         eye_ctrl_direction=eye_ctrl_direction,
                         base_module_nonTransform=face_non_transform_grp,
-                        pupil_skn=skn.pupil_LFT,
-                        iris_skn=skn.iris_LFT,
-                        eyeball_skn=skn.eyeball_LFT,
-                        parent_skin_detail_lid=jntDQBase
+                        # pupil_skn=skn.pupil_LFT,
+                        # iris_skn=skn.iris_LFT,
+                        # eyeball_skn=skn.eyeball_LFT,
+                        # parent_skin_detail_lid=jntDQBase
                         )
 
     print ('60% | left eyelid is done!')
@@ -483,7 +493,7 @@ def build_rig(
                          offset_lid04_position=lid04_position_offset,
                          eyeball_jnt=sj.eyeball_RGT,
                          eye_jnt=sj.eye_RGT,
-                         eye_skin=skn.eye_RGT,
+                         # eye_skin=skn.eye_RGT,
                          suffix_controller=suffix_controller,
                          prefix_eye=eye_prefix,
                          prefix_eye_aim=eye_aim_prefix,
@@ -512,10 +522,10 @@ def build_rig(
                          iris_prefix=iris_prefix,
                          eye_ctrl_direction=eye_ctrl_direction,
                          base_module_nonTransform=face_non_transform_grp,
-                         pupil_skn=skn.pupil_RGT,
-                         iris_skn=skn.iris_RGT,
-                         eyeball_skn=skn.eyeball_RGT,
-                         parent_skin_detail_lid=jntDQBase
+                         # pupil_skn=skn.pupil_RGT,
+                         # iris_skn=skn.iris_RGT,
+                         # eyeball_skn=skn.eyeball_RGT,
+                         # parent_skin_detail_lid=jntDQBase
                          )
 
     print ('70% | right eyelid is done!')
@@ -568,7 +578,8 @@ def build_rig(
                            eye_ctrl_direction=eye_ctrl_direction,
                            suffix_controller=suffix_controller,
                            base_module_nonTransform=face_non_transform_grp,
-                           parent_skin_eye=skn.eye_LFT)
+                           # parent_skin_eye=skn.eye_LFT
+                           )
 
     print ('80% | left lid out is done!')
 
@@ -616,7 +627,8 @@ def build_rig(
                             eye_ctrl_direction=eye_ctrl_direction,
                             suffix_controller=suffix_controller,
                             base_module_nonTransform=face_non_transform_grp,
-                            parent_skin_eye=skn.eye_RGT)
+                            # parent_skin_eye=skn.eye_RGT
+                            )
     print ('90% | right lid out is done!')
 
     # ==================================================================================================================
@@ -634,16 +646,16 @@ def build_rig(
                       brow_out_jnt_RGT=sj.brow_out_RGT,
                       brow_tip_jnt_RGT=sj.brow_tip_RGT,
                       brow_center_jnt=sj.brow_center,
-                      brow_tweak_skin_LFT=skn.brow_tweak_LFT,
-                      brow_in_skin_LFT=skn.brow_in_LFT,
-                      brow_mid_skin_LFT=skn.brow_mid_LFT,
-                      brow_out_skin_LFT=skn.brow_out_LFT,
-                      brow_tip_skin_LFT=skn.brow_tip_LFT,
-                      brow_tweak_skin_RGT=skn.brow_tweak_RGT,
-                      brow_in_skin_RGT=skn.brow_in_RGT,
-                      brow_mid_skin_RGT=skn.brow_mid_RGT,
-                      brow_out_skin_RGT=skn.brow_out_RGT,
-                      brow_tip_skin_RGT=skn.brow_tip_RGT,
+                      # brow_tweak_skin_LFT=skn.brow_tweak_LFT,
+                      # brow_in_skin_LFT=skn.brow_in_LFT,
+                      # brow_mid_skin_LFT=skn.brow_mid_LFT,
+                      # brow_out_skin_LFT=skn.brow_out_LFT,
+                      # brow_tip_skin_LFT=skn.brow_tip_LFT,
+                      # brow_tweak_skin_RGT=skn.brow_tweak_RGT,
+                      # brow_in_skin_RGT=skn.brow_in_RGT,
+                      # brow_mid_skin_RGT=skn.brow_mid_RGT,
+                      # brow_out_skin_RGT=skn.brow_out_RGT,
+                      # brow_tip_skin_RGT=skn.brow_tip_RGT,
                       brow_tweak_prefix=brow_tweak_prefix,
                       brow_in_prefix=brow_in_prefix,
                       brow_mid_prefix=brow_mid_prefix,
@@ -781,12 +793,15 @@ def build_rig(
     mc.parent(head.neck_ctrl_grp, setupCtrl.parent_control[0], 'faceAnim_grp')
     mc.parent(head.world_up_grp, 'faceUtils_grp')
 
-    if mc.objExists('spine04_skn'):
-        mc.parent(skn.neck, 'spine04_skn')
-    else:
-        mc.parent(skn.neck, base_controller.skin_grp)
+    # CONSTRAINT NECK JOINT AND CONTROLLER WITH SPINE 04 SKIN JOINT
 
-    # UNHIDE AND SEGMENT SCALE
+    if mc.objExists('spine04_skn'):
+        mc.parent(head.neck_jnt_grp, 'spine04_skn')
+        au.parent_scale_constraint('spine04_skn', head.neck_ctrl_grp, mo=1)
+    else:
+        mc.parent(sj.neck, face_joint_grp)
+
+    # UNHIDE SKIN JOINT
     unhide = mc.ls('*skn')
     for i in unhide:
         try:
@@ -794,10 +809,30 @@ def build_rig(
                 pass
             else:
                 mc.setAttr(i + '.visibility', 1)
-                mc.setAttr(i + '.segmentScaleCompensate', 0)
         except:
             pass
+    # CREATE SET LINEAR JOINT SKIN
+    sets_LN = mc.sets(sj.neck, n='FACE_SKIN_LN')
+    mc.setAttr(sj.neck + '.visibility', 1)
 
-    return {'neckJntGrp' :head.neck_jnt_grp,
-            'neckCtrlZroGrp' : head.neck_ctrl_grp,
-            'sj': sj}
+    for i in (sj.head, sj.head_up, sj.head_low, sj.jaw, sj.mentolabial, sj.chin, sj.brow_center,
+              sj.cheek_in_up_LFT, sj.cheek_in_low_LFT, sj.cheek_up_LFT, sj.cheek_mid_LFT, sj.cheek_low_LFT, sj.cheek_out_up_LFT,
+              sj.cheek_out_low_LFT, sj.cheek_in_up_RGT, sj.cheek_in_low_RGT, sj.cheek_up_RGT, sj.cheek_mid_RGT, sj.cheek_low_RGT,
+              sj.cheek_out_up_RGT, sj.cheek_out_low_RGT, sj.brow_in_LFT, sj.brow_mid_LFT, sj.brow_out_LFT, sj.brow_tip_LFT,
+              sj.brow_in_RGT, sj.brow_mid_RGT, sj.brow_out_RGT, sj.brow_tip_RGT, sj.nose_up, sj.columella, sj.eye_LFT, sj.eye_RGT,
+              sj.ear_LFT, sj.ear_RGT, sj.neckIn_Btw):
+        mc.sets(i, add=sets_LN)
+        mc.setAttr(i + '.visibility', 1)
+
+    for i in list(set(nose.all_joint+ lip.all_up_lip_joint + lip.all_low_lip_joint+ leftLidOut.lid_out_up_jnt+
+                      leftLidOut.lid_out_low_jnt+ rightLidOut.lid_out_up_jnt+ rightLidOut.lid_out_low_jnt)):
+        mc.sets(i, add=sets_LN)
+        mc.setAttr(i + '.visibility', 1)
+
+    # SETS DQ JOINT SKIN
+    sets_DQ = mc.sets(jntDQBase, n='FACE_SKIN_DQ')
+    mc.setAttr(jntDQBase + '.visibility', 1)
+
+    for i in list(set(leftEyelid.up_lid_all_jnt+ leftEyelid.low_lid_all_jnt+
+                   rightEyelid.up_lid_all_jnt+ rightEyelid.low_lid_all_jnt)):
+        mc.sets(i, add=sets_DQ)

@@ -17,11 +17,11 @@ class Build:
                  brow_mid_jnt,
                  brow_out_jnt,
                  brow_tip_jnt,
-                 brow_tweak_skin,
-                 brow_in_skin,
-                 brow_mid_skin,
-                 brow_out_skin,
-                 brow_tip_skin,
+                 # brow_tweak_skin,
+                 # brow_in_skin,
+                 # brow_mid_skin,
+                 # brow_out_skin,
+                 # brow_tip_skin,
                  brow_tw_prefix,
                  brow_in_prefix,
                  brow_mid_prefix,
@@ -273,13 +273,13 @@ class Build:
                   self.brow_tip_center_ctrl_grp, self.brow_ctrl_grp,
                   self.brow_all_ctrl_grp)
 
-        # CONSTRAINT SKIN
-
-        au.parent_scale_constraint(brow_tweak_jnt, brow_tweak_skin)
-        au.parent_scale_constraint(brow_in_jnt, brow_in_skin)
-        au.parent_scale_constraint(brow_mid_jnt, brow_mid_skin)
-        au.parent_scale_constraint(brow_out_jnt, brow_out_skin)
-        au.parent_scale_constraint(brow_tip_jnt, brow_tip_skin)
+        # # CONSTRAINT SKIN
+        #
+        # au.parent_scale_constraint(brow_tweak_jnt, brow_tweak_skin)
+        # au.parent_scale_constraint(brow_in_jnt, brow_in_skin)
+        # au.parent_scale_constraint(brow_mid_jnt, brow_mid_skin)
+        # au.parent_scale_constraint(brow_out_jnt, brow_out_skin)
+        # au.parent_scale_constraint(brow_tip_jnt, brow_tip_skin)
 
     def reverse_node(self, object, target_jnt, side_RGT, side_LFT, side, input_trans2X=-1, input_trans2Y=1,
                      input_trans2Z=1,

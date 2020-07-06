@@ -28,7 +28,8 @@ class Build:
                  low_lip_controller,
                  suffix_controller,
                  base_module_nonTransform,
-                 parent_skin):
+                 # parent_skin
+                 ):
 
         # DUPLICATE CURVE THEN RENAME
         curve_lip_new = au.obj_duplicate_then_rename(obj_duplicate=curve_lip_template, suffix='crv')[1]
@@ -43,7 +44,8 @@ class Build:
         self.curve_vertex = mc.ls('%s.cv[0:*]' % curve_lip, fl=True)
 
         self.create_joint_lip(curve=curve_lip, scale=scale, ctrl_color=ctrl_color, suffix_controller=suffix_controller,
-                              parent_skin=parent_skin)
+                              # parent_skin=parent_skin
+                              )
 
         self.create_reset_mouth_position_grp(mouth_base_jnt=mouth_jnt)
 
@@ -588,7 +590,9 @@ class Build:
             au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, jnt_grp)
             au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, loc_offset)
 
-    def create_joint_lip(self, curve, scale, ctrl_color, suffix_controller, parent_skin):
+    def create_joint_lip(self, curve, scale, ctrl_color, suffix_controller,
+                         # parent_skin
+                         ):
         self.all_joint =[]
         # self.all_skin=[]
         self.locator_group_offset=[]

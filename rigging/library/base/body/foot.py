@@ -130,4 +130,5 @@ class Build:
         joint = mc.joint(n='%s%s%s_jnt' % (prefix, obj_name, side), rad=0.1 * scale)
         mc.delete(mc.parentConstraint(joint_constraint, joint))
         mc.makeIdentity(joint, apply=True, t=1, r=1, s=1, n=0)
+        mc.hide(joint)
         return joint

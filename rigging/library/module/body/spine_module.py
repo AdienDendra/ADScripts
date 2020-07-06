@@ -24,9 +24,9 @@ class Spine:
                  pelvis_jnt=None,
                  root_jnt=None,
                  detail_spine_deformer=True,
-                 skin_root_jnt=None,
-                 skin_pelvis_jnt=None,
-                 skin_spine_jnt=None,
+                 # skin_root_jnt=None,
+                 # skin_pelvis_jnt=None,
+                 # skin_spine_jnt=None,
                  single_module=True,
                  size= 1.0
                  ):
@@ -58,32 +58,35 @@ class Spine:
                                        sFk_prefix_value='ModSpineFk', sIk_prefix_value='ModSpineIk',
                                        sAdd_prefix_value='ModSpineShape')
             sj = skeleton['sj']
-            sSkn = skeleton['sSkn']
             sFk = skeleton['sFk']
             sIk = skeleton['sIk']
             ss = skeleton['ss']
             sTwistHelp = skeleton['sTwistHelp']
             sAdd = skeleton['sAdd']
             self.module(prefix=prefix, prefix_spine_setup=prefix_spine_setup, base_controller=base_controller,
-                        spine_jnt=sj.spineList, pelvis_jnt=sj.pelvis, root_jnt=sj.root,
-                        detail_spine_deformer=detail_spine_deformer, skin_root_jnt=sSkn.root, skin_pelvis_jnt=sSkn.pelvis,
-                        skin_spine_jnt=sSkn.spineList, size=size, part=part)
+                        spine_jnt=sj.spine_list, pelvis_jnt=sj.pelvis, root_jnt=sj.root,
+                        detail_spine_deformer=detail_spine_deformer,
+                        # skin_root_jnt=sSkn.root, skin_pelvis_jnt=sSkn.pelvis,
+                        # skin_spine_jnt=sSkn.spineList,
+                        size=size, part=part)
 
-            # parent skin into skin group
-            mc.parent(sSkn.root, base_controller.skinGrp)
+            # # parent skin into skin group
+            # mc.parent(sj.root, base_controller.skinGrp)
 
             mc.delete(sFk.root, ss.root, sIk.root, sTwistHelp.root, sAdd.root,
-                      sj.clav_RGT, sj.clav_LFT, sj.neck, sj.upLeg_LFT, sj.upLeg_RGT, sSkn.upLeg_RGT, sSkn.upLeg_LFT,
-                      sSkn.clav_LFT, sSkn.clav_RGT, sSkn.neck)
+                      sj.clav_RGT, sj.clav_LFT, sj.neck, sj.upLeg_LFT, sj.upLeg_RGT)
         else:
             self.module(prefix=prefix, prefix_spine_setup=prefix_spine_setup, base_controller=base_controller,
                         spine_jnt=spine_jnt,
                         pelvis_jnt=pelvis_jnt, root_jnt=root_jnt, detail_spine_deformer=detail_spine_deformer,
-                        skin_root_jnt=skin_root_jnt,
-                        skin_pelvis_jnt=skin_pelvis_jnt, skin_spine_jnt=skin_spine_jnt, size=size, part=part)
+                        # skin_root_jnt=skin_root_jnt,
+                        # skin_pelvis_jnt=skin_pelvis_jnt, skin_spine_jnt=skin_spine_jnt,
+                        size=size, part=part)
 
-    def module(self, prefix, prefix_spine_setup, base_controller, spine_jnt, pelvis_jnt, root_jnt, detail_spine_deformer,
-               skin_root_jnt, skin_pelvis_jnt, skin_spine_jnt, size, part):
+    def module(self, prefix, prefix_spine_setup, base_controller, spine_jnt, pelvis_jnt, root_jnt,
+               detail_spine_deformer,
+               # skin_root_jnt, skin_pelvis_jnt, skin_spine_jnt,
+               size, part):
         # ==================================================================================================================
         #                                                  IMPORT SPINE MODULE
         # ==================================================================================================================
@@ -152,13 +155,13 @@ class Spine:
         # scale the spine part
         self.spine_part_scale(build_spine.controller_FkIk_spine_setup.control, detail_spine.follicle_grp_zro)
 
-        # CREATE JOINT SKIN AND CONNECTING
-        au.parent_scale_constraint(root_jnt, skin_root_jnt)
-        au.parent_scale_constraint(pelvis_jnt, skin_pelvis_jnt)
-        au.parent_scale_constraint(spine_jnt[0], skin_spine_jnt[0])
-        au.parent_scale_constraint(spine_jnt[1], skin_spine_jnt[1])
-        au.parent_scale_constraint(spine_jnt[2], skin_spine_jnt[2])
-        au.parent_scale_constraint(spine_jnt[3], skin_spine_jnt[3])
+        # # CREATE JOINT SKIN AND CONNECTING
+        # au.parent_scale_constraint(root_jnt, skin_root_jnt)
+        # au.parent_scale_constraint(pelvis_jnt, skin_pelvis_jnt)
+        # au.parent_scale_constraint(spine_jnt[0], skin_spine_jnt[0])
+        # au.parent_scale_constraint(spine_jnt[1], skin_spine_jnt[1])
+        # au.parent_scale_constraint(spine_jnt[2], skin_spine_jnt[2])
+        # au.parent_scale_constraint(spine_jnt[3], skin_spine_jnt[3])
 
     def spine_part_scale(self, controller, groupScale):
         # LIMB SCALE

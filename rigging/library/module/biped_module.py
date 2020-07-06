@@ -45,14 +45,14 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 # ======================================================================================================================
     sj = sd.listSkeletonDuplicate(value_prefix=sj_prefix_value,
                                   key_prefix='Ori',
-                                  suffix=suffix_joint,
+                                  suffix='skn',
                                   side_LFT=side_LFT,
                                   side_RGT=side_RGT
                                   )
 
     ss = sd.listSkeletonDuplicate(value_prefix=ss_prefix_value,
                                   key_prefix='Scl',
-                                  suffix=suffix_joint,
+                                  suffix='skn',
                                   side_LFT=side_LFT,
                                   side_RGT=side_RGT
                                   )
@@ -84,17 +84,22 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                                     side_RGT=side_RGT
                                     )
 
-    sSkn= sd.listSkeletonDuplicate(value_prefix='',
-                                   key_prefix='Skin',
-                                   suffix='skn',
-                                   side_LFT=side_LFT,
-                                   side_RGT=side_RGT
-                                   )
+    # sSkn= sd.listSkeletonDuplicate(value_prefix='',
+    #                                key_prefix='Skin',
+    #                                suffix='skn',
+    #                                side_LFT=side_LFT,
+    #                                side_RGT=side_RGT
+    #                                )
 
     # parent skin into skin group
-    mc.parent(sSkn.root, base.skin_grp)
+    # mc.parent(sSkn.root, base.skin_grp)
 
-    print ('5%  | skeleton duplicated is done!')
+    # print ('5%  | skeleton duplicated is done!')
+    # # RENAME ANKLE, CLAVICLE, BALL SCALE JOINT
+    # list_rename = [ss.ankle_LFT, ss.ankle_RGT, ss.clav_LFT, ss.clav_RGT, ss.ball_LFT, ss.ball_RGT]
+    # for item in list_rename:
+    #     replace = item.replace(suffix_joint, 'skn')
+    #     mc.rename(item, replace)
 
 # ======================================================================================================================
 #                                                     SPINE PARAMETERS
@@ -107,9 +112,9 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                      spine_jnt= sj.spine_list,
                      pelvis_jnt= sj.pelvis,
                      root_jnt= sj.root,
-                     skin_root_jnt=sSkn.root,
-                     skin_pelvis_jnt=sSkn.pelvis,
-                     skin_spine_jnt= sSkn.spine_list,
+                     # skin_root_jnt=sSkn.root,
+                     # skin_pelvis_jnt=sSkn.pelvis,
+                     # skin_spine_jnt= sSkn.spine_list,
                      single_module=False,
                      )
 
@@ -119,7 +124,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 #                                                  LEFT CLAVICLE PARAMETERS
 # ======================================================================================================================
     clavLFT = cm.Clavicle(clavicle=clavicle_left,
-                          skin_joint_clavicle=sSkn.clav_LFT,
+                          # skin_joint_clavicle=sSkn.clav_LFT,
                           prefix=prefix_clav,
                           side=side_LFT,
                           base_controller=base,
@@ -136,7 +141,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 #                                                   RIGHT CLAVICLE PARAMETERS
 # ======================================================================================================================
     clavRGT = cm.Clavicle(clavicle=clavicle_right,
-                          skin_joint_clavicle=sSkn.clav_RGT,
+                          # skin_joint_clavicle=sSkn.clav_RGT,
                           prefix=prefix_clav,
                           side=side_RGT,
                           base_controller=base,
@@ -194,9 +199,9 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                      prefix_middle_limb_detail=prefix_forearm + detail,
                      size=scale,
                      singleModule=False,
-                     skin_upper_limb_jnt=sSkn.upArm_LFT,
-                     skin_middle_limb_jnt=sSkn.forearm_LFT,
-                     skin_lower_limb_jnt=sSkn.wrist_LFT,
+                     # skin_upper_limb_jnt=sSkn.upArm_LFT,
+                     # skin_middle_limb_jnt=sSkn.forearm_LFT,
+                     # skin_lower_limb_jnt=sSkn.wrist_LFT,
                      )
     print ('25% | left arm is done!')
 
@@ -245,9 +250,9 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                      prefix_middle_limb_detail=prefix_forearm + detail,
                      size=scale,
                      singleModule=False,
-                     skin_upper_limb_jnt=sSkn.upArm_RGT,
-                     skin_middle_limb_jnt=sSkn.forearm_RGT,
-                     skin_lower_limb_jnt=sSkn.wrist_RGT,
+                     # skin_upper_limb_jnt=sSkn.upArm_RGT,
+                     # skin_middle_limb_jnt=sSkn.forearm_RGT,
+                     # skin_lower_limb_jnt=sSkn.wrist_RGT,
                      )
 
     print ('30% | right arm is done!')
@@ -265,10 +270,10 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       thumb_finger_base=sj.thumb1_LFT,
                       thumb_finger_up=sj.thumb2_LFT,
                       thumb_finger_mid=sj.thumb3_LFT,
-                      skin_thumb_finger_base=sSkn.thumb1_LFT,
-                      skin_thumb_finger_up=sSkn.thumb2_LFT,
-                      skin_thumb_finger_mid=sSkn.thumb3_LFT,
-                      skin_thumb_finger_end=sSkn.thumb4_LFT,
+                      # skin_thumb_finger_base=sSkn.thumb1_LFT,
+                      # skin_thumb_finger_up=sSkn.thumb2_LFT,
+                      # skin_thumb_finger_mid=sSkn.thumb3_LFT,
+                      # skin_thumb_finger_end=sSkn.thumb4_LFT,
                       prefix_thumb_finger_base=prefix_thumb + BaseF,
                       prefix_thumb_finger_up=prefix_thumb + UpF,
                       prefix_thumb_finger_mid=prefix_thumb + MidF,
@@ -276,11 +281,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       index_finger_up=sj.index2_LFT,
                       index_finger_mid=sj.index3_LFT,
                       index_finger_low=sj.index4_LFT,
-                      skin_index_finger_base=sSkn.index1_LFT,
-                      skin_index_finger_up=sSkn.index2_LFT,
-                      skin_index_finger_mid=sSkn.index3_LFT,
-                      skin_index_finger_low=sSkn.index4_LFT,
-                      skin_index_finger_end=sSkn.index5_LFT,
+                      # skin_index_finger_base=sSkn.index1_LFT,
+                      # skin_index_finger_up=sSkn.index2_LFT,
+                      # skin_index_finger_mid=sSkn.index3_LFT,
+                      # skin_index_finger_low=sSkn.index4_LFT,
+                      # skin_index_finger_end=sSkn.index5_LFT,
                       prefix_index_finger_base=prefix_index + BaseF,
                       prefix_index_finger_up=prefix_index + UpF,
                       prefix_index_finger_mid=prefix_index + MidF,
@@ -289,11 +294,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       middle_finger_up=sj.middle2_LFT,
                       middle_finger_mid=sj.middle3_LFT,
                       middle_finger_low=sj.middle4_LFT,
-                      skin_middle_finger_base=sSkn.middle1_LFT,
-                      skin_middle_finger_up=sSkn.middle2_LFT,
-                      skin_middle_finger_mid=sSkn.middle3_LFT,
-                      skin_middle_finger_low=sSkn.middle4_LFT,
-                      skin_middle_finger_end=sSkn.middle5_LFT,
+                      # skin_middle_finger_base=sSkn.middle1_LFT,
+                      # skin_middle_finger_up=sSkn.middle2_LFT,
+                      # skin_middle_finger_mid=sSkn.middle3_LFT,
+                      # skin_middle_finger_low=sSkn.middle4_LFT,
+                      # skin_middle_finger_end=sSkn.middle5_LFT,
                       prefix_middle_finger_base=prefix_middle + BaseF,
                       prefix_middle_finger_up=prefix_middle + UpF,
                       prefix_middle_finger_mid=prefix_middle + MidF,
@@ -302,11 +307,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       ring_finger_up=sj.ring2_LFT,
                       ring_finger_mid=sj.ring3_LFT,
                       ring_finger_low=sj.ring4_LFT,
-                      skin_ring_finger_base=sSkn.ring1_LFT,
-                      skin_ring_finger_up=sSkn.ring2_LFT,
-                      skin_ring_finger_mid=sSkn.ring3_LFT,
-                      skin_ring_finger_low=sSkn.ring4_LFT,
-                      skin_ring_finger_end=sSkn.ring5_LFT,
+                      # skin_ring_finger_base=sSkn.ring1_LFT,
+                      # skin_ring_finger_up=sSkn.ring2_LFT,
+                      # skin_ring_finger_mid=sSkn.ring3_LFT,
+                      # skin_ring_finger_low=sSkn.ring4_LFT,
+                      # skin_ring_finger_end=sSkn.ring5_LFT,
                       prefix_ring_finger_base=prefix_ring + BaseF,
                       prefix_ring_finger_up=prefix_ring + UpF,
                       prefix_ring_finger_mid=prefix_ring + MidF,
@@ -315,11 +320,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       pinky_finger_up=sj.pinky2_LFT,
                       pinky_finger_mid=sj.pinky3_LFT,
                       pinky_finger_low=sj.pinky4_LFT,
-                      skin_pinky_finger_base=sSkn.pinky1_LFT,
-                      skin_pinky_finger_up=sSkn.pinky2_LFT,
-                      skin_pinky_finger_mid=sSkn.pinky3_LFT,
-                      skin_pinky_finger_low=sSkn.pinky4_LFT,
-                      skin_pinky_finger_end=sSkn.pinky5_LFT,
+                      # skin_pinky_finger_base=sSkn.pinky1_LFT,
+                      # skin_pinky_finger_up=sSkn.pinky2_LFT,
+                      # skin_pinky_finger_mid=sSkn.pinky3_LFT,
+                      # skin_pinky_finger_low=sSkn.pinky4_LFT,
+                      # skin_pinky_finger_end=sSkn.pinky5_LFT,
                       prefix_pinky_finger_base=prefix_pinky + BaseF,
                       prefix_pinky_finger_up=prefix_pinky + UpF,
                       prefix_pinky_finger_mid=prefix_pinky + MidF,
@@ -327,10 +332,10 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       prefix_finger_setup=prefix_finger_setup,
                       prefix_palm=prefix_palm,
                       palm_jnt=sj.palm_LFT,
-                      skin_palm_jnt=sSkn.palm_LFT,
+                      # skin_palm_jnt=sSkn.palm_LFT,
                       wrist_jnt=sj.wrist_LFT,
                       hand_jnt=sj.hand_LFT,
-                      skin_hand_jnt=sSkn.hand_LFT,
+                      # skin_hand_jnt=sSkn.hand_LFT,
                       side=side_LFT,
                       size=scale)
 
@@ -349,10 +354,10 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       thumb_finger_base= sj.thumb1_RGT,
                       thumb_finger_up= sj.thumb2_RGT,
                       thumb_finger_mid= sj.thumb3_RGT,
-                      skin_thumb_finger_base=sSkn.thumb1_RGT,
-                      skin_thumb_finger_up=sSkn.thumb2_RGT,
-                      skin_thumb_finger_mid=sSkn.thumb3_RGT,
-                      skin_thumb_finger_end=sSkn.thumb4_RGT,
+                      # skin_thumb_finger_base=sSkn.thumb1_RGT,
+                      # skin_thumb_finger_up=sSkn.thumb2_RGT,
+                      # skin_thumb_finger_mid=sSkn.thumb3_RGT,
+                      # skin_thumb_finger_end=sSkn.thumb4_RGT,
                       prefix_thumb_finger_base=prefix_thumb + BaseF,
                       prefix_thumb_finger_up=prefix_thumb + UpF,
                       prefix_thumb_finger_mid=prefix_thumb + MidF,
@@ -360,11 +365,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       index_finger_up=sj.index2_RGT,
                       index_finger_mid=sj.index3_RGT,
                       index_finger_low=sj.index4_RGT,
-                      skin_index_finger_base=sSkn.index1_RGT,
-                      skin_index_finger_up=sSkn.index2_RGT,
-                      skin_index_finger_mid=sSkn.index3_RGT,
-                      skin_index_finger_low=sSkn.index4_RGT,
-                      skin_index_finger_end=sSkn.index5_RGT,
+                      # skin_index_finger_base=sSkn.index1_RGT,
+                      # skin_index_finger_up=sSkn.index2_RGT,
+                      # skin_index_finger_mid=sSkn.index3_RGT,
+                      # skin_index_finger_low=sSkn.index4_RGT,
+                      # skin_index_finger_end=sSkn.index5_RGT,
                       prefix_index_finger_base=prefix_index + BaseF,
                       prefix_index_finger_up=prefix_index + UpF,
                       prefix_index_finger_mid=prefix_index + MidF,
@@ -373,11 +378,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       middle_finger_up=sj.middle2_RGT,
                       middle_finger_mid=sj.middle3_RGT,
                       middle_finger_low=sj.middle4_RGT,
-                      skin_middle_finger_base=sSkn.middle1_RGT,
-                      skin_middle_finger_up=sSkn.middle2_RGT,
-                      skin_middle_finger_mid=sSkn.middle3_RGT,
-                      skin_middle_finger_low=sSkn.middle4_RGT,
-                      skin_middle_finger_end=sSkn.middle5_RGT,
+                      # skin_middle_finger_base=sSkn.middle1_RGT,
+                      # skin_middle_finger_up=sSkn.middle2_RGT,
+                      # skin_middle_finger_mid=sSkn.middle3_RGT,
+                      # skin_middle_finger_low=sSkn.middle4_RGT,
+                      # skin_middle_finger_end=sSkn.middle5_RGT,
                       prefix_middle_finger_base=prefix_middle + BaseF,
                       prefix_middle_finger_up=prefix_middle + UpF,
                       prefix_middle_finger_mid=prefix_middle + MidF,
@@ -386,11 +391,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       ring_finger_up=sj.ring2_RGT,
                       ring_finger_mid=sj.ring3_RGT,
                       ring_finger_low=sj.ring4_RGT,
-                      skin_ring_finger_base=sSkn.ring1_RGT,
-                      skin_ring_finger_up=sSkn.ring2_RGT,
-                      skin_ring_finger_mid=sSkn.ring3_RGT,
-                      skin_ring_finger_low=sSkn.ring4_RGT,
-                      skin_ring_finger_end=sSkn.ring5_RGT,
+                      # skin_ring_finger_base=sSkn.ring1_RGT,
+                      # skin_ring_finger_up=sSkn.ring2_RGT,
+                      # skin_ring_finger_mid=sSkn.ring3_RGT,
+                      # skin_ring_finger_low=sSkn.ring4_RGT,
+                      # skin_ring_finger_end=sSkn.ring5_RGT,
                       prefix_ring_finger_base=prefix_ring + BaseF,
                       prefix_ring_finger_up=prefix_ring + UpF,
                       prefix_ring_finger_mid=prefix_ring + MidF,
@@ -399,11 +404,11 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       pinky_finger_up=sj.pinky2_RGT,
                       pinky_finger_mid=sj.pinky3_RGT,
                       pinky_finger_low=sj.pinky4_RGT,
-                      skin_pinky_finger_base=sSkn.pinky1_RGT,
-                      skin_pinky_finger_up=sSkn.pinky2_RGT,
-                      skin_pinky_finger_mid=sSkn.pinky3_RGT,
-                      skin_pinky_finger_low=sSkn.pinky4_RGT,
-                      skin_pinky_finger_end=sSkn.pinky5_RGT,
+                      # skin_pinky_finger_base=sSkn.pinky1_RGT,
+                      # skin_pinky_finger_up=sSkn.pinky2_RGT,
+                      # skin_pinky_finger_mid=sSkn.pinky3_RGT,
+                      # skin_pinky_finger_low=sSkn.pinky4_RGT,
+                      # skin_pinky_finger_end=sSkn.pinky5_RGT,
                       prefix_pinky_finger_base=prefix_pinky + BaseF,
                       prefix_pinky_finger_up=prefix_pinky + UpF,
                       prefix_pinky_finger_mid=prefix_pinky + MidF,
@@ -411,10 +416,10 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                       prefix_finger_setup= prefix_finger_setup,
                       prefix_palm=prefix_palm,
                       palm_jnt=sj.palm_RGT,
-                      skin_palm_jnt=sSkn.palm_RGT,
+                      # skin_palm_jnt=sSkn.palm_RGT,
                       wrist_jnt=sj.wrist_RGT,
                       hand_jnt=sj.hand_RGT,
-                      skin_hand_jnt=sSkn.hand_RGT,
+                      # skin_hand_jnt=sSkn.hand_RGT,
                       side=side_RGT,
                       size=scale)
 
@@ -424,7 +429,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 #                                                   LEFT LEG PARAMETERS
 # ======================================================================================================================
     legLFT = lm.Limb(limb=leg_left,
-                     endLimb=foot_left,
+                     end_limb=foot_left,
                      arm=False,
                      prefix=prefix_leg,
                      side=side_LFT,
@@ -466,9 +471,9 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                      prefix_middle_limb_detail=prefix_lowerLeg + detail,
                      size=scale,
                      singleModule=False,
-                     skin_upper_limb_jnt=sSkn.upLeg_LFT,
-                     skin_middle_limb_jnt=sSkn.lowLeg_LFT,
-                     skin_lower_limb_jnt=sSkn.ankle_LFT,
+                     # skin_upper_limb_jnt=sSkn.upLeg_LFT,
+                     # skin_middle_limb_jnt=sSkn.lowLeg_LFT,
+                     # skin_lower_limb_jnt=sSkn.ankle_LFT,
                      )
 
     print('55% | left leg is done!')
@@ -477,7 +482,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 #                                                   RIGHT LEG PARAMETERS
 # ======================================================================================================================
     legRGT = lm.Limb(limb=leg_right,
-                     endLimb=foot_right,
+                     end_limb=foot_right,
                      arm=False,
                      prefix=prefix_leg,
                      side=side_RGT,
@@ -519,9 +524,9 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                      prefix_middle_limb_detail=prefix_lowerLeg + detail,
                      size=scale,
                      singleModule=False,
-                     skin_upper_limb_jnt=sSkn.upLeg_RGT,
-                     skin_middle_limb_jnt=sSkn.lowLeg_RGT,
-                     skin_lower_limb_jnt=sSkn.ankle_RGT,
+                     # skin_upper_limb_jnt=sSkn.upLeg_RGT,
+                     # skin_middle_limb_jnt=sSkn.lowLeg_RGT,
+                     # skin_lower_limb_jnt=sSkn.ankle_RGT,
                      )
 
 
@@ -539,6 +544,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                           ball_ik_jnt=sIk.ball_LFT,
                           toe_ik_jnt=sIk.toe_LFT,
                           ball_jnt=sj.ball_LFT,
+                          ball_scale_jnt=ss.ball_LFT,
                           heel_jnt=sj.heel_LFT,
                           lower_limb_jnt=sj.ankle_LFT,
                           in_tilt_jnt=sj.footIn_LFT,
@@ -552,16 +558,9 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                           controller_lower_limb_ik=legLFT.lower_limb_ik_control,
                           position_soft_jnt=legLFT.pos_soft_jnt,
                           part_joint_grp_module=legLFT.part_joint_grp,
-                          ankle_scale_jnt=ss.ankle_LFT,
-                          skin_ankle_jnt=sSkn.ankle_LFT,
-                          ball_scale_jnt=ss.ball_LFT,
-                          skin_ball_jnt=sSkn.ball_LFT,
-                          skin_toe_jnt=sSkn.toe_LFT,
-                          skin_heel_jnt=sSkn.heel_LFT,
-                          skin_foot_in_jnt=sSkn.footIn_LFT,
-                          skin_foot_out_jnt=sSkn.footOut_LFT,
                           side=side_LFT,
-                          scale=scale)
+                          scale=scale,
+                          )
 
     print('75% | left foot is done!')
 # ======================================================================================================================
@@ -576,6 +575,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                           ball_ik_jnt=sIk.ball_RGT,
                           toe_ik_jnt=sIk.toe_RGT,
                           ball_jnt=sj.ball_RGT,
+                          ball_scale_jnt=ss.ball_RGT,
                           heel_jnt=sj.heel_RGT,
                           lower_limb_jnt=sj.ankle_RGT,
                           in_tilt_jnt=sj.footIn_RGT,
@@ -589,14 +589,6 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                           controller_lower_limb_ik=legRGT.lower_limb_ik_control,
                           position_soft_jnt=legRGT.pos_soft_jnt,
                           part_joint_grp_module=legRGT.part_joint_grp,
-                          ankle_scale_jnt=ss.ankle_RGT,
-                          skin_ankle_jnt=sSkn.ankle_RGT,
-                          ball_scale_jnt=ss.ball_RGT,
-                          skin_ball_jnt=sSkn.ball_RGT,
-                          skin_toe_jnt=sSkn.toe_RGT,
-                          skin_heel_jnt=sSkn.heel_RGT,
-                          skin_foot_in_jnt=sSkn.footIn_RGT,
-                          skin_foot_out_jnt=sSkn.footOut_RGT,
                           side=side_RGT,
                           scale=scale)
 
@@ -606,17 +598,13 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
     # ==================================================================================================================
     #                                                     CLEAN UP SET
     # ==================================================================================================================
-    # UNHIDE AND SEGMENT SCALE
-    unhide = mc.ls('*skn')
-    for i in unhide:
-        mc.setAttr(i + '.visibility', 1)
-        mc.setAttr(i + '.segmentScaleCompensate', 0)
 
     # PARENT TO GENERAL MODULE
     if mc.objExists('anim_grp'):
         mc.parent(base.anim_control, 'anim_grp')
 
-    mc.delete(sAdd.neck, sSkn.neck, sj.neck)
+    # DELETE NECK JOINT
+    mc.delete(sAdd.neck, sj.neck)
 
     # PARENT TO ADD JOINT TO SKELETON GROUP
     selection =[sAdd.spine_list[0], sAdd.upLeg_LFT, sAdd.upLeg_RGT]
@@ -629,6 +617,44 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
             list_object.remove('')
 
     mc.parent(list(set(list_object)), base.skeleton_grp)
+
+    # SETS LN JOINT
+    sets_LN = mc.sets(sj.root, n='BODY_SKIN_LN')
+    unhide = mc.ls('*skn')
+    for i in unhide:
+        mc.setAttr(i + '.visibility', 1)
+        mc.sets(i, add=sets_LN)
+
+    # delete unused bones
+    mc.delete(sFk.thumb1_LFT, sFk.thumb1_RGT)
+    mc.delete(sIk.thumb1_LFT, sIk.thumb1_RGT)
+    mc.delete(sFk.hand_LFT, sFk.hand_RGT)
+    mc.delete(sIk.index1_LFT, sIk.index1_RGT)
+    mc.delete(sIk.middle1_LFT, sIk.middle1_RGT)
+    mc.delete(sIk.ring1_LFT, sIk.ring1_RGT)
+    mc.delete(sIk.pinky1_LFT, sIk.pinky1_RGT)
+    mc.delete(sFk.palm_LFT, sFk.palm_RGT)
+    mc.delete(sIk.palm_LFT, sIk.palm_RGT)
+
+    mc.delete(ss.upArm_LFT, ss.upArm_RGT)
+
+    if leg_left:
+        if foot_left:
+            mc.delete(ss.heel_LFT, ss.footIn_LFT, ss.footOut_LFT, ss.toe_LFT, sj.heel_LFT, sj.footIn_LFT, sj.footOut_LFT)
+
+    if leg_right:
+        if foot_right:
+            mc.delete(ss.heel_RGT, ss.footIn_RGT, ss.footOut_RGT, ss.toe_RGT, sj.heel_RGT, sj.footIn_RGT, sj.footOut_RGT)
+
+    mc.delete(sFk.heel_LFT, sFk.heel_RGT)
+    mc.delete(sFk.footIn_LFT, sFk.footIn_RGT)
+    mc.delete(sFk.footOut_LFT, sFk.footOut_RGT)
+    mc.delete(sIk.heel_LFT, sIk.heel_RGT)
+    mc.delete(sIk.footIn_LFT, sIk.footIn_RGT)
+    mc.delete(sIk.footOut_LFT, sIk.footOut_RGT)
+
+    mc.delete(sTwistHelp.wrist_LFT, sTwistHelp.wrist_RGT)
+    mc.delete(sTwistHelp.ankle_LFT, sTwistHelp.ankle_RGT)
 
     mc.delete(ss.root)
     mc.delete(sIk.root)

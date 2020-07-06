@@ -61,16 +61,16 @@ class Limb:
                  root_gimbal_ctrl=None,
                  singleModule=True,
                  size=1.0,
-                 skin_upper_limb_jnt=None,
-                 skin_middle_limb_jnt=None,
-                 skin_lower_limb_jnt=None,
+                 # skin_upper_limb_jnt=None,
+                 # skin_middle_limb_jnt=None,
+                 # skin_lower_limb_jnt=None,
 
                  arm=None,
                  base_controller=None,
                  detail_limb_deformer=None,
                  number_detail_ctrl=None,
-                 leftSide=True,
-                 endLimb=True):
+                 left_side=True,
+                 end_limb=True):
 
         """
         ###############################################################################################
@@ -93,7 +93,7 @@ class Limb:
             # single module
         if singleModule:
             if arm:
-                if leftSide:
+                if left_side:
                     if mc.objExists('upArmLFT_skn'):
                         mc.error('please clean up the left arm first!')
                     else:
@@ -109,47 +109,66 @@ class Limb:
                                                detail_limb_deformer=detail_limb_deformer,
                                                number_detail_ctrl=number_detail_ctrl, clav_jnt=self.sj.clav_LFT, parallel_axis='x', tip_pos='+',
                                                size=size, side='LFT',
-                                               skin_upper_limb_jnt=self.sSkn.upArm_LFT,
-                                               skin_middle_limb_jnt=self.sSkn.forearm_LFT, skin_lower_limb_jnt=self.sSkn.wrist_LFT)
-                        if endLimb:
+                                               # skin_upper_limb_jnt=self.sSkn.upArm_LFT,
+                                               # skin_middle_limb_jnt=self.sSkn.forearm_LFT, skin_lower_limb_jnt=self.sSkn.wrist_LFT
+                                               )
+                        if end_limb:
                             hm.Hand(parent=True, arm_object=self.part_control_grp, thumb_finger_base=self.sj.thumb1_LFT,
                                     thumb_finger_up=self.sj.thumb2_LFT, thumb_finger_mid=self.sj.thumb3_LFT,
-                                    skin_thumb_finger_base=self.sSkn.thumb1_LFT,
-                                    skin_thumb_finger_up=self.sSkn.thumb2_LFT,
-                                    skin_thumb_finger_mid=self.sSkn.thumb3_LFT,
-                                    skin_thumb_finger_end=self.sSkn.thumb4_LFT,
+                                    # skin_thumb_finger_base=self.sSkn.thumb1_LFT,
+                                    # skin_thumb_finger_up=self.sSkn.thumb2_LFT,
+                                    # skin_thumb_finger_mid=self.sSkn.thumb3_LFT,
+                                    # skin_thumb_finger_end=self.sSkn.thumb4_LFT,
                                     index_finger_base=self.sj.index1_LFT, index_finger_up=self.sj.index2_LFT,
                                     index_finger_mid=self.sj.index3_LFT, index_finger_low=self.sj.index4_LFT,
-                                    skin_index_finger_base=self.sSkn.index1_LFT,
-                                    skin_index_finger_up=self.sSkn.index2_LFT,
-                                    skin_index_finger_mid=self.sSkn.index3_LFT,
-                                    skin_index_finger_low=self.sSkn.index4_LFT,
-                                    skin_index_finger_end=self.sSkn.index5_LFT, middle_finger_base=self.sj.middle1_LFT,
+                                    # skin_index_finger_base=self.sSkn.index1_LFT,
+                                    # skin_index_finger_up=self.sSkn.index2_LFT,
+                                    # skin_index_finger_mid=self.sSkn.index3_LFT,
+                                    # skin_index_finger_low=self.sSkn.index4_LFT,
+                                    # skin_index_finger_end=self.sSkn.index5_LFT,
+                                    middle_finger_base=self.sj.middle1_LFT,
                                     middle_finger_up=self.sj.middle2_LFT, middle_finger_mid=self.sj.middle3_LFT,
-                                    middle_finger_low=self.sj.middle4_LFT, skin_middle_finger_base=self.sSkn.middle1_LFT,
-                                    skin_middle_finger_up=self.sSkn.middle2_LFT,
-                                    skin_middle_finger_mid=self.sSkn.middle3_LFT,
-                                    skin_middle_finger_low=self.sSkn.middle4_LFT,
-                                    skin_middle_finger_end=self.sSkn.middle5_LFT,
+                                    middle_finger_low=self.sj.middle4_LFT,
+                                    # skin_middle_finger_base=self.sSkn.middle1_LFT,
+                                    # skin_middle_finger_up=self.sSkn.middle2_LFT,
+                                    # skin_middle_finger_mid=self.sSkn.middle3_LFT,
+                                    # skin_middle_finger_low=self.sSkn.middle4_LFT,
+                                    # skin_middle_finger_end=self.sSkn.middle5_LFT,
                                     ring_finger_base=self.sj.ring1_LFT, ring_finger_up=self.sj.ring2_LFT,
                                     ring_finger_mid=self.sj.ring3_LFT, ring_finger_low=self.sj.ring4_LFT,
-                                    skin_ring_finger_base=self.sSkn.ring1_LFT, skin_ring_finger_up=self.sSkn.ring2_LFT,
-                                    skin_ring_finger_mid=self.sSkn.ring3_LFT, skin_ring_finger_low=self.sSkn.ring4_LFT,
-                                    skin_ring_finger_end=self.sSkn.ring5_LFT, pinky_finger_base=self.sj.pinky1_LFT,
+                                    # skin_ring_finger_base=self.sSkn.ring1_LFT,
+                                    # skin_ring_finger_up=self.sSkn.ring2_LFT,
+                                    # skin_ring_finger_mid=self.sSkn.ring3_LFT,
+                                    # skin_ring_finger_low=self.sSkn.ring4_LFT,
+                                    # skin_ring_finger_end=self.sSkn.ring5_LFT,
+                                    pinky_finger_base=self.sj.pinky1_LFT,
                                     pinky_finger_up=self.sj.pinky2_LFT, pinky_finger_mid=self.sj.pinky3_LFT,
-                                    pinky_finger_low=self.sj.pinky4_LFT, skin_pinky_finger_base=self.sSkn.pinky1_LFT,
-                                    skin_pinky_finger_up=self.sSkn.pinky2_LFT, skin_pinky_finger_mid=self.sSkn.pinky3_LFT,
-                                    skin_pinky_finger_low=self.sSkn.pinky4_LFT,
-                                    skin_pinky_finger_end=self.sSkn.pinky5_LFT,
-                                    palm_jnt=self.sj.palm_LFT, skin_palm_jnt=self.sSkn.palm_LFT,
+                                    pinky_finger_low=self.sj.pinky4_LFT,
+                                    # skin_pinky_finger_base=self.sSkn.pinky1_LFT,
+                                    # skin_pinky_finger_up=self.sSkn.pinky2_LFT,
+                                    # skin_pinky_finger_mid=self.sSkn.pinky3_LFT,
+                                    # skin_pinky_finger_low=self.sSkn.pinky4_LFT,
+                                    # skin_pinky_finger_end=self.sSkn.pinky5_LFT,
+                                    palm_jnt=self.sj.palm_LFT,
+                                    # skin_palm_jnt=self.sSkn.palm_LFT,
                                     wrist_jnt=self.sj.wrist_LFT,
-                                    hand_jnt=self.sj.hand_LFT, skin_hand_jnt=self.sSkn.hand_LFT, side='LFT', size=size,
+                                    hand_jnt=self.sj.hand_LFT,
+                                    # skin_hand_jnt=self.sSkn.hand_LFT,
+                                    side='LFT', size=size,
                                     single_module=singleModule)
-                        else:
-                            mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root,
-                                      self.sAdd.root, self.sSkn.root)
 
-                        mc.delete(self.sSkn.hand_LFT, self.sSkn.palm_LFT, self.sSkn.thumb1_LFT)
+                        # else:
+                        #
+
+                        mc.delete(self.sIk.hand_LFT, self.sIk.palm_LFT, self.sIk.thumb1_LFT,
+                                  self.sFk.hand_LFT, self.sFk.palm_LFT, self.sFk.thumb1_LFT,
+                                  self.sTwistHelp.hand_LFT, self.sTwistHelp.palm_LFT, self.sTwistHelp.thumb1_LFT)
+                        mc.delete(self.sj.hand_LFT, self.sj.palm_LFT, self.sj.thumb1_LFT)
+
+                        mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root,
+                                  self.sAdd.root,
+                                  # self.sSkn.root
+                                  )
 
                 else:
                     if mc.objExists('upArmRGT_skn'):
@@ -168,50 +187,69 @@ class Limb:
                                                number_detail_ctrl=number_detail_ctrl, clav_jnt=self.sj.clav_RGT, parallel_axis='x',
                                                tip_pos='-',
                                                size=size, side='RGT',
-                                               skin_upper_limb_jnt=self.sSkn.upArm_RGT,
-                                               skin_middle_limb_jnt=self.sSkn.forearm_RGT,
-                                               skin_lower_limb_jnt=self.sSkn.wrist_RGT)
-                        if endLimb:
+                                               # skin_upper_limb_jnt=self.sSkn.upArm_RGT,
+                                               # skin_middle_limb_jnt=self.sSkn.forearm_RGT,
+                                               # skin_lower_limb_jnt=self.sSkn.wrist_RGT
+                                               )
+                        if end_limb:
                             hm.Hand(parent=True, arm_object=self.part_control_grp, thumb_finger_base=self.sj.thumb1_RGT,
                                     thumb_finger_up=self.sj.thumb2_RGT, thumb_finger_mid=self.sj.thumb3_RGT,
-                                    skin_thumb_finger_base=self.sSkn.thumb1_RGT,
-                                    skin_thumb_finger_up=self.sSkn.thumb2_RGT,
-                                    skin_thumb_finger_mid=self.sSkn.thumb3_RGT,
-                                    skin_thumb_finger_end=self.sSkn.thumb4_RGT,
+                                    # skin_thumb_finger_base=self.sSkn.thumb1_RGT,
+                                    # skin_thumb_finger_up=self.sSkn.thumb2_RGT,
+                                    # skin_thumb_finger_mid=self.sSkn.thumb3_RGT,
+                                    # skin_thumb_finger_end=self.sSkn.thumb4_RGT,
                                     index_finger_base=self.sj.index1_RGT, index_finger_up=self.sj.index2_RGT,
                                     index_finger_mid=self.sj.index3_RGT, index_finger_low=self.sj.index4_RGT,
-                                    skin_index_finger_base=self.sSkn.index1_RGT,
-                                    skin_index_finger_up=self.sSkn.index2_RGT,
-                                    skin_index_finger_mid=self.sSkn.index3_RGT,
-                                    skin_index_finger_low=self.sSkn.index4_RGT,
-                                    skin_index_finger_end=self.sSkn.index5_RGT, middle_finger_base=self.sj.middle1_RGT,
-                                    middle_finger_up=self.sj.middle2_RGT, middle_finger_mid=self.sj.middle3_RGT,
-                                    middle_finger_low=self.sj.middle4_RGT, skin_middle_finger_base=self.sSkn.middle1_RGT,
-                                    skin_middle_finger_up=self.sSkn.middle2_RGT,
-                                    skin_middle_finger_mid=self.sSkn.middle3_RGT,
-                                    skin_middle_finger_low=self.sSkn.middle4_RGT,
-                                    skin_middle_finger_end=self.sSkn.middle5_RGT,
+                                    # skin_index_finger_base=self.sSkn.index1_RGT,
+                                    # skin_index_finger_up=self.sSkn.index2_RGT,
+                                    # skin_index_finger_mid=self.sSkn.index3_RGT,
+                                    # skin_index_finger_low=self.sSkn.index4_RGT,
+                                    # skin_index_finger_end=self.sSkn.index5_RGT,
+                                    middle_finger_base=self.sj.middle1_RGT,
+                                    middle_finger_up=self.sj.middle2_RGT,
+                                    middle_finger_mid=self.sj.middle3_RGT,
+                                    middle_finger_low=self.sj.middle4_RGT,
+                                    # skin_middle_finger_base=self.sSkn.middle1_RGT,
+                                    # skin_middle_finger_up=self.sSkn.middle2_RGT,
+                                    # skin_middle_finger_mid=self.sSkn.middle3_RGT,
+                                    # skin_middle_finger_low=self.sSkn.middle4_RGT,
+                                    # skin_middle_finger_end=self.sSkn.middle5_RGT,
                                     ring_finger_base=self.sj.ring1_RGT, ring_finger_up=self.sj.ring2_RGT,
                                     ring_finger_mid=self.sj.ring3_RGT, ring_finger_low=self.sj.ring4_RGT,
-                                    skin_ring_finger_base=self.sSkn.ring1_RGT, skin_ring_finger_up=self.sSkn.ring2_RGT,
-                                    skin_ring_finger_mid=self.sSkn.ring3_RGT, skin_ring_finger_low=self.sSkn.ring4_RGT,
-                                    skin_ring_finger_end=self.sSkn.ring5_RGT, pinky_finger_base=self.sj.pinky1_RGT,
-                                    pinky_finger_up=self.sj.pinky2_RGT, pinky_finger_mid=self.sj.pinky3_RGT,
-                                    pinky_finger_low=self.sj.pinky4_RGT, skin_pinky_finger_base=self.sSkn.pinky1_RGT,
-                                    skin_pinky_finger_up=self.sSkn.pinky2_RGT, skin_pinky_finger_mid=self.sSkn.pinky3_RGT,
-                                    skin_pinky_finger_low=self.sSkn.pinky4_RGT,
-                                    skin_pinky_finger_end=self.sSkn.pinky5_RGT,
-                                    palm_jnt=self.sj.palm_RGT, skin_palm_jnt=self.sSkn.palm_RGT,
+                                    # skin_ring_finger_base=self.sSkn.ring1_RGT,
+                                    # skin_ring_finger_up=self.sSkn.ring2_RGT,
+                                    # skin_ring_finger_mid=self.sSkn.ring3_RGT,
+                                    # skin_ring_finger_low=self.sSkn.ring4_RGT,
+                                    # skin_ring_finger_end=self.sSkn.ring5_RGT,
+                                    pinky_finger_base=self.sj.pinky1_RGT,
+                                    pinky_finger_up=self.sj.pinky2_RGT,
+                                    pinky_finger_mid=self.sj.pinky3_RGT,
+                                    pinky_finger_low=self.sj.pinky4_RGT,
+                                    # skin_pinky_finger_base=self.sSkn.pinky1_RGT,
+                                    # skin_pinky_finger_up=self.sSkn.pinky2_RGT,
+                                    # skin_pinky_finger_mid=self.sSkn.pinky3_RGT,
+                                    # skin_pinky_finger_low=self.sSkn.pinky4_RGT,
+                                    # skin_pinky_finger_end=self.sSkn.pinky5_RGT,
+                                    palm_jnt=self.sj.palm_RGT,
+                                    # skin_palm_jnt=self.sSkn.palm_RGT,
                                     wrist_jnt=self.sj.wrist_RGT,
-                                    hand_jnt=self.sj.hand_RGT, skin_hand_jnt=self.sSkn.hand_RGT, side='RGT', size=size,
+                                    hand_jnt=self.sj.hand_RGT,
+                                    # skin_hand_jnt=self.sSkn.hand_RGT,
+                                    side='RGT', size=size,
                                     single_module=singleModule)
 
-                            mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root,
-                                      self.sAdd.root, self.sSkn.root)
-                        else:
-                            mc.delete(self.sSkn.hand_RGT, self.sSkn.palm_RGT, self.sSkn.thumb1_RGT)
+                        # else:
+                        mc.delete(self.sIk.hand_RGT, self.sIk.palm_RGT, self.sIk.thumb1_RGT,
+                                  self.sFk.hand_RGT, self.sFk.palm_RGT, self.sFk.thumb1_RGT,
+                                  self.sTwistHelp.hand_RGT, self.sTwistHelp.palm_RGT, self.sTwistHelp.thumb1_RGT)
+
+                        mc.delete(self.sj.hand_RGT, self.sj.palm_RGT, self.sj.thumb1_RGT)
+                        mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root,
+                                  self.sAdd.root,
+                                  # self.sSkn.root
+                                  )
             else:
-                if leftSide:
+                if left_side:
                     if mc.objExists('upLegLFT_skn'):
                         mc.error('please clean up the left leg first!')
                     else:
@@ -225,10 +263,12 @@ class Limb:
                                                         end_limb_ik_jnt=self.sIk.ball_LFT, upper_limb_twist_help_driver_jnt=self.sTwistHelp.upLeg_LFT,
                                                         middle_limb_twist_help_driver_jnt=self.sTwistHelp.lowLeg_LFT,
                                                         detail_limb_deformer=detail_limb_deformer, number_detail_ctrl=number_detail_ctrl,
-                                                        parallel_axis='y', tip_pos='-', skin_upper_limb_jnt=self.sSkn.upLeg_LFT,
-                                                        skin_middle_limb_jnt=self.sSkn.lowLeg_LFT, skin_lower_limb_jnt=self.sSkn.ankle_LFT,
+                                                        parallel_axis='y', tip_pos='-',
+                                                        # skin_upper_limb_jnt=self.sSkn.upLeg_LFT,
+                                                        # skin_middle_limb_jnt=self.sSkn.lowLeg_LFT,
+                                                        # skin_lower_limb_jnt=self.sSkn.ankle_LFT,
                                                         side='LFT', size=size)
-                        if endLimb:
+                        if end_limb:
                             mc.delete(legLFT[0], legLFT[1])
                             fm.Foot(leg=True, foot=True, upper_limb_jnt=self.sj.upLeg_LFT, ball_fk_jnt=self.sFk.ball_LFT,
                                     ball_ik_jnt=self.sIk.ball_LFT, toe_ik_jnt=self.sIk.toe_LFT, ball_jnt=self.sj.ball_LFT,
@@ -237,24 +277,32 @@ class Limb:
                                     out_tilt_jnt=self.sj.footOut_LFT, lower_gimbal_fk_ctrl=self.lower_limb_fk_gimbal,
                                     lower_limb_ik_hdl=self.lower_limb_ik_hdl, end_limb_ik_hdl=self.end_limb_ik_hdl,
                                     controller_FkIk_limb_setup=self.FkIk_limb_setup_controller, prefix_ball_fk='ballFk',
-                                    prefix_toe_ik='toeIk', ankle_scale_jnt=self.ss.ankle_LFT,
-                                    skin_ankle_jnt=self.sSkn.ankle_LFT,
-                                    ball_scale_jnt=self.ss.ball_LFT, skin_ball_jnt=self.sSkn.ball_LFT,
-                                    skin_toe_jnt=self.sSkn.toe_LFT,
-                                    skin_heel_jnt=self.sSkn.heel_LFT, skin_foot_in_jnt=self.sSkn.footIn_LFT,
-                                    skin_foot_out_jnt=self.sSkn.footOut_LFT,
+                                    prefix_toe_ik='toeIk',
+                                    # ankle_scale_jnt=self.ss.ankle_LFT,
+                                    # skin_ankle_jnt=self.sSkn.ankle_LFT,
+                                    ball_scale_jnt=self.ss.ball_LFT,
+                                    # skin_ball_jnt=self.sSkn.ball_LFT,
+                                    # skin_toe_jnt=self.sSkn.toe_LFT,
+                                    # skin_heel_jnt=self.sSkn.heel_LFT,
+                                    # skin_foot_in_jnt=self.sSkn.footIn_LFT,
+                                    # skin_foot_out_jnt=self.sSkn.footOut_LFT,
                                     controller_lower_limb_ik=self.lower_limb_ik_control, position_soft_jnt=self.pos_soft_jnt,
                                     part_joint_grp_module=self.part_joint_grp, side='LFT', scale=size,
                                     single_module=singleModule,
                                     lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
                                     position_lower_limb_jnt=self.pos_lower_limb_jnt,
                                     lower_limb_ik_control=self.lower_limb_ik_control)
+
+                            mc.delete(self.ss.heel_LFT, self.ss.toe_LFT, self.ss.footIn_LFT, self.ss.footOut_LFT,
+                                      self.sj.heel_LFT, self.sj.toe_LFT, self.sj.footIn_LFT, self.sj.footOut_LFT,
+                                      self.sIk.heel_LFT, self.sIk.toe_LFT, self.sIk.footIn_LFT, self.sIk.footOut_LFT)
                         else:
-                            mc.delete(self.sSkn.ball_LFT)
+                            mc.delete(self.sj.ball_LFT)
 
                         mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root,
-                                  self.sAdd.root,
-                                  self.sSkn.root)
+                                  self.sAdd.root, self.sTwistHelp.ball_LFT
+                                  # self.sSkn.root
+                                  )
 
                 else:
                     if mc.objExists('upLegRGT_skn'):
@@ -270,10 +318,12 @@ class Limb:
                                                         end_limb_ik_jnt=self.sIk.ball_RGT, upper_limb_twist_help_driver_jnt=self.sTwistHelp.upLeg_RGT,
                                                         middle_limb_twist_help_driver_jnt=self.sTwistHelp.lowLeg_RGT,
                                                         detail_limb_deformer=detail_limb_deformer, number_detail_ctrl=number_detail_ctrl,
-                                                        parallel_axis='y', tip_pos='-', skin_upper_limb_jnt=self.sSkn.upLeg_RGT,
-                                                        skin_middle_limb_jnt=self.sSkn.lowLeg_RGT, skin_lower_limb_jnt=self.sSkn.ankle_RGT,
+                                                        parallel_axis='y', tip_pos='-',
+                                                        # skin_upper_limb_jnt=self.sSkn.upLeg_RGT,
+                                                        # skin_middle_limb_jnt=self.sSkn.lowLeg_RGT,
+                                                        # skin_lower_limb_jnt=self.sSkn.ankle_RGT,
                                                         side='RGT', size=size)
-                        if endLimb:
+                        if end_limb:
                             mc.delete(legRGT[0], legRGT[1])
                             fm.Foot(leg=True, foot=True, upper_limb_jnt=self.sj.upLeg_RGT, ball_fk_jnt=self.sFk.ball_RGT,
                                     ball_ik_jnt=self.sIk.ball_RGT, toe_ik_jnt=self.sIk.toe_RGT, ball_jnt=self.sj.ball_RGT,
@@ -282,24 +332,33 @@ class Limb:
                                     out_tilt_jnt=self.sj.footOut_RGT, lower_gimbal_fk_ctrl=self.lower_limb_fk_gimbal,
                                     lower_limb_ik_hdl=self.lower_limb_ik_hdl, end_limb_ik_hdl=self.end_limb_ik_hdl,
                                     controller_FkIk_limb_setup=self.FkIk_limb_setup_controller, prefix_ball_fk='ballFk',
-                                    prefix_toe_ik='toeIk', ankle_scale_jnt=self.ss.ankle_RGT,
-                                    skin_ankle_jnt=self.sSkn.ankle_RGT,
-                                    ball_scale_jnt=self.ss.ball_RGT, skin_ball_jnt=self.sSkn.ball_RGT,
-                                    skin_toe_jnt=self.sSkn.toe_RGT,
-                                    skin_heel_jnt=self.sSkn.heel_RGT, skin_foot_in_jnt=self.sSkn.footIn_RGT,
-                                    skin_foot_out_jnt=self.sSkn.footOut_RGT,
+                                    prefix_toe_ik='toeIk',
+                                    # ankle_scale_jnt=self.ss.ankle_RGT,
+                                    # skin_ankle_jnt=self.sSkn.ankle_RGT,
+                                    ball_scale_jnt=self.ss.ball_RGT,
+                                    # skin_ball_jnt=self.sSkn.ball_RGT,
+                                    # skin_toe_jnt=self.sSkn.toe_RGT,
+                                    # skin_heel_jnt=self.sSkn.heel_RGT,
+                                    # skin_foot_in_jnt=self.sSkn.footIn_RGT,
+                                    # skin_foot_out_jnt=self.sSkn.footOut_RGT,
                                     controller_lower_limb_ik=self.lower_limb_ik_control, position_soft_jnt=self.pos_soft_jnt,
                                     part_joint_grp_module=self.part_joint_grp, side='RGT', scale=size,
                                     single_module=singleModule,
                                     lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
                                     position_lower_limb_jnt=self.pos_lower_limb_jnt,
                                     lower_limb_ik_control=self.lower_limb_ik_control)
+
+                            mc.delete(self.ss.heel_RGT, self.ss.toe_RGT, self.ss.footIn_RGT, self.ss.footOut_RGT,
+                                      self.sj.heel_RGT, self.sj.toe_RGT, self.sj.footIn_RGT, self.sj.footOut_RGT,
+                                      self.sIk.heel_RGT, self.sIk.toe_RGT, self.sIk.footIn_RGT, self.sIk.footOut_RGT)
+
                         else:
-                            mc.delete(self.sSkn.ball_RGT)
+                            mc.delete(self.sj.ball_RGT)
 
                         mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root,
-                                  self.sAdd.root,
-                                  self.sSkn.root)
+                                  self.sAdd.root, self.sTwistHelp.ball_RGT
+                                  # self.sSkn.root
+                                  )
         else:
             if limb:
                 self.module(arm, prefix, base_controller, prefix_upper_limb, prefix_upper_limb_fk, prefix_middle_limb_fk,
@@ -312,8 +371,10 @@ class Limb:
                             middle_limb_ik_jnt, lower_limb_ik_jnt, end_limb_ik_jnt, world, upper_limb_twist_help_driver_jnt,
                             middle_limb_twist_help_driver_jnt,
                             clav_jnt, pelvis_gimbal_ctrl, detail_limb_deformer, number_detail_ctrl, parallel_axis, tip_pos,
-                            prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl, skin_upper_limb_jnt,
-                            skin_middle_limb_jnt, skin_lower_limb_jnt)
+                            prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl,
+                            # skin_upper_limb_jnt,
+                            # skin_middle_limb_jnt, skin_lower_limb_jnt
+                            )
 
                 self.run_soft_ik = rs.run_soft_ik_joint(prefix=prefix, side=side,
                                                         lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
@@ -322,7 +383,7 @@ class Limb:
                                                         lowerLimbIkControl=self.lower_limb_ik_control)
 
             else:
-                mc.delete(skin_upper_limb_jnt)
+                mc.delete(upper_limb_jnt)
 
     def module(self, arm, prefix, base_controller, prefix_upper_limb, prefix_upper_limb_fk, prefix_middle_limb_fk,
                prefix_lower_limb_fk, prefix_upper_limb_ik, prefix_pole_vector_ik, prefix_middle_limb_ik, prefix_lower_limb_ik,
@@ -330,7 +391,9 @@ class Limb:
                lower_limb_scale_jnt, end_limb_scale_jnt, upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, upper_limb_ik_jnt,
                middle_limb_ik_jnt, lower_limb_ik_jnt, end_limb_ik_jnt, world, upper_limb_twist_help_driver_jnt, middle_limb_twist_help_driver_jnt,
                clav_jnt, pelvis_gimbal_ctrl, detail_limb_deformer, number_detail_ctrl, parallel_axis, tip_pos,
-               prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl, skin_upper_limb_jnt, skin_middle_limb_jnt, skin_lower_limb_jnt):
+               prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl,
+               # skin_upper_limb_jnt, skin_middle_limb_jnt, skin_lower_limb_jnt
+               ):
 
         getValueTxLimbJnt = mc.xform(upper_limb_ik_jnt, ws=1, q=1, t=1)[0]
 
@@ -589,8 +652,8 @@ class Limb:
             volume_pos_max=0,
             number_joints=number_detail_ctrl)
 
-        # skin joint parent
-        mc.parent(detail_upper_limb.joint_skin, skin_upper_limb_jnt)
+        # # skin joint parent
+        # mc.parent(detail_upper_limb.joint_skin, skin_upper_limb_jnt)
 
         # set grp and ctrl follicle upper limb
         self.set_grp_follicle_upper_limb = detail_upper_limb.follicle_set_grp
@@ -759,8 +822,8 @@ class Limb:
             volume_pos_max=2,
             number_joints=number_detail_ctrl)
 
-        # skin joint parent
-        mc.parent(detail_lower_limb.joint_skin, skin_middle_limb_jnt)
+        # # skin joint parent
+        # mc.parent(detail_lower_limb.joint_skin, skin_middle_limb_jnt)
 
         # set grp and ctrl follicle middle limb
         self.set_grp_follicle_middle_limb = detail_lower_limb.follicle_set_grp
@@ -930,10 +993,10 @@ class Limb:
         mc.connectAttr(self.ctrl_combine_detail + '.detailBaseCtrlVis',
                        detail_lower_limb.ctrl_down.parent_control[0] + '.visibility')
 
-        # CREATE JOINT SKIN AND CONNECTING
-        au.parent_scale_constraint(upper_limb_jnt, skin_upper_limb_jnt)
-        au.parent_scale_constraint(middle_limb_jnt, skin_middle_limb_jnt)
-        au.parent_scale_constraint(lower_limb_jnt, skin_lower_limb_jnt)
+        # # CREATE JOINT SKIN AND CONNECTING
+        # au.parent_scale_constraint(upper_limb_jnt, skin_upper_limb_jnt)
+        # au.parent_scale_constraint(middle_limb_jnt, skin_middle_limb_jnt)
+        # au.parent_scale_constraint(lower_limb_jnt, skin_lower_limb_jnt)
 
         # rename constraint
         au.constraint_rename([pt_upper_limb_ik_constraint[0], aim_lower_limb_ik_constraint[0], elbow_follow_constraint, pac_lower_limb_constraint[0],
@@ -946,8 +1009,11 @@ class Limb:
     def single_module_arm(self, base_controller, upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, upper_limb_fk_jnt,
                           middle_limb_fk_jnt, lower_limb_fk_jnt, upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
                           end_limb_ik_jnt, upper_limb_twist_help_driver_jnt, middle_limb_twist_help_driver_jnt,
-                          detail_limb_deformer, number_detail_ctrl, clav_jnt, parallel_axis, tip_pos, skin_upper_limb_jnt, side, size,
-                          skin_middle_limb_jnt, skin_lower_limb_jnt):
+                          detail_limb_deformer, number_detail_ctrl, clav_jnt, parallel_axis, tip_pos,
+                          # skin_upper_limb_jnt,
+                          side, size,
+                          # skin_middle_limb_jnt, skin_lower_limb_jnt
+                          ):
 
         self.module(arm=True, prefix='arm', base_controller=base_controller, prefix_upper_limb='upperArm',
                     prefix_upper_limb_fk='upperArmFk', prefix_middle_limb_fk='forearmFk',
@@ -962,12 +1028,13 @@ class Limb:
                     lower_limb_ik_jnt=lower_limb_ik_jnt, end_limb_ik_jnt=end_limb_ik_jnt,
                     upper_limb_twist_help_driver_jnt=upper_limb_twist_help_driver_jnt,
                     middle_limb_twist_help_driver_jnt=middle_limb_twist_help_driver_jnt,
-                    world=base_controller.bodyPartGrp, detail_limb_deformer=detail_limb_deformer,
+                    world=base_controller.body_part_grp, detail_limb_deformer=detail_limb_deformer,
                     number_detail_ctrl=number_detail_ctrl - 2, clav_jnt=clav_jnt, pelvis_gimbal_ctrl=None,
                     root_gimbal_ctrl=None, parallel_axis=parallel_axis, tip_pos=tip_pos,
                     prefix_upper_limb_detail='upperArmDtl', prefix_middle_limb_detail='forearmDtl', size=size,
-                    skin_upper_limb_jnt=skin_upper_limb_jnt,
-                    skin_middle_limb_jnt=skin_middle_limb_jnt, skin_lower_limb_jnt=skin_lower_limb_jnt)
+                    # skin_upper_limb_jnt=skin_upper_limb_jnt,
+                    # skin_middle_limb_jnt=skin_middle_limb_jnt, skin_lower_limb_jnt=skin_lower_limb_jnt
+                    )
 
         self.run_soft_ik_arm = rs.run_soft_ik_joint(prefix='arm', side=side, lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
                                                     foot_reverse_joint_or_position_soft_jnt=self.pos_soft_jnt,
@@ -976,13 +1043,16 @@ class Limb:
 
         mc.parent(upper_limb_jnt, self.part.joint_grp)
         mc.parent(self.shoulder_ik_locator, self.shoulder_fk_locator, self.hip_fk_locator, self.hip_ik_locator, self.part.utils_grp)
-        mc.parent(skin_upper_limb_jnt, base_controller.skinGrp)
+        # mc.parent(skin_upper_limb_jnt, base_controller.skinGrp)
 
     def single_module_leg(self, base_controller, upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, end_limb_jnt, lower_limb_scale_jnt,
                           upper_limb_fk_jnt, end_limb_scale_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, upper_limb_ik_jnt, middle_limb_ik_jnt,
                           lower_limb_ik_jnt, end_limb_ik_jnt, upper_limb_twist_help_driver_jnt, middle_limb_twist_help_driver_jnt,
-                          detail_limb_deformer, number_detail_ctrl, parallel_axis, tip_pos, skin_upper_limb_jnt, side, size,
-                          skin_middle_limb_jnt, skin_lower_limb_jnt):
+                          detail_limb_deformer, number_detail_ctrl, parallel_axis, tip_pos,
+                          # skin_upper_limb_jnt,
+                          side, size,
+                          # skin_middle_limb_jnt, skin_lower_limb_jnt
+                          ):
 
         self.module(arm=False, prefix='leg', side=side, base_controller=base_controller,
                     prefix_upper_limb='upperLeg', prefix_upper_limb_fk='upperLegFk', prefix_middle_limb_fk='lowerLegFk',
@@ -994,12 +1064,14 @@ class Limb:
                     lower_limb_fk_jnt=lower_limb_fk_jnt, upper_limb_ik_jnt=upper_limb_ik_jnt, middle_limb_ik_jnt=middle_limb_ik_jnt,
                     lower_limb_ik_jnt=lower_limb_ik_jnt, end_limb_ik_jnt=end_limb_ik_jnt,
                     upper_limb_twist_help_driver_jnt=upper_limb_twist_help_driver_jnt,
-                    middle_limb_twist_help_driver_jnt=middle_limb_twist_help_driver_jnt, world=base_controller.bodyPartGrp,
+                    middle_limb_twist_help_driver_jnt=middle_limb_twist_help_driver_jnt, world=base_controller.body_part_grp,
                     detail_limb_deformer=detail_limb_deformer, number_detail_ctrl=number_detail_ctrl - 2, clav_jnt=None,
                     pelvis_gimbal_ctrl=self.sj.pelvis, root_gimbal_ctrl=None, parallel_axis=parallel_axis, tip_pos=tip_pos,
                     prefix_upper_limb_detail='upperLegDtl',
-                    prefix_middle_limb_detail='lowerLegDtl', size=size, skin_upper_limb_jnt=skin_upper_limb_jnt,
-                    skin_middle_limb_jnt=skin_middle_limb_jnt, skin_lower_limb_jnt=skin_lower_limb_jnt)
+                    prefix_middle_limb_detail='lowerLegDtl', size=size,
+                    # skin_upper_limb_jnt=skin_upper_limb_jnt,
+                    # skin_middle_limb_jnt=skin_middle_limb_jnt, skin_lower_limb_jnt=skin_lower_limb_jnt
+                    )
 
         run_soft_ik_leg = rs.run_soft_ik_joint(prefix='leg', side=side, lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
                                                foot_reverse_joint_or_position_soft_jnt=self.pos_soft_jnt,
@@ -1007,7 +1079,7 @@ class Limb:
                                                lowerLimbIkControl=self.lower_limb_ik_control)
 
         mc.parent(upper_limb_jnt, self.part.joint_grp)
-        mc.parent(skin_upper_limb_jnt, base_controller.skinGrp)
+        # mc.parent(skin_upper_limb_jnt, base_controller.skinGrp)
 
         return run_soft_ik_leg
 
@@ -1049,7 +1121,6 @@ class Limb:
                                    sFk_prefix_value='ModLegFk', sIk_prefix_value='ModLegIk',
                                    sAdd_prefix_value='ModLegShape')
         self.sj = skel['sj']
-        self.sSkn = skel['sSkn']
         self.sFk = skel['sFk']
         self.sIk = skel['sIk']
         self.ss = skel['ss']

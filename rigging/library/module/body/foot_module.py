@@ -25,6 +25,7 @@ class Foot:
                  ball_fk_jnt=None,
                  ball_ik_jnt=None,
                  ball_jnt=None,
+                 ball_scale_jnt=None,
                  toe_ik_jnt=None,
                  heel_jnt=None,
                  lower_limb_jnt=None,
@@ -39,14 +40,6 @@ class Foot:
                  controller_lower_limb_ik=None,
                  position_soft_jnt=None,
                  part_joint_grp_module=None,
-                 ankle_scale_jnt=None,
-                 skin_ankle_jnt=None,
-                 ball_scale_jnt=None,
-                 skin_ball_jnt=None,
-                 skin_toe_jnt=None,
-                 skin_heel_jnt=None,
-                 skin_foot_in_jnt=None,
-                 skin_foot_out_jnt=None,
                  side=None,
                  single_module=False,
                  scale=1.0,
@@ -100,6 +93,19 @@ class Foot:
 
             # parent ball handle to ball reverse
             mc.parent(end_limb_ik_hdl, build_foot.toe_wiggle_joint)
+
+            # parent object reverse joint
+            mc.parent(build_foot.ball_roll_joint, build_foot.outside_tilt_joint)
+
+            mc.parent(build_foot.outside_tilt_joint, build_foot.inside_tilt_joint)
+
+            mc.parent(build_foot.inside_tilt_joint, build_foot.toe_joint)
+
+            mc.parent(build_foot.toe_joint, build_foot.heel_joint)
+
+            mc.parent(build_foot.heel_joint, build_foot.toe_roll_joint)
+
+            mc.parent(build_foot.toe_roll_joint, build_foot.foot_reverse_joint)
 
             # parent to part joint
             mc.parent(build_foot.foot_reverse_joint, part_joint_grp_module)
@@ -249,15 +255,5 @@ class Foot:
                 rs.run_soft_ik_joint(prefix=prefix, side=side, lower_limb_ik_gimbal=lower_limb_ik_gimbal,
                                      foot_reverse_joint_or_position_soft_jnt=self.foot_reverse_joint, position_lower_limb_jnt=position_lower_limb_jnt,
                                      lowerLimbIkControl=lower_limb_ik_control)
-
-            # skin joint
-            au.parent_scale_constraint(ankle_scale_jnt, skin_ankle_jnt)
-            au.parent_scale_constraint(ball_scale_jnt, skin_ball_jnt)
-
-            # delete unnecesarry joint
-            mc.delete(skin_toe_jnt, skin_heel_jnt, skin_foot_in_jnt, skin_foot_out_jnt)
-
-    # clean up skinning joint
         else:
-            mc.delete(skin_ball_jnt)
-
+            mc.delete(ball_jnt, ball_scale_jnt)

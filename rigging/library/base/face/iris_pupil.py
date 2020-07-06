@@ -22,9 +22,9 @@ class Build:
                  eye_ctrl,
                  side,
                  suffix_controller,
-                 pupil_skn,
-                 iris_skn,
-                 eyeball_skn
+                 # pupil_skn,
+                 # iris_skn,
+                 # eyeball_skn
                  ):
         self.iris_connect_grp = mc.group(em=1, n='irisConnect' + side + '_grp')
         mc.delete(mc.parentConstraint(eyeball_jnt, self.iris_connect_grp))
@@ -68,8 +68,8 @@ class Build:
         mc.parent(iris_jnt_grp[0], eyeball_jnt)
         mc.parent(self.iris_ctrl_grp, self.iris_connect_grp)
 
-        # SKIN PARENT AND SCALE CONSTRAINT
-        au.parent_scale_constraint(pupil_jnt, pupil_skn)
-        au.parent_scale_constraint(iris_jnt, iris_skn)
-        au.parent_scale_constraint(eyeball_jnt, eyeball_skn)
-
+        # # SKIN PARENT AND SCALE CONSTRAINT
+        # au.parent_scale_constraint(pupil_jnt, pupil_skn)
+        # au.parent_scale_constraint(iris_jnt, iris_skn)
+        # au.parent_scale_constraint(eyeball_jnt, eyeball_skn)
+        #

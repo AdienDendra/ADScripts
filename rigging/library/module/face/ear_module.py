@@ -14,7 +14,7 @@ class Ear:
     def __init__(self,
                  scale,
                  ear_jnt,
-                 ear_skn,
+                 # ear_skn,
                  ear_prefix,
                  head_ctrl_gimbal,
                  side,
@@ -46,8 +46,8 @@ class Ear:
         # PARENT EAR CTRL TO HEAD GIMBAL
         mc.parent(ear_ctrl.parent_control[0], head_ctrl_gimbal)
 
-        # CONSTRAINT SKIN
-        au.parent_scale_constraint(ear_jnt, ear_skn)
+        # # CONSTRAINT SKIN
+        # au.parent_scale_constraint(ear_jnt, ear_skn)
 
 
     def reverse_node(self, object, target_jnt, side_RGT, side_LFT, side, input_trans2X=-1, input_trans2Y=1,

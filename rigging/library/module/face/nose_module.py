@@ -17,7 +17,7 @@ class Nose:
     def __init__(self,
                  face_utils_grp,
                  columella_jnt,
-                 columella_skn,
+                 # columella_skn,
                  columella_prefix,
                  curve_template_nose,
                  offset_jnt02_bind_position,
@@ -30,7 +30,7 @@ class Nose:
                  ctrl_color,
                  nose_jnt,
                  nose_up_jnt,
-                 nose_up_skin,
+                 # nose_up_skin,
                  position_mouth_ctrl,
                  head_ctrl_gimbal,
                  head_up_ctrl_gimbal,
@@ -50,7 +50,7 @@ class Nose:
                  jaw_ctrl,
                  suffix_controller,
                  base_module_nonTransform,
-                 parent_skin_nose
+                 # parent_skin_nose
                  ):
 
 
@@ -64,7 +64,9 @@ class Nose:
                         ctrl01_direction=ctrl01_direction, ctrl02_direction=ctrl02_direction,
                         ctrl03_direction=ctrl03_direction, ctrl04_direction=ctrl04_direction, ctrl05_direction=ctrl05_direction,
                         ctrl_color=ctrl_color, wire_low_controller=False, shape=shape, face_utils_grp=face_utils_grp, connect_with_corner_ctrl=False,
-                        suffix_controller=suffix_controller, base_module_nonTransform=base_module_nonTransform, parent_skin=parent_skin_nose)
+                        suffix_controller=suffix_controller, base_module_nonTransform=base_module_nonTransform,
+                        # parent_skin=parent_skin_nose
+                        )
 
 
         self.controller_nose01_LFT = wire.controller_bind05
@@ -293,8 +295,8 @@ class Nose:
                         target_x='input3Dy', target_y='input3Dz')
 
         # SKIN PARENT AND SCALE CONSTRAINT
-        au.parent_scale_constraint(nose_up_jnt, nose_up_skin)
-        au.parent_scale_constraint(columella_jnt, columella_skn)
+        # au.parent_scale_constraint(nose_up_jnt, nose_up_skin)
+        # au.parent_scale_constraint(columella_jnt, columella_skn)
 
     # ==================================================================================================================
     #                                                 FUNCTION NOSE AND NOSTRIL

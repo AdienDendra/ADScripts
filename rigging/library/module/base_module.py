@@ -146,20 +146,20 @@ class Base:
         mc.setAttr(self.face_joint_grp + '.it', 0, l=1)
         mc.setAttr(self.face_non_transform_grp + '.it', 0, l=1)
 
-        mc.setAttr(self.face_joint_grp + '.visibility', 0)
+        # mc.setAttr(self.face_joint_grp + '.visibility', 0)
         mc.setAttr(self.face_utils_grp + '.visibility', 0)
         mc.setAttr(self.face_non_transform_grp + '.visibility', 0)
 
-        au.lock_hide_attr(['t', 'r', 's','v'], self.face_anim_grp)
-        au.lock_hide_attr(['t', 'r', 's','v'], self.face_controller_grp)
-        au.lock_hide_attr(['t', 'r', 's','v'], self.face_joint_grp)
-        au.lock_hide_attr(['t', 'r', 's','v'], self.face_utils_grp)
-        au.lock_hide_attr(['t', 'r', 's','v'], self.face_non_transform_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.face_anim_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.face_controller_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.face_joint_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.face_utils_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.face_non_transform_grp)
 
 
-        # adding group for joint
-        self.skin_grp = mc.group(n='skin_grp', em=1, p=anim_control.control_gimbal)
-        au.lock_hide_attr(['t', 'r', 's'], self.skin_grp)
+        # # adding group for joint
+        # self.skin_grp = mc.group(n='skin_grp', em=1, p=anim_control.control_gimbal)
+        # au.lock_hide_attr(['t', 'r', 's'], self.skin_grp)
 
         # adding group for joint
         self.skeleton_grp = mc.group(n='skeleton_grp', em=1, p=anim_control.control_gimbal)
@@ -210,11 +210,11 @@ class Part:
 
         mc.setAttr(self.non_transform_grp + '.it', 0, l=1)
 
-        mc.setAttr(self.joint_grp + '.visibility', 0)
+        # mc.setAttr(self.joint_grp + '.visibility', 0)
         mc.setAttr(self.utils_grp + '.visibility', 0)
 
-        au.lock_hide_attr(['t', 'r', 's', ], self.top_grp)
-        au.lock_hide_attr(['t', 'r', 's', 'v' ], self.control_grp)
-        au.lock_hide_attr(['t', 'r', 's', 'v'], self.joint_grp)
-        au.lock_hide_attr(['t', 'r', 's', 'v'], self.utils_grp)
-        au.lock_hide_attr(['t', 'r', 's', 'v'], self.non_transform_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.top_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.control_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.joint_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.utils_grp)
+        au.lock_hide_attr(['t', 'r', 's'], self.non_transform_grp)

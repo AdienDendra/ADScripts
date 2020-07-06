@@ -136,19 +136,21 @@ class Build:
         # create joints for distance
         # upper limb distance
         mc.select(cl=1)
-        self.pos_upper_limb_jnt = mc.joint(n='%s%s%s_jnt' % (prefix_upper_limb_ik, 'Dist', side))
+        self.pos_upper_limb_jnt = mc.joint(n='%s%s%s_jnt' % (prefix_upper_limb_ik, 'Dist', side), radius=0.2*scale)
+        mc.hide(self.pos_upper_limb_jnt)
         mc.delete(mc.pointConstraint(upper_limb_ik_jnt, self.pos_upper_limb_jnt))
 
         # elbow distance
         mc.select(cl=1)
-        self.pos_pole_vector_jnt = mc.joint(n='%s%s%s_jnt' % (prefix_pole_vector_ik, 'Dist', side))
+        self.pos_pole_vector_jnt = mc.joint(n='%s%s%s_jnt' % (prefix_pole_vector_ik, 'Dist', side), radius=0.2*scale)
         mc.delete(mc.parentConstraint(pole_vector_ik_jnt, self.pos_pole_vector_jnt))
         mc.makeIdentity(self.pos_pole_vector_jnt, a=1, r=1, n=2, pn=1)
         mc.hide(self.pos_pole_vector_jnt)
 
         # wrist distance
         mc.select(cl=1)
-        self.pos_lower_limb_jnt = mc.joint(n='%s%s%s_jnt' % (prefix_lower_limb_ik, 'Dist', side))
+        self.pos_lower_limb_jnt = mc.joint(n='%s%s%s_jnt' % (prefix_lower_limb_ik, 'Dist', side), radius=0.2*scale)
+        mc.hide(self.pos_lower_limb_jnt)
         mc.delete(mc.pointConstraint(lower_limb_ik_jnt, self.pos_lower_limb_jnt))
 
         # aiming the pos upper limb joint to wrist joint

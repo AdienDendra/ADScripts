@@ -15,7 +15,8 @@ class Build:
     def __init__(self, curve_template, scale, side_LFT, side_RGT, side, offset_jnt02_bind_position, offset_jnt04_bind_position,
                  ctrl01_direction, ctrl02_direction, ctrl03_direction, ctrl04_direction, ctrl05_direction,
                  ctrl_color, wire_low_controller, shape, position_joint_direction, face_utils_grp, suffix_controller,
-                 base_module_nonTransform, parent_skin,
+                 base_module_nonTransform,
+                 # parent_skin,
                  connect_with_corner_ctrl=False):
 
         # DUPLICATE CURVE THEN RENAME
@@ -29,7 +30,9 @@ class Build:
 
         self.curve_vertex = mc.ls('%s.cv[0:*]' % curve, fl=True)
 
-        self.create_joint_wire(curve=curve, scale=scale, side=side, parent_skin=parent_skin)
+        self.create_joint_wire(curve=curve, scale=scale, side=side,
+                               # parent_skin=parent_skin
+                               )
 
         self.wire_bind_curve(offset_jnt02_bind_position=offset_jnt02_bind_position, ctrl01_direction=ctrl01_direction,
                              ctrl02_direction=ctrl02_direction, offset_jnt04_bind_position=offset_jnt04_bind_position,
@@ -476,7 +479,9 @@ class Build:
         self.curves_grp = curves_grp
         self.bind_jnt_grp =bind_jnt_grp
 
-    def create_joint_wire(self, curve, side, scale, parent_skin):
+    def create_joint_wire(self, curve, side, scale,
+                          # parent_skin
+                          ):
 
         curve_vetex = mc.ls('%s.cv[0:*]' % curve, fl=True)
 

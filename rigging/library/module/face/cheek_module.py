@@ -54,13 +54,13 @@ class Cheek:
                  head_low_ctrl,
                  suffix_controller,
 
-                 cheek_low_skn,
-                 cheek_mid_skn,
-                 cheek_up_skn,
-                 cheek_in_up_skn,
-                 cheek_in_low_skn,
-                 cheek_out_up_skn,
-                 cheek_out_low_skn,
+                 # cheek_low_skn,
+                 # cheek_mid_skn,
+                 # cheek_up_skn,
+                 # cheek_in_up_skn,
+                 # cheek_in_low_skn,
+                 # cheek_out_up_skn,
+                 # cheek_out_low_skn,
                  ):
 
         self.position = mc.xform(corner_lip_ctrl, ws=1, q=1, t=1)[0]
@@ -95,13 +95,13 @@ class Cheek:
                          cheek_out_low_prefix=cheek_out_low_prefix,
                          scale=scale,
                          side=side,
-                        cheek_low_skn=cheek_low_skn,
-                        cheek_mid_skn=cheek_mid_skn,
-                        cheek_up_skn=cheek_up_skn,
-                        cheek_in_up_skn=cheek_in_up_skn,
-                        cheek_in_low_skn=cheek_in_low_skn,
-                        cheek_out_up_skn=cheek_out_up_skn,
-                        cheek_out_low_skn=cheek_out_low_skn,
+                        # cheek_low_skn=cheek_low_skn,
+                        # cheek_mid_skn=cheek_mid_skn,
+                        # cheek_up_skn=cheek_up_skn,
+                        # cheek_in_up_skn=cheek_in_up_skn,
+                        # cheek_in_low_skn=cheek_in_low_skn,
+                        # cheek_out_up_skn=cheek_out_up_skn,
+                        # cheek_out_low_skn=cheek_out_low_skn,
                          suffix_controller=suffix_controller)
 
         mc.parent(cheek.cheek_low_jnt_grp[0], cheek.cheek_mid_jnt_grp[0],

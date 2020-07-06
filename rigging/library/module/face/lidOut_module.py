@@ -57,7 +57,7 @@ class LidOut:
                  eye_ctrl_direction,
                  suffix_controller,
                  base_module_nonTransform,
-                 parent_skin_eye
+                 # parent_skin_eye
                  ):
 
     # ==================================================================================================================
@@ -72,7 +72,9 @@ class LidOut:
                            ctrl03_direction=ctrl03_direction, ctrl04_direction=ctrl04_direction,
                            ctrl05_direction=ctrl05_direction, suffix_controller=suffix_controller,
                            ctrl_color=ctrl_color, wire_low_controller=False, shape=shape, face_utils_grp=face_utils_grp,
-                           connect_with_corner_ctrl=True,base_module_nonTransform=base_module_nonTransform, parent_skin=parent_skin_eye)
+                           connect_with_corner_ctrl=True,base_module_nonTransform=base_module_nonTransform,
+                           # parent_skin=parent_skin_eye
+                           )
 
         wire_low = wr.Build(curve_template=curve_low_template, position_joint_direction=eyeball_jnt, scale=scale, side_LFT=side_LFT, side_RGT=side_RGT, side=side,
                             offset_jnt02_bind_position=offset_jnt02_bind_position, offset_jnt04_bind_position=offset_jnt04_bind_position,
@@ -80,7 +82,9 @@ class LidOut:
                             ctrl03_direction=ctrl03_direction, ctrl04_direction=ctrl04_direction,
                             ctrl05_direction=ctrl05_direction, suffix_controller=suffix_controller,
                             ctrl_color=ctrl_color, wire_low_controller=True, shape=shape, face_utils_grp=face_utils_grp,
-                            connect_with_corner_ctrl=True, base_module_nonTransform=base_module_nonTransform, parent_skin=parent_skin_eye)
+                            connect_with_corner_ctrl=True, base_module_nonTransform=base_module_nonTransform,
+                            # parent_skin=parent_skin_eye
+                            )
 
         self.lid_out_up_jnt = wire_up.all_joint
         self.lid_out_low_jnt = wire_low.all_joint

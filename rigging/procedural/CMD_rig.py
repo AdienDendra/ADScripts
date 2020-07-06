@@ -356,12 +356,7 @@ def face_biped(# LIP
                             add_set_bulge=add_set_bulge,
                             suffix_joint=suffix_joint
                             )
-    if mc.objExists('spine04%s_jnt' % sj_prefix_value):
-        mc.parent(faceRig['neckJntGrp'], 'spine04%s_jnt' % sj_prefix_value)
-        mc.parentConstraint('spine04%s_jnt' % sj_prefix_value, faceRig['neckCtrlZroGrp'], mo=1)
-        mc.scaleConstraint('spine04%s_jnt' % sj_prefix_value, faceRig['neckCtrlZroGrp'])
-    else:
-        mc.parent(faceRig['neckJntGrp'], 'faceJoint_grp')
+
 
     print ('------------------------------')
     print ('Facial base is done!')
@@ -521,6 +516,8 @@ def add_expand_joint(number_arm_detail_ctrl= 5,
                     middle_expand_joint=middle_expand_joint,
                     ring_expand_joint=ring_expand_joint,
                     pinky_expand_joint=pinky_expand_joint,
+                    suffix_parent_joint='skn',
+                    suffix_duplicate_expand_joint='jnt'
                     )
 
     print('------------------------------')

@@ -22,7 +22,7 @@ class Lid:
                  offset_lid04_position,
                  eyeball_jnt,
                  eye_jnt,
-                 eye_skin,
+                 # eye_skin,
                  prefix_eye,
                  prefix_eye_aim,
                  scale,
@@ -53,10 +53,10 @@ class Lid:
                  suffix_controller,
                  base_module_nonTransform,
 
-                 pupil_skn,
-                 iris_skn,
-                 eyeball_skn,
-                 parent_skin_detail_lid
+                 # pupil_skn,
+                 # iris_skn,
+                 # eyeball_skn,
+                 # parent_skin_detail_lid
                  ):
 
         self.position = mc.xform(eyeball_jnt, ws=1, q=1, t=1)[0]
@@ -107,7 +107,7 @@ class Lid:
                               upper_head_gimbal_ctrl=upper_head_gimbal_ctrl,
                               suffix_controller=suffix_controller,
                               base_module_nonTransform=base_module_nonTransform,
-                              parent_skin=parent_skin_detail_lid
+                              # parent_skin=parent_skin_detail_lid
                               )
         self.lid_out_up01_follow_attr = self.upLid.lid_out01_follow_attr
         self.lid_out_up02_follow_attr = self.upLid.lid_out02_follow_attr
@@ -145,7 +145,7 @@ class Lid:
                                upper_head_gimbal_ctrl=upper_head_gimbal_ctrl,
                                suffix_controller=suffix_controller,
                                base_module_nonTransform=base_module_nonTransform,
-                               parent_skin=parent_skin_detail_lid
+                               # parent_skin=parent_skin_detail_lid
                                )
         self.lid_out_low01_follow_attr = self.lowLid.lid_out01_follow_attr
         self.lid_out_low02_follow_attr = self.lowLid.lid_out02_follow_attr
@@ -254,9 +254,9 @@ class Lid:
                               eye_ctrl=self.eyeball_controller,
                               eye_jnt_grp_offset=self.eyeball_ctrl_grp_offset,
                               suffix_controller=suffix_controller,
-                              pupil_skn=pupil_skn,
-                              iris_skn=iris_skn,
-                              eyeball_skn=eyeball_skn
+                              # pupil_skn=pupil_skn,
+                              # iris_skn=iris_skn,
+                              # eyeball_skn=eyeball_skn
                               )
 
         # ==================================================================================================================
@@ -276,8 +276,8 @@ class Lid:
                   head_up_ctrl_gimbal)
         mc.parent(lid_grp, self.upLid.move_grp, self.lowLid.move_grp, face_utils_grp)
 
-        # SKIN PARENT AND SCALE CONSTRAINT
-        au.parent_scale_constraint(eye_jnt, eye_skin)
+        # # SKIN PARENT AND SCALE CONSTRAINT
+        # au.parent_scale_constraint(eye_jnt, eye_skin)
 
     # ==================================================================================================================
     #                                                   FUNCTIONS

@@ -43,18 +43,18 @@ class Head:
                  tongue04_jnt,
                  suffix_controller,
                  scale,
-                 neck_skn,
-                 neck_in_btw_skn,
-                 head_skn,
-                 jaw_skn,
-                 head_up_skn,
-                 head_low_skn,
-                 upper_teeth_skn,
-                 lower_teeth_skn,
-                 tongue01_skn,
-                 tongue02_skn,
-                 tongue03_skn,
-                 tongue04_skn
+                 # neck_skn,
+                 # neck_in_btw_skn,
+                 # head_skn,
+                 # jaw_skn,
+                 # head_up_skn,
+                 # head_low_skn,
+                 # upper_teeth_skn,
+                 # lower_teeth_skn,
+                 # tongue01_skn,
+                 # tongue02_skn,
+                 # tongue03_skn,
+                 # tongue04_skn
                  ):
 
         world_up_grp = mc.spaceLocator(n='worldUpFacialObject_loc')[0]
@@ -84,18 +84,18 @@ class Head:
                         tongue04_jnt=tongue04_jnt,
                         scale=scale,
                         suffix_controller=suffix_controller,
-                        neck_skn=neck_skn,
-                        neck_in_btw_skn=neck_in_btw_skn,
-                        head_skn=head_skn,
-                        jaw_skn=jaw_skn,
-                        head_up_skn=head_up_skn,
-                        head_low_skn=head_low_skn,
-                        upper_teeth_skn=upper_teeth_skn,
-                        lower_teeth_skn=lower_teeth_skn,
-                        tongue01_skn=tongue01_skn,
-                        tongue02_skn=tongue02_skn,
-                        tongue03_skn=tongue03_skn,
-                        tongue04_skn=tongue04_skn
+                        # neck_skn=neck_skn,
+                        # neck_in_btw_skn=neck_in_btw_skn,
+                        # head_skn=head_skn,
+                        # jaw_skn=jaw_skn,
+                        # head_up_skn=head_up_skn,
+                        # head_low_skn=head_low_skn,
+                        # upper_teeth_skn=upper_teeth_skn,
+                        # lower_teeth_skn=lower_teeth_skn,
+                        # tongue01_skn=tongue01_skn,
+                        # tongue02_skn=tongue02_skn,
+                        # tongue03_skn=tongue03_skn,
+                        # tongue04_skn=tongue04_skn
                         )
 
         self.head_up_ctrl = head.head_up_ctrl.control

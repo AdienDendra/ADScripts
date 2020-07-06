@@ -18,7 +18,7 @@ reload(ds)
 class Clavicle:
     def __init__(self,
                  clavicle=None,
-                 skin_joint_clavicle=None,
+                 # skin_joint_clavicle=None,
                  prefix='clavicle',
                  base_controller=None,
                  clavicle_jnt=None,
@@ -48,28 +48,30 @@ class Clavicle:
                     mc.error('please clean up the left clavicle first!')
                 else:
                     self.joint_driver()
-                    self.module(clavicle_jnt=self.sj.clav_LFT, skin_joint_clavicle=self.sSkn.clav_LFT,
+                    self.module(clavicle_jnt=self.sj.clav_LFT,
+                                # skin_joint_clavicle=self.sSkn.clav_LFT,
                                 prefix=prefix, base=base_controller, parent_jnt=False, side='LFT',
                                 scale_jnt=self.ss.clav_LFT, size=1.0)
-                    mc.parent(self.sSkn.clav_LFT, base_controller.skinGrp)
-                    mc.delete(self.sj.upArm_LFT, self.ss.upArm_LFT, self.sSkn.upArm_LFT)
+                    # mc.parent(self.sSkn.clav_LFT, base_controller.skinGrp)
+                    mc.delete(self.sj.upArm_LFT, self.ss.upArm_LFT)
 
             else:
                 if mc.objExists('clavRGT_skn'):
                     mc.error('please clean up the right clavicle first!')
                 else:
                     self.joint_driver()
-                    self.module(clavicle_jnt=self.sj.clav_RGT, skin_joint_clavicle=self.sSkn.clav_RGT,
+                    self.module(clavicle_jnt=self.sj.clav_RGT,
+                                # skin_joint_clavicle=self.sSkn.clav_RGT,
                                 prefix=prefix, base=base_controller, parent_jnt=False, side='RGT',
                                 scale_jnt=self.ss.clav_RGT, size=1.0)
-                    mc.parent(self.sSkn.clav_RGT, base_controller.skinGrp)
-                    mc.delete(self.sj.upArm_RGT, self.ss.upArm_RGT, self.sSkn.upArm_RGT)
+                    # mc.parent(self.sSkn.clav_RGT, base_controller.skinGrp)
+                    mc.delete(self.sj.upArm_RGT, self.ss.upArm_RGT)
 
-            mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root, self.sAdd.root,
-                      self.sSkn.root)
+            mc.delete(self.sj.root, self.ss.root, self.sFk.root, self.sIk.root, self.sTwistHelp.root, self.sAdd.root,)
         else:
             if clavicle:
-                self.module(clavicle_jnt=clavicle_jnt, skin_joint_clavicle=skin_joint_clavicle,
+                self.module(clavicle_jnt=clavicle_jnt,
+                            # skin_joint_clavicle=skin_joint_clavicle,
                             prefix=prefix, base=base_controller, parent_jnt=parent_jnt, side=side, scale_jnt=scale_jnt,
                             size=size)
 
@@ -78,14 +80,15 @@ class Clavicle:
                                sIk_prefix_value='ModClavIk',
                                sAdd_prefix_value='ModClavShape')
         self.sj = skel['sj']
-        self.sSkn = skel['sSkn']
         self.sFk = skel['sFk']
         self.sIk = skel['sIk']
         self.ss = skel['ss']
         self.sTwistHelp = skel['sTwistHelp']
         self.sAdd = skel['sAdd']
 
-    def module(self, clavicle_jnt, skin_joint_clavicle, prefix, base, side, scale_jnt, size, parent_jnt=True):
+    def module(self, clavicle_jnt,
+               # skin_joint_clavicle,
+               prefix, base, side, scale_jnt, size, parent_jnt=True):
         ### IMPORT SPINE MODULE
         build_clavicle = cl.Build(
             clav_jnt=clavicle_jnt,
@@ -119,5 +122,5 @@ class Clavicle:
         # parent joint scale
         mc.parent(scale_jnt, self.clavicle_gimbal)
 
-        # connect skin
-        au.parent_scale_constraint(scale_jnt, skin_joint_clavicle)
+        # # connect skin
+        # au.parent_scale_constraint(scale_jnt, skin_joint_clavicle)

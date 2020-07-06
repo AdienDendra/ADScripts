@@ -7,11 +7,11 @@ from rigging.library.module import template_module as sd
 reload(sd)
 
 def all_skeleton(side_LFT='LFT', side_RGT='RGT', suffix_joint='jnt', sj_prefix_value='', ss_prefix_value='Scl', sFk_prefix_value='Fk', sIk_prefix_value='Ik',
-                 sAdd_prefix_value='Shape', sSkn_prefix_value='', suffix_skin='skn'):
+                 sAdd_prefix_value='Shape'):
 
     sj = sd.listSkeletonDuplicate(value_prefix=sj_prefix_value,
                                   key_prefix='Ori',
-                                  suffix=suffix_joint,
+                                  suffix='skn',
                                   side_LFT=side_LFT,
                                   side_RGT=side_RGT
                                   )
@@ -49,22 +49,21 @@ def all_skeleton(side_LFT='LFT', side_RGT='RGT', suffix_joint='jnt', sj_prefix_v
                                     side_LFT=side_LFT,
                                     side_RGT=side_RGT
                                     )
-    sSkn = sd.listSkeletonDuplicate(value_prefix=sSkn_prefix_value,
-                                    key_prefix='Skin',
-                                    suffix=suffix_skin,
-                                    side_LFT=side_LFT,
-                                    side_RGT=side_RGT
-                                    )
+
+    mc.hide('tmpJnt_grp')
 
     #unhide skin joint
     unhide = mc.ls('*skn')
     for i in unhide:
         mc.setAttr(i + '.visibility', 1)
 
+    hide = mc.ls('*jnt')
+    for i in hide:
+        mc.setAttr(i + '.visibility', 0)
+
     return {'sj':sj,
             'ss':ss,
             'sFk':sFk,
             'sIk':sIk,
             'sTwistHelp':sTwistHelp,
-            'sAdd':sAdd,
-            'sSkn':sSkn}
+            'sAdd':sAdd}

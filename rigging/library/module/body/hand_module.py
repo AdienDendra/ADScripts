@@ -32,10 +32,10 @@ class Hand:
                  thumb_finger_base=None,
                  thumb_finger_up=None,
                  thumb_finger_mid=None,
-                 skin_thumb_finger_base=None,
-                 skin_thumb_finger_up=None,
-                 skin_thumb_finger_mid=None,
-                 skin_thumb_finger_end=None,
+                 # skin_thumb_finger_base=None,
+                 # skin_thumb_finger_up=None,
+                 # skin_thumb_finger_mid=None,
+                 # skin_thumb_finger_end=None,
                  prefix_thumb_finger_base=prefix_thumb + BaseF,
                  prefix_thumb_finger_up=prefix_thumb + UpF,
                  prefix_thumb_finger_mid=prefix_thumb + MidF,
@@ -43,11 +43,11 @@ class Hand:
                  index_finger_up=None,
                  index_finger_mid=None,
                  index_finger_low=None,
-                 skin_index_finger_base=None,
-                 skin_index_finger_up=None,
-                 skin_index_finger_mid=None,
-                 skin_index_finger_low=None,
-                 skin_index_finger_end=None,
+                 # skin_index_finger_base=None,
+                 # skin_index_finger_up=None,
+                 # skin_index_finger_mid=None,
+                 # skin_index_finger_low=None,
+                 # skin_index_finger_end=None,
                  prefix_index_finger_base=prefix_index + BaseF,
                  prefix_index_finger_up=prefix_index + UpF,
                  prefix_index_finger_mid=prefix_index + MidF,
@@ -56,11 +56,11 @@ class Hand:
                  middle_finger_up=None,
                  middle_finger_mid=None,
                  middle_finger_low=None,
-                 skin_middle_finger_base=None,
-                 skin_middle_finger_up=None,
-                 skin_middle_finger_mid=None,
-                 skin_middle_finger_low=None,
-                 skin_middle_finger_end=None,
+                 # skin_middle_finger_base=None,
+                 # skin_middle_finger_up=None,
+                 # skin_middle_finger_mid=None,
+                 # skin_middle_finger_low=None,
+                 # skin_middle_finger_end=None,
                  prefix_middle_finger_base=prefix_middle + BaseF,
                  prefix_middle_finger_up=prefix_middle + UpF,
                  prefix_middle_finger_mid=prefix_middle + MidF,
@@ -69,11 +69,11 @@ class Hand:
                  ring_finger_up=None,
                  ring_finger_mid=None,
                  ring_finger_low=None,
-                 skin_ring_finger_base=None,
-                 skin_ring_finger_up=None,
-                 skin_ring_finger_mid=None,
-                 skin_ring_finger_low=None,
-                 skin_ring_finger_end=None,
+                 # skin_ring_finger_base=None,
+                 # skin_ring_finger_up=None,
+                 # skin_ring_finger_mid=None,
+                 # skin_ring_finger_low=None,
+                 # skin_ring_finger_end=None,
                  prefix_ring_finger_base=prefix_ring + BaseF,
                  prefix_ring_finger_up=prefix_ring + UpF,
                  prefix_ring_finger_mid=prefix_ring + MidF,
@@ -82,11 +82,11 @@ class Hand:
                  pinky_finger_up=None,
                  pinky_finger_mid=None,
                  pinky_finger_low=None,
-                 skin_pinky_finger_base=None,
-                 skin_pinky_finger_up=None,
-                 skin_pinky_finger_mid=None,
-                 skin_pinky_finger_low=None,
-                 skin_pinky_finger_end=None,
+                 # skin_pinky_finger_base=None,
+                 # skin_pinky_finger_up=None,
+                 # skin_pinky_finger_mid=None,
+                 # skin_pinky_finger_low=None,
+                 # skin_pinky_finger_end=None,
                  prefix_pinky_finger_base=prefix_pinky + BaseF,
                  prefix_pinky_finger_up=prefix_pinky + UpF,
                  prefix_pinky_finger_mid=prefix_pinky + MidF,
@@ -101,9 +101,9 @@ class Hand:
                  pinky=True,
                  wrist_jnt=None,
                  hand_jnt=None,
-                 skin_hand_jnt=None,
+                 # skin_hand_jnt=None,
                  palm_jnt=None,
-                 skin_palm_jnt=None,
+                 # skin_palm_jnt=None,
                  size=1.0,
                  single_module=False):
 
@@ -165,11 +165,11 @@ class Hand:
                 # HAND SCALE
                 self.hand_scale(controller=self.finger_setup_control, wrist_jnt=wrist_jnt)
 
-                # SKIN JOINT
-                au.parent_scale_constraint(hand_jnt, skin_hand_jnt)
-                au.parent_scale_constraint(palm_jnt, skin_palm_jnt)
+            #     # SKIN JOINT
+            #     au.parent_scale_constraint(hand_jnt, skin_hand_jnt)
+            #     au.parent_scale_constraint(palm_jnt, skin_palm_jnt)
             else:
-                mc.delete(skin_palm_jnt, skin_hand_jnt)
+                mc.delete(palm_jnt, hand_jnt)
 
         # ==========================================================================================================
         #                                                THUMB CONTROLLER
@@ -235,13 +235,13 @@ class Hand:
                 # rotate module controller
                 self.change_pos_ctrl(thumb_finger_base, self.thumb_finger1.control)
 
-                # SKINNING JOINT
-                au.parent_scale_constraint(thumb_finger_base, skin_thumb_finger_base)
-                au.parent_scale_constraint(thumb_finger_up, skin_thumb_finger_up)
-                au.parent_scale_constraint(thumb_finger_mid, skin_thumb_finger_mid)
-                mc.delete(skin_thumb_finger_end)
+            #     # SKINNING JOINT
+            #     au.parent_scale_constraint(thumb_finger_base, skin_thumb_finger_base)
+            #     au.parent_scale_constraint(thumb_finger_up, skin_thumb_finger_up)
+            #     au.parent_scale_constraint(thumb_finger_mid, skin_thumb_finger_mid)
+            #     mc.delete(skin_thumb_finger_end)
             else:
-                mc.delete(skin_thumb_finger_base)
+                mc.delete(thumb_finger_base)
 
         # ==========================================================================================================
         #                                                INDEX CONTROLLER
@@ -335,14 +335,14 @@ class Hand:
                 # rotate module controller
                 self.change_pos_ctrl(index_finger_base, self.index_finger1.control)
 
-                # SKINNING JOINT
-                au.parent_scale_constraint(index_finger_base, skin_index_finger_base)
-                au.parent_scale_constraint(index_finger_up, skin_index_finger_up)
-                au.parent_scale_constraint(index_finger_mid, skin_index_finger_mid)
-                au.parent_scale_constraint(index_finger_low, skin_index_finger_low)
-                mc.delete(skin_index_finger_end)
+            #     # SKINNING JOINT
+            #     au.parent_scale_constraint(index_finger_base, skin_index_finger_base)
+            #     au.parent_scale_constraint(index_finger_up, skin_index_finger_up)
+            #     au.parent_scale_constraint(index_finger_mid, skin_index_finger_mid)
+            #     au.parent_scale_constraint(index_finger_low, skin_index_finger_low)
+            #     mc.delete(skin_index_finger_end)
             else:
-                mc.delete(skin_index_finger_base)
+                mc.delete(index_finger_base)
         # ==========================================================================================================
         #                                                MIDDLE CONTROLLER
         # ==========================================================================================================
@@ -433,14 +433,14 @@ class Hand:
                 # rotate module controller
                 self.change_pos_ctrl(middle_finger_base, self.middle_finger1.control)
 
-                # SKINNING JOINT
-                au.parent_scale_constraint(middle_finger_base, skin_middle_finger_base)
-                au.parent_scale_constraint(middle_finger_up, skin_middle_finger_up)
-                au.parent_scale_constraint(middle_finger_mid, skin_middle_finger_mid)
-                au.parent_scale_constraint(middle_finger_low, skin_middle_finger_low)
-                mc.delete(skin_middle_finger_end)
+            #     # SKINNING JOINT
+            #     au.parent_scale_constraint(middle_finger_base, skin_middle_finger_base)
+            #     au.parent_scale_constraint(middle_finger_up, skin_middle_finger_up)
+            #     au.parent_scale_constraint(middle_finger_mid, skin_middle_finger_mid)
+            #     au.parent_scale_constraint(middle_finger_low, skin_middle_finger_low)
+            #     mc.delete(skin_middle_finger_end)
             else:
-                mc.delete(skin_middle_finger_base)
+                mc.delete(middle_finger_base)
         # ==========================================================================================================
         #                                                RING CONTROLLER
         # ==========================================================================================================
@@ -536,14 +536,14 @@ class Hand:
                 # rotate module controller
                 self.change_pos_ctrl(ring_finger_base, self.ring_finger1.control)
 
-                # SKINNING JOINT
-                au.parent_scale_constraint(ring_finger_base, skin_ring_finger_base)
-                au.parent_scale_constraint(ring_finger_up, skin_ring_finger_up)
-                au.parent_scale_constraint(ring_finger_mid, skin_ring_finger_mid)
-                au.parent_scale_constraint(ring_finger_low, skin_ring_finger_low)
-                mc.delete(skin_ring_finger_end)
+            #     # SKINNING JOINT
+            #     au.parent_scale_constraint(ring_finger_base, skin_ring_finger_base)
+            #     au.parent_scale_constraint(ring_finger_up, skin_ring_finger_up)
+            #     au.parent_scale_constraint(ring_finger_mid, skin_ring_finger_mid)
+            #     au.parent_scale_constraint(ring_finger_low, skin_ring_finger_low)
+            #     mc.delete(skin_ring_finger_end)
             else:
-                mc.delete(skin_ring_finger_base)
+                mc.delete(ring_finger_base)
 
         # ==========================================================================================================
         #                                                PINKY CONTROLLER
@@ -639,16 +639,16 @@ class Hand:
                 # rotate module controller
                 self.change_pos_ctrl(pinky_finger_base, self.pinky_finger1.control)
 
-                # SKINNING JOINT
-                au.parent_scale_constraint(pinky_finger_base, skin_pinky_finger_base)
-                au.parent_scale_constraint(pinky_finger_up, skin_pinky_finger_up)
-                au.parent_scale_constraint(pinky_finger_mid, skin_pinky_finger_mid)
-                au.parent_scale_constraint(pinky_finger_low, skin_pinky_finger_low)
-                mc.delete(skin_pinky_finger_end)
+        #         # SKINNING JOINT
+        #         au.parent_scale_constraint(pinky_finger_base, skin_pinky_finger_base)
+        #         au.parent_scale_constraint(pinky_finger_up, skin_pinky_finger_up)
+        #         au.parent_scale_constraint(pinky_finger_mid, skin_pinky_finger_mid)
+        #         au.parent_scale_constraint(pinky_finger_low, skin_pinky_finger_low)
+        #         mc.delete(skin_pinky_finger_end)
             else:
-                mc.delete(skin_pinky_finger_base)
-        else:
-            mc.delete(skin_hand_jnt, skin_palm_jnt, skin_thumb_finger_base)
+                mc.delete(pinky_finger_base)
+        # else:
+        #     mc.delete(hand_jnt, palm_jnt, thumb_finger_base)
     # ==================================================================================================================
     #                                               GENERAL FUNCTION FINGER
     # ==================================================================================================================
