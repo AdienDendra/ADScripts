@@ -148,7 +148,7 @@ class Base:
 
         # mc.setAttr(self.face_joint_grp + '.visibility', 0)
         mc.setAttr(self.face_utils_grp + '.visibility', 0)
-        mc.setAttr(self.face_non_transform_grp + '.visibility', 0)
+        # mc.setAttr(self.face_non_transform_grp + '.visibility', 0)
 
         au.lock_hide_attr(['t', 'r', 's'], self.face_anim_grp)
         au.lock_hide_attr(['t', 'r', 's'], self.face_controller_grp)
