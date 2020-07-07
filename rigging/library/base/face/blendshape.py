@@ -3,301 +3,324 @@ from __builtin__ import reload
 
 import maya.cmds as mc
 
+from rigging.library.utils import transform as tf
 from rigging.tools import AD_utils as au
 
 reload(au)
+reload(tf)
+
 
 class BuildTwoSide:
-    def __init__(self, bsnName, prefixSquashStretch, prefixRollLow, suffixBsh, prefixRollUp, squashStretchAttr, mouthCtrl,
-                 controllerUpRollBshAttr, controllerLowRollBshAttr, prefixCheekOut, cheekOutAttrLFT, cheekOutAttrRGT, sideLFT, sideRGT):
+    def __init__(self, blendshape_node_name, squash_stretch_prefix, roll_low_prefix, blendshape_suffix, roll_up_prefix,
+                 squash_stretch_attr, mouth_ctrl,
+                 controller_roll_up_bsh_attr, controller_roll_low_bsh_attr, cheek_out_prefix, cheek_out_attr_LFT,
+                 cheek_out_attr_RGT, side_LFT, side_RGT):
 
         # TWO SLIDE
-        self.twoValueSlider(bsnName=bsnName, controller=mouthCtrl, prefix=prefixSquashStretch, side='', slideAtribute=squashStretchAttr,
-                            subPrefixOne='Stretch', valuePosOne=10, subPrefixTwo='Squash', valuePosTwo=-10, connect=True, suffixBsh=suffixBsh)
+        self.two_value_slider(blendshape_name=blendshape_node_name, controller=mouth_ctrl, prefix=squash_stretch_prefix,
+                              side='', slide_atribute=squash_stretch_attr,
+                              sub_prefix_one='Stretch', value_pos_one=10, sub_prefix_two='Squash', value_pos_two=-10,
+                              connect=True, suffix_bsh=blendshape_suffix)
 
-        self.twoValueSlider(bsnName=bsnName, controller=mouthCtrl, prefix=prefixRollLow, side='', slideAtribute=controllerLowRollBshAttr,
-                            subPrefixOne='Out', valuePosOne=10, subPrefixTwo='In', valuePosTwo=-10, connect=True, suffixBsh=suffixBsh)
+        self.two_value_slider(blendshape_name=blendshape_node_name, controller=mouth_ctrl, prefix=roll_low_prefix,
+                              side='', slide_atribute=controller_roll_low_bsh_attr,
+                              sub_prefix_one='Out', value_pos_one=10, sub_prefix_two='In', value_pos_two=-10,
+                              connect=True, suffix_bsh=blendshape_suffix)
 
-        self.twoValueSlider(bsnName=bsnName, controller=mouthCtrl, prefix=prefixRollUp, side='', slideAtribute=controllerUpRollBshAttr,
-                            subPrefixOne='Out', valuePosOne=10, subPrefixTwo='In', valuePosTwo=-10, connect=True, suffixBsh=suffixBsh)
+        self.two_value_slider(blendshape_name=blendshape_node_name, controller=mouth_ctrl, prefix=roll_up_prefix,
+                              side='', slide_atribute=controller_roll_up_bsh_attr,
+                              sub_prefix_one='Out', value_pos_one=10, sub_prefix_two='In', value_pos_two=-10,
+                              connect=True, suffix_bsh=blendshape_suffix)
 
-        self.oneValueSlider(bsnName=bsnName, controller=mouthCtrl, prefix=prefixCheekOut, side=sideLFT, slideAtribute=cheekOutAttrLFT, subPrefix='',
-                            valueNode=10, sideRGT=sideRGT, sideLFT=sideLFT, suffixBsh=suffixBsh)
+        self.one_value_slider(blendshape_name=blendshape_node_name, controller=mouth_ctrl, prefix=cheek_out_prefix,
+                              side=side_LFT, slide_atribute=cheek_out_attr_LFT, sub_prefix='',
+                              valueNode=10, side_RGT=side_RGT, side_LFT=side_LFT, suffix_bsh=blendshape_suffix)
 
-        self.oneValueSlider(bsnName=bsnName, controller=mouthCtrl, prefix=prefixCheekOut, side=sideRGT, slideAtribute=cheekOutAttrRGT, subPrefix='',
-                            valueNode=10, sideRGT=sideRGT, sideLFT=sideLFT, suffixBsh=suffixBsh)
+        self.one_value_slider(blendshape_name=blendshape_node_name, controller=mouth_ctrl, prefix=cheek_out_prefix,
+                              side=side_RGT, slide_atribute=cheek_out_attr_RGT, sub_prefix='',
+                              valueNode=10, side_RGT=side_RGT, side_LFT=side_LFT, suffix_bsh=blendshape_suffix)
 
-    def combinedValueSlider(self, bsnName, controller, side, subPrefixFirst='', subPrefixSecond='', clampDriverFirstOne='',
-                            clampDriverFirstTwo='', clampDriverSecondOne='', clampDriverSecondTwo='', twoSide=True):
+    def combined_value_slider(self, blendshape_name, controller, side, sub_prefix_first='', sub_prefix_second='',
+                              clamp_driver_first_one='',
+                              clamp_driver_first_two='', clamp_driver_second_one='', clamp_driver_second_two='',
+                              two_side=True):
 
-        ctrlNew = self.replacePosLFTRGT(controller, 'BshRGT', 'BshLFT')
-        listWeight = mc.listAttr(bsnName+'.w', m=True)
+        ctrl_new = tf.reposition_side(controller, 'BshRGT', 'BshLFT')
+        list_weight = mc.listAttr(blendshape_name + '.w', m=True)
 
         # DRIVER VALUE
-        multDoubleLinearCombinedOne = mc.createNode('multDoubleLinear', n=au.prefix_name(ctrlNew) + subPrefixFirst + 'BshCombined' + side + '_mdl')
-        mc.connectAttr(clampDriverFirstOne + '.outputR', multDoubleLinearCombinedOne + '.input1')
-        mc.connectAttr(clampDriverFirstTwo + '.outputR', multDoubleLinearCombinedOne + '.input2')
+        mult_double_linear_combined_one = mc.createNode('multDoubleLinear', n=au.prefix_name(
+            ctrl_new) + sub_prefix_first + 'BshCombined' + side + '_mdl')
+        mc.connectAttr(clamp_driver_first_one + '.outputR', mult_double_linear_combined_one + '.input1')
+        mc.connectAttr(clamp_driver_first_two + '.outputR', mult_double_linear_combined_one + '.input2')
 
-        if twoSide :
-            multDoubleLinearCombinedTwo = mc.createNode('multDoubleLinear', n=au.prefix_name(ctrlNew) + subPrefixSecond + 'BshCombined' + side + '_mdl')
-            mc.connectAttr(clampDriverSecondOne + '.outputR', multDoubleLinearCombinedTwo + '.input1')
-            mc.connectAttr(clampDriverSecondTwo + '.outputR', multDoubleLinearCombinedTwo + '.input2')
-            self.connectNodeToBsh(listWeight, multDoubleLinearCombinedTwo, 'output', bsnName=bsnName, sideRGT='BshCombinedRGT', sideLFT='BshCombinedLFT', side=side)
+        if two_side:
+            mult_double_linear_combined_two = mc.createNode('multDoubleLinear', n=au.prefix_name(
+                ctrl_new) + sub_prefix_second + 'BshCombined' + side + '_mdl')
+            mc.connectAttr(clamp_driver_second_one + '.outputR', mult_double_linear_combined_two + '.input1')
+            mc.connectAttr(clamp_driver_second_two + '.outputR', mult_double_linear_combined_two + '.input2')
+            self.connect_node_to_bsh(list_weight, mult_double_linear_combined_two, 'output',
+                                     blendshape_name=blendshape_name, side_RGT='BshCombinedRGT',
+                                     side_LFT='BshCombinedLFT', side=side)
 
         # CONNECT TO BSH
-        self.connectNodeToBsh(listWeight, multDoubleLinearCombinedOne, 'output', bsnName=bsnName, sideRGT='BshCombinedRGT', sideLFT='BshCombinedLFT', side=side)
+        self.connect_node_to_bsh(list_weight, mult_double_linear_combined_one, 'output',
+                                 blendshape_name=blendshape_name, side_RGT='BshCombinedRGT', side_LFT='BshCombinedLFT',
+                                 side=side)
 
-    def twoValueSlider(self, bsnName, controller, prefix, side, slideAtribute, subPrefixOne, valuePosOne, subPrefixTwo, valuePosTwo, suffixBsh,
-                       sideRGT='', sideLFT='', connect=True, clampUpMin=0.0, clampUpMax=10.0, clampDownMin=0.0,
-                       clampDownMax=10.0):
+    def two_value_slider(self, blendshape_name, controller, prefix, side, slide_atribute, sub_prefix_one, value_pos_one,
+                         sub_prefix_two, value_pos_two, suffix_bsh,
+                         side_RGT='', side_LFT='', connect=True, clamp_up_min=0.0, clamp_up_max=10.0,
+                         clamp_down_min=0.0,
+                         clamp_down_max=10.0):
         # UP
-        ctrlNew = self.replacePosLFTRGT(prefix, sideRGT, sideLFT)
-        multDoubleLinearUp = mc.createNode('multDoubleLinear', n=au.prefix_name(ctrlNew) + subPrefixOne + 'Bsh' + side + '_mdl')
-        mc.setAttr(multDoubleLinearUp + '.input2', 1.0/valuePosOne)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearUp + '.input1')
+        ctrl_new = tf.reposition_side(prefix, side_RGT, side_LFT)
+        mult_double_linear_up = mc.createNode('multDoubleLinear',
+                                              n=au.prefix_name(ctrl_new) + sub_prefix_one + 'Bsh' + side + '_mdl')
+        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
-        clampUp = mc.createNode('clamp', n=au.prefix_name(ctrlNew) + subPrefixOne + 'Bsh' + side + '_clm')
-        mc.setAttr(clampUp + '.maxR', clampUpMax)
-        mc.setAttr(clampUp + '.minR', clampUpMin)
+        clamp_up = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_one + 'Bsh' + side + '_clm')
+        mc.setAttr(clamp_up + '.maxR', clamp_up_max)
+        mc.setAttr(clamp_up + '.minR', clamp_up_min)
 
-        mc.connectAttr(multDoubleLinearUp + '.output', clampUp + '.inputR')
+        mc.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
 
         # DOWN
-        multDoubleLinearDown = mc.createNode('multDoubleLinear', n=au.prefix_name(ctrlNew) + subPrefixTwo + 'Bsh' + side + '_mdl')
-        mc.setAttr(multDoubleLinearDown + '.input2', 1.0/valuePosTwo)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearDown + '.input1')
+        mult_double_linear_down = mc.createNode('multDoubleLinear',
+                                                n=au.prefix_name(ctrl_new) + sub_prefix_two + 'Bsh' + side + '_mdl')
+        mc.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
 
-        clampDown = mc.createNode('clamp', n=au.prefix_name(ctrlNew) + subPrefixTwo + 'Bsh' + side + '_clm')
-        mc.setAttr(clampDown + '.maxR', clampDownMax)
-        mc.setAttr(clampDown + '.minR', clampDownMin)
-        mc.connectAttr(multDoubleLinearDown + '.output', clampDown + '.inputR')
+        clamp_down = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_two + 'Bsh' + side + '_clm')
+        mc.setAttr(clamp_down + '.maxR', clamp_down_max)
+        mc.setAttr(clamp_down + '.minR', clamp_down_min)
+        mc.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
 
         # CONNECT TO BSH
         if connect:
-            listWeight = mc.listAttr(bsnName+'.w', m=True)
-            self.connectNodeToBsh(listWeight, clampUp, 'outputR', bsnName=bsnName, sideRGT=sideRGT, sideLFT=sideLFT, side=side, suffixBsh=suffixBsh)
-            self.connectNodeToBsh(listWeight, clampDown, 'outputR', bsnName=bsnName, sideRGT=sideRGT, sideLFT=sideLFT, side=side, suffixBsh=suffixBsh)
+            list_weight = mc.listAttr(blendshape_name + '.w', m=True)
+            self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_name=blendshape_name,
+                                     side_RGT=side_RGT, side_LFT=side_LFT, side=side, suffix_bsh=suffix_bsh)
+            self.connect_node_to_bsh(list_weight, clamp_down, 'outputR', blendshape_name=blendshape_name,
+                                     side_RGT=side_RGT, side_LFT=side_LFT, side=side, suffix_bsh=suffix_bsh)
         # else:
-        return clampUp, clampDown
+        return clamp_up, clamp_down
 
-    def oneValueSlider(self, bsnName, controller, side, slideAtribute, prefix, suffixBsh, subPrefix, valueNode, sideRGT='', sideLFT='',
-                       clampMax=10.0, clampMin=0.0
-                       ):
-        ctrlNew = self.replacePosLFTRGT(prefix, sideRGT, sideLFT)
-        multDoubleLinear = mc.createNode('multDoubleLinear', n=au.prefix_name(ctrlNew) + subPrefix + 'Bsh' + side + '_mdl')
-        mc.setAttr(multDoubleLinear + '.input2', 1.0 / valueNode)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinear + '.input1')
+    def one_value_slider(self, blendshape_name, controller, side, slide_atribute, prefix, suffix_bsh, sub_prefix,
+                         valueNode, side_RGT='', side_LFT='',
+                         clamp_max=10.0, clamp_min=0.0
+                         ):
+        ctrl_new = tf.reposition_side(prefix, side_RGT, side_LFT)
+        mult_double_linear = mc.createNode('multDoubleLinear',
+                                           n=au.prefix_name(ctrl_new) + sub_prefix + 'Bsh' + side + '_mdl')
+        mc.setAttr(mult_double_linear + '.input2', 1.0 / valueNode)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear + '.input1')
 
-        clamp = mc.createNode('clamp', n=au.prefix_name(ctrlNew) + subPrefix + 'Bsh' + side + '_clm')
-        mc.setAttr(clamp + '.maxR', clampMax)
-        mc.setAttr(clamp + '.minR', clampMin)
+        clamp = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix + 'Bsh' + side + '_clm')
+        mc.setAttr(clamp + '.maxR', clamp_max)
+        mc.setAttr(clamp + '.minR', clamp_min)
 
-        mc.connectAttr(multDoubleLinear + '.output', clamp + '.inputR')
+        mc.connectAttr(mult_double_linear + '.output', clamp + '.inputR')
         # CONNECT TO BSH
-        listWeight = mc.listAttr(bsnName+'.w', m=True)
+        list_weight = mc.listAttr(blendshape_name + '.w', m=True)
 
         # UP
-        self.connectNodeToBsh(listWeight, clamp, 'outputR', bsnName=bsnName, sideRGT=sideRGT, sideLFT=sideLFT, side=side, suffixBsh=suffixBsh)
+        self.connect_node_to_bsh(list_weight, clamp, 'outputR', blendshape_name=blendshape_name, side_RGT=side_RGT,
+                                 side_LFT=side_LFT, side=side, suffix_bsh=suffix_bsh)
         return clamp
 
-    def replacePosLFTRGT(self, nameObj, sideRGT, sideLFT):
-        if sideRGT in nameObj:
-            crvNewName = nameObj.replace(sideRGT, '')
-        elif sideLFT in nameObj:
-            crvNewName = nameObj.replace(sideLFT, '')
-        else:
-            crvNewName = nameObj
-
-        return crvNewName
-
-    def connectNodeToBsh(self, listWeight, connectorNode, atttNode, bsnName, sideRGT, sideLFT, side, suffixBsh):
+    def connect_node_to_bsh(self, list_weight, connector_node, attribute_node, blendshape_name, side_RGT, side_LFT,
+                            side, suffix_bsh):
         list = []
-        for i in listWeight:
+        for i in list_weight:
             listI = i[:-7]
             list.append(listI)
 
-        baseName = self.replacePosLFTRGT(connectorNode, sideRGT, sideLFT)
-        if re.compile('|'.join(list), re.IGNORECASE).search(connectorNode):  # re.IGNORECASE is used to ignore case
-            mc.connectAttr(connectorNode +'.%s' % atttNode, bsnName +'.%s%s%s' % (au.prefix_name(baseName), side, '_' + suffixBsh))
+        base_name = tf.reposition_side(connector_node, side_RGT, side_LFT)
+        if re.compile('|'.join(list), re.IGNORECASE).search(connector_node):  # re.IGNORECASE is used to ignore case
+            mc.connectAttr(connector_node + '.%s' % attribute_node,
+                           blendshape_name + '.%s%s%s' % (au.prefix_name(base_name), side, '_' + suffix_bsh))
         else:
-            print (mc.error ('There is no weight on blendshape'))
+            print(mc.error('There is no weight on blendshape'))
+
 
 class BuildOneSide:
-    def __init__(self, bsnName, mouthCtrl, upperLipRollCtrl, lowerLipRollCtrl, upperLipCtrl, lowerLipCtrl, upperLipCtrlOut,
-                 lowerLipCtrlOut, mouthTwistCtrl, ACtrl, AhCtrl, ECtrl, FVCtrl, LCtrl, MBPCtrl, OhCtrl, OOOCtrl, RCtrl,
-                 TKGCtrl, ThCtrl, UhCtrl, YCtrl, NCtrl):
+    def __init__(self, blendshape_node_name, mouth_ctrl, upper_lip_roll_ctrl, lower_lip_roll_ctrl, upper_lip_ctrl,
+                 lower_lip_ctrl, upper_lip_ctrl_out,
+                 lower_lip_ctrl_out, mouth_twist_ctrl, a_ctrl, ah_ctrl, e_ctrl, fv_ctrl, l_ctrl, mbp_ctrl, oh_ctrl,
+                 ooo_ctrl, r_ctrl,
+                 tkg_ctrl, th_ctrl, uh_ctrl, y_ctrl, n_ctrl):
 
         # TWO VALUE
-        self.twoValueSlider(bsnName=bsnName, controller=mouthCtrl, slideAtribute='translateY',
-                            subPrefixOne='Up', valuePosOne=2, subPrefixTwo='Down', valuePosTwo=-2)
-        self.twoValueSlider(bsnName=bsnName, controller=mouthCtrl, slideAtribute='translateX',
-                            subPrefixOne='LFT', valuePosOne=2, subPrefixTwo='RGT', valuePosTwo=-2)
+        self.two_value_slider(blendshape_node_name=blendshape_node_name, controller=mouth_ctrl,
+                              slide_atribute='translateY',
+                              sub_prefix_one='Up', value_pos_one=2, sub_prefix_two='Down', value_pos_two=-2)
+        self.two_value_slider(blendshape_node_name=blendshape_node_name, controller=mouth_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix_one='LFT', value_pos_one=2, sub_prefix_two='RGT', value_pos_two=-2)
 
-        # self.twoValueSlider(bsnName=bsnName, controller=upperLipRollCtrl, slideAtribute='translateY',
-        #                     subPrefixOne='Up', valuePosOne=1, subPrefixTwo='Down', valuePosTwo=-1, addPrefix='MID',
-        #                     sideRGT='BshMID', sideLFT='BshMID')
-        #
-        # self.twoValueSlider(bsnName=bsnName, controller=lowerLipRollCtrl, slideAtribute='translateY',
-        #                     subPrefixOne='Up', valuePosOne=-1, subPrefixTwo='Down', valuePosTwo=1, addPrefix='MID',
-        #                     sideRGT='BshMID', sideLFT='BshMID')
+        self.two_value_slider(blendshape_node_name=blendshape_node_name, controller=upper_lip_ctrl,
+                              slide_atribute='translateY',
+                              sub_prefix_one='Up', value_pos_one=1, sub_prefix_two='Down', value_pos_two=-1,
+                              add_prefix='MID',
+                              side_RGT='BshMID', side_LFT='BshMID')
 
+        self.two_value_slider(blendshape_node_name=blendshape_node_name, controller=lower_lip_ctrl,
+                              slide_atribute='translateY',
+                              sub_prefix_one='Up', value_pos_one=1, sub_prefix_two='Down', value_pos_two=-1,
+                              add_prefix='MID',
+                              side_RGT='BshMID', side_LFT='BshMID')
 
-
-        self.twoValueSlider(bsnName=bsnName, controller=upperLipCtrl, slideAtribute='translateY',
-                            subPrefixOne='Up', valuePosOne=1, subPrefixTwo='Down', valuePosTwo=-1, addPrefix='MID',
-                            sideRGT='BshMID', sideLFT='BshMID')
-
-        self.twoValueSlider(bsnName=bsnName, controller=lowerLipCtrl, slideAtribute='translateY',
-                            subPrefixOne='Up', valuePosOne=1, subPrefixTwo='Down', valuePosTwo=-1, addPrefix='MID',
-                            sideRGT='BshMID', sideLFT='BshMID')
-
-        self.twoValueSlider(bsnName=bsnName, controller=mouthTwistCtrl, slideAtribute='translateX',
-                            subPrefixOne='RGT', valuePosOne=2, subPrefixTwo='LFT', valuePosTwo=-2)
+        self.two_value_slider(blendshape_node_name=blendshape_node_name, controller=mouth_twist_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix_one='RGT', value_pos_one=2, sub_prefix_two='LFT', value_pos_two=-2)
 
         # ONE VALUE
-        self.oneValueSlider(bsnName=bsnName, controller=upperLipCtrlOut, slideAtribute='translateY',
-                            subPrefix='', valueNode=3, addPrefix='MID', sideRGT='BshMID', sideLFT='BshMID')
-        self.oneValueSlider(bsnName=bsnName, controller=lowerLipCtrlOut, slideAtribute='translateY',
-                            subPrefix='', valueNode=3, addPrefix='MID', sideRGT='BshMID', sideLFT='BshMID')
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=upper_lip_ctrl_out,
+                              slide_atribute='translateY',
+                              sub_prefix='', value_node=3, add_prefix='MID', side_RGT='BshMID', side_LFT='BshMID')
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=lower_lip_ctrl_out,
+                              slide_atribute='translateY',
+                              sub_prefix='', value_node=3, add_prefix='MID', side_RGT='BshMID', side_LFT='BshMID')
 
-        # self.oneValueSlider(bsnName=bsnName, controller=lowerLipRollCtrl, slideAtribute='translateY',
-        #                     subPrefix='HalfUp', valueNode=-1, addPrefix='MID',
-        #                     sideRGT='BshMID', sideLFT='BshMID')
-        #
-        # self.oneValueSlider(bsnName=bsnName, controller=upperLipRollCtrl, slideAtribute='translateY',
-        #                     subPrefix='HalfDown', valueNode=-1, addPrefix='MID',
-        #                     sideRGT='BshMID', sideLFT='BshMID')
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=upper_lip_roll_ctrl,
+                              slide_atribute='translateY',
+                              sub_prefix='Up', value_node=1, add_prefix='MID',
+                              side_RGT='BshMID', side_LFT='BshMID')
 
-        self.oneValueSlider(bsnName=bsnName, controller=upperLipRollCtrl, slideAtribute='translateY',
-                            subPrefix='Up', valueNode=1, addPrefix='MID',
-                            sideRGT='BshMID', sideLFT='BshMID')
-
-        self.oneValueSlider(bsnName=bsnName, controller=lowerLipRollCtrl, slideAtribute='translateY',
-                             subPrefix='Down', valueNode=1, addPrefix='MID',
-                            sideRGT='BshMID', sideLFT='BshMID')
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=lower_lip_roll_ctrl,
+                              slide_atribute='translateY',
+                              sub_prefix='Down', value_node=1, add_prefix='MID',
+                              side_RGT='BshMID', side_LFT='BshMID')
 
         # LETTER MOUTH
-        self.oneValueSlider(bsnName=bsnName, controller=ACtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=AhCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=ECtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=FVCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=LCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=MBPCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=OhCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=OOOCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=RCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=TKGCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=ThCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=UhCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=YCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
-        self.oneValueSlider(bsnName=bsnName, controller=NCtrl, slideAtribute='translateX',
-                             subPrefix='', valueNode=4, addPrefix='',
-                            )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=a_ctrl, slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=ah_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=e_ctrl, slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=fv_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=l_ctrl, slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=mbp_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=oh_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=ooo_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=r_ctrl, slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=tkg_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=th_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=uh_ctrl,
+                              slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=y_ctrl, slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
+        self.one_value_slider(blendshape_node_name=blendshape_node_name, controller=n_ctrl, slide_atribute='translateX',
+                              sub_prefix='', value_node=4, add_prefix='',
+                              )
 
-    def twoValueSlider(self, bsnName, controller, slideAtribute, subPrefixOne, valuePosOne, subPrefixTwo,
-                       valuePosTwo, addPrefix='', sideRGT='Bsh', sideLFT='Bsh', clampUpMin=0.0, clampUpMax=1.0, clampDownMin=0.0,
-                       clampDownMax=1.0):
+    def two_value_slider(self, blendshape_node_name, controller, slide_atribute, sub_prefix_one, value_pos_one,
+                         sub_prefix_two,
+                         value_pos_two, add_prefix='', side_RGT='Bsh', side_LFT='Bsh', clamp_up_min=0.0,
+                         clamp_up_max=1.0, clamp_down_min=0.0,
+                         clamp_down_max=1.0):
         # UP
-        ctrlNew = self.replacePosLFTRGT(controller, sideRGT, sideLFT)
-        multDoubleLinearUp = mc.createNode('multDoubleLinear',
-                                           n=au.prefix_name(ctrlNew) + subPrefixOne + '_mdl')
-        mc.setAttr(multDoubleLinearUp + '.input2', 1.0 / valuePosOne)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearUp + '.input1')
+        ctrl_new = tf.reposition_side(controller, side_RGT, side_LFT)
+        mult_double_linear_up = mc.createNode('multDoubleLinear',
+                                              n=au.prefix_name(ctrl_new) + sub_prefix_one + '_mdl')
+        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
-        clampUp = mc.createNode('clamp', n=au.prefix_name(ctrlNew) + subPrefixOne + '_clm')
-        mc.setAttr(clampUp + '.maxR', clampUpMax)
-        mc.setAttr(clampUp + '.minR', clampUpMin)
+        clamp_up = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_one + '_clm')
+        mc.setAttr(clamp_up + '.maxR', clamp_up_max)
+        mc.setAttr(clamp_up + '.minR', clamp_up_min)
 
-        mc.connectAttr(multDoubleLinearUp + '.output', clampUp + '.inputR')
+        mc.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
 
         # DOWN
-        multDoubleLinearDown = mc.createNode('multDoubleLinear',
-                                             n=au.prefix_name(ctrlNew) + subPrefixTwo + '_mdl')
-        mc.setAttr(multDoubleLinearDown + '.input2', 1.0 / valuePosTwo)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearDown + '.input1')
+        mult_double_linear_down = mc.createNode('multDoubleLinear',
+                                                n=au.prefix_name(ctrl_new) + sub_prefix_two + '_mdl')
+        mc.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
 
-        clampDown = mc.createNode('clamp', n=au.prefix_name(ctrlNew) + subPrefixTwo + '_clm')
-        mc.setAttr(clampDown + '.maxR', clampDownMax)
-        mc.setAttr(clampDown + '.minR', clampDownMin)
+        clamp_down = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_two + '_clm')
+        mc.setAttr(clamp_down + '.maxR', clamp_down_max)
+        mc.setAttr(clamp_down + '.minR', clamp_down_min)
 
-        mc.connectAttr(multDoubleLinearDown + '.output', clampDown + '.inputR')
-
-        # CONNECT TO BSH
-        listWeight = mc.listAttr(bsnName + '.w', m=True)
-        # UP
-        self.connectNodeToBsh(listWeight, clampUp, 'outputR', bsnName, addPrefix, sideRGT=sideRGT, sideLFT=sideLFT)
-        self.connectNodeToBsh(listWeight, clampDown, 'outputR', bsnName, addPrefix, sideRGT=sideRGT, sideLFT=sideLFT)
-
-        return clampUp, clampDown
-
-    def oneValueSlider(self, bsnName, controller, slideAtribute, subPrefix, valueNode, addPrefix, sideRGT='Bsh', sideLFT='Bsh',
-                       clampMax=1.0, clampMin=0.0,
-                       ):
-        ctrlNew = self.replacePosLFTRGT(controller, sideRGT, sideLFT)
-        multDoubleLinear = mc.createNode('multDoubleLinear',
-                                         n=au.prefix_name(ctrlNew) + subPrefix + '_mdl')
-        mc.setAttr(multDoubleLinear + '.input2', 1.0 / valueNode)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinear + '.input1')
-
-        clamp = mc.createNode('clamp', n=au.prefix_name(ctrlNew) + subPrefix + '_clm')
-        mc.setAttr(clamp + '.maxR', clampMax)
-        mc.setAttr(clamp + '.minR', clampMin)
-
-        mc.connectAttr(multDoubleLinear + '.output', clamp + '.inputR')
+        mc.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
 
         # CONNECT TO BSH
-        listWeight = mc.listAttr(bsnName + '.w', m=True)
+        list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
+        # UP
+        self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_node_name, add_prefix, side_RGT=side_RGT,
+                                 side_LFT=side_LFT)
+        self.connect_node_to_bsh(list_weight, clamp_down, 'outputR', blendshape_node_name, add_prefix,
+                                 side_RGT=side_RGT, side_LFT=side_LFT)
+
+        return clamp_up, clamp_down
+
+    def one_value_slider(self, blendshape_node_name, controller, slide_atribute, sub_prefix, value_node, add_prefix,
+                         side_RGT='Bsh', side_LFT='Bsh',
+                         clamp_max=1.0, clamp_min=0.0,
+                         ):
+        ctrl_new = tf.reposition_side(controller, side_RGT, side_LFT)
+        mult_double_linear = mc.createNode('multDoubleLinear',
+                                           n=au.prefix_name(ctrl_new) + sub_prefix + '_mdl')
+        mc.setAttr(mult_double_linear + '.input2', 1.0 / value_node)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear + '.input1')
+
+        clamp = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix + '_clm')
+        mc.setAttr(clamp + '.maxR', clamp_max)
+        mc.setAttr(clamp + '.minR', clamp_min)
+
+        mc.connectAttr(mult_double_linear + '.output', clamp + '.inputR')
+
+        # CONNECT TO BSH
+        list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
 
         # UP
-        self.connectNodeToBsh(listWeight, clamp, 'outputR', bsnName, addPrefix, sideRGT=sideRGT, sideLFT=sideLFT)
+        self.connect_node_to_bsh(list_weight, clamp, 'outputR', blendshape_node_name, add_prefix, side_RGT=side_RGT,
+                                 side_LFT=side_LFT)
 
-    def replacePosLFTRGT(self, nameObj, sideRGT, sideLFT):
-        if sideRGT in nameObj:
-            crvNewName = nameObj.replace(sideRGT, '')
-        elif sideLFT in nameObj:
-            crvNewName = nameObj.replace(sideLFT, '')
-        else:
-            crvNewName = nameObj
-
-        return crvNewName
-
-    def connectNodeToBsh(self, listWeight, connectorNode, atttNode, bsnName, addPrefix, sideRGT, sideLFT):
+    def connect_node_to_bsh(self, list_weight, connector_node, attribute_node, blendshape_node_name, add_prefix,
+                            side_RGT, side_LFT):
         list = []
-        for i in listWeight:
+        for i in list_weight:
             listI = i[:-7]
             list.append(listI)
 
-        baseName = self.replacePosLFTRGT(connectorNode, sideRGT, sideLFT)
+        base_name = tf.reposition_side(connector_node, side_RGT, side_LFT)
         if re.compile('|'.join(list), re.IGNORECASE).search(
-                connectorNode):  # re.IGNORECASE is used to ignore case
-            mc.connectAttr(connectorNode + '.%s' % atttNode,
-                           bsnName + '.%s%s%s' % (au.prefix_name(baseName), addPrefix, '_ply'))
+                connector_node):  # re.IGNORECASE is used to ignore case
+            mc.connectAttr(connector_node + '.%s' % attribute_node,
+                           blendshape_node_name + '.%s%s%s' % (au.prefix_name(base_name), add_prefix, '_ply'))
         else:
             print(mc.error('There is no weight on blendshape'))
 
@@ -307,97 +330,82 @@ class BuildFree:
                  lowerWeightBsnMID, lowerWeightBsnLFT,
                  lowerWeightBsnRGT):
 
-        self.oneValueSlider(bsnName, controller=rollCtrl, slideAtribute='translateY',
-                            valueNode=3, weightBsnName=upperWeightBsnMID)
+        self.one_value_slider(bsnName, controller=rollCtrl, slide_atribute='translateY',
+                              value_node=3, weight_blendshape_name=upperWeightBsnMID)
 
-        self.oneValueSlider(bsnName, controller=rollCtrl, slideAtribute='translateY',
-                            valueNode=3, weightBsnName=upperWeightBsnLFT)
+        self.one_value_slider(bsnName, controller=rollCtrl, slide_atribute='translateY',
+                              value_node=3, weight_blendshape_name=upperWeightBsnLFT)
 
-        self.oneValueSlider(bsnName, controller=rollCtrl, slideAtribute='translateY',
-                            valueNode=3, weightBsnName=upperWeightBsnRGT)
+        self.one_value_slider(bsnName, controller=rollCtrl, slide_atribute='translateY',
+                              value_node=3, weight_blendshape_name=upperWeightBsnRGT)
 
-        self.oneValueSlider(bsnName, controller=rollCtrl, slideAtribute='translateY',
-                            valueNode=3, weightBsnName=lowerWeightBsnMID)
+        self.one_value_slider(bsnName, controller=rollCtrl, slide_atribute='translateY',
+                              value_node=3, weight_blendshape_name=lowerWeightBsnMID)
 
-        self.oneValueSlider(bsnName, controller=rollCtrl, slideAtribute='translateY',
-                            valueNode=3, weightBsnName=lowerWeightBsnLFT)
+        self.one_value_slider(bsnName, controller=rollCtrl, slide_atribute='translateY',
+                              value_node=3, weight_blendshape_name=lowerWeightBsnLFT)
 
-        self.oneValueSlider(bsnName, controller=rollCtrl, slideAtribute='translateY',
-                            valueNode=3, weightBsnName=lowerWeightBsnRGT)
+        self.one_value_slider(bsnName, controller=rollCtrl, slide_atribute='translateY',
+                              value_node=3, weight_blendshape_name=lowerWeightBsnRGT)
 
-        # self.twoValueSlider(bsnName, controller=mouthCtrlRGT, slideAtribute='translateY',
-        #                     subPrefixOne='SmileRGT', valuePosOne=1.5, subPrefixTwo='DownRGT',
-        #                valuePosTwo=-1.5, weightBsnName=mouthCtrlSmileRGT,
-        #                connect=True)
-
-    def twoValueSlider(self, bsnName, controller, slideAtribute, subPrefixOne, valuePosOne, subPrefixTwo,
-                       valuePosTwo, weightBsnName,
-                     connect=True):
+    def two_value_slider(self, blendshape_node_name, controller, slide_atribute, sub_prefix_one, value_pos_one,
+                         sub_prefix_two,
+                         value_pos_two, weight_blendshape_name,
+                         connect=True):
         # UP
         # ctrlNew = self.replacePosLFTRGT(weightBsnName, sideRGT=sideRGT, sideLFT=sideLFT)
-        weightNames = au.prefix_name(weightBsnName)
-        weightName = weightNames.replace(subPrefixOne,'').replace(subPrefixTwo,'')
+        weight_names = au.prefix_name(weight_blendshape_name)
+        weight_name = weight_names.replace(sub_prefix_one, '').replace(sub_prefix_two, '')
 
-        multDoubleLinearUp = mc.createNode('multDoubleLinear',
-                                           n=weightName[:-3]+ subPrefixOne+ weightName[-3:] +'_mdl')
-        mc.setAttr(multDoubleLinearUp + '.input2', 1.0 / valuePosOne)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearUp + '.input1')
+        mult_double_linear_up = mc.createNode('multDoubleLinear',
+                                              n=weight_name[:-3] + sub_prefix_one + weight_name[-3:] + '_mdl')
+        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
-        clampUp = mc.createNode('clamp', n=weightName[:-3]+ subPrefixOne+ weightName[-3:] +'_clm')
-        mc.setAttr(clampUp + '.maxR', 1)
-        mc.connectAttr(multDoubleLinearUp + '.output', clampUp + '.inputR')
+        clamp_up = mc.createNode('clamp', n=weight_name[:-3] + sub_prefix_one + weight_name[-3:] + '_clm')
+        mc.setAttr(clamp_up + '.maxR', 1)
+        mc.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
 
         # DOWN
-        multDoubleLinearDown = mc.createNode('multDoubleLinear',
-                                             n=weightName[:-3]+ subPrefixTwo+ weightName[-3:] + '_mdl')
-        mc.setAttr(multDoubleLinearDown + '.input2', 1.0 / valuePosTwo)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearDown + '.input1')
+        mult_double_linear_down = mc.createNode('multDoubleLinear',
+                                                n=weight_name[:-3] + sub_prefix_two + weight_name[-3:] + '_mdl')
+        mc.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
 
-        clampDown = mc.createNode('clamp', n=weightName[:-3]+ subPrefixTwo+ weightName[-3:] + '_clm')
-        mc.setAttr(clampDown + '.maxR', 1)
-        mc.connectAttr(multDoubleLinearDown + '.output', clampDown + '.inputR')
+        clamp_down = mc.createNode('clamp', n=weight_name[:-3] + sub_prefix_two + weight_name[-3:] + '_clm')
+        mc.setAttr(clamp_down + '.maxR', 1)
+        mc.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
 
         # CONNECT TO BSH
         if connect:
-            listWeight = mc.listAttr(bsnName + '.w', m=True)
-            self.connectNodeToBsh(listWeight, clampUp, 'outputR', bsnName=bsnName)
-            self.connectNodeToBsh(listWeight, clampDown, 'outputR', bsnName=bsnName)
-        return clampUp, clampDown
+            list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
+            self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_node_name=blendshape_node_name)
+            self.connect_node_to_bsh(list_weight, clamp_down, 'outputR', blendshape_node_name=blendshape_node_name)
+        return clamp_up, clamp_down
 
-    def oneValueSlider(self, bsnName, controller, slideAtribute, valueNode, weightBsnName):
-        # ctrlNew = self.replacePosLFTRGT(controller, sideRGT, sideLFT)
-        weightName = au.prefix_name(weightBsnName)
-        multDoubleLinearUp = mc.createNode('multDoubleLinear',
-                                           n=weightName[:-3]+ weightName[-3:] + '_mdl')
-        mc.setAttr(multDoubleLinearUp + '.input2', 1.0 / valueNode)
-        mc.connectAttr(controller + '.%s' % slideAtribute, multDoubleLinearUp + '.input1')
-
+    def one_value_slider(self, blendshape_node_name, controller, slide_atribute, value_node, weight_blendshape_name):
+        weight_name = au.prefix_name(weight_blendshape_name)
+        mult_double_linear_up = mc.createNode('multDoubleLinear',
+                                              n=weight_name[:-3] + weight_name[-3:] + '_mdl')
+        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_node)
+        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
         # CONNECT TO BSH
-        listWeight = mc.listAttr(bsnName + '.w', m=True)
+        list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
 
         # UP
-        self.connectNodeToBsh(listWeight, multDoubleLinearUp, 'output', bsnName=bsnName)
+        self.connect_node_to_bsh(list_weight, mult_double_linear_up, 'output',
+                                 blendshape_node_name=blendshape_node_name)
 
-    def replacePosLFTRGT(self, nameObj, sideRGT, sideLFT):
-        if sideRGT in nameObj:
-            crvNewName = nameObj.replace(sideRGT, '')
-        elif sideLFT in nameObj:
-            crvNewName = nameObj.replace(sideLFT, '')
-        else:
-            crvNewName = nameObj
-
-        return crvNewName
-
-    def connectNodeToBsh(self, listWeight, connectorNode, atttNode, bsnName):
+    def connect_node_to_bsh(self, list_weight, connector_node, attribute_node, blendshape_node_name):
         list = []
-        for i in listWeight:
+        for i in list_weight:
             listI = i[:-7]
             list.append(listI)
 
         # baseName = self.replacePosLFTRGT(connectorNode, sideRGT=sideRGT, sideLFT=sideLFT)
-        if re.compile('|'.join(list), re.IGNORECASE).search(connectorNode):  # re.IGNORECASE is used to ignore case
-            mc.connectAttr(connectorNode + '.%s' % atttNode,
-                           bsnName + '.%s%s' % (au.prefix_name(connectorNode) , '_ply'))
+        if re.compile('|'.join(list), re.IGNORECASE).search(connector_node):  # re.IGNORECASE is used to ignore case
+            mc.connectAttr(connector_node + '.%s' % attribute_node,
+                           blendshape_node_name + '.%s%s' % (au.prefix_name(connector_node), '_ply'))
         else:
             print(mc.error('There is no weight on blendshape'))

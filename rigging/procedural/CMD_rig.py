@@ -1,10 +1,10 @@
 from __builtin__ import reload
 
 import maya.cmds as mc
-
+from rigging.library.utils import core as cr
 from rigging.library.module import biped_module as cbm, face_module as cfm
 from rigging.library.module.body import expand_skeleton_module as esm
-from rigging.library.module.face import blendshape_module as bsm
+from rigging.library.base.face import blendshape as bsm
 from rigging.tools import AD_utils as au
 
 reload(cbm)
@@ -12,16 +12,10 @@ reload(cfm)
 reload(esm)
 reload(au)
 reload(bsm)
+reload(cr)
 
 # load Plug-ins
-matrix_node = mc.pluginInfo('matrixNodes.mll', query=True, loaded=True)
-quat_node = mc.pluginInfo('quatNodes.mll', query=True, loaded=True)
-
-if not matrix_node:
-    mc.loadPlugin( 'matrixNodes.mll' )
-
-if not quat_node:
-    mc.loadPlugin( 'quatNodes.mll' )
+cr.load_matrix_quad_plugin()
 
 # build Spine
 prefix_spine = 'spine'
@@ -364,16 +358,16 @@ def face_biped(# LIP
 # ======================================================================================================================
 #                                                   FACIAL BLENDSHAPE CMD
 # ======================================================================================================================
-def Blendshape(faceBsnName='face_bsn',
-               squashStretchBshPrefix='head',
-               rollUpBshPrefix='rollLipUp',
-               rollLowBshPrefix='rollLipLow',
-               cheekOutPrefix = 'cheekOut',
-               sideLFT='LFT',
-               sideRGT='RGT',
+def blendshape(face_blendshape_node_name='face_bsn',
+               squash_stretch_bsh_prefix='head',
+               roll_up_lip_bsh_prefix='rollLipUp',
+               roll_low_lip_bsh_prefix='rollLipLow',
+               cheek_out_prefix ='cheekOut',
+               side_LFT='LFT',
+               side_RGT='RGT',
                bshSuffix='grp'):
 
-    if faceBsnName:
+    if face_blendshape_node_name:
         print('------------------------------')
         print('Add facial blendshape..............')
 
@@ -381,38 +375,38 @@ def Blendshape(faceBsnName='face_bsn',
                          nice_name=[' '], at="enum",
                          en='Bsh Setup', channel_box=True)
 
-        controllerUpRollBsh = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
-                                               long_name=['rollLipUpBsh'],
-                                               attributeType="float", dv=0, keyable=True)
+        controller_up_roll_bsh = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
+                                                  long_name=['rollLipUpBsh'],
+                                                  attributeType="float", dv=0, keyable=True)
 
-        controllerLowRollBsh = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
-                                                long_name=['rollLipLowBsh'],
-                                                attributeType="float", dv=0, keyable=True)
+        controller_low_roll_bsh = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
+                                                   long_name=['rollLipLowBsh'],
+                                                   attributeType="float", dv=0, keyable=True)
 
-        headLowSquashStretch = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
-                                                long_name=['squashStretchBsh'],
-                                                attributeType="float", dv=0, keyable=True)
+        head_low_squash_stretch = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
+                                                   long_name=['squashStretchBsh'],
+                                                   attributeType="float", dv=0, keyable=True)
 
-        cheekOutLFT = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
-                                       long_name=['cheekOutLFT' + '_' + 'Bsh'],
-                                       attributeType="float", dv=0, min=0, keyable=True)
-        cheekOutRGT = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
-                                       long_name=['cheekOutRGT' + '_' + 'Bsh'],
-                                       attributeType="float", dv=0, min=0, keyable=True)
-        bsm.blendshape(bsnName=faceBsnName,
-                       prefixSquashStretch=squashStretchBshPrefix,
-                       prefixRollLow=rollLowBshPrefix,
-                       prefixRollUp=rollUpBshPrefix,
-                       prefixCheekOut=cheekOutPrefix,
-                       suffixBsh=bshSuffix,
-                       mouthCtrl='%s_%s' % (prefix_mouth_jnt, suffix_controller),
-                       controllerUpRollBshAttr=controllerUpRollBsh,
-                       controllerLowRollBshAttr=controllerLowRollBsh,
-                       squashStretchAttr=headLowSquashStretch,
-                       cheekOutAttrLFT= cheekOutLFT,
-                       cheekOutAttrRGT=cheekOutRGT,
-                       sideLFT = sideLFT,
-                       sideRGT = sideRGT
+        cheek_out_LFT = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
+                                         long_name=['cheekOutLFT' + '_' + 'Bsh'],
+                                         attributeType="float", dv=0, min=0, keyable=True)
+        cheek_out_RGT = au.add_attribute(objects=['%s_%s' % (prefix_mouth_jnt, suffix_controller)],
+                                         long_name=['cheekOutRGT' + '_' + 'Bsh'],
+                                         attributeType="float", dv=0, min=0, keyable=True)
+        bsm.BuildTwoSide(blendshape_node_name=face_blendshape_node_name,
+                       squash_stretch_prefix=squash_stretch_bsh_prefix,
+                       roll_low_prefix=roll_low_lip_bsh_prefix,
+                       roll_up_prefix=roll_up_lip_bsh_prefix,
+                       cheek_out_prefix=cheek_out_prefix,
+                       blendshape_suffix=bshSuffix,
+                       mouth_ctrl='%s_%s' % (prefix_mouth_jnt, suffix_controller),
+                       controller_roll_up_bsh_attr=controller_up_roll_bsh,
+                       controller_roll_low_bsh_attr=controller_low_roll_bsh,
+                       squash_stretch_attr=head_low_squash_stretch,
+                       cheek_out_attr_LFT= cheek_out_LFT,
+                       cheek_out_attr_RGT=cheek_out_RGT,
+                       side_LFT= side_LFT,
+                       side_RGT= side_RGT
                        )
         print('Facial blendshape is done!')
 
