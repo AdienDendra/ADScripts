@@ -12,6 +12,7 @@ from rigging.tools import AD_utils as au
 
 reload(au)
 
+
 def reorder_number(prefix, side_RGT, side_LFT):
     # get the number
     new_prefix = reposition_side(object=prefix, side_RGT=side_RGT, side_LFT=side_LFT)
@@ -27,6 +28,7 @@ def reorder_number(prefix, side_RGT, side_LFT):
     prefix_no_number = str(new_prefix).translate(None, digits)
 
     return prefix_no_number, prefix_number
+
 
 def create_parent_transform(parent_list, object, match_position, prefix, suffix, side=''):
     list_relatives = mc.listRelatives(object, ap=1)
@@ -123,5 +125,3 @@ def reposition_side(object, side_RGT, side_LFT):
         obj_new_name = object
 
     return obj_new_name
-
-

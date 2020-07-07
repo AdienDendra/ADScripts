@@ -25,13 +25,6 @@ class Build:
                  cheek_out_up_prefix,
                  cheek_out_low_jnt,
                  cheek_out_low_prefix,
-                 # cheek_low_skn,
-                 # cheek_mid_skn,
-                 # cheek_up_skn,
-                 # cheek_in_up_skn,
-                 # cheek_in_low_skn,
-                 # cheek_out_up_skn,
-                 # cheek_out_low_skn,
                  scale,
                  side,
                  suffix_controller):
@@ -43,8 +36,6 @@ class Build:
         # check position
         position_cheek_low_jnt = mc.xform(cheek_low_jnt, ws=1, q=1, t=1)[0]
 
-        # cheek ctrl grp
-        # self.cheekDriverCtrlGrp = mc.createNode('transform', n='cheekDriverCtrl_grp')
         # ==================================================================================================================
         #                                            CHEEK MIDDLE AREA
         # ==================================================================================================================
@@ -144,8 +135,6 @@ class Build:
         # ==================================================================================================================
 
         # parenting the joint
-        # self.cheekDriverJntGrp = mc.createNode('transform', n='cheekDriverJnt_grp')
-
         self.cheek_low_jnt_grp = tf.create_parent_transform(['', 'Offset'], match_position=cheek_low_jnt,
                                                             object=cheek_low_jnt,
                                                             prefix=cheek_low_jnt, suffix=cheek_low_jnt, side=side
@@ -190,14 +179,3 @@ class Build:
             mc.setAttr(self.cheek_in_up_ctrl_grp_offset + '.scaleX', -1)
             mc.setAttr(self.cheek_out_up_ctrl_grp_offset + '.scaleX', -1)
             mc.setAttr(self.cheek_out_low_ctrl_grp_offset + '.scaleX', -1)
-
-        #
-        # # CONSTRAINT TO SKIN
-        # au.parent_scale_constraint(cheek_low_jnt, cheek_low_skn)
-        # au.parent_scale_constraint(cheek_mid_jnt, cheek_mid_skn)
-        # au.parent_scale_constraint(cheek_up_jnt, cheek_up_skn)
-        # au.parent_scale_constraint(cheek_in_up_jnt, cheek_in_up_skn)
-        # au.parent_scale_constraint(cheek_in_low_jnt, cheek_in_low_skn)
-        # au.parent_scale_constraint(cheek_out_up_jnt, cheek_out_up_skn)
-        # au.parent_scale_constraint(cheek_out_low_jnt, cheek_out_low_skn)
-        #

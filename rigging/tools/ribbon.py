@@ -10,21 +10,22 @@ reload(tr)
 reload(ct)
 reload(au)
 
+
 class CreateRibbon:
     def __init__(self,
                  deformer=False,
-                 create_ctrl =False,
-                 tip = '',
-                 base ='',
-                 parallel_axis ='z',
-                 tip_position ='',
+                 create_ctrl=False,
+                 tip='',
+                 base='',
+                 parallel_axis='z',
+                 tip_position='',
                  aim_axis='',
-                 up_axis ='',
-                 ctrlShape_tip =ct.SQUARE,
-                 ctrlShape_mid = ct.SQUARE,
-                 ctrlShape_base =ct.SQUARE,
-                 ctrlShape_details = ct.CIRCLEPLUS,
-                 ctrl_size = 1.0,
+                 up_axis='',
+                 ctrlShape_tip=ct.SQUARE,
+                 ctrlShape_mid=ct.SQUARE,
+                 ctrlShape_base=ct.SQUARE,
+                 ctrlShape_details=ct.CIRCLEPLUS,
+                 ctrl_size=1.0,
                  prefix='prefix',
                  number_joints=None):
 
@@ -49,40 +50,40 @@ class CreateRibbon:
 
         # Tip point dictionary towards
         tip_point = {'+': [(size / 2.0 * -1), (size / 2.0)],
-                    '-': [(size / 2.0), (size / 2.0 * -1)]}
+                     '-': [(size / 2.0), (size / 2.0 * -1)]}
 
         if tip_position in tip_point.keys():
-            self.pos       = (0,0,0)
-            self.up_point   = tip_point[tip_position][0]
+            self.pos = (0, 0, 0)
+            self.up_point = tip_point[tip_position][0]
             self.down_point = tip_point[tip_position][1]
         else:
             raise mc.error('The string %s in tipPos argument is not found. Fill with + or -' % tip_position)
 
         # Dictionary list
-        tmp_plane_dictionary ={'x': [(0, 1, 0), size, (1.0 / size), number_joints, 1],
-                      'y': [(1,0,0), 1, size, 1, number_joints],
-                      'z': [(0,1,0), 1, size, 1, number_joints]}
+        tmp_plane_dictionary = {'x': [(0, 1, 0), size, (1.0 / size), number_joints, 1],
+                                'y': [(1, 0, 0), 1, size, 1, number_joints],
+                                'z': [(0, 1, 0), 1, size, 1, number_joints]}
 
         direction = {'x': ['.rotateY', 90, '.translateZ'],
                      'y': ['.rotateZ', 90, '.translateZ'],
                      'z': ['.rotateX', 0, '.translateX']}
 
-        if tip_position== '-':
+        if tip_position == '-':
             rot_defomer = {'x': (0, 0, -90),
-                          'y': (0, 0, 180),
-                          'z': (-90, 0, 90)}
+                           'y': (0, 0, 180),
+                           'z': (-90, 0, 90)}
         else:
             rot_defomer = {'x': (0, 0, 90),
-                          'y': (0, 0, 180),
-                          'z': (-90, 0, 90)}
+                           'y': (0, 0, 180),
+                           'z': (-90, 0, 90)}
 
         volume_input_mdn = {'x': ['.translateX', '.input1Z', '.outputZ', '.scaleY', '.scaleZ'],
-                       'y': ['.translateY','.input1Z', '.outputZ', '.scaleX', '.scaleZ'],
-                       'z': ['.translateZ','.input1X', '.outputX','.scaleX', '.scaleZ']}
+                            'y': ['.translateY', '.input1Z', '.outputZ', '.scaleX', '.scaleZ'],
+                            'z': ['.translateZ', '.input1X', '.outputX', '.scaleX', '.scaleZ']}
 
-        follicle_volume ={'x': ('.parameterV', -1),
-                      'y': ('.parameterU', -1),
-                      'z': ('.parameterU', 1)}
+        follicle_volume = {'x': ('.parameterV', -1),
+                           'y': ('.parameterU', -1),
+                           'z': ('.parameterU', 1)}
 
         # Create the main groups
         self.grp_all_ribbon = mc.group(empty=True, name=(prefix + 'AllRibbon_grp'))
@@ -101,9 +102,10 @@ class CreateRibbon:
         mc.setAttr(self.grp_follicle_offset[0] + '.it', 0, l=1)
 
         # Create a NURBS-plane to use as a module
-        tmp_plane = mc.nurbsPlane(axis=tmp_plane_dictionary[parallel_axis][0], width=tmp_plane_dictionary[parallel_axis][1],
-                                  lengthRatio=tmp_plane_dictionary[parallel_axis][2], u=tmp_plane_dictionary[parallel_axis][3],
-                                  v=tmp_plane_dictionary[parallel_axis][4], degree=3, ch=0)[0]
+        tmp_plane = \
+        mc.nurbsPlane(axis=tmp_plane_dictionary[parallel_axis][0], width=tmp_plane_dictionary[parallel_axis][1],
+                      lengthRatio=tmp_plane_dictionary[parallel_axis][2], u=tmp_plane_dictionary[parallel_axis][3],
+                      v=tmp_plane_dictionary[parallel_axis][4], degree=3, ch=0)[0]
 
         # Create the NURBS-planes to use in the setup
         geo_plane = mc.duplicate(tmp_plane, name=(prefix + '_geo'))
@@ -155,7 +157,8 @@ class CreateRibbon:
 
         # Create Group for joints wire curve
         self.joint_up_parent = tr.create_parent_transform(parent_list=['Zro'], object=self.joint_up[0],
-                                                          match_position=self.joint_up[0], prefix=au.prefix_name(self.joint_up[0]),
+                                                          match_position=self.joint_up[0],
+                                                          prefix=au.prefix_name(self.joint_up[0]),
                                                           suffix='_jnt')
 
         self.joint_mid_parent = tr.create_parent_transform(parent_list=['Zro'], object=self.joint_mid[0],
@@ -170,11 +173,14 @@ class CreateRibbon:
 
         # Create Group for joints orientation ribbon
         self.joint_up_orient_parent = tr.create_parent_transform(['Zro'], self.joint_orient_up[0],
-                                                                 self.joint_orient_up[0], self.joint_orient_up[0], '_jnt')
+                                                                 self.joint_orient_up[0], self.joint_orient_up[0],
+                                                                 '_jnt')
         self.joint_mid_orient_parent = tr.create_parent_transform(['Zro'], self.joint_orient_mid[0],
-                                                                  self.joint_orient_mid[0], self.joint_orient_mid[0], '_jnt')
+                                                                  self.joint_orient_mid[0], self.joint_orient_mid[0],
+                                                                  '_jnt')
         self.joint_down_orient_parent = tr.create_parent_transform(['Zro'], self.joint_orient_down[0],
-                                                                   self.joint_orient_down[0], self.joint_orient_down[0], '_jnt')
+                                                                   self.joint_orient_down[0], self.joint_orient_down[0],
+                                                                   '_jnt')
 
         # Create the controllers
         ctrl_up = ct.Control(match_obj_first_position=self.joint_up_parent[0], prefix=prefix + 'Up',
@@ -195,7 +201,8 @@ class CreateRibbon:
         mc.parent(self.joint_reference_up, self.joint_reference_down, w=True)
 
         # Create joint on evenly position
-        position_uv_follicle = cr.split_evenly(self.joint_reference_up, self.joint_reference_down, prefix, split=number_joints)
+        position_uv_follicle = cr.split_evenly(self.joint_reference_up, self.joint_reference_down, prefix,
+                                               split=number_joints)
 
         # match orient joint
         mc.delete(mc.orientConstraint(base, self.joint_up_orient_parent[0]))
@@ -243,14 +250,12 @@ class CreateRibbon:
         ribbon_blendshape = mc.blendShape(geo_plane_wire[0], geo_plane_orient[0],
                                           geo_plane[0], name=(prefix + '_bsn'), weight=[(0, 1), (1, 1)])
 
-
         # Create follicles: The main-surface and the volume-surface
         follicle_s = self.item_follicle(position_uv_follicle, geo_plane, 'fol')
 
         # Scaling the follicle with decompose matrix
         decompose_matrix_node = mc.createNode('decomposeMatrix', n=prefix + 'RbnScaleFol_dmtx')
         mc.connectAttr(self.grp_transform + '.worldMatrix[0]', decompose_matrix_node + '.inputMatrix')
-
 
         # Grouping listing of the follicle parent group
         follicle_ctrl_grp = []
@@ -312,9 +317,12 @@ class CreateRibbon:
             self.add_attribute(objects=[ctrl_down.control, ctrl_mid.control, ctrl_up.control],
                                long_name=['twistSep'], nice_name=[' '], at="enum", en='Twist', channel_box=True)
 
-            self.add_attribute(objects=[ctrl_down.control, ctrl_up.control], long_name=['twist'], at="float", keyable=True)
-            self.add_attribute(objects=[ctrl_down.control, ctrl_up.control], long_name=['twistOffset'], at="float", keyable=True)
-            self.add_attribute(objects=[ctrl_down.control, ctrl_up.control], long_name=['affectToMid'], at="float", min=0,
+            self.add_attribute(objects=[ctrl_down.control, ctrl_up.control], long_name=['twist'], at="float",
+                               keyable=True)
+            self.add_attribute(objects=[ctrl_down.control, ctrl_up.control], long_name=['twistOffset'], at="float",
+                               keyable=True)
+            self.add_attribute(objects=[ctrl_down.control, ctrl_up.control], long_name=['affectToMid'], at="float",
+                               min=0,
                                max=10, dv=10, keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['roll'], at="float", keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['rollOffset'], at="float", keyable=True)
@@ -323,13 +331,16 @@ class CreateRibbon:
             self.add_attribute(objects=[ctrl_mid.control], long_name=['volumeSep'], nice_name=[' '], at="enum",
                                en='Volume', channel_box=True)
 
-            self.add_attribute(objects=[ctrl_mid.control], long_name=['volume'], at="float", min=-1, max=1, keyable=True)
-            self.add_attribute(objects=[ctrl_mid.control], long_name=['volumeMultiplier'], at="float", min=1, dv=3, keyable=True)
+            self.add_attribute(objects=[ctrl_mid.control], long_name=['volume'], at="float", min=-1, max=1,
+                               keyable=True)
+            self.add_attribute(objects=[ctrl_mid.control], long_name=['volumeMultiplier'], at="float", min=1, dv=3,
+                               keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['startDropoff'], at="float", min=0, max=1, dv=1,
                                keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['endDropoff'], at="float", min=0, max=1, dv=1,
                                keyable=True)
-            self.add_attribute(objects=[ctrl_mid.control], long_name=['volumeScale'], at="float", min=self.up_point * 0.9,
+            self.add_attribute(objects=[ctrl_mid.control], long_name=['volumeScale'], at="float",
+                               min=self.up_point * 0.9,
                                max=self.down_point * 2, keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['volumePosition'], min=self.up_point,
                                max=self.down_point, at="float", keyable=True)
@@ -341,9 +352,9 @@ class CreateRibbon:
             self.add_attribute(objects=[ctrl_mid.control], long_name=['amplitude'], attributeType="float", keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['offset'], attributeType="float", keyable=True)
             self.add_attribute(objects=[ctrl_mid.control], long_name=['twist'], attributeType="float", keyable=True)
-            self.add_attribute(objects=[ctrl_mid.control], long_name=['sineLength'], min=0.1, dv=2, attributeType="float",
+            self.add_attribute(objects=[ctrl_mid.control], long_name=['sineLength'], min=0.1, dv=2,
+                               attributeType="float",
                                keyable=True)
-
 
             # Create deformers: Twist deformer, Sine deformer, Squash deformer
             # Set them rotation  according on point parallelFaceAxis position
@@ -396,7 +407,8 @@ class CreateRibbon:
             mc.connectAttr((ctrl_mid.control + '.endDropoff'), (self.squash_deformer[0] + '.endSmoothness'))
 
             # Set the translate squash deformer according the point parallelFaceAxis position
-            mc.connectAttr((ctrl_mid.control + '.volumePosition'), (self.squash_deformer[1] + volume_input_mdn[parallel_axis][0]))
+            mc.connectAttr((ctrl_mid.control + '.volumePosition'),
+                           (self.squash_deformer[1] + volume_input_mdn[parallel_axis][0]))
 
             # Squash deformer: Set up the volume scaling
             sum_scale_pma = mc.shadingNode('plusMinusAverage', asUtility=1, name=(prefix + 'VolumeScaleSum_pma'))
@@ -434,13 +446,14 @@ class CreateRibbon:
 
             # Looping the follicle S and follicle V
             for folv, fol_grp_offset in zip(follicle_v['follicle'], follicle_grp_off):
-
                 # Make the connections for the volume according on point parallelFaceAxis position
-                multiplier_mdn = mc.shadingNode('multiplyDivide', asUtility=1, name=au.prefix_name(folv) + 'Multiplier_mdn')
+                multiplier_mdn = mc.shadingNode('multiplyDivide', asUtility=1,
+                                                name=au.prefix_name(folv) + 'Multiplier_mdn')
                 mc.connectAttr((ctrl_mid.control + '.volumeMultiplier'), volume_input_mdn[parallel_axis][1])
                 mc.connectAttr((folv + '.translate'), (multiplier_mdn + '.input2'))
 
-                sum_volume = mc.shadingNode('plusMinusAverage', asUtility=1, name=au.prefix_name(folv) + 'VolumeSum_pma')
+                sum_volume = mc.shadingNode('plusMinusAverage', asUtility=1,
+                                            name=au.prefix_name(folv) + 'VolumeSum_pma')
                 mc.connectAttr((multiplier_mdn + volume_input_mdn[parallel_axis][2]), (sum_volume + '.input1D[0]'))
                 mc.setAttr((sum_volume + '.input1D[1]'), 1)
                 mc.connectAttr((sum_volume + '.output1D'), (fol_grp_offset + volume_input_mdn[parallel_axis][3]))
@@ -476,7 +489,8 @@ class CreateRibbon:
         mc.parent(geo_plane_orient[0], self.grp_surfaces)
         mc.parent(self.joint_up_parent[0], self.joint_mid_parent[0], self.joint_down_parent[0], self.grp_jnt_cluster)
         mc.parent(ctrl_down.parent_control[0], ctrl_mid.parent_control[0], ctrl_up.parent_control[0], self.grp_ctrl)
-        mc.parent(geo_plane[0], geo_plane_wire[0], (mc.listConnections(wire_deformer[0] + '.baseWire[0]')[0]), self.grp_surface)
+        mc.parent(geo_plane[0], geo_plane_wire[0], (mc.listConnections(wire_deformer[0] + '.baseWire[0]')[0]),
+                  self.grp_surface)
         mc.parent(deform_curve, self.joint_up_orient_parent[0],
                   self.joint_mid_orient_parent[0], self.joint_down_orient_parent[0], self.grp_misc)
         mc.parent(self.grp_jnt_cluster, self.grp_surfaces[0], self.grp_misc[0], self.grp_no_transform)
@@ -487,7 +501,8 @@ class CreateRibbon:
         # Match position with the module and tip joint
         mc.parentConstraint(base, ctrl_up.parent_control[0])
         mc.parentConstraint(tip, ctrl_down.parent_control[0])
-        mc.delete(mc.parentConstraint(ctrl_up.parent_control[0], ctrl_down.parent_control[0], ctrl_mid.parent_control[0]))
+        mc.delete(
+            mc.parentConstraint(ctrl_up.parent_control[0], ctrl_down.parent_control[0], ctrl_mid.parent_control[0]))
 
         # PointConstraint the midCtrl between the top/end
         pt_mid_constraint = mc.pointConstraint(ctrl_down.control, ctrl_up.control, ctrl_mid.parent_control[0], mo=1)
@@ -554,11 +569,11 @@ class CreateRibbon:
         mc.delete(tmp_plane, grp_joint_orient)
 
         # rename constraint
-        au.constraint_rename([pt_mid_constraint[0], aim_mid_constraint[0], pac_jnt_up[0], pac_jnt_mid[0], pac_jnt_down[0]])
+        au.constraint_rename(
+            [pt_mid_constraint[0], aim_mid_constraint[0], pac_jnt_up[0], pac_jnt_mid[0], pac_jnt_down[0]])
 
         # Clear all selection
         mc.select(cl=1)
-
 
     # GENERAL FUNCTION: ADD JOINTS FOR GUIDANCE OF FOLLICLES
     def item_follicle(self, items, obj_tansform, suffix):
@@ -577,7 +592,8 @@ class CreateRibbon:
 
         # GENERAL FUNCTION: ADD ATTRIBUTE(S) ON MULTIPLE OBJECTS
 
-    def add_attribute(self, objects=[], long_name='', nice_name='', separator=False, keyable=False, channel_box=False, **kwargs):
+    def add_attribute(self, objects=[], long_name='', nice_name='', separator=False, keyable=False, channel_box=False,
+                      **kwargs):
         # For each object
         for obj in objects:
             # For each attribute
@@ -594,7 +610,8 @@ class CreateRibbon:
 
         # GENERAL FUNCTION: CREATE A NONLINEAR DEFORMER
 
-    def nonlinear_deformer(self, objects=[], deformer_type=None, low_bound=-1, high_bound=1, translate=None, rotate=None,
+    def nonlinear_deformer(self, objects=[], deformer_type=None, low_bound=-1, high_bound=1, translate=None,
+                           rotate=None,
                            name='nonLinear'):
 
         # If something went wrong or the type is not valid, raise exception

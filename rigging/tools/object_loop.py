@@ -4,23 +4,16 @@ import maya.cmds as mc
 
 import rigging.tools.AD_utils as au
 from rigging.library.utils import joint as jn, controller as ct
-from rigging.library.utils import rotation_controller as rc
+from rigging.library.utils import rotation_controller as rc, core as cr
 
-reload (ct)
-reload (au)
+reload(ct)
+reload(au)
 reload(rc)
-reload (jn)
+reload(jn)
+reload(cr)
 
 # load Plug-ins
-matrix_node = mc.pluginInfo('matrixNodes.mll', query=True, loaded=True)
-quat_node = mc.pluginInfo('quatNodes.mll', query=True, loaded=True)
-
-if not matrix_node:
-    mc.loadPlugin( 'matrixNodes.mll' )
-
-if not quat_node:
-    mc.loadPlugin( 'quatNodes.mll' )
-
+cr.load_matrix_quad_plugin()
 
 def loop(curve='', world_up_loc='', controller=False):
     all_grp = mc.group(empty=True, n=au.prefix_name(curve) + 'MotionLoop' + '_grp')
@@ -28,8 +21,8 @@ def loop(curve='', world_up_loc='', controller=False):
     grp_jnt = mc.group(empty=True, n=au.prefix_name(curve) + 'Joints' + '_grp')
     grp_crv = mc.group(empty=True, n=au.prefix_name(curve) + 'Crv' + '_grp')
 
-    create_ik = jn.joint_on_curve(curve=curve, world_up_loc=world_up_loc, delete_group=False, delWUpLoc=False,
-                                 ctrl=controller)
+    create_ik = jn.joint_on_curve(curve=curve, world_up_loc=world_up_loc, delete_group=False,
+                                  ctrl=controller)
 
     ctrl = ct.Control(match_obj_first_position=create_ik['joints'][0], prefix=au.prefix_name(curve),
                       shape=ct.STICKCIRCLE,
@@ -46,7 +39,7 @@ def loop(curve='', world_up_loc='', controller=False):
         motion_path_uvalue = mc.getAttr(i + '.u')
 
         mult_timing = mc.shadingNode('multDoubleLinear', asUtility=1, n=au.prefix_name(i) + 'TimeMult' + '_mdl')
-        mc.connectAttr(ctrl.control +'.%s' % attribute_speed, mult_timing + '.input1')
+        mc.connectAttr(ctrl.control + '.%s' % attribute_speed, mult_timing + '.input1')
         mc.connectAttr('time1.outTime', mult_timing + '.input2')
 
         add_speed = mc.shadingNode('addDoubleLinear', asUtility=1, n=au.prefix_name(i) + 'SpeedAdd' + '_adl')
@@ -68,16 +61,17 @@ def loop(curve='', world_up_loc='', controller=False):
         mc.connectAttr(mult_offset + '.outputX', condition_speed + '.colorIfTrueR')
         mc.connectAttr(add_value + '.output1D', condition_speed + '.colorIfFalseR')
 
-        mc.setDrivenKeyframe(i +'.u', cd=condition_speed + '.outColorR', dv=0, v=0)
-        mc.setDrivenKeyframe(i +'.u', cd=condition_speed + '.outColorR', dv=1, v=1)
+        mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=0, v=0)
+        mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=1, v=1)
 
-        mc.keyTangent(i+'_uValue', edit=True,  inTangentType='linear', outTangentType='linear')
+        mc.keyTangent(i + '_uValue', edit=True, inTangentType='linear', outTangentType='linear')
 
-        mc.setAttr(i+'_uValue'+'.preInfinity', 3)
-        mc.setAttr(i+'_uValue'+'.postInfinity', 3)
+        mc.setAttr(i + '_uValue' + '.preInfinity', 3)
+        mc.setAttr(i + '_uValue' + '.postInfinity', 3)
 
         if controller:
-            pos_offset_attr = au.add_attribute(objects=[ctrls], long_name=['posOffset'], dv=0, min=0, at="float", keyable=True)
+            pos_offset_attr = au.add_attribute(objects=[ctrls], long_name=['posOffset'], dv=0, min=0, at="float",
+                                               keyable=True)
 
             obj_offset = mc.shadingNode('plusMinusAverage', asUtility=1, n=au.prefix_name(i) + 'ObjSpeed' + '_pma')
             mc.connectAttr(mult_timing + '.output', obj_offset + '.input1D[0]')
@@ -108,7 +102,7 @@ def loop(curve='', world_up_loc='', controller=False):
         else:
             mc.connectAttr(mult_timing + '.output', add_speed + '.input1')
 
-        mc.setAttr(i+'.u', lock=True)
+        mc.setAttr(i + '.u', lock=True)
 
     decompose = mc.shadingNode('decomposeMatrix', asUtility=1, n=au.prefix_name(curve) + 'Scale' + 'dmt')
     mc.connectAttr(grp_crv + '.worldMatrix[0]', decompose + '.inputMatrix')
@@ -131,159 +125,3 @@ def loop(curve='', world_up_loc='', controller=False):
     au.lock_attr(['t', 'r', 's'], setup_grp)
 
     mc.select(cl=1)
-
-
-# # NOT USED #
-# def loopAuto(curve='', numberOfJnt=None):
-#     allGrp = mc.group(empty=True, n=au.prefixName(curve) + 'MotionLoop' + '_grp')
-#     setupGrp = mc.group(empty=True, n=au.prefixName(curve) + 'Setup' + '_grp')
-#     grpJnt = mc.group(empty=True, n=au.prefixName(curve) + 'Joints' + '_grp')
-#     grpCrv = mc.group(empty=True, n=au.prefixName(curve) + 'Crv' + '_grp')
-#
-#     createIk = jn.jointOnCrv(curve=curve, numberOfJnt=numberOfJnt, delGrp=False,  delWUpLoc= False)
-#
-#     ctrl = ct.Control(matchPos=createIk['joints'][0], prefix=au.prefixName(curve), shape=ct.STICKCIRCLE,
-#                       groupsCtrl=['Zro'], ctrlSize=10.0,
-#                       ctrlColor='blue', gimbal=False, lockChannels=['r','s','v'])
-#
-#     au.addAttribute(objects=[ctrl.control], longName=['speed'], min=0, dv=1, at="float", k=True)
-#
-#     for i in createIk['motionPath']:
-#         motionPathUvalue = mc.getAttr(i+'.u')
-#
-#         addSpeed = mc.shadingNode('addDoubleLinear', asUtility=1, n=au.prefixName(i) + 'SpeedAdd' + '_adl')
-#         mc.connectAttr('time1.outTime', addSpeed + '.input1')
-#         mc.setAttr(addSpeed + '.input2', motionPathUvalue*1000)
-#
-#         mc.setDrivenKeyframe(addSpeed + '.input2', cd=ctrl.control+'.speed', dv=0, v=0)
-#         mc.setDrivenKeyframe(addSpeed + '.input2', cd=ctrl.control+'.speed', dv=1, v=motionPathUvalue*1000)
-#         mc.setAttr(addSpeed+'_'+'input2'+'.postInfinity', 1)
-#
-#         multSpeed = mc.shadingNode('multiplyDivide', asUtility=1, n=au.prefixName(i) + 'Speed' + '_mdn')
-#         mc.connectAttr(ctrl.control+'.speed', multSpeed+'.input2X')
-#         mc.setAttr(multSpeed+'.input1X', 1000)
-#         mc.setAttr(multSpeed+'.operation',2)
-#
-#         multOffset = mc.shadingNode('multiplyDivide', asUtility=1, n=au.prefixName(i) + 'SpeedOffset' + '_mdn')
-#         mc.setAttr(multOffset+'.operation', 2)
-#         mc.connectAttr(multSpeed+'.outputX', multOffset+'.input2X')
-#         mc.connectAttr(addSpeed+'.output', multOffset+'.input1X')
-#
-#
-#         conditionSpeed  = mc.shadingNode('condition', asUtility=1, n=au.prefixName(i) + 'Speed' + '_cnd')
-#         mc.setAttr(conditionSpeed+'.operation',0)
-#         mc.connectAttr(ctrl.control+'.speed', conditionSpeed+'.firstTerm')
-#         mc.connectAttr(multOffset+'.outputX', conditionSpeed+'.colorIfFalseR')
-#         mc.setAttr(conditionSpeed+'.colorIfTrueR', motionPathUvalue)
-#
-#
-#         # addValue = mc.shadingNode('plusMinusAverage', asUtility=1, n=au.prefixName(i) + 'Speed' + '_pma')
-#         # mc.connectAttr(multOffset+'.outputX', addValue+'.input1D[0]')
-#         # mc.setAttr(addValue+'.input1D[1]', 1)
-#
-#         # mc.connectAttr(multOffset+'.outputX', conditionSpeed+'.colorIfTrueR')
-#         # mc.connectAttr(addValue+'.output1D', conditionSpeed+'.colorIfFalseR')
-#
-#         mc.setDrivenKeyframe(i+'.u', cd=conditionSpeed+'.outColorR', dv=0, v=0)
-#         mc.setDrivenKeyframe(i+'.u', cd=conditionSpeed+'.outColorR', dv=1, v=1)
-#
-#         mc.keyTangent(i+'_uValue', edit=True,  inTangentType='linear', outTangentType='linear')
-#
-#         mc.setAttr(i+'_uValue'+'.preInfinity', 3)
-#         mc.setAttr(i+'_uValue'+'.postInfinity', 3)
-#
-#         mc.setAttr(i+'.u', lock=True)
-#
-#     decompose = mc.shadingNode('decomposeMatrix', asUtility=1, n=au.prefixName(curve) + 'Scale' + 'dmt')
-#     mc.connectAttr(grpCrv + '.worldMatrix[0]', decompose + '.inputMatrix')
-#
-#     for i in createIk['joints']:
-#         mc.connectAttr(decompose+'.outputScale', i+'.scale')
-#         au.lockAttr(['t', 'r','s'], i)
-#
-#     mc.parent(createIk['joints'], grpJnt)
-#     mc.parent(curve, grpCrv)
-#
-#     mc.parent(grpJnt, grpCrv, setupGrp)
-#     mc.parent(ctrl.parentControl[0], setupGrp, allGrp)
-#
-#     mc.setAttr(createIk['wUpLoc']+'.visibility', 0)
-#     au.lockAttr(['t', 'r', 's'], curve)
-#     au.lockAttr(['t', 'r', 's'], grpJnt)
-#     au.lockAttr(['t', 'r', 's'], setupGrp)
-#
-#     mc.select(cl=1)
-#
-# # ORIGINAL #
-# def loopAutoSub(curve='', numberOfJnt=None):
-#     allGrp = mc.group(empty=True, n=au.prefixName(curve) + 'MotionLoop' + '_grp')
-#     setupGrp = mc.group(empty=True, n=au.prefixName(curve) + 'Setup' + '_grp')
-#     grpJnt = mc.group(empty=True, n=au.prefixName(curve) + 'Joints' + '_grp')
-#     grpCrv = mc.group(empty=True, n=au.prefixName(curve) + 'Crv' + '_grp')
-#
-#     createIk = jn.jointOnCrv(curve=curve, numberOfJnt=numberOfJnt, delGrp=False,  delWUpLoc= False)
-#
-#     ctrl = ct.Control(matchPos=createIk['joints'][0], prefix=au.prefixName(curve), shape=ct.STICKCIRCLE,
-#                       groupsCtrl=['Zro'], ctrlSize=10.0,
-#                       ctrlColor='blue', gimbal=False, lockChannels=['r','s','v'])
-#
-#     au.addAttribute(objects=[ctrl.control], longName=['speed'], dv=1, at="float", k=True)
-#
-#     for i in createIk['motionPath']:
-#         motionPathUvalue = mc.getAttr(i+'.u')
-#
-#         addSpeed = mc.shadingNode('addDoubleLinear', asUtility=1, n=au.prefixName(i) + 'SpeedAdd' + '_adl')
-#         mc.connectAttr('time1.outTime', addSpeed + '.input1')
-#         mc.setAttr(addSpeed + '.input2', motionPathUvalue*1000)
-#
-#         multSpeed = mc.shadingNode('multiplyDivide', asUtility=1, n=au.prefixName(i) + 'Speed' + '_mdn')
-#         mc.connectAttr(ctrl.control+'.speed', multSpeed+'.input1X')
-#         mc.connectAttr(addSpeed+'.output', multSpeed+'.input2X')
-#
-#         conditionSpeed  = mc.shadingNode('condition', asUtility=1, n=au.prefixName(i) + 'Speed' + '_cnd')
-#         mc.setAttr(conditionSpeed+'.operation',2)
-#         mc.connectAttr(multSpeed+'.outputX', conditionSpeed+'.firstTerm')
-#
-#         multOffset = mc.shadingNode('multiplyDivide', asUtility=1, n=au.prefixName(i) + 'SpeedOffset' + '_mdn')
-#         mc.setAttr(multOffset+'.operation', 2)
-#         mc.setAttr(multOffset+'.input2X', 1000)
-#         mc.connectAttr(multSpeed+'.outputX', multOffset+'.input1X')
-#
-#         addValue = mc.shadingNode('plusMinusAverage', asUtility=1, n=au.prefixName(i) + 'Speed' + '_pma')
-#         mc.connectAttr(multOffset+'.outputX', addValue+'.input1D[0]')
-#         mc.setAttr(addValue+'.input1D[1]', 1)
-#
-#         mc.connectAttr(multOffset+'.outputX', conditionSpeed+'.colorIfTrueR')
-#         mc.connectAttr(addValue+'.output1D', conditionSpeed+'.colorIfFalseR')
-#
-#         mc.setDrivenKeyframe(i+'.u', cd=conditionSpeed+'.outColorR', dv=0, v=0)
-#         mc.setDrivenKeyframe(i+'.u', cd=conditionSpeed+'.outColorR', dv=1, v=1)
-#
-#         mc.keyTangent(i+'_uValue', edit=True,  inTangentType='linear', outTangentType='linear')
-#
-#         mc.setAttr(i+'_uValue'+'.preInfinity', 3)
-#         mc.setAttr(i+'_uValue'+'.postInfinity', 3)
-#
-#         mc.setAttr(i+'.u', lock=True)
-#
-#     decompose = mc.shadingNode('decomposeMatrix', asUtility=1, n=au.prefixName(curve) + 'Scale' + 'dmt')
-#     mc.connectAttr(grpCrv + '.worldMatrix[0]', decompose + '.inputMatrix')
-#
-#     for i in createIk['joints']:
-#         mc.connectAttr(decompose+'.outputScale', i+'.scale')
-#         au.lockAttr(['t', 'r','s'], i)
-#
-#     mc.parent(createIk['joints'], grpJnt)
-#     mc.parent(curve, createIk['wUpLoc'], grpCrv)
-#
-#     mc.parent(grpJnt, grpCrv, setupGrp)
-#     mc.parent(ctrl.parentControl[0], setupGrp, allGrp)
-#
-#     mc.setAttr(createIk['wUpLoc']+'.visibility', 0)
-#     au.lockAttr(['t', 'r', 's'], curve)
-#     au.lockAttr(['t', 'r', 's'], grpJnt)
-#     au.lockAttr(['t', 'r', 's'], setupGrp)
-#
-#     mc.select(cl=1)
-
-

@@ -220,7 +220,8 @@ def create_follicle_selection(obj_select, obj_mesh, connect=None, prefix=None, s
 # APPENDING RESULT OF CREATEFOLLICLESET FUNCTION
 def follicle_set(obj_select, obj_mesh, prefix=None, suffix=None, connect_follicle=['']):
     grps = []
-    grps.extend(create_follicle_selection(obj_select, obj_mesh, prefix=prefix, suffix=suffix, connect_follicle=connect_follicle))
+    grps.extend(create_follicle_selection(obj_select, obj_mesh, prefix=prefix, suffix=suffix,
+                                          connect_follicle=connect_follicle))
     return {'folTrans': grps[0],
             'folShape': grps[1]}
 
@@ -372,6 +373,7 @@ def query_skin_name(obj):
         for obj in skin_cluster:
             return obj
 
+
 ########################################################################################################################
 
 def group_null(name):
@@ -506,6 +508,7 @@ def prefix_name(obj):
         return get_prefix_name
     else:
         return obj
+
 
 def suffix_name(obj):
     objs = obj.split('|')[-1:]
@@ -920,14 +923,16 @@ def connect_attr_rotate(obj_base, obj_target):
     return rotate_attr
 
 
-def connect_part_object(obj_base_connection, target_connection, obj_name='', target_name=[''], channel_box=False, keyable=False, select_obj=True):
+def connect_part_object(obj_base_connection, target_connection, obj_name='', target_name=[''], channel_box=False,
+                        keyable=False, select_obj=True):
     if select_obj:
         sel = mc.ls(sl=1)
         if isinstance(obj_base_connection, str) and sel:
             for i in range(len(sel)):
                 if i > 0:
                     if not mc.objExists('%s.%s' % (sel[0], obj_base_connection)):
-                        add_attr_transform(sel[0], obj_base_connection, 'long', edit=True, channel_box=channel_box, keyable=keyable, dv=1, min=0, max=1)
+                        add_attr_transform(sel[0], obj_base_connection, 'long', edit=True, channel_box=channel_box,
+                                           keyable=keyable, dv=1, min=0, max=1)
                         mc.connectAttr(sel[0] + ('.%s' % obj_base_connection), sel[i - 0] + ('.%s' % target_connection))
                     else:
                         mc.connectAttr(sel[0] + ('.%s' % obj_base_connection), sel[i - 0] + ('.%s' % target_connection))
@@ -936,7 +941,8 @@ def connect_part_object(obj_base_connection, target_connection, obj_name='', tar
     else:
         for i in target_name:
             if not mc.objExists('%s.%s' % (obj_name, obj_base_connection)):
-                add_attr_transform(obj_name, obj_base_connection, 'long', edit=True, channel_box=channel_box, keyable=keyable, dv=1, min=0, max=1)
+                add_attr_transform(obj_name, obj_base_connection, 'long', edit=True, channel_box=channel_box,
+                                   keyable=keyable, dv=1, min=0, max=1)
                 mc.connectAttr(obj_name + ('.%s' % obj_base_connection), i + ('.%s' % target_connection))
             else:
                 mc.connectAttr(obj_name + ('.%s' % obj_base_connection), i + ('.%s' % target_connection))
@@ -1131,7 +1137,8 @@ def joint_on_crv_sub(curve='', number_of_jnt=None, del_poc=None, spline_ik=None)
     point_on_crv = []
     for i in range(0, number_of_jnt + 1):
         ranges = num * i
-        pointCurve_node = mc.shadingNode('pointOnCurveInfo', asUtility=1, n=prefix_name(curve) + str(i + 1).zfill(2) + '_poc')
+        pointCurve_node = mc.shadingNode('pointOnCurveInfo', asUtility=1,
+                                         n=prefix_name(curve) + str(i + 1).zfill(2) + '_poc')
         point_on_crv.append(pointCurve_node)
         mc.connectAttr(curve + '.worldSpace[0]', pointCurve_node + '.inputCurve')
         mc.setAttr(pointCurve_node + '.parameter', ranges)
@@ -1148,7 +1155,7 @@ def joint_on_crv_sub(curve='', number_of_jnt=None, del_poc=None, spline_ik=None)
     ik_hdl = None
     if spline_ik:
         ik_hdl = mc.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
-                            n=prefix_name(curve) + '_ikh')
+                             n=prefix_name(curve) + '_ikh')
     if del_poc:
         mc.delete(point_on_crv)
 

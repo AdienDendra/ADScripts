@@ -47,7 +47,6 @@ class Foot:
                  position_lower_limb_jnt=None,
                  lower_limb_ik_control=None):
 
-
         if foot:
             build_foot = ft.Build(prefix=prefix,
                                   ball_fk_jnt=ball_fk_jnt,
@@ -71,7 +70,7 @@ class Foot:
 
             get_value_tx_upper_limb_jnt = mc.xform(upper_limb_jnt, ws=1, q=1, t=1)[0]
 
-            if get_value_tx_upper_limb_jnt>0:
+            if get_value_tx_upper_limb_jnt > 0:
                 value_attribute = -1
             else:
                 value_attribute = 1
@@ -113,8 +112,8 @@ class Foot:
             # assigned name foot reverse joint
             self.foot_reverse_joint = build_foot.foot_reverse_joint
 
-        # CREATE NODE REVERSE
-        # FOOT ROLL NEGATIVE
+            # CREATE NODE REVERSE
+            # FOOT ROLL NEGATIVE
             # create clamp
             clamp_roll_negative = mc.createNode('clamp', n='%s%s%s_clm' % (prefix, 'RollBack', side))
             mc.connectAttr(controller_lower_limb_ik + '.footRoll', clamp_roll_negative + '.inputR')
@@ -128,7 +127,7 @@ class Foot:
             # connect to HEEL JOINT X
             mc.connectAttr(mdl_roll_negative + '.output', build_foot.heel_joint + '.rotateX')
 
-        # FOOT ROLL POSITIVE
+            # FOOT ROLL POSITIVE
             # create clamp foot positive
             clamp_foot_position = mc.createNode('clamp', n='%s%s%s_clm' % (prefix, 'RollToe', side))
             mc.connectAttr(controller_lower_limb_ik + '.footRoll', clamp_foot_position + '.inputR')
@@ -171,7 +170,8 @@ class Foot:
             mc.setAttr(setRange_ball_position + '.maxX', 1)
 
             # create mult double linear ball percent
-            mdl_ball_position_percent = mc.createNode('multDoubleLinear', n='%s%s%s_mdl' % (prefix, 'RollBallPercent', side))
+            mdl_ball_position_percent = mc.createNode('multDoubleLinear',
+                                                      n='%s%s%s_mdl' % (prefix, 'RollBallPercent', side))
             mc.connectAttr(setRange_ball_position + '.outValueX', mdl_ball_position_percent + '.input1')
             mc.connectAttr(pma_foot_position + '.output1D', mdl_ball_position_percent + '.input2')
 
@@ -191,10 +191,10 @@ class Foot:
             # connect to TOE JOINT X
             mc.connectAttr(mdl_roll_pos_reverse + '.output', build_foot.toe_joint + '.rotateX')
 
-        # FOOT HEEL SPIN
+            # FOOT HEEL SPIN
             mc.connectAttr(controller_lower_limb_ik + '.heelSpin', build_foot.heel_joint + '.rotateZ')
 
-        # FOOT TOE SPIN
+            # FOOT TOE SPIN
             # create mult double linear ball reverse
             mdl_toe_spin = mc.createNode('multDoubleLinear', n='%s%s%s_mdl' % (prefix, 'SpinToeRev', side))
             mc.connectAttr(controller_lower_limb_ik + '.toeSpin', mdl_toe_spin + '.input1')
@@ -202,7 +202,7 @@ class Foot:
             # connect to TOE JOINT Z
             mc.connectAttr(mdl_toe_spin + '.output', build_foot.toe_joint + '.rotateZ')
 
-        # FOOT TOE ROLL
+            # FOOT TOE ROLL
             # create mult double linear ball reverse
             mdl_toe_roll = mc.createNode('multDoubleLinear', n='%s%s%s_mdl' % (prefix, 'RollToeUDRev', side))
             mc.connectAttr(controller_lower_limb_ik + '.toeRoll', mdl_toe_roll + '.input1')
@@ -214,9 +214,10 @@ class Foot:
             cnd_toe_roll = mc.createNode('condition', n='%s%s%s_cnd' % (prefix, 'RollToeUD', side))
             mc.setAttr(cnd_toe_roll + '.operation', 4)
             mc.connectAttr(build_foot.toe_roll_joint + '.rotateX', cnd_toe_roll + '.firstTerm')
-            mc.connectAttr(cnd_toe_roll + '.outColorR', parent_constraint_position_soft[0] + '.%sW0' % build_foot.toe_roll_joint)
+            mc.connectAttr(cnd_toe_roll + '.outColorR',
+                           parent_constraint_position_soft[0] + '.%sW0' % build_foot.toe_roll_joint)
 
-        # FOOT TOE WIGGLE
+            # FOOT TOE WIGGLE
             # create mult double linear ball reverse
             mdl_toe_wiggle = mc.createNode('multDoubleLinear', n='%s%s%s_mdl' % (prefix, 'RollToeWglRev', side))
             mc.connectAttr(controller_lower_limb_ik + '.toeWiggle', mdl_toe_wiggle + '.input1')
@@ -224,7 +225,7 @@ class Foot:
             # connect to TOE JOINT ROLL X
             mc.connectAttr(mdl_toe_wiggle + '.output', build_foot.toe_wiggle_joint + '.rotateX')
 
-        # FOOT TILT
+            # FOOT TILT
             # create mult double linear ball reverse
             mdl_tilt = mc.createNode('multDoubleLinear', n='%s%s%s_mdl' % (prefix, 'TiltRev', side))
             mc.connectAttr(controller_lower_limb_ik + '.tilt', mdl_tilt + '.input1')
@@ -249,11 +250,13 @@ class Foot:
 
             if not single_module:
                 rs.run_soft_ik_joint(prefix=prefix, side=side, lower_limb_ik_gimbal=leg.lower_limb_ik_gimbal,
-                                     foot_reverse_joint_or_position_soft_jnt=self.foot_reverse_joint, position_lower_limb_jnt=leg.pos_lower_limb_jnt,
+                                     foot_reverse_joint_or_position_soft_jnt=self.foot_reverse_joint,
+                                     position_lower_limb_jnt=leg.pos_lower_limb_jnt,
                                      lowerLimbIkControl=leg.lower_limb_ik_control)
             else:
                 rs.run_soft_ik_joint(prefix=prefix, side=side, lower_limb_ik_gimbal=lower_limb_ik_gimbal,
-                                     foot_reverse_joint_or_position_soft_jnt=self.foot_reverse_joint, position_lower_limb_jnt=position_lower_limb_jnt,
+                                     foot_reverse_joint_or_position_soft_jnt=self.foot_reverse_joint,
+                                     position_lower_limb_jnt=position_lower_limb_jnt,
                                      lowerLimbIkControl=lower_limb_ik_control)
         else:
             mc.delete(ball_jnt, ball_scale_jnt)

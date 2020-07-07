@@ -1,5 +1,3 @@
-from __builtin__ import reload
-
 from rigging.library.base.face import blendshape as bsh
 from rigging.tools import AD_utils as au
 
@@ -16,12 +14,3 @@ def blendshape(blendshape_node_name, mouth_ctrl, blendshape_suffix, squash_stret
                                   squash_stretch_attr=squash_stretch_attr, cheek_out_attr_LFT=cheek_out_attr_LFT, cheek_out_attr_RGT=cheek_out_attr_RGT,
                                   side_LFT=side_LFT, side_RGT=side_RGT, cheek_out_prefix=cheek_out_prefix,
                                   )
-
-
-    # independent = bsh.BuildFree(bsnName='face_bsn', rollCtrl='rollLipBsh_ctrl',
-    #                             upperWeightBsnMID='upperLipRollHalfDownMID_ply',
-    #                             upperWeightBsnLFT='upperLipRollHalfDownLFT_ply',
-    #                             upperWeightBsnRGT='upperLipRollHalfDownRGT_ply',
-    #                             lowerWeightBsnMID='lowerLipRollHalfUpMID_ply',
-    #                             lowerWeightBsnLFT='lowerLipRollHalfUpLFT_ply',
-    #                             lowerWeightBsnRGT='lowerLipRollHalfUpRGT_ply', )

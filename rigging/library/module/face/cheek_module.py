@@ -1,10 +1,9 @@
-import re
 from __builtin__ import reload
-from string import digits
 
 import maya.cmds as mc
-from rigging.library.utils import transform as tf, core as cr
+
 from rigging.library.base.face import cheek as ck
+from rigging.library.utils import transform as tf, core as cr
 from rigging.tools import AD_utils as au
 
 reload (au)
@@ -47,20 +46,11 @@ class Cheek:
                  nostril_drive_ctrl_attr_cheek_up,
                  nostril_drive_ctrl_attr_cheek_up_two,
                  nostril_drive_ctrl,
-
                  corner_lip_ctrl_attr_cheek_out_up,
                  corner_lip_ctrl_attr_cheek_out_low,
                  head_up_ctrl,
                  head_low_ctrl,
                  suffix_controller,
-
-                 # cheek_low_skn,
-                 # cheek_mid_skn,
-                 # cheek_up_skn,
-                 # cheek_in_up_skn,
-                 # cheek_in_low_skn,
-                 # cheek_out_up_skn,
-                 # cheek_out_low_skn,
                  ):
 
         self.position = mc.xform(corner_lip_ctrl, ws=1, q=1, t=1)[0]
@@ -95,13 +85,6 @@ class Cheek:
                          cheek_out_low_prefix=cheek_out_low_prefix,
                          scale=scale,
                          side=side,
-                        # cheek_low_skn=cheek_low_skn,
-                        # cheek_mid_skn=cheek_mid_skn,
-                        # cheek_up_skn=cheek_up_skn,
-                        # cheek_in_up_skn=cheek_in_up_skn,
-                        # cheek_in_low_skn=cheek_in_low_skn,
-                        # cheek_out_up_skn=cheek_out_up_skn,
-                        # cheek_out_low_skn=cheek_out_low_skn,
                          suffix_controller=suffix_controller)
 
         mc.parent(cheek.cheek_low_jnt_grp[0], cheek.cheek_mid_jnt_grp[0],
@@ -124,7 +107,6 @@ class Cheek:
         self.cheek_up_ctrl_grp = cheek.cheek_up_ctrl_grp
         self.cheek_in_up_ctrl_grp = cheek.cheek_in_up_ctrl_grp
         self.cheek_in_low_ctrl_grp = cheek.cheek_in_low_ctrl_grp
-
 
     # ==================================================================================================================
     #                                                       SET DRIVER
@@ -278,14 +260,7 @@ class Cheek:
 
         # SET INTERPOLATION
         mc.setAttr(const_interp[0] + '.interpType', interp_type)
-
-        # mc.parentConstraint(parentDriver, groupDriverJnt, mo=1)
-        # mc.scaleConstraint(parentDriver, groupDriverJnt, mo=1)
         au.connect_attr_object(parent_driver, group_driver_jnt)
-        # mc.connectAttr(driver+'.translate', groupDriverJnt+'.translate')
-        # mc.connectAttr(driver+'.rotate', groupDriverJnt+'.rotate')
-        # mc.connectAttr(driver+'.scale', groupDriverJnt+'.scale')
-        # au.connectAttrObject(driver, groupDriverJnt)
 
         # CORNER LIP FOR REVERSE
         # CREATE MULTIPLIER CONTROLLER
@@ -568,7 +543,6 @@ class Cheek:
 
         # connect attribute cheek  joint parent to cheek parent controller
         au.connect_attr_object(cheek_joint_grp, cheek_ctrl_grp)
-        # au.connectAttrScale(cheekJointParentZro, cheekParentCtrlOffset)
         au.connect_attr_translate_rotate(cheek_joint_grp_offset, cheek_ctrl_grp_offset)
 
         # connect attribute cheek controller to cheek  joint
@@ -578,7 +552,6 @@ class Cheek:
                 au.connect_attr_scale(cheek_ctrl, cheek_jnt)
 
             else:
-                # au.connectAttrTransRot(cheekCtrl, cheekJnt)
                 au.connect_attr_object(cheek_ctrl, cheek_jnt)
         else:
             reverse_trans = mc.createNode('multiplyDivide', n=au.prefix_name(object_prefix) + 'ReverseTrans' + side + '_mdn')
@@ -605,7 +578,6 @@ class Cheek:
             mc.connectAttr(cheek_ctrl + '.rotate', reverse_rotation + '.input1')
             mc.connectAttr(reverse_rotation + '.output', cheek_jnt + '.rotate')
 
-            # au.connectAttrRot(cheekCtrl, cheekJnt)
             au.connect_attr_scale(cheek_ctrl, cheek_jnt)
 
         return parent_driver

@@ -26,7 +26,6 @@ class Build:
                  offset_translation_position,
                  offset_value,
                  position_name,
-                 # skin_joint_parent,
                  constraint_method=False
                  ):
 
@@ -34,9 +33,6 @@ class Build:
             name_prefix = au.prefix_name(joint_add_target)
             if side in name_prefix:
                 name_prefix = name_prefix.replace(side, '')
-
-            # skinJnt = mc.duplicate(jointAddTarget)[0]
-            # skinJoint = mc.rename(skinJnt, au.prefixName(namePrefix) + positionName + side + '_skn')
 
             # ADD GROUP FOR TRANSFORM
             driver_joint_duplicate = mc.duplicate(joint_add_target)[0]
@@ -57,13 +53,6 @@ class Build:
             driver_adjust_joint = mc.rename(driver_adjust_joint,
                                             au.prefix_name(name_prefix) + 'Adjust' + position_name + side + '_skn')
 
-
-            # # CREATE TRANS SKIN JNT
-            # adjust_skinning = mc.duplicate(driver_adjust_joint)[0]
-            # adjust_skinning = mc.rename(adjust_skinning,
-            #                             au.prefix_name(name_prefix) + 'Adjust' + position_name + side + '_skn')
-            # mc.parent(adjust_skinning, driver_adjust_joint)
-
             # DUPLICATE FOR POSITION ADJUST JOINT
             # CREATE GRP TRANSFORM FOR THE JOINT
             self.grp_adjust_joint = tf.create_parent_transform(parent_list=[''],
@@ -71,8 +60,7 @@ class Build:
                                                                match_position=driver_adjust_joint,
                                                                prefix=driver_adjust_joint, suffix='skn',
                                                                side=side)
-            # # MATCH POSITION JOINT AND SKIN
-            # au.match_position(driver_adjust_joint, adjust_skinning)
+
             if constraint_method:
                 # point constraint
                 point_constraint = mc.pointConstraint(point_grp_driver[0], point_grp_driver[-1], self.group_expand_joint,
@@ -104,22 +92,8 @@ class Build:
             mc.connectAttr(fk_ik_setup + '.%s%sExpand' % (controller_expand_name, position_name),
                            self.pair_blend + '.weight')
 
-            # # HIDE JOINT DRIVER
-            # mc.setAttr(driver_joint_rename+'.drawStyle', 2)
-
             # ADD TO SETS
             mc.sets(driver_adjust_joint, add='BODY_SKIN_LN')
-
-            # # SKIN JOINT
-            # # ADD GROUP FOR TRANSFORM
-            #
-            # # mc.parent(transSkin, skinJoint)
-            # mc.parent(adjust_skinning, skin_joint_parent)
-            # # au.parentScaleCons(driverJoint, skinJoint)
-            # au.parent_scale_constraint(driver_adjust_joint, adjust_skinning)
-            #
-            # # mc.setAttr(skinJoint+'.visibility', 1)
-            # mc.setAttr(adjust_skinning + '.visibility', 1)
 
     # ==================================================================================================================
     #                                               GENERAL FUNCTION
@@ -127,8 +101,6 @@ class Build:
 
     def create_pair_blend(self, joint_driver_matrix, joint_driver_inverse_matrix, joint_add_target, prefix, side,
                           rotation, rotation_pair_blend, position_name):
-
-        # getValueTxUpperObjJnt = mc.xform(joint_driver_inverse_matrix, ws=1, q=1, t=1)[0]
 
         mult_matrix = mc.createNode('multMatrix', n='%s%s%s%s_mmtx' % (prefix, position_name, 'BlendingShp', side))
         mc.connectAttr(joint_driver_matrix + '.worldMatrix[0]', mult_matrix + '.matrixIn[0]')

@@ -324,6 +324,7 @@ class BuildOneSide:
         else:
             print(mc.error('There is no weight on blendshape'))
 
+
 class BuildFree:
     def __init__(self, bsnName, rollCtrl, upperWeightBsnMID,
                  upperWeightBsnLFT, upperWeightBsnRGT,

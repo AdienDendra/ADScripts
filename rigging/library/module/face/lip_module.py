@@ -7,11 +7,12 @@ from rigging.library.base.face import lip as lp, lip_corner as lc
 from rigging.library.utils import controller as ct, transform as tf
 from rigging.tools import AD_utils as au
 
-reload (ct)
-reload (tf)
-reload (au)
-reload (lp)
-reload (lc)
+reload(ct)
+reload(tf)
+reload(au)
+reload(lp)
+reload(lc)
+
 
 class Lip:
     def __init__(self,
@@ -36,12 +37,11 @@ class Lip:
                  prefix_upLip_follow,
                  headLow_normal_rotationGrp,
                  base_module_nonTransform,
-                 # parent_skin_mouth
                  ):
 
-    # ==============================================================================================================
-    #                                          LIP UP AND LOW CONTROLLER
-    # ==============================================================================================================
+        # ==============================================================================================================
+        #                                          LIP UP AND LOW CONTROLLER
+        # ==============================================================================================================
 
         # UP LIP
         upLip = lp.Build(curve_lip_template=curve_up_lip_template,
@@ -50,14 +50,13 @@ class Lip:
                          scale=scale,
                          lip01_cheek_direction=lip01_cheek_direction,
                          lip02_cheek_direction=lip02_cheek_direction,
-                         side_LFT= side_LFT,
-                         side_RGT= side_RGT,
+                         side_LFT=side_LFT,
+                         side_RGT=side_RGT,
                          mouth_jnt=mouth_jnt,
                          ctrl_color='yellow',
                          low_lip_controller=False,
                          suffix_controller=suffix_controller,
                          base_module_nonTransform=base_module_nonTransform,
-                         # parent_skin=parent_skin_mouth
                          )
 
         # LOW LIP
@@ -74,46 +73,46 @@ class Lip:
                           low_lip_controller=True,
                           suffix_controller=suffix_controller,
                           base_module_nonTransform=base_module_nonTransform,
-                          # parent_skin=parent_skin_mouth
                           )
 
         self.low_bind_jnt = lowLip.jnt_mid
         self.all_up_lip_joint = upLip.all_joint
         self.all_low_lip_joint = lowLip.all_joint
 
-    # ================================================================================================================
-    #                                               ASSIGN CURVE
-    # =================================================================================================================
+        # ================================================================================================================
+        #                                               ASSIGN CURVE
+        # =================================================================================================================
         curve_up_lip = upLip.curve_lip
         curve_low_lip = lowLip.curve_lip
         self.curve_up_lip = curve_up_lip
         self.curve_low_lip = curve_low_lip
-    # ================================================================================================================
-    #                                               UP LIP FOLLOW JAW
-    # =================================================================================================================
+        # ================================================================================================================
+        #                                               UP LIP FOLLOW JAW
+        # =================================================================================================================
         # CONTROLLER
         self.upLip_follow_jaw(jaw_ctrl=jaw_ctrl, prefix_upLip_follow=prefix_upLip_follow, name='Ctrl', jaw_jnt=jaw_jnt,
                               headLow_normal_rotationGrp=headLow_normal_rotationGrp,
-                              crv_up_lip=curve_up_lip, mouth_lip_grp=upLip.mouth_ctrl_grp, mouth_offset_lip_grp=upLip.mouth_ctrl_grp_offset)
+                              crv_up_lip=curve_up_lip, mouth_lip_grp=upLip.mouth_ctrl_grp,
+                              mouth_offset_lip_grp=upLip.mouth_ctrl_grp_offset)
         # SETUP
         self.upLip_follow_jaw(jaw_ctrl=jaw_ctrl, prefix_upLip_follow=prefix_upLip_follow, name='Setup', jaw_jnt=jaw_jnt,
                               headLow_normal_rotationGrp=headLow_normal_rotationGrp,
-                              crv_up_lip=curve_up_lip, mouth_lip_grp=upLip.reset_all_mouth_ctrl_grp, mouth_offset_lip_grp=upLip.reset_all_mouth_ctrl_grp_offset)
+                              crv_up_lip=curve_up_lip, mouth_lip_grp=upLip.reset_all_mouth_ctrl_grp,
+                              mouth_offset_lip_grp=upLip.reset_all_mouth_ctrl_grp_offset)
 
-
-    # ================================================================================================================
-    #                                             CORNER LIP CONTROLLER
-    # =================================================================================================================
+        # ================================================================================================================
+        #                                             CORNER LIP CONTROLLER
+        # =================================================================================================================
 
         # CONTROLLER RGT CORNER
         corner_lip_ctrl_RGT = lc.Build(
-                 match_pos_one=lowLip.jnt01_RGT,
-                 match_pos_two=upLip.jnt01_RGT,
-                 prefix='cornerLipDrv',
-                 scale=scale,
-                 sticky=True,
-                 side=side_RGT,
-                 suffix_controller=suffix_controller)
+            match_pos_one=lowLip.jnt01_RGT,
+            match_pos_two=upLip.jnt01_RGT,
+            prefix='cornerLipDrv',
+            scale=scale,
+            sticky=True,
+            side=side_RGT,
+            suffix_controller=suffix_controller)
 
         self.corner_lip_ctrl_RGT = corner_lip_ctrl_RGT.control
         self.cheek_mid_attr_ctrl_RGT = corner_lip_ctrl_RGT.cheek_mid_ctrl
@@ -126,13 +125,13 @@ class Lip:
 
         # CONTROLLER LFT CORNER
         corner_lip_ctrl_LFT = lc.Build(
-                 match_pos_one=lowLip.jnt01_LFT,
-                 match_pos_two=upLip.jnt01_LFT,
-                 prefix='cornerLipDrv',
-                 scale=scale,
-                 sticky=True,
-                 side=side_LFT,
-                 suffix_controller=suffix_controller)
+            match_pos_one=lowLip.jnt01_LFT,
+            match_pos_two=upLip.jnt01_LFT,
+            prefix='cornerLipDrv',
+            scale=scale,
+            sticky=True,
+            side=side_LFT,
+            suffix_controller=suffix_controller)
 
         self.corner_lip_ctrl_LFT = corner_lip_ctrl_LFT.control
         self.cheek_mid_attr_ctrl_LFT = corner_lip_ctrl_LFT.cheek_mid_ctrl
@@ -171,16 +170,18 @@ class Lip:
         self.up_lip_controller_all = upLip.controller_all
         self.low_lip_controller_all = lowLip.controller_all
         self.low_reset_mouth_ctrl_grp_offset = lowLip.reset_mouth_ctrl_grp_offset
-        self.up_lip_controller_all_grp_zro= upLip.controller_all_grp_zro
-        self.up_lip_mouth_ctrl_grp =upLip.mouth_ctrl_grp
+        self.up_lip_controller_all_grp_zro = upLip.controller_all_grp_zro
+        self.up_lip_mouth_ctrl_grp = upLip.mouth_ctrl_grp
 
         # LOW LIP
-        self.up_and_low_lip_setup(corner_lip_ctrl_RGT=corner_lip_ctrl_RGT, corner_lip_ctrl_LFT=corner_lip_ctrl_LFT, side_LFT=side_LFT,
+        self.up_and_low_lip_setup(corner_lip_ctrl_RGT=corner_lip_ctrl_RGT, corner_lip_ctrl_LFT=corner_lip_ctrl_LFT,
+                                  side_LFT=side_LFT,
                                   side_RGT=side_RGT, prefix_bind='LowBind', prefix_ctrl='LowCtrl', lip=lowLip,
                                   condition_low_lip=True)
 
         # UP LIP
-        self.up_and_low_lip_setup(corner_lip_ctrl_RGT=corner_lip_ctrl_RGT, corner_lip_ctrl_LFT=corner_lip_ctrl_LFT, side_LFT=side_LFT,
+        self.up_and_low_lip_setup(corner_lip_ctrl_RGT=corner_lip_ctrl_RGT, corner_lip_ctrl_LFT=corner_lip_ctrl_LFT,
+                                  side_LFT=side_LFT,
                                   side_RGT=side_RGT, prefix_bind='upBind', prefix_ctrl='upCtrl', lip=upLip,
                                   condition_low_lip=False)
 
@@ -200,45 +201,58 @@ class Lip:
                                    joint_bind_target=lowLip.reset_mouth_ctrl_grp_offset,
                                    name='Rot', connect='rotate')
 
-        # au.connectAttrRot(lowLip.controllerAll, lowLip.resetMouthOffsetCtrlGrp)
         au.connect_attr_translate_rotate(upLip.controller_all, upLip.reset_mouth_ctrl_grp_offset)
 
         # CREATE JAW FOLLOW LOW LIP
-        corner_adjust_LFT, jaw_following_LFT = self.multiply_lip_and_jaw(side=side_LFT, corner_adjust_ctrl='%s.%s' % (corner_lip_ctrl_LFT.control, corner_lip_ctrl_LFT.jaw_ud_ctrl),
-                                                                         jaw_following_ctrl='%s.%s' % (corner_lip_ctrl_LFT.control, corner_lip_ctrl_LFT.jaw_following_ctrl))
+        corner_adjust_LFT, jaw_following_LFT = self.multiply_lip_and_jaw(side=side_LFT, corner_adjust_ctrl='%s.%s' % (
+        corner_lip_ctrl_LFT.control, corner_lip_ctrl_LFT.jaw_ud_ctrl),
+                                                                         jaw_following_ctrl='%s.%s' % (
+                                                                         corner_lip_ctrl_LFT.control,
+                                                                         corner_lip_ctrl_LFT.jaw_following_ctrl))
 
-        corner_adjust_RGT, jaw_following_RGT = self.multiply_lip_and_jaw(side=side_RGT, corner_adjust_ctrl='%s.%s' % (corner_lip_ctrl_RGT.control, corner_lip_ctrl_RGT.jaw_ud_ctrl),
-                                                                         jaw_following_ctrl='%s.%s' % (corner_lip_ctrl_RGT.control, corner_lip_ctrl_RGT.jaw_following_ctrl))
+        corner_adjust_RGT, jaw_following_RGT = self.multiply_lip_and_jaw(side=side_RGT, corner_adjust_ctrl='%s.%s' % (
+        corner_lip_ctrl_RGT.control, corner_lip_ctrl_RGT.jaw_ud_ctrl),
+                                                                         jaw_following_ctrl='%s.%s' % (
+                                                                         corner_lip_ctrl_RGT.control,
+                                                                         corner_lip_ctrl_RGT.jaw_following_ctrl))
 
         # UP LIP
         self.up_lip_jaw(side=side_LFT, mult_corner_adjust=corner_adjust_LFT, mult_jaw_following=jaw_following_LFT,
-                        locator_set01=upLip.locator_set01_LFT, reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
+                        locator_set01=upLip.locator_set01_LFT,
+                        reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
 
         self.up_lip_jaw(side=side_LFT, mult_corner_adjust=corner_adjust_LFT, mult_jaw_following=jaw_following_LFT,
-                        locator_set01=upLip.locator_set01_LFT, reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
+                        locator_set01=upLip.locator_set01_LFT,
+                        reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
 
         self.up_lip_jaw(side=side_RGT, mult_corner_adjust=corner_adjust_RGT, mult_jaw_following=jaw_following_RGT,
-                        locator_set01=upLip.locator_set01_RGT, reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
+                        locator_set01=upLip.locator_set01_RGT,
+                        reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
 
         self.up_lip_jaw(side=side_RGT, mult_corner_adjust=corner_adjust_RGT, mult_jaw_following=jaw_following_RGT,
-                        locator_set01=upLip.locator_set01_RGT, reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
+                        locator_set01=upLip.locator_set01_RGT,
+                        reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
 
         # LOW LIP
         self.low_lip_jaw(side=side_LFT, mult_corner_adjust=corner_adjust_LFT, mult_jaw_following=jaw_following_LFT,
-                         locator_set01=lowLip.locator_set01_LFT, reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
+                         locator_set01=lowLip.locator_set01_LFT,
+                         reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
 
         self.low_lip_jaw(side=side_LFT, mult_corner_adjust=corner_adjust_LFT, mult_jaw_following=jaw_following_LFT,
-                         locator_set01=lowLip.locator_set01_LFT, reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
+                         locator_set01=lowLip.locator_set01_LFT,
+                         reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
 
         self.low_lip_jaw(side=side_RGT, mult_corner_adjust=corner_adjust_RGT, mult_jaw_following=jaw_following_RGT,
-                         locator_set01=lowLip.locator_set01_RGT, reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
+                         locator_set01=lowLip.locator_set01_RGT,
+                         reset_mouth_ctrl_grp_offset=upLip.reset_mouth_ctrl_grp_offset, name_w='W0', W0=True)
 
         self.low_lip_jaw(side=side_RGT, mult_corner_adjust=corner_adjust_RGT, mult_jaw_following=jaw_following_RGT,
-                         locator_set01=lowLip.locator_set01_RGT, reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
+                         locator_set01=lowLip.locator_set01_RGT,
+                         reset_mouth_ctrl_grp_offset=lowLip.reset_mouth_ctrl_grp_offset, name_w='W1', W0=False)
 
-    # ==================================================================================================================
-    #                                                   STICKY LIP
-    # ==================================================================================================================
+        # ==================================================================================================================
+        #                                                   STICKY LIP
+        # ==================================================================================================================
 
         xform_corner_lip_right = mc.xform(self.corner_lip_loc_set01_RGT, ws=1, q=1, t=1)
         xform_corner_lip_left = mc.xform(self.corner_lip_loc_set01_LFT, ws=1, q=1, t=1)
@@ -253,30 +267,34 @@ class Lip:
                       weight=[(0, 0.5), (1, 0.5)])
 
         # STICKY BLENDSHAPE STICKY TO LOW BIND MID
-        mc.blendShape(sticky_lip_bind_crv, lowLip.bind_sticky_mid_crv, n=au.prefix_name(curve_low_lip) + 'BindStickyMid' + '_bsn',
+        mc.blendShape(sticky_lip_bind_crv, lowLip.bind_sticky_mid_crv,
+                      n=au.prefix_name(curve_low_lip) + 'BindStickyMid' + '_bsn',
                       weight=[(0, 1)])
 
         # STICKY BLENDSHAPE STICKY TO UP BIND MID
-        mc.blendShape(sticky_lip_bind_crv, upLip.bind_sticky_mid_crv, n=au.prefix_name(curve_up_lip) + 'BindStickyMid' + '_bsn',
+        mc.blendShape(sticky_lip_bind_crv, upLip.bind_sticky_mid_crv,
+                      n=au.prefix_name(curve_up_lip) + 'BindStickyMid' + '_bsn',
                       weight=[(0, 1)])
 
         # SET KEYFRAME FOR CONSTRAINT
         # LOW LIP SET
         self.set_value_sticky(constraint=lowLip.cluster_constraint, offset_value=0.65,
-                              attribute_RGT=corner_lip_ctrl_RGT.sticky_ctrl, attribute_LFT=corner_lip_ctrl_LFT.sticky_ctrl,
+                              attribute_RGT=corner_lip_ctrl_RGT.sticky_ctrl,
+                              attribute_LFT=corner_lip_ctrl_LFT.sticky_ctrl,
                               controller_RGT=corner_lip_ctrl_RGT.control, controller_LFT=corner_lip_ctrl_LFT.control,
                               lip_sticky_origin_locator_name='%sStickyOrigin' % au.prefix_name(curve_low_lip),
                               lip_sticky_mid_locator_name='%sStickyMid' % au.prefix_name(curve_low_lip))
         # UP LIP SET
         self.set_value_sticky(constraint=upLip.cluster_constraint, offset_value=0.65,
-                              attribute_RGT=corner_lip_ctrl_RGT.sticky_ctrl, attribute_LFT=corner_lip_ctrl_LFT.sticky_ctrl,
+                              attribute_RGT=corner_lip_ctrl_RGT.sticky_ctrl,
+                              attribute_LFT=corner_lip_ctrl_LFT.sticky_ctrl,
                               controller_RGT=corner_lip_ctrl_RGT.control, controller_LFT=corner_lip_ctrl_LFT.control,
                               lip_sticky_origin_locator_name='%sStickyOrigin' % au.prefix_name(curve_up_lip),
                               lip_sticky_mid_locator_name='%sStickyMid' % au.prefix_name(curve_up_lip))
 
-    # ==================================================================================================================
-    #                                                   MOUTH AIM
-    # ==================================================================================================================
+        # ==================================================================================================================
+        #                                                   MOUTH AIM
+        # ==================================================================================================================
 
         self.mouth_controller = ct.Control(match_obj_first_position=None,
                                            prefix='mouth',
@@ -294,21 +312,23 @@ class Lip:
         self.controller_up_roll = au.add_attribute(objects=[self.mouth_controller.control], long_name=['rollLipUpSkin'],
                                                    attributeType="float", dv=0, keyable=True)
 
-        self.controller_low_roll = au.add_attribute(objects=[self.mouth_controller.control], long_name=['rollLipLowSkin'],
+        self.controller_low_roll = au.add_attribute(objects=[self.mouth_controller.control],
+                                                    long_name=['rollLipLowSkin'],
                                                     attributeType="float", dv=0, keyable=True)
 
         self.cheek_in_up_attr = au.add_attribute(objects=[self.mouth_controller.control], long_name=['cheekInUp'],
                                                  attributeType="float", dv=1, min=0.001, keyable=True)
 
         # CONNECT ROLL ATTRIBUTE CONTROLLER MID TO MDL LIP ROLL
-        mc.connectAttr(self.mouth_controller.control + '.%s' % self.controller_low_roll, lowLip.lip_roll_mdl + '.input1')
+        mc.connectAttr(self.mouth_controller.control + '.%s' % self.controller_low_roll,
+                       lowLip.lip_roll_mdl + '.input1')
         mc.setAttr(lowLip.lip_roll_mdl + '.input2', 10)
 
         mc.connectAttr(self.mouth_controller.control + '.%s' % self.controller_up_roll, upLip.lip_roll_mdl + '.input1')
         mc.setAttr(upLip.lip_roll_mdl + '.input2', -10)
 
         # CONNECT ROLL ATTRIBUTE CONTROLLER MID TO CONDITION ROLL ROLL
-        for low, up, in zip (lowLip.condition, upLip.condition):
+        for low, up, in zip(lowLip.condition, upLip.condition):
             mc.connectAttr(self.mouth_controller.control + '.%s' % self.controller_low_roll, low + '.firstTerm')
             mc.connectAttr(self.mouth_controller.control + '.%s' % self.controller_up_roll, up + '.firstTerm')
 
@@ -319,7 +339,7 @@ class Lip:
         mc.setAttr(self.mouth_controller.parent_control[0] + '.translateZ', tZ_value + (position_mouth_ctrl * scale))
 
         # AIM LOC OBJECT LOOK UP
-        locator_aim =  mc.spaceLocator(n='mouthAim_loc')[0]
+        locator_aim = mc.spaceLocator(n='mouthAim_loc')[0]
         locator_aim_grp = tf.create_parent_transform(parent_list=[''], object=locator_aim,
                                                      match_position=locator_aim, prefix=au.prefix_name(locator_aim),
                                                      suffix='_loc')
@@ -344,16 +364,17 @@ class Lip:
         mc.parentConstraint(head_low_jnt, self.mouth_controller.parent_control[0], mo=1)
         mc.scaleConstraint(head_low_jnt, self.mouth_controller.parent_control[0], mo=1)
 
-    # ==================================================================================================================
-    #                                                   PARENT GROUP
-    # ==================================================================================================================
+        # ==================================================================================================================
+        #                                                   PARENT GROUP
+        # ==================================================================================================================
         self.lip = mc.createNode('transform', n='lip_grp')
         self.controller_grp = mc.createNode('transform', n='lipCtrlAll_grp')
         self.setup_grp = mc.createNode('transform', n='lipSetup_grp')
         mc.hide(self.setup_grp)
 
         mc.parent(self.setup_grp, self.lip)
-        mc.parent(upLip.sticky_grp, lowLip.sticky_grp, upLip.utils_grp, lowLip.utils_grp, sticky_lip_bind_crv, corner_set_grp,
+        mc.parent(upLip.sticky_grp, lowLip.sticky_grp, upLip.utils_grp, lowLip.utils_grp, sticky_lip_bind_crv,
+                  corner_set_grp,
                   locator_aim_grp[0], self.setup_grp)
         mc.parent(self.mouth_controller.parent_control[0], corner_lip_ctrl_LFT.control_grp_zro,
                   corner_lip_ctrl_RGT.control_grp_zro, upLip.ctrl_grp, lowLip.ctrl_grp, self.controller_grp)
@@ -361,11 +382,11 @@ class Lip:
         mc.parent(self.controller_grp, face_anim_ctrl_grp)
         mc.parent(self.lip, face_utils_grp)
 
-
     # ==================================================================================================================
     #                                                   FUNCTIONS
     # ==================================================================================================================
-    def upLip_follow_jaw(self, jaw_ctrl, prefix_upLip_follow, name, jaw_jnt, headLow_normal_rotationGrp, crv_up_lip, mouth_offset_lip_grp, mouth_lip_grp):
+    def upLip_follow_jaw(self, jaw_ctrl, prefix_upLip_follow, name, jaw_jnt, headLow_normal_rotationGrp, crv_up_lip,
+                         mouth_offset_lip_grp, mouth_lip_grp):
 
         # UPPERLIP FOLLOWING JAW
         upLipX_follow_jaw = mc.createNode('transform', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotX_grp' % name)
@@ -381,18 +402,16 @@ class Lip:
         oc_upperLipX = mc.orientConstraint(jaw_jnt, upLipX_follow_jaw, mo=1, skip=('y', 'z'))
         oc_upperLipYZ = mc.orientConstraint(jaw_jnt, headLow_normal_rotationGrp, upLipYZ_follow_jaw, mo=1, skip='x')
 
-
         oc_upperLipX = au.constraint_rename(oc_upperLipX)[0]
         oc_upperLipYZ = au.constraint_rename(oc_upperLipYZ)[0]
-        # mc.setAttr(oc_upperLipYZ+'.interpType', 2)
 
         # CREATE REVERSE
         reverse_follow_jaw = mc.createNode('reverse', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotXY_rev' % name)
-        mc.connectAttr(jaw_ctrl+'.%s' % prefix_upLip_follow, reverse_follow_jaw+'.inputX')
+        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, reverse_follow_jaw + '.inputX')
 
         # CONNECT TO OBJECT
-        mc.connectAttr(jaw_ctrl+'.%s' % prefix_upLip_follow, oc_upperLipYZ+'.%sW0' % jaw_jnt)
-        mc.connectAttr(reverse_follow_jaw+'.outputX', oc_upperLipYZ+'.%sW1' % headLow_normal_rotationGrp)
+        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, oc_upperLipYZ + '.%sW0' % jaw_jnt)
+        mc.connectAttr(reverse_follow_jaw + '.outputX', oc_upperLipYZ + '.%sW1' % headLow_normal_rotationGrp)
 
     def reverse_low_lid(self, control, input_2X, input_2Y, input_2Z, joint_bind_target, name, connect):
         mdn_reverse = mc.createNode('multiplyDivide', n=au.prefix_name(control) + 'ReverseAllMouth' + name + '_mdn')
@@ -426,14 +445,17 @@ class Lip:
 
         return sum_both_adjust_and_follow
 
-    def up_lip_jaw(self, side, mult_corner_adjust, mult_jaw_following, locator_set01, reset_mouth_ctrl_grp_offset, name_w, W0=True):
+    def up_lip_jaw(self, side, mult_corner_adjust, mult_jaw_following, locator_set01, reset_mouth_ctrl_grp_offset,
+                   name_w, W0=True):
 
-        mult_both_adjust_and_follow = mc.createNode('multDoubleLinear', n='upLipJawFolCornerAdjust' + name_w + side + '_mdl')
+        mult_both_adjust_and_follow = mc.createNode('multDoubleLinear',
+                                                    n='upLipJawFolCornerAdjust' + name_w + side + '_mdl')
         mc.connectAttr(mult_corner_adjust + '.output', mult_both_adjust_and_follow + '.input1')
         mc.connectAttr(mult_jaw_following + '.output', mult_both_adjust_and_follow + '.input2')
 
         if W0:
-            sum_both_adjust_and_follow = self.jaw_following_subtract(side, mult_jaw_following, name_w, name='upLipJawFolSum')
+            sum_both_adjust_and_follow = self.jaw_following_subtract(side, mult_jaw_following, name_w,
+                                                                     name='upLipJawFolSum')
             value_min_w0 = mc.createNode('plusMinusAverage', n='upLipValueJawFolCornerAdjustW0' + side + '_pma')
             mc.connectAttr(mult_both_adjust_and_follow + '.output', value_min_w0 + '.input1D[0]')
             mc.connectAttr(sum_both_adjust_and_follow + '.output1D', value_min_w0 + '.input1D[1]')
@@ -450,15 +472,18 @@ class Lip:
             mc.connectAttr(value_min_w1 + '.output1D',
                            '%s_pac.%sW1' % (locator_set01, reset_mouth_ctrl_grp_offset))
 
-    def low_lip_jaw(self, side, mult_corner_adjust, mult_jaw_following, locator_set01, reset_mouth_ctrl_grp_offset, name_w, W0=True):
+    def low_lip_jaw(self, side, mult_corner_adjust, mult_jaw_following, locator_set01, reset_mouth_ctrl_grp_offset,
+                    name_w, W0=True):
 
         value_corner_lip = self.jaw_following_subtract(side, mult_jaw_following, name_w, name='lowLipValueJawFol')
-        mult_both_adjust_and_follow = mc.createNode('multDoubleLinear', n='lowLipJawFolCornerAdjust' + name_w + side + '_mdl')
+        mult_both_adjust_and_follow = mc.createNode('multDoubleLinear',
+                                                    n='lowLipJawFolCornerAdjust' + name_w + side + '_mdl')
         mc.connectAttr(mult_corner_adjust + '.output', mult_both_adjust_and_follow + '.input1')
         mc.connectAttr(value_corner_lip + '.output1D', mult_both_adjust_and_follow + '.input2')
 
         if W0:
-            subtract_both_adjust_and_follow = self.jaw_following_subtract(side, mult_jaw_following, name_w, name='lowLipJawFolSubtract')
+            subtract_both_adjust_and_follow = self.jaw_following_subtract(side, mult_jaw_following, name_w,
+                                                                          name='lowLipJawFolSubtract')
             value_min_w0 = mc.createNode('plusMinusAverage', n='lowLipValueJawFolCornerAdjustW0' + side + '_pma')
             mc.setAttr(value_min_w0 + '.operation', 2)
             mc.connectAttr(subtract_both_adjust_and_follow + '.output1D', value_min_w0 + '.input1D[0]')
@@ -477,10 +502,12 @@ class Lip:
 
     def parent_constraint_set_locator(self, lip, up_lip, low_lip, condition_low_lip, jaw_jnt, head_low_jnt):
         # parent constraint 01 set locator
-        right_constraint = mc.parentConstraint(up_lip.reset_mouth_ctrl_grp_offset, low_lip.reset_mouth_ctrl_grp_offset, lip.locator_set01_RGT, mo=1)[0]
+        right_constraint = mc.parentConstraint(up_lip.reset_mouth_ctrl_grp_offset, low_lip.reset_mouth_ctrl_grp_offset,
+                                               lip.locator_set01_RGT, mo=1)[0]
         mc.setAttr(right_constraint + '.interpType', 2)
 
-        left_constraint = mc.parentConstraint(up_lip.reset_mouth_ctrl_grp_offset, low_lip.reset_mouth_ctrl_grp_offset, lip.locator_set01_LFT, mo=1)[0]
+        left_constraint = mc.parentConstraint(up_lip.reset_mouth_ctrl_grp_offset, low_lip.reset_mouth_ctrl_grp_offset,
+                                              lip.locator_set01_LFT, mo=1)[0]
         mc.setAttr(left_constraint + '.interpType', 2)
 
         # PARENT CONSTRAINT MID LOCATOR
@@ -499,7 +526,8 @@ class Lip:
             scl_mouth_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
 
             # rename constraint
-            au.constraint_rename([pac_reset_all_ctrl_cons[0], scl_reset_all_ctrl_cons[0], pac_mouth_ctrl_cons[0], scl_mouth_ctrl_cons[0]])
+            au.constraint_rename([pac_reset_all_ctrl_cons[0], scl_reset_all_ctrl_cons[0], pac_mouth_ctrl_cons[0],
+                                  scl_mouth_ctrl_cons[0]])
 
         else:
             # parent constraint mouth reset grp and mouth ctrl all grp
@@ -534,10 +562,12 @@ class Lip:
                              prefix_bind, prefix_ctrl,
                              lip, condition_low_lip=True):
         # CONNECT CORNER CONTROLLER TO OFFSET BIND JNT
-        self.reverse_corner_bind_grp_offset_direction(corner_ctrl=corner_lip_ctrl_RGT, prefix=prefix_bind, side=side_RGT,
+        self.reverse_corner_bind_grp_offset_direction(corner_ctrl=corner_lip_ctrl_RGT, prefix=prefix_bind,
+                                                      side=side_RGT,
                                                       jnt_bind_grp_offset=lip.joint_bind01_RGT_grp[1], side_RGT=True)
 
-        self.reverse_corner_bind_grp_offset_direction(corner_ctrl=corner_lip_ctrl_LFT, prefix=prefix_bind, side=side_LFT,
+        self.reverse_corner_bind_grp_offset_direction(corner_ctrl=corner_lip_ctrl_LFT, prefix=prefix_bind,
+                                                      side=side_LFT,
                                                       jnt_bind_grp_offset=lip.joint_bind01_LFT_grp[1], side_RGT=False)
 
         # CONNECT ROTATION LOCATOR OFFSET LOWLIP OF JAW ROTATION
@@ -559,12 +589,15 @@ class Lip:
 
         # CONNECT CORNER CONTROLLER TO CONTROLLER 01 OFFSET GRP
         self.reverse_corner_ctrl_direction(corner_ctrl=corner_lip_ctrl_RGT, prefix=prefix_ctrl, side=side_RGT,
-                                           ctrl_bind_grp_offset=lip.controller_bind01_RGT.parent_control[2], condition_low_lip=condition_low_lip)
+                                           ctrl_bind_grp_offset=lip.controller_bind01_RGT.parent_control[2],
+                                           condition_low_lip=condition_low_lip)
 
         self.reverse_corner_ctrl_direction(corner_ctrl=corner_lip_ctrl_LFT, prefix=prefix_ctrl, side=side_LFT,
-                                           ctrl_bind_grp_offset=lip.controller_bind01_LFT.parent_control[2], condition_low_lip=condition_low_lip)
+                                           ctrl_bind_grp_offset=lip.controller_bind01_LFT.parent_control[2],
+                                           condition_low_lip=condition_low_lip)
 
-    def set_value_sticky(self, offset_value, constraint, attribute_RGT, attribute_LFT, controller_RGT, controller_LFT, lip_sticky_origin_locator_name,
+    def set_value_sticky(self, offset_value, constraint, attribute_RGT, attribute_LFT, controller_RGT, controller_LFT,
+                         lip_sticky_origin_locator_name,
                          lip_sticky_mid_locator_name):
         len_constraint = len(constraint)
         constraint_right = constraint[0:((len_constraint - 1) / 2)]
@@ -575,30 +608,33 @@ class Lip:
         sticky_value = 10
         result = sticky_value / float(list_part)
 
-
         # RIGHT SIDE
-        self.set_keyframe_sticky(result=result, constraint_side=constraint_right, lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
+        self.set_keyframe_sticky(result=result, constraint_side=constraint_right,
+                                 lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
                                  controller=controller_RGT, attribute=attribute_RGT, offset_value=offset_value,
                                  lip_sticky_mid_locator_name=lip_sticky_mid_locator_name)
 
         # LEFT SIDE
-        self.set_keyframe_sticky(result=result, constraint_side=constraint_left, lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
+        self.set_keyframe_sticky(result=result, constraint_side=constraint_left,
+                                 lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
                                  controller=controller_LFT, attribute=attribute_LFT, offset_value=offset_value,
                                  lip_sticky_mid_locator_name=lip_sticky_mid_locator_name)
 
         # MID
         mid_constraint = constraint[((len_constraint - 1) / 2)]
         # MID RIGHT
-        self.set_keyframe_sticky_mid(result=result, mid_cons=mid_constraint, lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
+        self.set_keyframe_sticky_mid(result=result, mid_cons=mid_constraint,
+                                     lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
                                      controller=controller_RGT, attribute=attribute_RGT, offset_value=offset_value,
                                      lip_sticky_mid_locator_name=lip_sticky_mid_locator_name)
         # MID LEFT
-        self.set_keyframe_sticky_mid(result=result, mid_cons=mid_constraint, lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
+        self.set_keyframe_sticky_mid(result=result, mid_cons=mid_constraint,
+                                     lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
                                      controller=controller_LFT, attribute=attribute_LFT, offset_value=offset_value,
                                      lip_sticky_mid_locator_name=lip_sticky_mid_locator_name)
 
-
-    def set_keyframe_sticky_mid(self, result, mid_cons, lip_sticky_origin_locator_name, controller, attribute, offset_value,
+    def set_keyframe_sticky_mid(self, result, mid_cons, lip_sticky_origin_locator_name, controller, attribute,
+                                offset_value,
                                 lip_sticky_mid_locator_name):
 
         prefix = self.get_number_of_list(mid_cons)
@@ -606,20 +642,20 @@ class Lip:
 
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW0' % (lip_sticky_origin_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal-1) * result) * offset_value, v=0.5, itt='auto', ott='auto')
+                             dv=((driverVal - 1) * result) * offset_value, v=0.5, itt='auto', ott='auto')
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW0' % (lip_sticky_origin_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal-1) * result) + result, v=0, itt='auto', ott='auto')
+                             dv=((driverVal - 1) * result) + result, v=0, itt='auto', ott='auto')
 
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW1' % (lip_sticky_mid_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal-1) * result) * offset_value, v=0, itt='auto', ott='auto')
+                             dv=((driverVal - 1) * result) * offset_value, v=0, itt='auto', ott='auto')
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW1' % (lip_sticky_mid_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal-1) * result) + result, v=0.5, itt='auto', ott='auto')
+                             dv=((driverVal - 1) * result) + result, v=0.5, itt='auto', ott='auto')
 
-
-    def set_keyframe_sticky(self, result, constraint_side, lip_sticky_origin_locator_name, controller, attribute, offset_value,
+    def set_keyframe_sticky(self, result, constraint_side, lip_sticky_origin_locator_name, controller, attribute,
+                            offset_value,
                             lip_sticky_mid_locator_name):
 
         for n, i in enumerate(constraint_side):

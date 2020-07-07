@@ -7,19 +7,18 @@ from rigging.tools import AD_utils as au, AD_controller as ac
 reload(ac)
 reload(au)
 
-def create_bpm (Fk = None,
-                joints='',
-                main_mesh='',
-                mesh_bpm='',
-                base_joint='',
-                scale_object =None,
-                shape =ac.JOINT,
-                ctrl_size=1.0,
-                ctrl_color ='lightPink',
-                connect_mesh=[]
-                ):
 
-
+def create_bpm(Fk=None,
+               joints='',
+               main_mesh='',
+               mesh_bpm='',
+               base_joint='',
+               scale_object=None,
+               shape=ac.JOINT,
+               ctrl_size=1.0,
+               ctrl_color='lightPink',
+               connect_mesh=[]
+               ):
     """
     :param Fk : bool, either bpm run on FK or IK system
     :param joints: str, list joint bpm FK list
@@ -54,7 +53,6 @@ def create_bpm (Fk = None,
                 if o not in list_joints:
                     list_joints.append(o)
 
-
         ac.create_controller(object_list=list_joints,
                              groups_ctrl=['Zro', 'Offset'],
                              ctrl_color=ctrl_color,
@@ -68,13 +66,13 @@ def create_bpm (Fk = None,
 
         for obj in list_joints:
 
-            #sorting the full path of object then rid off []
+            # sorting the full path of object then rid off []
             list_relatives_obj = mc.listRelatives(obj, ap=1, f=1)[0]
 
-            #spliting the object with | and take out Zro grp which is on the -4 position
+            # spliting the object with | and take out Zro grp which is on the -4 position
             split_object = list_relatives_obj.split('|')[-3]
 
-            #appending all of the object this is purpose for enumerate later
+            # appending all of the object this is purpose for enumerate later
             ctrls.append(split_object)
 
             follicles = au.follicle_set(obj, main_mesh, connect_follicle=connect_mesh)
@@ -124,7 +122,8 @@ def create_bpm (Fk = None,
             grp_obj = au.group_object(['Zro', 'BPM', 'Null', 'Adjust'], base_joint, base_joint)
 
             mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint),
-                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(base_joint)))
+                           '%s.bindPreMatrix[%d]' % (
+                           au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(base_joint)))
 
             mc.parent(grp_obj[0], ctrl_grp)
 
@@ -136,7 +135,6 @@ def create_bpm (Fk = None,
             mc.parent(follicle_grp, drive_grp, ctrl_grp, all_grp)
 
         mc.select(cl=1)
-
 
     if not Fk:
 
@@ -215,7 +213,7 @@ def create_bpm (Fk = None,
 
 
 ################################################# re-skin the mesh ###################################################
-def reskin_mesh_bpm(Fk = None,
+def reskin_mesh_bpm(Fk=None,
                     joints='',
                     mesh_bpm='',
                     base_joint=''):
@@ -260,7 +258,6 @@ def reskin_mesh_bpm(Fk = None,
             mc.connectAttr('%s.worldInverseMatrix[0]' % i,
                            '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(obj)))
 
-
     # re-conncet module joint
     list_connetion_base = mc.listConnections('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint))
     if not list_connetion_base:
@@ -271,12 +268,14 @@ def reskin_mesh_bpm(Fk = None,
 
     mc.select(cl=1)
 
+
 ############################################## tools BPM ###############################################
 
 # listing the joint connection destination to skin cluster matrix
 def joint_destination_matrix(obj):
     list_connection = mc.listConnections(obj + '.worldMatrix[0]', p=True)
     return list_connection
+
 
 # get the number of skin cluster matrix
 def skin_matrix_list_from_joint(obj):
@@ -285,11 +284,13 @@ def skin_matrix_list_from_joint(obj):
         integer = int((split[0].split('[')[-1][:-1]))
         return integer
 
+
 def array_bpm_folder(obj):
     relatives = mc.listRelatives(obj, p=True, f=True)
     for o in relatives:
         split = o.split('|')[-3]
         return split
+
 
 def create_group(node, name):
     if not mc.objExists(name):
@@ -298,34 +299,38 @@ def create_group(node, name):
     else:
         return name
 
+
 ####################################### sorting the skin matrix index (not used) ##############################################################
 
-#remove the long name form matrix long name listing of skin cluster
+# remove the long name form matrix long name listing of skin cluster
 def skin_matrix_list(obj):
-    objs =[]
+    objs = []
     for o in skin_matrix_list_long(obj):
         objs.append(int(o))
     return objs
 
-#getting attribute matrix long name from listing of skin cluster
+
+# getting attribute matrix long name from listing of skin cluster
 def skin_matrix_list_long(obj):
     for i in obj:
         get_attr = mc.getAttr(i + '.matrix', mi=True)
         return get_attr
 
-#getting complete name skin cluster matrix include the number
+
+# getting complete name skin cluster matrix include the number
 def skin_cluster_matrix_list_num(obj):
     list_matrix = []
     for cluster in obj:
         for indexNum in skin_matrix_list(obj):
-                at = cluster+'.matrix[%d]' % (int(indexNum))
-                list_matrix.append(at)
+            at = cluster + '.matrix[%d]' % (int(indexNum))
+            list_matrix.append(at)
     return list_matrix
 
-#getting the source connection from the skin cluster matrix
+
+# getting the source connection from the skin cluster matrix
 def source_joint_skin_matrix(obj):
-      list = mc.listConnections(skin_cluster_matrix_list_num(obj), d=True)
-      return  list
+    list = mc.listConnections(skin_cluster_matrix_list_num(obj), d=True)
+    return list
 
 
 ############################################# misc (not used) ##################################################
@@ -338,9 +343,11 @@ def group_fk(obj):
         au.match_position(split_name, grp_parent[0])
         return grp_parent
 
+
 def list_matrix_connection(obj):
-    list = mc.listConnections(obj[0] +'.matrix', s=True)
+    list = mc.listConnections(obj[0] + '.matrix', s=True)
     return list
+
 
 def list_folder_bpm_connection(obj):
     objs = []
@@ -355,16 +362,15 @@ def list_relatives(obj):
         lR = grps.append(mc.listRelatives(o, ap=True))
     return grps
 
+
 def adding_grp_not_none_list_relatives(obj):
-        grps= group_fk(obj)
-        return grps
+    grps = group_fk(obj)
+    return grps
+
 
 def array_part_object(joints, listObj):
-    grps=[]
+    grps = []
     for obj in joints:
         if obj in listObj:
             grps.append(obj)
     return grps
-
-
-##########################################################################################################

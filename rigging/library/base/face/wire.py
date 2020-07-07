@@ -1,6 +1,5 @@
 from __builtin__ import reload
 
-import maya.OpenMaya as om
 import maya.cmds as mc
 
 from rigging.library.utils import controller as ct, transform as tf, core as cr
@@ -16,7 +15,6 @@ class Build:
                  ctrl01_direction, ctrl02_direction, ctrl03_direction, ctrl04_direction, ctrl05_direction,
                  ctrl_color, wire_low_controller, shape, position_joint_direction, face_utils_grp, suffix_controller,
                  base_module_nonTransform,
-                 # parent_skin,
                  connect_with_corner_ctrl=False):
 
         # DUPLICATE CURVE THEN RENAME
@@ -30,17 +28,16 @@ class Build:
 
         self.curve_vertex = mc.ls('%s.cv[0:*]' % curve, fl=True)
 
-        self.create_joint_wire(curve=curve, scale=scale, side=side,
-                               # parent_skin=parent_skin
-                               )
+        self.create_joint_wire(curve=curve, scale=scale, side=side)
 
         self.wire_bind_curve(offset_jnt02_bind_position=offset_jnt02_bind_position, ctrl01_direction=ctrl01_direction,
                              ctrl02_direction=ctrl02_direction, offset_jnt04_bind_position=offset_jnt04_bind_position,
-                             ctrl03_direction=ctrl03_direction, ctrl04_direction=ctrl04_direction, ctrl05_direction=ctrl05_direction,
-                             curve=curve, scale=scale, side=side)
+                             ctrl03_direction=ctrl03_direction, ctrl04_direction=ctrl04_direction,
+                             ctrl05_direction=ctrl05_direction, curve=curve, scale=scale, side=side)
 
         self.controller_wire(scale=scale, side=side, controller_wire_low=wire_low_controller, shape=shape, ctrl_color=ctrl_color,
-                             connect_with_corner_ctrl=connect_with_corner_ctrl, side_RGT=side_RGT, side_LFT=side_LFT, suffix_controller=suffix_controller)
+                             connect_with_corner_ctrl=connect_with_corner_ctrl, side_RGT=side_RGT, side_LFT=side_LFT,
+                             suffix_controller=suffix_controller)
 
         self.grouping_wire(side=side, face_utils_grp=face_utils_grp, position_direction_jnt=position_joint_direction)
 
@@ -65,8 +62,6 @@ class Build:
 
         mc.parent(wire_driven_jnt_grp, setup_driver_grp, all_grp)
         mc.parent(wire_driven_ctrl_grp, ctrl_driver_grp)
-
-        # mc.parent(groupDriver, setupDriverGrp, ctrlDriverGrp, grpNoseAll)
 
         mc.parent(all_grp, face_utils_grp)
 
@@ -287,10 +282,6 @@ class Build:
                                        input_2X=1, input_2Y=-1, input_2Z=-1,
                                        joint_bind_target=self.jnt05, side_RGT=side_RGT, side_LFT=side_LFT, side=side)
 
-        # # CONNECT GROUP PARENT BIND JOINT 01 AND 02 TO THE CONTROLLER GRP PARENT 01 AND 02
-        # au.connectAttrTransRot(jointBind02Grp[0], controllerBind02.parentControl[0])
-        # au.connectAttrTransRot(self.jointBind04Grp[0], controllerBind04.parentControl[0])
-
         self.drive_ctrl_grp=drive_ctrl_grp
         self.controller_bind01 = controller_bind01.control
         self.controller_bind01_grp = controller_bind01.parent_control[0]
@@ -394,12 +385,6 @@ class Build:
             mc.setAttr(joint_bind05_grp[0] + '.rotateY', ctrl05_direction * -1)
             mc.setAttr(joint_bind04_grp[0] + '.rotateY', ctrl04_direction * -1)
 
-        # # rotation bind joint follow the mouth shape
-        # mc.setAttr(jointBindGrp05[0] + '.rotateY', directionCtrl01 * -1)
-        # mc.setAttr(jointBindGrp04[0] + '.rotateY', directionCtrl02 * -1)
-        # mc.setAttr(jointBindGrp01[0] + '.rotateY', directionCtrl01)
-        # mc.setAttr(jointBindGrp02[0] + '.rotateY', directionCtrl02)
-
         # rebuild the curve
         mc.rebuildCurve(deform_curve, rpo=1, rt=0, end=1, kr=0, kcp=0,
                         kep=1, kt=0, s=8, d=3, tol=0.01)
@@ -479,16 +464,14 @@ class Build:
         self.curves_grp = curves_grp
         self.bind_jnt_grp =bind_jnt_grp
 
-    def create_joint_wire(self, curve, side, scale,
-                          # parent_skin
-                          ):
+    def create_joint_wire(self, curve, side, scale):
 
         curve_vetex = mc.ls('%s.cv[0:*]' % curve, fl=True)
 
         self.all_joint = []
         self.locator_grp_offset = []
         self.locator_grp_zro = []
-        self.all_skin=[]
+        self.all_skin = []
         self.joint_grp_zro = []
 
         for index, object in enumerate(curve_vetex):
@@ -532,14 +515,6 @@ class Build:
             mc.connectAttr(decompose_node + '.outputTranslate', joint_grp[0] + '.translate')
             mc.connectAttr(decompose_node + '.outputRotate', joint_grp[0] + '.rotate')
 
-            # # CREATE SKINNING JOINT
-            # mc.select(cl=1)
-            # skin = mc.joint(n='%s%02d%s%s' % (self.prefix_name_crv, (index + 1), side, '_skn'), rad=0.1 * scale)
-            # # SKIN PARENT AND SCALE CONSTRAINT
-            # au.parent_scale_constraint(joint, skin)
-            # self.all_skin.append(skin)
-
-
         # grouping joint
         self.joint_grp = mc.group(em=1, n=self.prefix_name_crv + 'Jnt' + side + '_grp')
         mc.parent(self.joint_grp_zro, self.joint_grp)
@@ -548,6 +523,3 @@ class Build:
         self.locator_grp = mc.group(em=1, n=self.prefix_name_crv + 'Loc' + side + '_grp')
         mc.setAttr(self.locator_grp + '.it', 0, l=1)
         mc.parent(self.locator_grp_zro, self.locator_grp)
-
-        # # PARENT SKIN JOINT
-        # mc.parent(self.all_skin, parent_skin)

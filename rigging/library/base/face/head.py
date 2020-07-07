@@ -35,18 +35,6 @@ class Build:
                  tongue03_jnt,
                  tongue04_jnt,
                  suffix_controller,
-                 # neck_skn,
-                 # neck_in_btw_skn,
-                 # head_skn,
-                 # jaw_skn,
-                 # head_up_skn,
-                 # head_low_skn,
-                 # upper_teeth_skn,
-                 # lower_teeth_skn,
-                 # tongue01_skn,
-                 # tongue02_skn,
-                 # tongue03_skn,
-                 # tongue04_skn
                  ):
         # create group jaw
         jaw_direction_grp = mc.group(em=1, n=au.prefix_name(jaw_jnt) + 'Direction_grp')
@@ -212,17 +200,3 @@ class Build:
         # CONSTRAINT RENAME
         au.constraint_rename([ctrl_orient_constraint, ctrl_point_constraint[0], transform_point_cosntraint[0],
                               transform_orient_constraint])
-
-        # # SKIN PARENT AND SCALE CONSTRAINT
-        # au.parent_scale_constraint(neck_jnt, neck_skn)
-        # au.parent_scale_constraint(neck_in_btw_jnt, neck_in_btw_skn)
-        # au.parent_scale_constraint(head_jnt, head_skn)
-        # au.parent_scale_constraint(jaw_jnt, jaw_skn)
-        # au.parent_scale_constraint(head_up_jnt, head_up_skn)
-        # au.parent_scale_constraint(head_low_jnt, head_low_skn)
-        # au.parent_scale_constraint(upper_teeth_jnt, upper_teeth_skn)
-        # au.parent_scale_constraint(lower_teeth_jnt, lower_teeth_skn)
-        # au.parent_scale_constraint(tongue01_jnt, tongue01_skn)
-        # au.parent_scale_constraint(tongue02_jnt, tongue02_skn)
-        # au.parent_scale_constraint(tongue03_jnt, tongue03_skn)
-        # au.parent_scale_constraint(tongue04_jnt, tongue04_skn)

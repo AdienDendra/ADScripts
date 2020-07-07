@@ -6,12 +6,10 @@ from rigging.library.base.face import head as hd
 from rigging.library.utils import controller as ct
 from rigging.tools import AD_utils as au
 
-# from library.base.body import detailLimb as dl
-
 reload(hd)
 reload(au)
 reload(ct)
-# reload(dl)
+
 
 class Head:
     def __init__(self,
@@ -43,18 +41,6 @@ class Head:
                  tongue04_jnt,
                  suffix_controller,
                  scale,
-                 # neck_skn,
-                 # neck_in_btw_skn,
-                 # head_skn,
-                 # jaw_skn,
-                 # head_up_skn,
-                 # head_low_skn,
-                 # upper_teeth_skn,
-                 # lower_teeth_skn,
-                 # tongue01_skn,
-                 # tongue02_skn,
-                 # tongue03_skn,
-                 # tongue04_skn
                  ):
 
         world_up_grp = mc.spaceLocator(n='worldUpFacialObject_loc')[0]
@@ -84,18 +70,6 @@ class Head:
                         tongue04_jnt=tongue04_jnt,
                         scale=scale,
                         suffix_controller=suffix_controller,
-                        # neck_skn=neck_skn,
-                        # neck_in_btw_skn=neck_in_btw_skn,
-                        # head_skn=head_skn,
-                        # jaw_skn=jaw_skn,
-                        # head_up_skn=head_up_skn,
-                        # head_low_skn=head_low_skn,
-                        # upper_teeth_skn=upper_teeth_skn,
-                        # lower_teeth_skn=lower_teeth_skn,
-                        # tongue01_skn=tongue01_skn,
-                        # tongue02_skn=tongue02_skn,
-                        # tongue03_skn=tongue03_skn,
-                        # tongue04_skn=tongue04_skn
                         )
 
         self.head_up_ctrl = head.head_up_ctrl.control
@@ -118,7 +92,6 @@ class Head:
         self.jaw_ctrl = head.jaw_ctrl.control
         self.attr_upLip_follow = head.attr_upLip_follow
         self.headLow_normal_rotationGrp = head.headLow_normal_rotationGrp
-        # self.jawCtrlGimbal = head.jawCtrl.control_gimbal
 
         self.jaw_prefix = jaw_prefix
         self.neck_jnt_grp = head.neck_jnt_grp
@@ -128,54 +101,16 @@ class Head:
                          object_grp_local=self.head_ctrl_grp_local,
                          local_base=self.neck_ctrl_gimbal, world_base=world_up_grp, eye_aim=False)
 
-        # # parent head up and low ctrl to head controller
-        # mc.parent(head.headUpCtrl.parentControl[0], head.headLowCtrl.parentControl[0], head.headCtrl.control_gimbal)
-
-        # jaw reverse trans
-        # self.jawReverseNode(nodeName='ReverseTrans', jawController=head.jawCtrl.control_gimbal,
-        #                     jawOffsetGrpCtrl=head.jawCtrl.parentControl[1], connection='translate')
-        #
-        # self.jawReverseNode(nodeName='ReverseRot', jawController=head.jawCtrl.control_gimbal,
-        #                     jawOffsetGrpCtrl=head.jawCtrl.parentControl[1], connection='rotate')
-
-        # # connect to module joint
-        # self.jawCtrlGimbalDriverJnt(nodeName='AddTrans', jawController=head.jawCtrl.control,
-        #                             jawControllerGimbal=head.jawCtrl.control_gimbal, jawTarget=jawJnt,
-        #                             attribute='translate')
-        #
-        # self.jawCtrlGimbalDriverJnt(nodeName='AddRot', jawController=head.jawCtrl.control,
-        #                             jawControllerGimbal=head.jawCtrl.control_gimbal, jawTarget=jawJnt,
-        #                             attribute='rotate')
-        #
-        # # connect to jaw direction offset
-        # self.jawCtrlGimbalDriverJnt(nodeName='AddTransDir', jawController=head.jawCtrl.control,
-        #                             jawControllerGimbal=head.jawCtrl.control_gimbal, jawTarget=head.jawDirectionOffsetGrp,
-        #                             attribute='translate')
-        #
-        # self.jawCtrlGimbalDriverJnt(nodeName='AddRotDir', jawController=head.jawCtrl.control,
-        #                             jawControllerGimbal=head.jawCtrl.control_gimbal, jawTarget=head.jawDirectionOffsetGrp,
-        #                             attribute='rotate')
-
-        # # connect the tip joint to parent ctrl jaw
-        # dMtxJaw = mc.createNode('decomposeMatrix', n=self.prefixJaw+'_dmtx')
-        # mc.connectAttr(jawTipJnt + '.worldMatrix[0]', dMtxJaw + '.inputMatrix')
-        #
-        # mc.connectAttr(dMtxJaw+'.outputTranslate', head.jawCtrl.parentControl[0]+'.translate')
-        # mc.connectAttr(dMtxJaw+'.outputRotate', head.jawCtrl.parentControl[0]+'.rotate')
-        # mc.connectAttr(dMtxJaw+'.outputScale', head.jawCtrl.parentControl[0]+'.scale')
-
         # JAW CONNECTION
         au.connect_attr_translate_rotate(self.jaw_ctrl, head.jaw_direction_grp_offset)
         au.connect_attr_translate_rotate(self.jaw_ctrl, jaw_jnt)
         pac_jaw_tip = mc.parentConstraint(jaw_jnt, head.jaw_tip_jnt_grp[1], mo=1)
-        # au.connectAttrTransRot(head.jawTipGrp[0], self.jawCtrlGrp)
+
         # CREATE PMA
         jaw_pma = mc.createNode('plusMinusAverage', n=au.prefix_name(jaw_tip_jnt) + 'Trans_pma')
         mc.setAttr(jaw_pma + '.operation', 2)
         mc.connectAttr(head.jaw_tip_jnt_grp[1] + '.translate', jaw_pma + '.input3D[0]')
         mc.connectAttr(self.jaw_ctrl + '.translate', jaw_pma + '.input3D[1]')
-        # mc.connectAttr(self.jawCtrlGimbal+'.translate', jawPma+'.input3D[2]')
-
         mc.connectAttr(jaw_pma + '.output3D', head.jaw_ctrl.parent_control[1] + '.translate')
 
         # ==================================================================================================================
@@ -193,8 +128,6 @@ class Head:
         self.eye_aim_main_ctrl_grp = eye_aim_main_ctrl.parent_control[0]
         self.eye_aim_main_ctrl_grp_global = eye_aim_main_ctrl.parent_control[1]
         self.eye_aim_main_ctrl_grp_local = eye_aim_main_ctrl.parent_control[2]
-
-        # mc.setAttr(self.eyeAimMainCtrlGrp+'.rotate', 0, 0, 0, type="double3")
 
         get_attribute = mc.getAttr(eye_aim_main_ctrl.parent_control[0] + '.translateZ')
         mc.setAttr(eye_aim_main_ctrl.parent_control[0] + '.translateZ', get_attribute + (position_eye_aim_ctrl * scale))
@@ -215,36 +148,6 @@ class Head:
         # RENAME CONSTRAINT
         au.constraint_rename([pac_jaw_tip[0], scale_eye_main_constraint[0]])
 
-
-    # face_anim_ctrl_grp,
-    # face_utils_grp,
-    # neck_jnt,
-    # neck_in_btw_jnt,
-    # head_jnt,
-    # jaw_jnt,
-    # jaw_tip_jnt,
-    # head_up_jnt,
-    # head_low_jnt,
-    # jaw_prefix,
-    # jaw_tip_prefix,
-    # head_prefix,
-    # neck_prefix,
-    # neck_in_btw_prefix,
-    # head_up_prefix,
-    # head_low_prefix,
-    # eye_aim_prefix,
-    # eye_jnt_LFT,
-    # eye_jnt_RGT,
-    # position_eye_aim_ctrl,
-    # upper_teeth_jnt,
-    # lower_teeth_jnt,
-    # tongue01_jnt,
-    # tongue02_jnt,
-    # tongue03_jnt,
-    # tongue04_jnt,
-    # suffix_controller,
-    # scale
-
     def jaw_ctrl_gimbal_driver_jnt(self, node_name, jaw_controller, jaw_controller_gimbal, jaw_target, attribute):
         pma_jaw_add = mc.createNode('plusMinusAverage', n=self.jaw_prefix + node_name + '_pma')
         mc.connectAttr(jaw_controller + '.%s' % attribute, pma_jaw_add + '.input3D[0]')
@@ -252,8 +155,8 @@ class Head:
 
         mc.connectAttr(pma_jaw_add + '.output3D', jaw_target + '.%s' % attribute)
 
-    def local_world(self, object_name, object_ctrl, object_grp,
-                    object_grp_global, object_grp_local, local_base, world_base, eye_aim=False):
+    def local_world(self, object_name, object_ctrl, object_grp, object_grp_global, object_grp_local, local_base,
+                    world_base, eye_aim=False):
         # LOCAL WORLD HEAD
         local = mc.createNode('transform', n=object_name + 'Local_grp')
         mc.parent(local, object_grp)

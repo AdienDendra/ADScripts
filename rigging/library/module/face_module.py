@@ -27,100 +27,99 @@ reload(bs)
 
 
 def build_rig(
-             offset_jnt02_bind_lip_cheek_position,
-             offset_jnt02_bind_lip_nose_position,
-             offset_jnt04_bind_lip_nose_position,
-             lip01_cheek_direction,
-             lip02_cheek_direction,
-             scale,
-             side_LFT,
-             side_RGT,
-             suffix_controller,
+        offset_jnt02_bind_lip_cheek_position,
+        offset_jnt02_bind_lip_nose_position,
+        offset_jnt04_bind_lip_nose_position,
+        lip01_cheek_direction,
+        lip02_cheek_direction,
+        scale,
+        side_LFT,
+        side_RGT,
+        suffix_controller,
 
-             cheek_low_prefix,
-             cheek_mid_prefix,
-             cheek_up_prefix,
-             cheek_in_up_prefix,
-             cheek_in_low_prefix,
+        cheek_low_prefix,
+        cheek_mid_prefix,
+        cheek_up_prefix,
+        cheek_in_up_prefix,
+        cheek_in_low_prefix,
 
-             cheek_out_up_prefix,
-             cheek_out_low_prefix,
-             curve_up_template_lip,
-             curve_low_template_lip,
-             curve_up_template_lip_roll,
-             curve_low_template_lip_roll,
-             position_mouth_ctrl,
-             curve_template_nose,
+        cheek_out_up_prefix,
+        cheek_out_low_prefix,
+        curve_up_template_lip,
+        curve_low_template_lip,
+        curve_up_template_lip_roll,
+        curve_low_template_lip_roll,
+        position_mouth_ctrl,
+        curve_template_nose,
 
-             jaw_prefix,
-             jaw_tip_prefix,
-             head_prefix,
-             neck_prefix,
-             neck_in_btw_prefix,
-             head_up_prefix,
-             head_low_prefix,
-             columella_prefix,
+        jaw_prefix,
+        jaw_tip_prefix,
+        head_prefix,
+        neck_prefix,
+        neck_in_btw_prefix,
+        head_up_prefix,
+        head_low_prefix,
+        columella_prefix,
 
-             curve_up_lid_template_LFT,
-             curve_low_lid_template_LFT,
-             curve_up_lid_template_RGT,
-             curve_low_lid_template_RGT,
-             eye_prefix,
-             eye_aim_prefix,
-             lid01_direction,
-             lid02_direction,
-             lid03_direction,
-             lid04_direction,
-             lid05_direction,
-             position_eye_aim_ctrl,
+        curve_up_lid_template_LFT,
+        curve_low_lid_template_LFT,
+        curve_up_lid_template_RGT,
+        curve_low_lid_template_RGT,
+        eye_prefix,
+        eye_aim_prefix,
+        lid01_direction,
+        lid02_direction,
+        lid03_direction,
+        lid04_direction,
+        lid05_direction,
+        position_eye_aim_ctrl,
 
-             eye_ctrl_direction,
+        eye_ctrl_direction,
 
-             lid02_position_offset,
-             lid04_position_offset,
-             nose_follow_mouth_value,
+        lid02_position_offset,
+        lid04_position_offset,
+        nose_follow_mouth_value,
 
-             curve_up_lid_out_LFT,
-             curve_low_lid_out_LFT,
-             curve_up_lid_out_RGT,
-             curve_low_lid_out_RGT,
-             jnt02_bind_lip_lid_out_position_offset,
-             jnt04_bind_lip_lid_out_position_offset,
-             lid01_out_ctrl_direction,
-             lid02_out_ctrl_direction,
-             lid03_out_ctrl_direction,
-             lid04_out_ctrl_direction,
-             lid05_out_ctrl_direction,
-             pupil_prefix,
-             iris_prefix,
+        curve_up_lid_out_LFT,
+        curve_low_lid_out_LFT,
+        curve_up_lid_out_RGT,
+        curve_low_lid_out_RGT,
+        jnt02_bind_lip_lid_out_position_offset,
+        jnt04_bind_lip_lid_out_position_offset,
+        lid01_out_ctrl_direction,
+        lid02_out_ctrl_direction,
+        lid03_out_ctrl_direction,
+        lid04_out_ctrl_direction,
+        lid05_out_ctrl_direction,
+        pupil_prefix,
+        iris_prefix,
 
-             mentolabial_prefix,
-             chin_prefix,
+        mentolabial_prefix,
+        chin_prefix,
 
-             ear_prefix,
+        ear_prefix,
 
-             brow_tweak_prefix,
-             brow_in_prefix,
-             brow_mid_prefix,
-             brow_out_prefix,
-             brows_prefix,
-             brow_tip_prefix,
-             brow_center_prefix,
-             brow_in_rotation_grp_offset,
-             brow_mid_rotation_grp_offset,
-             brow_out_rotation_grp_offset,
-             brow_tip_rotation_grp_offset,
+        brow_tweak_prefix,
+        brow_in_prefix,
+        brow_mid_prefix,
+        brow_out_prefix,
+        brows_prefix,
+        brow_tip_prefix,
+        brow_center_prefix,
+        brow_in_rotation_grp_offset,
+        brow_mid_rotation_grp_offset,
+        brow_out_rotation_grp_offset,
+        brow_tip_rotation_grp_offset,
 
-             low_lid_following_down,
-             up_lid_following_down_low_lid_following_up,
-             up_lid_LR_low_lid_LR,
-             up_lid_following_up,
+        low_lid_following_down,
+        up_lid_following_down_low_lid_following_up,
+        up_lid_LR_low_lid_LR,
+        up_lid_following_up,
 
-             bulge_mesh,
-             add_set_bulge,
-             suffix_joint
-            ):
-
+        bulge_mesh,
+        add_set_bulge,
+        suffix_joint
+):
     # FINGER POSITION
     BaseF = 'Base'
     UpF = 'Up'
@@ -137,29 +136,20 @@ def build_rig(
     else:
         face_non_transform_grp = 'faceNonTransform_grp'
         face_controller_grp = 'faceCtrl_grp'
-        face_joint_grp ='faceJoint_grp'
+        face_joint_grp = 'faceJoint_grp'
 
-# ======================================================================================================================
-#                                              DUPLICATE JOINTS AS DRIVER
-# ======================================================================================================================
+    # ======================================================================================================================
+    #                                              DUPLICATE JOINTS AS DRIVER
+    # ======================================================================================================================
     sj = tm.listSkeletonDuplicate(value_prefix='',
                                   key_prefix='Ori',
                                   suffix='skn',
                                   side_LFT=side_LFT,
                                   side_RGT=side_RGT
                                   )
-    # skn = tm.listSkeletonDuplicate(value_prefix='',
-    #                               key_prefix='Skin',
-    #                               suffix='skn',
-    #                               side_LFT=side_LFT,
-    #                               side_RGT=side_RGT)
 
-    mc.parent(sj.neck,
-              # skn.neck,
-              world=True)
-    mc.delete(sj.root,
-              # skn.root
-              )
+    mc.parent(sj.neck, world=True)
+    mc.delete(sj.root)
 
     # ROTATE EYE JNT
     mc.setAttr(sj.eyeball_LFT + '.rotateY', eye_ctrl_direction)
@@ -169,12 +159,12 @@ def build_rig(
 
     # JOINT DQ BASE
     mc.select(cl=1)
-    jntDQBase = mc.joint(n='headDQBase_skn')
+    jntDQBase = mc.joint(n='headDQBase_skn', radius=0.2 * scale)
     mc.delete(mc.parentConstraint(sj.neck, jntDQBase))
     mc.makeIdentity(jntDQBase, apply=1, translate=1, rotate=1)
     mc.parent((jntDQBase, face_non_transform_grp))
 
-    print ('5%  | skeleton duplicated is done!')
+    print('5%  | skeleton duplicated is done!')
 
     # ==================================================================================================================
     #                                                     HEAD PARAMETERS
@@ -184,13 +174,13 @@ def build_rig(
                    face_utils_grp=face_non_transform_grp,
                    neck_jnt=sj.neck,
                    neck_in_btw_jnt=sj.neckIn_Btw,
-                   head_jnt= sj.head,
-                   jaw_jnt= sj.jaw,
+                   head_jnt=sj.head,
+                   jaw_jnt=sj.jaw,
                    jaw_tip_jnt=sj.jaw_tip,
                    head_up_jnt=sj.head_up,
                    head_low_jnt=sj.head_low,
                    jaw_prefix=jaw_prefix,
-                   jaw_tip_prefix= jaw_tip_prefix,
+                   jaw_tip_prefix=jaw_tip_prefix,
                    head_prefix=head_prefix,
                    neck_prefix=neck_prefix,
                    neck_in_btw_prefix=neck_in_btw_prefix,
@@ -208,21 +198,9 @@ def build_rig(
                    tongue04_jnt=sj.tongue04,
                    scale=scale,
                    suffix_controller=suffix_controller,
-                   # neck_skn=skn.neck,
-                   # neck_in_btw_skn=skn.neckIn_Btw,
-                   # head_skn=skn.head,
-                   # jaw_skn=skn.jaw,
-                   # head_up_skn=skn.head_up,
-                   # head_low_skn=skn.head_low,
-                   # upper_teeth_skn=skn.upper_teeth,
-                   # lower_teeth_skn=skn.lower_teeth,
-                   # tongue01_skn=skn.tongue01,
-                   # tongue02_skn=skn.tongue02,
-                   # tongue03_skn=skn.tongue03,
-                   # tongue04_skn=skn.tongue04
                    )
 
-    print ('10% | head is done!')
+    print('10% | head is done!')
     # ==================================================================================================================
     #                                                     LIP PARAMETERS
     # ==================================================================================================================
@@ -247,19 +225,16 @@ def build_rig(
                  prefix_upLip_follow=head.attr_upLip_follow,
                  headLow_normal_rotationGrp=head.headLow_normal_rotationGrp,
                  base_module_nonTransform=face_non_transform_grp,
-                 # parent_skin_mouth=skn.mouth
                  )
 
-    print ('15% | lip is done!')
+    print('15% | lip is done!')
     # ==================================================================================================================
     #                                                     NOSE PARAMETERS
     # ==================================================================================================================
     nose = nm.Nose(face_utils_grp=face_non_transform_grp,
                    columella_jnt=sj.columella,
-                   # columella_skn=skn.columella,
                    nose_jnt=sj.nose,
                    nose_up_jnt=sj.nose_up,
-                   # nose_up_skin=skn.nose_up,
                    columella_prefix=columella_prefix,
                    curve_template_nose=curve_template_nose,
                    offset_jnt02_bind_position=offset_jnt02_bind_lip_nose_position,
@@ -284,16 +259,14 @@ def build_rig(
                    nostril_attr_ctrl_RGT=lip.nostril_attr_ctrl_RGT,
                    up_lip_controller_all=lip.up_lip_controller_all,
                    mouth_ctrl=lip.mouth_ctrl,
-                   nose_follow_mouth_value= nose_follow_mouth_value,
+                   nose_follow_mouth_value=nose_follow_mouth_value,
                    up_lip_all_ctrl_grp_ctrl=lip.up_lip_mouth_ctrl_grp,
-                   jaw_ctrl= head.jaw_ctrl,
+                   jaw_ctrl=head.jaw_ctrl,
                    suffix_controller=suffix_controller,
                    base_module_nonTransform=face_non_transform_grp,
-                   # parent_skin_nose=skn.nose
                    )
 
-
-    print ('25% | nose is done!')
+    print('25% | nose is done!')
     # ==================================================================================================================
     #                                                     CHEEK PARAMETERS
     # ==================================================================================================================
@@ -324,7 +297,7 @@ def build_rig(
                          head_low_jnt=sj.head_low,
                          head_up_jnt=sj.head_up,
                          jaw_jnt=sj.jaw,
-                         corner_lip_ctrl= lip.corner_lip_ctrl_LFT,
+                         corner_lip_ctrl=lip.corner_lip_ctrl_LFT,
                          corner_lip_ctrl_attr_cheek_low=lip.cheek_low_attr_ctrl_LFT,
                          corner_lip_ctrl_attr_cheek_mid=lip.cheek_mid_attr_ctrl_LFT,
                          low_lip_drive_ctrl=lip.low_reset_mouth_ctrl_grp_offset,
@@ -336,16 +309,9 @@ def build_rig(
                          head_up_ctrl=head.head_up_ctrl,
                          head_low_ctrl=head.head_low_ctrl,
                          suffix_controller=suffix_controller,
-                         # cheek_low_skn=skn.cheek_low_LFT,
-                         # cheek_mid_skn=skn.cheek_mid_LFT,
-                         # cheek_up_skn=skn.cheek_up_LFT,
-                         # cheek_in_up_skn=skn.cheek_in_up_LFT,
-                         # cheek_in_low_skn=skn.cheek_in_low_LFT,
-                         # cheek_out_up_skn=skn.cheek_out_up_LFT,
-                         # cheek_out_low_skn=skn.cheek_out_low_LFT,
                          )
 
-    print ('30% | left cheek is done!')
+    print('30% | left cheek is done!')
 
     rightCheek = cm.Cheek(face_anim_ctrl_grp=face_controller_grp,
                           face_utils_grp=face_non_transform_grp,
@@ -376,7 +342,7 @@ def build_rig(
                           corner_lip_ctrl=lip.corner_lip_ctrl_RGT,
                           corner_lip_ctrl_attr_cheek_low=lip.cheek_low_attr_ctrl_RGT,
                           corner_lip_ctrl_attr_cheek_mid=lip.cheek_mid_attr_ctrl_RGT,
-                          low_lip_drive_ctrl= lip.low_reset_mouth_ctrl_grp_offset,
+                          low_lip_drive_ctrl=lip.low_reset_mouth_ctrl_grp_offset,
                           nostril_drive_ctrl_attr_cheek_up=nose.pull_forward_RGT,
                           nostril_drive_ctrl_attr_cheek_up_two=nose.push_upward_RGT,
                           nostril_drive_ctrl=nose.controller_nose01_RGT,
@@ -385,23 +351,15 @@ def build_rig(
                           head_up_ctrl=head.head_up_ctrl,
                           head_low_ctrl=head.head_low_ctrl,
                           suffix_controller=suffix_controller,
-                          # cheek_low_skn=skn.cheek_low_RGT,
-                          # cheek_mid_skn=skn.cheek_mid_RGT,
-                          # cheek_up_skn=skn.cheek_up_RGT,
-                          # cheek_in_up_skn=skn.cheek_in_up_RGT,
-                          # cheek_in_low_skn=skn.cheek_in_low_RGT,
-                          # cheek_out_up_skn=skn.cheek_out_up_RGT,
-                          # cheek_out_low_skn=skn.cheek_out_low_RGT,
                           )
 
-    print ('40% | right cheek is done!')
+    print('40% | right cheek is done!')
 
     # ==================================================================================================================
     #                                                     EARS PARAMETERS
     # ==================================================================================================================
     earLeft = er.Ear(scale=scale,
                      ear_jnt=sj.ear_LFT,
-                     # ear_skn=skn.ear_LFT,
                      ear_prefix=ear_prefix,
                      head_ctrl_gimbal=head.head_ctrl_gimbal,
                      side=side_LFT,
@@ -411,7 +369,6 @@ def build_rig(
 
     earRight = er.Ear(scale=scale,
                       ear_jnt=sj.ear_RGT,
-                      # ear_skn=skn.ear_RGT,
                       ear_prefix=ear_prefix,
                       head_ctrl_gimbal=head.head_ctrl_gimbal,
                       side=side_RGT,
@@ -424,111 +381,99 @@ def build_rig(
     chin = ch.Chin(mentolabial_jnt=sj.mentolabial,
                    mentolabial_prefix=mentolabial_prefix,
                    chin_jnt=sj.chin,
-                   # chin_skn=skn.chin,
-                   # mentolabial_skn=skn.mentolabial,
                    chin_prefix=chin_prefix,
                    scale=scale,
                    face_anim_ctrl_grp=face_controller_grp,
                    face_utils_grp=face_non_transform_grp,
                    lower_lip_bind_jnt=lip.low_bind_jnt,
-                   jaw_jnt= sj.jaw,
+                   jaw_jnt=sj.jaw,
                    suffix_controller=suffix_controller)
 
-    print ('50% | chin is done!')
+    print('50% | chin is done!')
 
     # ==================================================================================================================
     #                                                     EYELID PARAMETERS
     # ==================================================================================================================
 
     leftEyelid = ld.Lid(
-                        face_utils_grp=face_non_transform_grp,
-                        curve_up_lid_template=curve_up_lid_template_LFT,
-                        curve_low_lid_template=curve_low_lid_template_LFT,
-                        offset_lid02_position=lid02_position_offset,
-                        offset_lid04_position=lid04_position_offset,
-                        eyeball_jnt=sj.eyeball_LFT,
-                        eye_jnt=sj.eye_LFT,
-                        # eye_skin=skn.eye_LFT,
-                        suffix_controller=suffix_controller,
-                        prefix_eye=eye_prefix,
-                        prefix_eye_aim=eye_aim_prefix,
-                        scale=scale,
-                        side=side_LFT,
-                        side_LFT=side_LFT,
-                        side_RGT=side_RGT,
-                        lid01_direction=lid01_direction,
-                        lid02_direction=lid02_direction,
-                        lid03_direction=lid03_direction,
-                        lid04_direction=lid04_direction,
-                        lid05_direction=lid05_direction,
-                        position_eye_aim_ctrl=position_eye_aim_ctrl,
-                        eye_aim_main_ctrl=head.eyeAimMainCtrl,
-                        head_up_ctrl_gimbal= head.head_up_ctrl_gimbal,
-                        corner_lip=lip.corner_lip_ctrl_LFT,
-                        corner_lip_lid_attr=lip.lid_attr_ctrl_LFT,
-                        low_lid_following_down=low_lid_following_down,
-                        upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
-                        upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
-                        upLid_following_up=up_lid_following_up,
-                        upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
-                        pupil_jnt=sj.pupil_LFT,
-                        iris_jnt=sj.iris_LFT,
-                        pupil_prefix=pupil_prefix,
-                        iris_prefix=iris_prefix,
-                        eye_ctrl_direction=eye_ctrl_direction,
-                        base_module_nonTransform=face_non_transform_grp,
-                        # pupil_skn=skn.pupil_LFT,
-                        # iris_skn=skn.iris_LFT,
-                        # eyeball_skn=skn.eyeball_LFT,
-                        # parent_skin_detail_lid=jntDQBase
-                        )
+        face_utils_grp=face_non_transform_grp,
+        curve_up_lid_template=curve_up_lid_template_LFT,
+        curve_low_lid_template=curve_low_lid_template_LFT,
+        offset_lid02_position=lid02_position_offset,
+        offset_lid04_position=lid04_position_offset,
+        eyeball_jnt=sj.eyeball_LFT,
+        eye_jnt=sj.eye_LFT,
+        suffix_controller=suffix_controller,
+        prefix_eye=eye_prefix,
+        prefix_eye_aim=eye_aim_prefix,
+        scale=scale,
+        side=side_LFT,
+        side_LFT=side_LFT,
+        side_RGT=side_RGT,
+        lid01_direction=lid01_direction,
+        lid02_direction=lid02_direction,
+        lid03_direction=lid03_direction,
+        lid04_direction=lid04_direction,
+        lid05_direction=lid05_direction,
+        position_eye_aim_ctrl=position_eye_aim_ctrl,
+        eye_aim_main_ctrl=head.eyeAimMainCtrl,
+        head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+        corner_lip=lip.corner_lip_ctrl_LFT,
+        corner_lip_lid_attr=lip.lid_attr_ctrl_LFT,
+        low_lid_following_down=low_lid_following_down,
+        upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
+        upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
+        upLid_following_up=up_lid_following_up,
+        upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
+        pupil_jnt=sj.pupil_LFT,
+        iris_jnt=sj.iris_LFT,
+        pupil_prefix=pupil_prefix,
+        iris_prefix=iris_prefix,
+        eye_ctrl_direction=eye_ctrl_direction,
+        base_module_nonTransform=face_non_transform_grp,
+    )
 
-    print ('60% | left eyelid is done!')
+    print('60% | left eyelid is done!')
 
     rightEyelid = ld.Lid(
-                         face_utils_grp=face_non_transform_grp,
-                         curve_up_lid_template=curve_up_lid_template_RGT,
-                         curve_low_lid_template=curve_low_lid_template_RGT,
-                         offset_lid02_position=lid02_position_offset,
-                         offset_lid04_position=lid04_position_offset,
-                         eyeball_jnt=sj.eyeball_RGT,
-                         eye_jnt=sj.eye_RGT,
-                         # eye_skin=skn.eye_RGT,
-                         suffix_controller=suffix_controller,
-                         prefix_eye=eye_prefix,
-                         prefix_eye_aim=eye_aim_prefix,
-                         scale=scale,
-                         side=side_RGT,
-                         side_LFT=side_LFT,
-                         side_RGT=side_RGT,
-                         lid01_direction=lid01_direction,
-                         lid02_direction=lid02_direction,
-                         lid03_direction=lid03_direction,
-                         lid04_direction=lid04_direction,
-                         lid05_direction=lid05_direction,
-                         position_eye_aim_ctrl=position_eye_aim_ctrl,
-                         eye_aim_main_ctrl=head.eyeAimMainCtrl,
-                         head_up_ctrl_gimbal= head.head_up_ctrl_gimbal,
-                         corner_lip=lip.corner_lip_ctrl_RGT,
-                         corner_lip_lid_attr=lip.lid_attr_ctrl_RGT,
-                         low_lid_following_down=low_lid_following_down,
-                         upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
-                         upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
-                         upLid_following_up=up_lid_following_up,
-                         upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
-                         pupil_jnt=sj.pupil_RGT,
-                         iris_jnt=sj.iris_RGT,
-                         pupil_prefix=pupil_prefix,
-                         iris_prefix=iris_prefix,
-                         eye_ctrl_direction=eye_ctrl_direction,
-                         base_module_nonTransform=face_non_transform_grp,
-                         # pupil_skn=skn.pupil_RGT,
-                         # iris_skn=skn.iris_RGT,
-                         # eyeball_skn=skn.eyeball_RGT,
-                         # parent_skin_detail_lid=jntDQBase
-                         )
+        face_utils_grp=face_non_transform_grp,
+        curve_up_lid_template=curve_up_lid_template_RGT,
+        curve_low_lid_template=curve_low_lid_template_RGT,
+        offset_lid02_position=lid02_position_offset,
+        offset_lid04_position=lid04_position_offset,
+        eyeball_jnt=sj.eyeball_RGT,
+        eye_jnt=sj.eye_RGT,
+        suffix_controller=suffix_controller,
+        prefix_eye=eye_prefix,
+        prefix_eye_aim=eye_aim_prefix,
+        scale=scale,
+        side=side_RGT,
+        side_LFT=side_LFT,
+        side_RGT=side_RGT,
+        lid01_direction=lid01_direction,
+        lid02_direction=lid02_direction,
+        lid03_direction=lid03_direction,
+        lid04_direction=lid04_direction,
+        lid05_direction=lid05_direction,
+        position_eye_aim_ctrl=position_eye_aim_ctrl,
+        eye_aim_main_ctrl=head.eyeAimMainCtrl,
+        head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+        corner_lip=lip.corner_lip_ctrl_RGT,
+        corner_lip_lid_attr=lip.lid_attr_ctrl_RGT,
+        low_lid_following_down=low_lid_following_down,
+        upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
+        upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
+        upLid_following_up=up_lid_following_up,
+        upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
+        pupil_jnt=sj.pupil_RGT,
+        iris_jnt=sj.iris_RGT,
+        pupil_prefix=pupil_prefix,
+        iris_prefix=iris_prefix,
+        eye_ctrl_direction=eye_ctrl_direction,
+        base_module_nonTransform=face_non_transform_grp,
+    )
 
-    print ('70% | right eyelid is done!')
+    print('70% | right eyelid is done!')
 
     # ==================================================================================================================
     #                                                     EYELID OUT PARAMETERS
@@ -578,10 +523,9 @@ def build_rig(
                            eye_ctrl_direction=eye_ctrl_direction,
                            suffix_controller=suffix_controller,
                            base_module_nonTransform=face_non_transform_grp,
-                           # parent_skin_eye=skn.eye_LFT
                            )
 
-    print ('80% | left lid out is done!')
+    print('80% | left lid out is done!')
 
     rightLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
                             curve_up_template=curve_up_lid_out_RGT,
@@ -627,51 +571,40 @@ def build_rig(
                             eye_ctrl_direction=eye_ctrl_direction,
                             suffix_controller=suffix_controller,
                             base_module_nonTransform=face_non_transform_grp,
-                            # parent_skin_eye=skn.eye_RGT
                             )
-    print ('90% | right lid out is done!')
+    print('90% | right lid out is done!')
 
     # ==================================================================================================================
     #                                                     BROWS PARAMETERS
     # ==================================================================================================================
 
-    brows =  bm.Brows(brow_tweak_jnt_LFT=sj.brow_tweak_LFT,
-                      brow_in_jnt_LFT=sj.brow_in_LFT,
-                      brow_mid_jnt_LFT=sj.brow_mid_LFT,
-                      brow_out_jnt_LFT=sj.brow_out_LFT,
-                      brow_tip_jnt_LFT=sj.brow_tip_LFT,
-                      brow_tweak_jnt_RGT=sj.brow_tweak_RGT,
-                      brow_in_jnt_RGT=sj.brow_in_RGT,
-                      brow_mid_jnt_RGT=sj.brow_mid_RGT,
-                      brow_out_jnt_RGT=sj.brow_out_RGT,
-                      brow_tip_jnt_RGT=sj.brow_tip_RGT,
-                      brow_center_jnt=sj.brow_center,
-                      # brow_tweak_skin_LFT=skn.brow_tweak_LFT,
-                      # brow_in_skin_LFT=skn.brow_in_LFT,
-                      # brow_mid_skin_LFT=skn.brow_mid_LFT,
-                      # brow_out_skin_LFT=skn.brow_out_LFT,
-                      # brow_tip_skin_LFT=skn.brow_tip_LFT,
-                      # brow_tweak_skin_RGT=skn.brow_tweak_RGT,
-                      # brow_in_skin_RGT=skn.brow_in_RGT,
-                      # brow_mid_skin_RGT=skn.brow_mid_RGT,
-                      # brow_out_skin_RGT=skn.brow_out_RGT,
-                      # brow_tip_skin_RGT=skn.brow_tip_RGT,
-                      brow_tweak_prefix=brow_tweak_prefix,
-                      brow_in_prefix=brow_in_prefix,
-                      brow_mid_prefix=brow_mid_prefix,
-                      brow_out_prefix=brow_out_prefix,
-                      brows_prefix=brows_prefix,
-                      brow_tip_prefix=brow_tip_prefix,
-                      brow_center_prefix=brow_center_prefix,
-                      scale=scale,
-                      side_RGT=side_RGT,
-                      side_LFT=side_LFT,
-                      brow_in_rotate_grp_offset=brow_in_rotation_grp_offset,
-                      brow_mid_rotate_grp_offset= brow_mid_rotation_grp_offset,
-                      brow_out_rotate_grp_offset=brow_out_rotation_grp_offset,
-                      brow_tip_rotate_grp_offset= brow_tip_rotation_grp_offset,
-                      head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
-                      suffix_controller=suffix_controller)
+    brows = bm.Brows(brow_tweak_jnt_LFT=sj.brow_tweak_LFT,
+                     brow_in_jnt_LFT=sj.brow_in_LFT,
+                     brow_mid_jnt_LFT=sj.brow_mid_LFT,
+                     brow_out_jnt_LFT=sj.brow_out_LFT,
+                     brow_tip_jnt_LFT=sj.brow_tip_LFT,
+                     brow_tweak_jnt_RGT=sj.brow_tweak_RGT,
+                     brow_in_jnt_RGT=sj.brow_in_RGT,
+                     brow_mid_jnt_RGT=sj.brow_mid_RGT,
+                     brow_out_jnt_RGT=sj.brow_out_RGT,
+                     brow_tip_jnt_RGT=sj.brow_tip_RGT,
+                     brow_center_jnt=sj.brow_center,
+                     brow_tweak_prefix=brow_tweak_prefix,
+                     brow_in_prefix=brow_in_prefix,
+                     brow_mid_prefix=brow_mid_prefix,
+                     brow_out_prefix=brow_out_prefix,
+                     brows_prefix=brows_prefix,
+                     brow_tip_prefix=brow_tip_prefix,
+                     brow_center_prefix=brow_center_prefix,
+                     scale=scale,
+                     side_RGT=side_RGT,
+                     side_LFT=side_LFT,
+                     brow_in_rotate_grp_offset=brow_in_rotation_grp_offset,
+                     brow_mid_rotate_grp_offset=brow_mid_rotation_grp_offset,
+                     brow_out_rotate_grp_offset=brow_out_rotation_grp_offset,
+                     brow_tip_rotate_grp_offset=brow_tip_rotation_grp_offset,
+                     head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+                     suffix_controller=suffix_controller)
     # ==================================================================================================================
     #                                                     BULGE PARAMETERS
     # ==================================================================================================================
@@ -705,7 +638,7 @@ def build_rig(
                      scale=scale,
                      add_set=add_set_bulge)
 
-    print ('100% | brows is done!')
+    print('100% | brows is done!')
 
     # ==================================================================================================================
     #                                         SETUP VISIBILITY CONTROLLER
@@ -719,7 +652,8 @@ def build_rig(
     #                                  target_name=['hair_geo', 'hairMainGeoCtrl_grp'], channel_box=True, select_obj=False)
 
     # MAIN CHEEK VIS
-    mainCheekCtrlVis = au.connect_part_object(obj_base_connection='mainCheekCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    mainCheekCtrlVis = au.connect_part_object(obj_base_connection='mainCheekCtrlVis', target_connection='visibility',
+                                              obj_name=setupCtrl.control,
                                               target_name=[leftCheek.cheek_low_ctrl_grp,
                                                            leftCheek.cheek_mid_ctrl_grp,
                                                            leftCheek.cheek_out_up_ctrl_grp,
@@ -731,7 +665,8 @@ def build_rig(
                                               channel_box=True, select_obj=False)
 
     # SECONDARY CHEEK VIS
-    secondaryCheekCtrlVis = au.connect_part_object(obj_base_connection='secondaryCheekCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    secondaryCheekCtrlVis = au.connect_part_object(obj_base_connection='secondaryCheekCtrlVis',
+                                                   target_connection='visibility', obj_name=setupCtrl.control,
                                                    target_name=[leftCheek.cheek_up_ctrl_grp,
                                                                 leftCheek.cheek_in_up_ctrl_grp,
                                                                 leftCheek.cheek_in_low_ctrl_grp,
@@ -741,34 +676,41 @@ def build_rig(
                                                    channel_box=True, select_obj=False)
 
     # CHIN VIS
-    chinCtrlVis = au.connect_part_object(obj_base_connection='chinCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    chinCtrlVis = au.connect_part_object(obj_base_connection='chinCtrlVis', target_connection='visibility',
+                                         obj_name=setupCtrl.control,
                                          target_name=[chin.chin_ctrl_grp,
                                                       chin.mentolabial_ctrl_grp],
                                          channel_box=True, select_obj=False)
 
     # LIP VIS
-    mouthCtrlVis = au.connect_part_object(obj_base_connection='mouthCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    mouthCtrlVis = au.connect_part_object(obj_base_connection='mouthCtrlVis', target_connection='visibility',
+                                          obj_name=setupCtrl.control,
                                           target_name=[lip.controller_grp], channel_box=True, select_obj=False)
 
     # NOSE VIS
-    noseCtrlVis = au.connect_part_object(obj_base_connection='noseCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    noseCtrlVis = au.connect_part_object(obj_base_connection='noseCtrlVis', target_connection='visibility',
+                                         obj_name=setupCtrl.control,
                                          target_name=[nose.nose_controller_grp, nose.nose_ctrl_grp_zro,
                                                       nose.nose_up_controller_grp], channel_box=True, select_obj=False)
 
     # EYE VIS
-    eyeCtrlVis = au.connect_part_object(obj_base_connection='eyeCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    eyeCtrlVis = au.connect_part_object(obj_base_connection='eyeCtrlVis', target_connection='visibility',
+                                        obj_name=setupCtrl.control,
                                         target_name=[leftEyelid.eyeball_ctrl.parent_control[0],
                                                      leftEyelid.upLid.ctrl_0204_grp,
                                                      leftEyelid.lowLid.ctrl_0204_grp,
                                                      rightEyelid.eyeball_ctrl.parent_control[0],
                                                      rightEyelid.upLid.ctrl_0204_grp,
-                                                     rightEyelid.lowLid.ctrl_0204_grp], channel_box=True, select_obj=False)
+                                                     rightEyelid.lowLid.ctrl_0204_grp], channel_box=True,
+                                        select_obj=False)
     # BROW VIS
-    browCtrlVis = au.connect_part_object(obj_base_connection='browCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    browCtrlVis = au.connect_part_object(obj_base_connection='browCtrlVis', target_connection='visibility',
+                                         obj_name=setupCtrl.control,
                                          target_name=[brows.brow_all_ctrl], channel_box=True, select_obj=False)
 
     # BULGE VIS
-    bulgeCtrlVis = au.connect_part_object(obj_base_connection='bulgeCtrlVis', target_connection='visibility', obj_name=setupCtrl.control,
+    bulgeCtrlVis = au.connect_part_object(obj_base_connection='bulgeCtrlVis', target_connection='visibility',
+                                          obj_name=setupCtrl.control,
                                           target_name=[bulge.cheek_bulge_ctrl_LFT_grp,
                                                        bulge.cheek_bulge_ctrl_RGT_grp,
                                                        bulge.brow_in_bulge_ctrl_LFT_grp,
@@ -816,16 +758,20 @@ def build_rig(
     mc.setAttr(sj.neck + '.visibility', 1)
 
     for i in (sj.head, sj.head_up, sj.head_low, sj.jaw, sj.mentolabial, sj.chin, sj.brow_center,
-              sj.cheek_in_up_LFT, sj.cheek_in_low_LFT, sj.cheek_up_LFT, sj.cheek_mid_LFT, sj.cheek_low_LFT, sj.cheek_out_up_LFT,
-              sj.cheek_out_low_LFT, sj.cheek_in_up_RGT, sj.cheek_in_low_RGT, sj.cheek_up_RGT, sj.cheek_mid_RGT, sj.cheek_low_RGT,
-              sj.cheek_out_up_RGT, sj.cheek_out_low_RGT, sj.brow_in_LFT, sj.brow_mid_LFT, sj.brow_out_LFT, sj.brow_tip_LFT,
-              sj.brow_in_RGT, sj.brow_mid_RGT, sj.brow_out_RGT, sj.brow_tip_RGT, sj.nose_up, sj.columella, sj.eye_LFT, sj.eye_RGT,
+              sj.cheek_in_up_LFT, sj.cheek_in_low_LFT, sj.cheek_up_LFT, sj.cheek_mid_LFT, sj.cheek_low_LFT,
+              sj.cheek_out_up_LFT,
+              sj.cheek_out_low_LFT, sj.cheek_in_up_RGT, sj.cheek_in_low_RGT, sj.cheek_up_RGT, sj.cheek_mid_RGT,
+              sj.cheek_low_RGT,
+              sj.cheek_out_up_RGT, sj.cheek_out_low_RGT, sj.brow_in_LFT, sj.brow_mid_LFT, sj.brow_out_LFT,
+              sj.brow_tip_LFT,
+              sj.brow_in_RGT, sj.brow_mid_RGT, sj.brow_out_RGT, sj.brow_tip_RGT, sj.nose_up, sj.columella, sj.eye_LFT,
+              sj.eye_RGT,
               sj.ear_LFT, sj.ear_RGT, sj.neckIn_Btw):
         mc.sets(i, add=sets_LN)
         mc.setAttr(i + '.visibility', 1)
 
-    for i in list(set(nose.all_joint+ lip.all_up_lip_joint + lip.all_low_lip_joint+ leftLidOut.lid_out_up_jnt+
-                      leftLidOut.lid_out_low_jnt+ rightLidOut.lid_out_up_jnt+ rightLidOut.lid_out_low_jnt)):
+    for i in list(set(nose.all_joint + lip.all_up_lip_joint + lip.all_low_lip_joint + leftLidOut.lid_out_up_jnt +
+                      leftLidOut.lid_out_low_jnt + rightLidOut.lid_out_up_jnt + rightLidOut.lid_out_low_jnt)):
         mc.sets(i, add=sets_LN)
         mc.setAttr(i + '.visibility', 1)
 
@@ -833,6 +779,6 @@ def build_rig(
     sets_DQ = mc.sets(jntDQBase, n='FACE_SKIN_DQ')
     mc.setAttr(jntDQBase + '.visibility', 1)
 
-    for i in list(set(leftEyelid.up_lid_all_jnt+ leftEyelid.low_lid_all_jnt+
-                   rightEyelid.up_lid_all_jnt+ rightEyelid.low_lid_all_jnt)):
+    for i in list(set(leftEyelid.up_lid_all_jnt + leftEyelid.low_lid_all_jnt +
+                      rightEyelid.up_lid_all_jnt + rightEyelid.low_lid_all_jnt)):
         mc.sets(i, add=sets_DQ)

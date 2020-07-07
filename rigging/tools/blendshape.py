@@ -1,20 +1,21 @@
 import maya.cmds as mc
 
+
 def connect_blendshape(blendshapeName):
     list_ctrl = mc.ls(sl=1)
     print(list_ctrl)
 
-    combine_multiply =[]
+    combine_multiply = []
     for i in list_ctrl:
         # create mult double linear node
         sufixName = suffix_name(i)
         multiplier = mc.createNode('multDoubleLinear', n=prefix_name(i) + '_mdl')
-        mc.connectAttr(i+'.translateX', multiplier+'.input1')
-        mc.setAttr(multiplier+'.input2', 0.1)
+        mc.connectAttr(i + '.translateX', multiplier + '.input1')
+        mc.setAttr(multiplier + '.input2', 0.1)
 
         # if not (queryTheNameObject(selCtrl)+'_'+ sufixName):
         combine_multiplier = mc.createNode('multDoubleLinear', n=prefix_name(i) + 'CombineMult' + '_mdl')
-        mc.connectAttr(multiplier +'.output', combine_multiplier + '.input1')
+        mc.connectAttr(multiplier + '.output', combine_multiplier + '.input1')
 
         mc.connectAttr(combine_multiplier + '.output', blendshapeName + '.%s_ply' % prefix_name(i))
 
@@ -23,7 +24,7 @@ def connect_blendshape(blendshapeName):
     # main controller
     name_main_ctrl = query_the_name_object(list_ctrl) + '_' + suffix_name(list_ctrl[0])
 
-    #list connection
+    # list connection
     if not mc.listConnections(name_main_ctrl + '.translateX', d=1):
         multiplier_main = mc.createNode('multDoubleLinear', n=prefix_name(name_main_ctrl) + '_mdl')
         mc.connectAttr(multiplier_main + '.output', blendshapeName + '.%s_ply' % prefix_name(name_main_ctrl))
@@ -62,12 +63,14 @@ def connect_blendshape(blendshapeName):
         for i in combine_multiply:
             mc.connectAttr(destination_condition + '.outColorR', i + '.input2')
 
+
 def prefix_name(obj):
     if '_' in obj:
         get_prefix_name = obj.split('_')[0]
         return get_prefix_name
     else:
         return obj
+
 
 def query_the_name_object(list_controller):
     s = []
@@ -76,6 +79,7 @@ def query_the_name_object(list_controller):
             s.append(x[0])
 
     return ''.join(s)
+
 
 def suffix_name(obj):
     objs = obj.split('|')[-1:]

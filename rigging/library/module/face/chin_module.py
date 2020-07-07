@@ -13,10 +13,8 @@ reload (au)
 class Chin:
     def __init__(self,
                  mentolabial_jnt,
-                 # mentolabial_skn,
                  mentolabial_prefix,
                  chin_jnt,
-                 # chin_skn,
                  chin_prefix,
                  scale,
                  face_anim_ctrl_grp,
@@ -55,10 +53,6 @@ class Chin:
         self.chin_ctrl = chin_ctrl[0]
         self.chin_ctrl_grp = chin_ctrl[1]
         self.mentolabial_ctrl_grp = mentolabial_ctrl[1]
-
-        # # SKIN CONSTRAINT
-        # au.parent_scale_constraint(chin_jnt, chin_skn)
-        # au.parent_scale_constraint(mentolabial_jnt, mentolabial_skn)
 
     def controller_setup(self, object_joint, object_prefix, scale, constraint, w, jaw_ctrl, suffix_controller):
         # create controller

@@ -12,11 +12,13 @@ reload(ct)
 reload(au)
 
 general_scale = 1.0
+
+
 class GeneralBase:
-    #top structure
+    # top structure
     def __init__(self,
-                lockChannels = ['t','r','s'],
-                scale = general_scale
+                 lockChannels=['t', 'r', 's'],
+                 scale=general_scale
                  ):
         """
         @param lockChannels: str, list attribute channels
@@ -51,15 +53,14 @@ class GeneralBase:
         )
 
         # create group and parenting corresponding to its grp
-        self.root_grp  = mc.group (n='Rig_Grp', em=1)
-        self.world_grp = mc.group (n='World_Grp', em=1, p=self.root_grp)
+        self.root_grp = mc.group(n='Rig_Grp', em=1)
+        self.world_grp = mc.group(n='World_Grp', em=1, p=self.root_grp)
         mc.parent(world_control.control, self.world_grp)
 
         self.place_grp = mc.group(n='Place_Grp', em=1, p=world_control.control)
         mc.parent(place_control.control, self.place_grp)
 
         self.anim_grp = mc.group(n='anim_grp', em=1, p=place_control.control)
-        # self.jntGrp   = mc.group(n='jnt_grp', em=1, p=placeControl.control)
 
         self.util_grp = mc.group(n='Utils_Grp', em=1, p=self.world_grp)
 
@@ -94,7 +95,7 @@ class GeneralBase:
 class Base:
     # create  main controller for base part
     def __init__(self,
-                 scale = general_scale,
+                 scale=general_scale,
                  ):
         """
         @param scale: float, scale the main controller builder
@@ -146,20 +147,13 @@ class Base:
         mc.setAttr(self.face_joint_grp + '.it', 0, l=1)
         mc.setAttr(self.face_non_transform_grp + '.it', 0, l=1)
 
-        # mc.setAttr(self.face_joint_grp + '.visibility', 0)
         mc.setAttr(self.face_utils_grp + '.visibility', 0)
-        # mc.setAttr(self.face_non_transform_grp + '.visibility', 0)
 
         au.lock_hide_attr(['t', 'r', 's'], self.face_anim_grp)
         au.lock_hide_attr(['t', 'r', 's'], self.face_controller_grp)
         au.lock_hide_attr(['t', 'r', 's'], self.face_joint_grp)
         au.lock_hide_attr(['t', 'r', 's'], self.face_utils_grp)
         au.lock_hide_attr(['t', 'r', 's'], self.face_non_transform_grp)
-
-
-        # # adding group for joint
-        # self.skin_grp = mc.group(n='skin_grp', em=1, p=anim_control.control_gimbal)
-        # au.lock_hide_attr(['t', 'r', 's'], self.skin_grp)
 
         # adding group for joint
         self.skeleton_grp = mc.group(n='skeleton_grp', em=1, p=anim_control.control_gimbal)
@@ -171,28 +165,13 @@ class Base:
         au.lock_hide_attr(['t', 'r', 's'], self.additional_grp)
         mc.hide(self.additional_grp)
 
-        # # adding group for still
-        # self.nonTransformGrp = mc.group(n='nonTransform_grp', em=1, p=animControl.controlGimbal)
-        # mc.setAttr (self.nonTransformGrp + '.it', 0, l=1)
-        # au.lockHideAttr(['t','r','s'], self.nonTransformGrp)
-        # mc.hide(self.nonTransformGrp)
-
-        # # adding group for utilities
-        # self.utilitiesGrp = mc.group(n='utilities_grp', em=1, p=animControl.controlGimbal)
-        # au.lockHideAttr(['t','r','s'], self.utilitiesGrp)
-        # mc.hide(self.utilitiesGrp)
-
-        # # adding group for skin
-        # self.skinGrp = mc.group(n='skin_grp', em=1, p=animControl.controlGimbal)
-        # au.lockHideAttr(['t','r','s'], self.skinGrp)
-        # mc.hide(self.skinGrp)
 
 class Part:
     # create part of base group
     def __init__(self,
-                 prefix ='prefix',
+                 prefix='prefix',
                  side='',
-                 grpName ='_grp',
+                 grpName='_grp',
                  ):
         """
         :param prefix: str, name of part of limbs
@@ -200,17 +179,15 @@ class Part:
         :return : None
         """
 
-        self.top_grp       = mc.group(n=prefix + 'Module' + side + grpName, em=1)
+        self.top_grp = mc.group(n=prefix + 'Module' + side + grpName, em=1)
 
-        self.control_grp   = mc.group (n=prefix + 'Anim' + side + grpName, em=1, p=self.top_grp)
+        self.control_grp = mc.group(n=prefix + 'Anim' + side + grpName, em=1, p=self.top_grp)
         self.joint_grp = mc.group(n=prefix + 'Joint' + side + grpName, em=1, p=self.top_grp)
-        # self.skinGrp = mc.group (n=prefix +'Skin' + side + grpName, em=1, p=self.topGrp)
         self.utils_grp = mc.group(n=prefix + 'Utils' + side + grpName, em=1, p=self.top_grp)
         self.non_transform_grp = mc.group(n=prefix + 'NonTransform' + side + grpName, em=1, p=self.top_grp)
 
         mc.setAttr(self.non_transform_grp + '.it', 0, l=1)
 
-        # mc.setAttr(self.joint_grp + '.visibility', 0)
         mc.setAttr(self.utils_grp + '.visibility', 0)
 
         au.lock_hide_attr(['t', 'r', 's'], self.top_grp)

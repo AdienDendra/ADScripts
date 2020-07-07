@@ -24,16 +24,6 @@ class Brows:
                  brow_mid_jnt_RGT,
                  brow_out_jnt_RGT,
                  brow_tip_jnt_RGT,
-                 # brow_tweak_skin_LFT,
-                 # brow_in_skin_LFT,
-                 # brow_mid_skin_LFT,
-                 # brow_out_skin_LFT,
-                 # brow_tip_skin_LFT,
-                 # brow_tweak_skin_RGT,
-                 # brow_in_skin_RGT,
-                 # brow_mid_skin_RGT,
-                 # brow_out_skin_RGT,
-                 # brow_tip_skin_RGT,
                  brow_center_jnt,
                  brow_tweak_prefix,
                  brow_in_prefix,
@@ -66,11 +56,6 @@ class Brows:
                              brow_mid_jnt=brow_mid_jnt_LFT,
                              brow_out_jnt=brow_out_jnt_LFT,
                              brow_tip_jnt=brow_tip_jnt_LFT,
-                             # brow_tweak_skin=brow_tweak_skin_LFT,
-                             # brow_in_skin=brow_in_skin_LFT,
-                             # brow_mid_skin=brow_mid_skin_LFT,
-                             # brow_out_skin=brow_out_skin_LFT,
-                             # brow_tip_skin=brow_tip_skin_LFT,
                              brow_tw_prefix=brow_tweak_prefix,
                              brow_in_prefix=brow_in_prefix,
                              brow_mid_prefix=brow_mid_prefix,
@@ -92,11 +77,6 @@ class Brows:
                               brow_mid_jnt=brow_mid_jnt_RGT,
                               brow_out_jnt=brow_out_jnt_RGT,
                               brow_tip_jnt=brow_tip_jnt_RGT,
-                              # brow_tweak_skin=brow_tweak_skin_RGT,
-                              # brow_in_skin=brow_in_skin_RGT,
-                              # brow_mid_skin=brow_mid_skin_RGT,
-                              # brow_out_skin=brow_out_skin_RGT,
-                              # brow_tip_skin=brow_tip_skin_RGT,
                               brow_tw_prefix=brow_tweak_prefix,
                               brow_in_prefix=brow_in_prefix,
                               brow_mid_prefix=brow_mid_prefix,
@@ -252,10 +232,6 @@ class Brows:
 
         mc.connectAttr(div_node + '.outputY', target)
         return div_node
-
-    # connectAttr - f
-    # noseWeightTransYCtrl_pma.output1D
-    # noseWeightJawTransYCtrl_pma.input1D[0];
 
     def sum(self, target_jnt, side_RGT, side_LFT, side=''):
         if side_RGT in target_jnt:

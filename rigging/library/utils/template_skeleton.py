@@ -2,7 +2,8 @@ from __builtin__ import reload
 
 from rigging.tools import AD_utils as au
 
-reload (au)
+reload(au)
+
 
 def dic_list(obj_duplicate='', value_prefix='', suffix='', selection=False):
     dic = {}
@@ -19,10 +20,12 @@ def dic_list(obj_duplicate='', value_prefix='', suffix='', selection=False):
         dic[keys] = value
     return dic
 
+
 def list_skeleton_dic(obj_duplicate='', value_prefix='', key_prefix='', suffix='', selection=False, **kwargs):
     dic = {}
-    list_name = au.obj_duplicate_then_rename(obj_duplicate=obj_duplicate, value_prefix=value_prefix, key_prefix=key_prefix,
-                                            suffix=suffix, selection=selection, kwargs=kwargs)
+    list_name = au.obj_duplicate_then_rename(obj_duplicate=obj_duplicate, value_prefix=value_prefix,
+                                             key_prefix=key_prefix,
+                                             suffix=suffix, selection=selection, kwargs=kwargs)
     list_keys = list_name[0]
     list_value = list_name[1]
 

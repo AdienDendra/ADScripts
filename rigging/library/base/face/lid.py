@@ -18,8 +18,7 @@ class Build:
     def __init__(self, curve_template, eyeball_jnt, world_up_object,
                  scale, side_LFT, side_RGT, side, offset_jnt02_position, offset_jnt04_position,
                  lid01_direction, lid02_direction, lid03_direction, lid04_direction, lid05_direction,
-                 ctrl_color, lid_low_controller, upper_head_gimbal_ctrl, suffix_controller, base_module_nonTransform,
-                 # parent_skin
+                 ctrl_color, lid_low_controller, upper_head_gimbal_ctrl, suffix_controller, base_module_nonTransform
                  ):
 
         self.position_eyeball_jnt = mc.xform(eyeball_jnt, q=1, ws=1, t=1)[0]
@@ -35,7 +34,6 @@ class Build:
         self.create_joint_lid(curve=curve, world_up_object=world_up_object, scale=scale, eye_jnt=eyeball_jnt,
                               side_LFT=side_LFT, side_RGT=side_RGT, side=side, ctrl_color=ctrl_color,
                               upper_head_gimbal_ctrl=upper_head_gimbal_ctrl, suffix_controller=suffix_controller,
-                              # parent_skin=parent_skin
                               )
 
         self.wire_bind_curve(side_LFT=side_LFT, side_RGT=side_RGT, curve=curve, scale=scale, side=side,
@@ -279,17 +277,6 @@ class Build:
                                        input_2X=1, input_2Y=-1, input_2Z=-1,
                                        joint_bind_target=self.jnt05, side_RGT=side_RGT, side_LFT=side_LFT, side=side)
 
-        # def bindTranslateReverse(self,  control, input2X, input2Y, input2Z, jointBindTarget):
-        #     mdnReverse = mc.createNode('multiplyDivide', n=au.prefixName(control) + '_mdn')
-        #     mc.connectAttr(control + '.translate', mdnReverse + '.input1')
-        #
-        #     mc.setAttr(mdnReverse + '.input2X', input2X)
-        #     mc.setAttr(mdnReverse + '.input2Y', input2Y)
-        #     mc.setAttr(mdnReverse + '.input2Z', input2Z)
-        #
-        #     # connect to object
-        #     mc.connectAttr(mdnReverse+'.output', jointBindTarget+'.translate')
-
         # CONNECT GROUP PARENT BIND JOINT 01 AND 02 TO THE CONTROLLER GRP PARENT 01 AND 02
         au.connect_attr_translate_rotate(self.joint_bind02_grp[0], self.lid_bind02.parent_control[0])
         au.connect_attr_translate_rotate(self.joint_bind04_grp[0], self.lid_bind04.parent_control[0])
@@ -381,19 +368,6 @@ class Build:
 
         self.joint_bind01_grp_offset = self.joint_bind01_grp[1]
         self.joint_bind05_grp_offset = self.joint_bind05_grp[1]
-
-        # # eye grp connect
-        # self.eyeOffsetBind01 = self.eyeGrpBind(crv=crvNewName, bindZroGrp=self.jointBind01Grp[0],
-        #                                        number='01', side=side, eyeJnt=eyeJnt,
-        #                                        eyeCtrlDirection=eyeCtrlDirection)
-        #
-        # self.eyeOffsetBind03 = self.eyeGrpBind(crv=crvNewName, bindZroGrp=self.jointBind03Grp[0],
-        #                                        number='03', side=side, eyeJnt=eyeJnt,
-        #                                        eyeCtrlDirection=eyeCtrlDirection)
-        #
-        # self.eyeOffsetBind05 = self.eyeGrpBind(crv=crvNewName, bindZroGrp=self.jointBind05Grp[0],
-        #                                        number='05', side=side, eyeJnt=eyeJnt,
-        #                                        eyeCtrlDirection=eyeCtrlDirection)
 
         if self.position_eyeball_jnt > 0:
             mc.setAttr(self.joint_bind01_grp[0] + '.rotateY', lid01_direction * -1)
@@ -491,11 +465,6 @@ class Build:
         eye_grp_offset = mc.group(em=1, n=au.prefix_name(curve) + 'EyeOffset' + number + side + '_grp', p=eye_grp_zro)
         mc.delete(mc.parentConstraint(eye_jnt, eye_grp_zro))
 
-        # if self.pos >= 0:
-        #     mc.setAttr(eyeZro+ '.rotateY', eyeCtrlDirection)
-        # else:
-        #     mc.setAttr(eyeZro+ '.rotateY', eyeCtrlDirection*-1)
-
         mc.parent(bind_grp_zro, eye_grp_offset)
 
         return eye_grp_zro, eye_grp_offset
@@ -507,7 +476,6 @@ class Build:
                          ):
         self.all_joint_center = []
         self.all_joint = []
-        # self.all_skin = []
         self.all_locator = []
         self.jnt_ctrl_grp_offset = []
         self.ctrl_joint_grp = []
@@ -589,15 +557,6 @@ class Build:
             au.connect_attr_rotate(self.joint_center, joint_controller.parent_control[0])
             au.connect_attr_translate_rotate(joint_controller.control, self.joint)
 
-            # # CREATE SKINNING JOINT
-            # mc.select(cl=1)
-            # self.skin = mc.joint(n='%s%02d%s%s' % (au.prefix_name(curve_new_name), (index + 1), side, '_skn'),
-            #                       rad=0.1 * scale)
-
-            # # SKIN PARENT AND SCALE CONSTRAINT
-            # au.parent_scale_constraint(self.joint, self.skin)
-            # self.all_skin.append(self.skin)
-
         # grouping joint
         self.all_joint_ctrl = mc.group(em=1, n=au.prefix_name(curve_new_name) + 'DtlCtrl' + side + '_grp')
         mc.delete(mc.parentConstraint(upper_head_gimbal_ctrl, self.all_joint_ctrl))
@@ -614,13 +573,8 @@ class Build:
         mc.parent(self.move_grp_offset, self.move_grp)
         mc.parent(self.joint_grp, self.move_grp_offset)
 
-        # mc.hide(self.jointGrp)
-
         # grouping locator
         self.locator_grp = mc.group(em=1, n=au.prefix_name(curve_new_name) + 'Loc' + side + '_grp')
         mc.setAttr(self.locator_grp + '.it', 0, l=1)
         mc.parent(self.all_locator, self.locator_grp)
         mc.hide(self.locator_grp)
-
-        # # PARENT SKIN JOINT
-        # mc.parent(self.all_skin, parent_skin)

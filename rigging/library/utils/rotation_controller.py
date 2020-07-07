@@ -1,7 +1,7 @@
 import maya.cmds as mc
 
-def change_position(shape, destination):
 
+def change_position(shape, destination):
     points = mc.ls('%s.cv[0:*]' % shape, fl=True)
 
     for i in points:
@@ -18,22 +18,20 @@ def change_position(shape, destination):
             move = mc.setAttr(i + '.yValue', rev_forms_y)
             move = mc.setAttr(i + '.zValue', rev_forms_z)
 
-        elif destination == 'xy' or destination== 'yx':
+        elif destination == 'xy' or destination == 'yx':
             move = mc.setAttr(i + '.xValue', forms_y)
             move = mc.setAttr(i + '.yValue', forms_x)
             move = mc.setAttr(i + '.zValue', forms_z)
 
-        elif destination == 'xz' or destination== 'zx':
+        elif destination == 'xz' or destination == 'zx':
             move = mc.setAttr(i + '.xValue', forms_z)
             move = mc.setAttr(i + '.yValue', forms_y)
             move = mc.setAttr(i + '.zValue', forms_x)
 
-        elif destination == 'yz'or destination == 'zy':
+        elif destination == 'yz' or destination == 'zy':
             move = mc.setAttr(i + '.xValue', forms_x)
             move = mc.setAttr(i + '.yValue', forms_z)
             move = mc.setAttr(i + '.zValue', forms_y)
 
         else:
             mc.error('please check your dest parameter name!')
-
-

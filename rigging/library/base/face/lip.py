@@ -28,7 +28,6 @@ class Build:
                  low_lip_controller,
                  suffix_controller,
                  base_module_nonTransform,
-                 # parent_skin
                  ):
 
         # DUPLICATE CURVE THEN RENAME
@@ -44,7 +43,6 @@ class Build:
         self.curve_vertex = mc.ls('%s.cv[0:*]' % curve_lip, fl=True)
 
         self.create_joint_lip(curve=curve_lip, scale=scale, ctrl_color=ctrl_color, suffix_controller=suffix_controller,
-                              # parent_skin=parent_skin
                               )
 
         self.create_reset_mouth_position_grp(mouth_base_jnt=mouth_jnt)
@@ -262,7 +260,6 @@ class Build:
             position = mc.xform(object, q=1, ws=1, t=1)
             # CREATE LOCATOR
             locator_roll = mc.spaceLocator(n='%s%s%02d%s' % (self.prefix_name_curve, 'Roll', (index + 1), '_loc'))[0]
-            # GRPLOCATORROLL =
             locator_list_relatives = mc.listRelatives(locator_roll, s=True)[0]
 
             mc.setAttr(locator_list_relatives + '.localScaleX', 0.1 * scale)
@@ -272,7 +269,6 @@ class Build:
             mc.xform(locator_roll, ws=1, t=position)
 
             # CONNECT MDL NODE ROLL TO OBJECT LOCATOR
-            # mc.connectAttr(self.mdlLipRoll + '.output', locatorRoll + '.rotateX')
             all_locator_roll.append(locator_roll)
 
         for index, object_RGT, in enumerate(right_position_length):
@@ -289,8 +285,6 @@ class Build:
             mult_double.append(mdl)
             condition.append(self.cnd_RGT)
 
-            # mc.connectAttr(mdl + '.output', locatorRoll + '.rotateX')
-
         for index, object_LFT, in enumerate(left_position_length):
             prefix_name, number_name = tf.reorder_number(prefix=object_LFT, side_RGT='', side_LFT='')
             mdl = mc.createNode('multDoubleLinear', n=au.prefix_name(prefix_name) + 'MulRoll' + number_name + '_mdl')
@@ -299,7 +293,6 @@ class Build:
             mc.setAttr(self.cnd_LFT + '.colorIfTrueR', (divide * index))
             mc.setAttr(self.cnd_LFT + '.colorIfFalseR', 1)
 
-            # mc.setAttr(mdl + '.input2', (div * n))
             mc.connectAttr(self.lip_roll_mdl + '.output', mdl + '.input1')
             mc.connectAttr(self.cnd_LFT + '.outColorR', mdl + '.input2')
 
@@ -590,16 +583,13 @@ class Build:
             au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, jnt_grp)
             au.connect_attr_scale(self.reset_all_mouth_ctrl_grp, loc_offset)
 
-    def create_joint_lip(self, curve, scale, ctrl_color, suffix_controller,
-                         # parent_skin
-                         ):
-        self.all_joint =[]
-        # self.all_skin=[]
-        self.locator_group_offset=[]
+    def create_joint_lip(self, curve, scale, ctrl_color, suffix_controller):
+        self.all_joint = []
+        self.locator_group_offset = []
         self.locator_group_zro = []
-        self.all_locator=[]
-        self.control_group_zro=[]
-        self.control_group_offset=[]
+        self.all_locator = []
+        self.control_group_zro = []
+        self.control_group_offset = []
 
         for index, object in enumerate(self.curve_vertex):
             # create joint
@@ -641,16 +631,7 @@ class Build:
 
             mc.connectAttr(decompose_node + '.outputTranslate', control_group.parent_control[0] + '.translate')
             mc.connectAttr(decompose_node + '.outputRotate', control_group.parent_control[0] + '.rotate')
-            # mc.connectAttr(dMtx + '.outputScale', parentJntGrp[0] + '.scale')
             mc.setAttr(self.joint+'.visibility', 0)
-
-            # # CREATE SKINNING JOINT
-            # mc.select(cl=1)
-            # self.skin = mc.joint(n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_skn'), rad=0.1 * scale)
-            #
-            # # SKIN PARENT AND SCALE CONSTRAINT
-            # au.parent_scale_constraint(self.joint, self.skin)
-            # self.all_skin.append(self.skin)
 
         # grouping joint
         self.joint_grp = mc.group(em=1, n=self.prefix_name_curve + 'JntCtr' + '_grp')
@@ -660,6 +641,3 @@ class Build:
         self.locator_grp = mc.group(em=1, n=self.prefix_name_curve + 'Loc' + '_grp')
         mc.setAttr (self.locator_grp + '.it', 0, l=1)
         mc.parent(self.locator_group_zro, self.locator_grp)
-
-        # # PARENT SKIN JOINT
-        # mc.parent(self.all_skin, parent_skin)

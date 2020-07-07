@@ -196,8 +196,8 @@ class CreateDetail:
         mc.parent(self.joint_reference_up, self.joint_reference_down, w=True)
 
         # Create joint on evenly position
-        position_uv_fol = cr.split_evenly(self.joint_reference_up, self.joint_reference_down, prefix, side=side, split=number_joints,
-                                          base_tip=True)
+        position_uv_fol = cr.split_evenly(self.joint_reference_up, self.joint_reference_down, prefix, side=side,
+                                          split=number_joints, base_tip=True)
 
         # Create deformers: Wire deformer
         deform_crv = mc.curve(p=[(self.down_point, 0, 0), (0, 0, 0), (self.up_point, 0, 0)], degree=2)
@@ -650,7 +650,7 @@ class CreateDetail:
 
         # Lock unnecesarry key detail
         au.lock_hide_attr(['s'], self.ctrl_up.control)
-        au.lock_hide_attr(['s'], self.ctrl_mid.control)
+        au.lock_hide_attr(['r', 's'], self.ctrl_mid.control)
         au.lock_hide_attr(['s'], self.ctrl_down.control)
 
         # Lock some groups
@@ -675,7 +675,6 @@ class CreateDetail:
 
         # Clear all selection
         mc.select(cl=1)
-
 
     # ==================================================================================================================
     #                                               GENERAL FUNCTION

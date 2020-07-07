@@ -3,8 +3,9 @@ from __builtin__ import reload
 from rigging.library.utils import controller as ct
 from rigging.library.utils import transform as tf
 
-reload (ct)
-reload (tf)
+reload(ct)
+reload(tf)
+
 
 class Build:
     def __init__(self,
@@ -12,11 +13,12 @@ class Build:
                  columella_prefix,
                  suffix_controller,
                  scale):
-    # ==================================================================================================================
-    #                                                   COLUMELLA
-    # ==================================================================================================================
+        # ==================================================================================================================
+        #                                                   COLUMELLA
+        # ==================================================================================================================
         # grouping joint
-        self.columella_jnt_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=columella_jnt, match_position=columella_jnt,
+        self.columella_jnt_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=columella_jnt,
+                                                            match_position=columella_jnt,
                                                             prefix=columella_prefix, suffix='_jnt')
 
         # create columella controller
@@ -28,5 +30,5 @@ class Build:
                                     suffix=suffix_controller,
                                     connection=['connectMatrixTransRot'])
 
-        self.columella_ctrl= columella_ctrl.control
+        self.columella_ctrl = columella_ctrl.control
         self.columella_ctrl_grp_zro = columella_ctrl.parent_control[0]

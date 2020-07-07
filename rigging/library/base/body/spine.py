@@ -8,9 +8,10 @@ import maya.cmds as mc
 from rigging.library.utils import rotation_controller as rc, controller as ct
 from rigging.tools import AD_utils as au
 
-reload (ct)
-reload (au)
-reload (rc)
+reload(ct)
+reload(au)
+reload(rc)
+
 
 class Build:
     def __init__(self,
@@ -38,7 +39,8 @@ class Build:
         # ==============================================================================================================
         #                                                   CONTROL FK
         # ==============================================================================================================
-        self.controller_spine_fk_low = ct.Control(match_obj_first_position=spine_jnt[0], match_obj_second_position=root_jnt,
+        self.controller_spine_fk_low = ct.Control(match_obj_first_position=spine_jnt[0],
+                                                  match_obj_second_position=root_jnt,
                                                   prefix='spineFk01', shape=ct.CIRCLEPLUS,
                                                   groups_ctrl=['Zro', 'Offset'], side=side, ctrl_size=scale,
                                                   ctrl_color='yellow', gimbal=True, lock_channels=['v', 's'])
@@ -48,7 +50,6 @@ class Build:
                                                   shape=ct.CIRCLEPLUS,
                                                   groups_ctrl=['Zro', 'Offset'], side=side, ctrl_size=scale,
                                                   ctrl_color='yellow', gimbal=True, lock_channels=['v', 's'])
-
 
         self.controller_spine_fk_up = ct.Control(match_obj_first_position=spine_jnt[3],
                                                  match_obj_second_position=spine_jnt[2], prefix='spineFk03',
@@ -79,7 +80,8 @@ class Build:
         #                               POINT CONSTRAINT ROOT AND SPINE IK UP TO SPINE IK LOW
         # ==============================================================================================================
         # point constraint IK Low
-        ik_low_point_constraint = mc.pointConstraint(self.controller_root.control_gimbal, self.controller_spine_ik_up.control_gimbal,
+        ik_low_point_constraint = mc.pointConstraint(self.controller_root.control_gimbal,
+                                                     self.controller_spine_ik_up.control_gimbal,
                                                      self.controller_spine_ik_low.parent_control[0], mo=1)
 
         # constraint rename
@@ -101,7 +103,8 @@ class Build:
         #                               ADD ATTRIBUTE FOR FK/IK SETUP CONTROLLER
         # ==============================================================================================================
         # add attribute FK/IK
-        au.add_attr_transform(self.controller_FkIk_spine_setup.control, 'FkIk', 'long', keyable=True, min=0, max=1, dv=0)
+        au.add_attr_transform(self.controller_FkIk_spine_setup.control, 'FkIk', 'long', keyable=True, min=0, max=1,
+                              dv=0)
 
         # create reverse node for FK on/off
         spine_setup_reverse = mc.createNode('reverse', n='spineFkIk01_rev')
@@ -111,7 +114,8 @@ class Build:
                                obj_name=self.controller_FkIk_spine_setup.control,
                                target_name=[spine_setup_reverse], select_obj=False)
 
-        au.connect_part_object(obj_base_connection='outputX', target_connection='visibility', obj_name=spine_setup_reverse,
+        au.connect_part_object(obj_base_connection='outputX', target_connection='visibility',
+                               obj_name=spine_setup_reverse,
                                target_name=[self.controller_spine_fk_low.parent_control[0]], select_obj=False)
 
         # set on/off attribute IK
@@ -163,7 +167,8 @@ class Build:
                                   max=1, dv=0)
 
             # Add attributes: Volume attributes
-            au.add_attribute(objects=[self.controller_FkIk_spine_setup.control], long_name=['volumeSep'], nice_name=[' '],
+            au.add_attribute(objects=[self.controller_FkIk_spine_setup.control], long_name=['volumeSep'],
+                             nice_name=[' '],
                              at="enum", en='Volume', channel_box=True)
             au.add_attribute(objects=[self.controller_FkIk_spine_setup.control], long_name=['volume'],
                              at="float", min=-1, max=1, keyable=True)
@@ -188,7 +193,8 @@ class Build:
                              attributeType="float", keyable=True)
             au.add_attribute(objects=[self.controller_FkIk_spine_setup.control], long_name=['twist'],
                              attributeType="float", keyable=True)
-            au.add_attribute(objects=[self.controller_FkIk_spine_setup.control], long_name=['sineLength'], min=0.1, dv=2,
+            au.add_attribute(objects=[self.controller_FkIk_spine_setup.control], long_name=['sineLength'], min=0.1,
+                             dv=2,
                              attributeType="float", keyable=True)
 
         ### PARENT THE ROOT TO FK/IK CONTROL

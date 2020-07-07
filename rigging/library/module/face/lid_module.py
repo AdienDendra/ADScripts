@@ -22,7 +22,6 @@ class Lid:
                  offset_lid04_position,
                  eyeball_jnt,
                  eye_jnt,
-                 # eye_skin,
                  prefix_eye,
                  prefix_eye_aim,
                  scale,
@@ -44,7 +43,6 @@ class Lid:
                  upLid_LR_lowLid_LR,
                  upLid_following_up,
                  upper_head_gimbal_ctrl,
-
                  pupil_jnt,
                  iris_jnt,
                  pupil_prefix,
@@ -52,11 +50,6 @@ class Lid:
                  eye_ctrl_direction,
                  suffix_controller,
                  base_module_nonTransform,
-
-                 # pupil_skn,
-                 # iris_skn,
-                 # eyeball_skn,
-                 # parent_skin_detail_lid
                  ):
 
         self.position = mc.xform(eyeball_jnt, ws=1, q=1, t=1)[0]
@@ -69,7 +62,6 @@ class Lid:
         mc.delete(mc.parentConstraint(eyeball_jnt, world_up_object))
         value = mc.getAttr(world_up_object + '.translateY')
         mc.setAttr(world_up_object + '.translateY', value + (10 * scale))
-        # mc.parentConstraint(headUpJoint, worldUpObject, mo=1)
         self.world_up_object = world_up_object
 
         # world up object eye aim
@@ -107,7 +99,6 @@ class Lid:
                               upper_head_gimbal_ctrl=upper_head_gimbal_ctrl,
                               suffix_controller=suffix_controller,
                               base_module_nonTransform=base_module_nonTransform,
-                              # parent_skin=parent_skin_detail_lid
                               )
         self.lid_out_up01_follow_attr = self.upLid.lid_out01_follow_attr
         self.lid_out_up02_follow_attr = self.upLid.lid_out02_follow_attr
@@ -145,7 +136,6 @@ class Lid:
                                upper_head_gimbal_ctrl=upper_head_gimbal_ctrl,
                                suffix_controller=suffix_controller,
                                base_module_nonTransform=base_module_nonTransform,
-                               # parent_skin=parent_skin_detail_lid
                                )
         self.lid_out_low01_follow_attr = self.lowLid.lid_out01_follow_attr
         self.lid_out_low02_follow_attr = self.lowLid.lid_out02_follow_attr
@@ -254,9 +244,6 @@ class Lid:
                               eye_ctrl=self.eyeball_controller,
                               eye_jnt_grp_offset=self.eyeball_ctrl_grp_offset,
                               suffix_controller=suffix_controller,
-                              # pupil_skn=pupil_skn,
-                              # iris_skn=iris_skn,
-                              # eyeball_skn=eyeball_skn
                               )
 
         # ==================================================================================================================
@@ -275,9 +262,6 @@ class Lid:
         mc.parent(self.eyeball_ctrl.parent_control[0], self.upLid.ctrl_0204_grp, self.lowLid.ctrl_0204_grp,
                   head_up_ctrl_gimbal)
         mc.parent(lid_grp, self.upLid.move_grp, self.lowLid.move_grp, face_utils_grp)
-
-        # # SKIN PARENT AND SCALE CONSTRAINT
-        # au.parent_scale_constraint(eye_jnt, eye_skin)
 
     # ==================================================================================================================
     #                                                   FUNCTIONS
@@ -363,9 +347,6 @@ class Lid:
         mc.connectAttr(condition_side + '.outColorR', lid_low_ctrl03_grp_offset + '.translateY')
         mc.connectAttr(condition_side + '.outColorR', lid_low_lip03_bind_corner + '.translateY')
 
-        # mc.setAttr(conditionAimSide + '.colorIfTrueG', 0)
-        # mc.connectAttr(eyeAimCtrl + '.translateY', conditionAimSide + '.firstTerm')
-
     def lid_out_eye_ctrl_connect(self, side, sub_prefix, side_RGT, side_LFT, attribute):
         new_target_up, number_target_up = tf.reorder_number(prefix=self.eyeball_controller, side_RGT=side_RGT,
                                                             side_LFT=side_LFT)
@@ -378,25 +359,6 @@ class Lid:
         mc.connectAttr(self.eyeball_controller + '.' + self.lid_out_follow, mdn + '.input2Z')
 
         return mdn
-
-    # def lidOnOffFollow(self, side, eyeController, targetUp, sideRGT, sideLFT):
-    #     newTargetUp, numberTargetUp = self.reorderNumber(prefix=targetUp, sideRGT=sideRGT, sideLFT=sideLFT)
-    #
-    #     transRev = mc.createNode('multiplyDivide', n=au.prefixName(newTargetUp) + 'Trans' +numberTargetUp+side+ '_mdn')
-    #     rotRev = mc.createNode('multiplyDivide', n=au.prefixName(newTargetUp) + 'Rot' +numberTargetUp+side+ '_mdn')
-    #
-    #     mc.connectAttr(eyeController + '.translate', transRev + '.input1')
-    #     mc.connectAttr(self.eyeController + '.' + self.lidFollow, transRev + '.input2X')
-    #     mc.connectAttr(self.eyeController + '.' + self.lidFollow, transRev + '.input2Y')
-    #     mc.connectAttr(self.eyeController + '.' + self.lidFollow, transRev + '.input2Z')
-    #
-    #     mc.connectAttr(eyeController + '.rotate', rotRev + '.input1')
-    #     mc.connectAttr(self.eyeController + '.' + self.lidFollow, rotRev + '.input2X')
-    #     mc.connectAttr(self.eyeController + '.' + self.lidFollow, rotRev + '.input2Y')
-    #     mc.connectAttr(self.eyeController + '.' + self.lidFollow, rotRev + '.input2Z')
-    #
-    #     mc.connectAttr(transRev + '.output', targetUp + '.translate')
-    #     mc.connectAttr(rotRev + '.output', targetUp + '.rotate')
 
     def blink_setup(self, side_RGT, side_LFT, eyeball_jnt, eye_prefix, eye_aim_prefix, curve_up, curve_low, scale,
                     side, upLid, lowLid, position_eye_aim_ctrl, world_up_aim_object, eye_aim_main_ctrl, eye_aim_jnt,
@@ -434,13 +396,8 @@ class Lid:
         self.eye_aim_follow = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['eyeAimFollow'],
                                                attributeType="float", min=0.001, dv=1, keyable=True)
 
-        # self.lidFollow = au.addAttribute(objects=[self.eyeCtrl.control], longName=['lidFollow'],
-        #                                  attributeType="float", min=0, max=1, dv=1, k=True)
-
         self.lid_out_follow = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lidOutFollow'],
                                                attributeType="float", min=0, max=1, dv=0.5, keyable=True)
-
-        # mc.parent(eyeballGrp[0], headUpJnt)
 
         # ==============================================================================================================
         #                                                   EYE AIM
@@ -488,10 +445,6 @@ class Lid:
         # ==============================================================================================================
         #                                                   BLINK
         # ==============================================================================================================
-        # if blinkOpen:
-        #     self.blinkOpen(side=side, crvUp=crvUp, crvLow=crvLow, upLid, lowLid, sideRGT, sideLFT, scale)
-
-        # def blinkOpen(self, side, crvUp, crvLow, upLid, lowLid, sideRGT, sideLFT, scale):
         # CREATE CURVE MID BLINK
         curve_blink_bind_mid_old = mc.curve(d=3, ep=[(self.upLid.xform_jnt01), (self.upLid.xform_jnt05)])
 
@@ -552,8 +505,6 @@ class Lid:
 
         mc.connectAttr(upLid.lid_bind03_ctrl + '.%s' % upLid.close_lid_attr, up_lid_bsn + '.%s' % curve_blink_up)
 
-        # mc.connectAttr(upLid.controllerBind03Ctrl + '.%s' % upLid.closeLid, up_lid_bsn + '.%s' % curve_blink_up)
-
         low_lid_bsn = mc.blendShape(curve_blink_low, curve_low, n=('lidBlinkLow' + side + '_bsn'),
                                     weight=[(0, 1)])[0]
 
@@ -607,7 +558,6 @@ class Lid:
                                                                 prefix=prefix, sub_prefix='BBind',
                                                                 attribute='translateY')
         mc.connectAttr(range_aim_bind_b + '.outputX', condition_aim_side_greater + '.colorIfTrueR')
-        # mc.connectAttr(rangeAimBindB + '.outputX', conditionAimSideGreater + '.colorIfTrueG')
 
         # CREATE DIVIDE RANGE AIM SIDE D
         if up_lid:
@@ -632,30 +582,12 @@ class Lid:
             mc.connectAttr(range_aim_bindA + '.outputX', condition_aim_side_greater + '.colorIfFalseR')
 
         mc.connectAttr(condition_aim_side_greater + '.outColorR', lid_bind03_grp + '.translateY')
-        # mc.connectAttr(conditionAimSideGreater + '.outColorR', lidLowBind03Grp + '.translateY')
 
         # CREATE DIVIDE RANGE AIM SIDE C
         range_aim_bindC = self.part_lid_follow_range_connected(side, eye_aim_ctrl, value_range=value_range_c,
                                                                prefix=prefix, sub_prefix='CBind',
                                                                attribute='translateX')
         mc.connectAttr(range_aim_bindC + '.outputX', lid_bind03_grp + '.translateX')
-        # mc.connectAttr(rangeAimBindC + '.outputX', conditionAimSideLessC + '.colorIfTrueG')
-
-        # mc.connectAttr(conditionAimSideGreater + '.outColorG', lidBind03Grp + '.translateX')
-
-        # else:
-        #     mc.connectAttr(conditionAimSideGreater + '.outColorR', lidLowBind03Grp + '.translateY')
-        #     mc.connectAttr(conditionAimSideGreater + '.outColorG', lidUpBind03Grp + '.translateY')
-
-        # # # CONDITION EXCEPTION AIM SIDE C
-        # conditionAimSideLessC = mc.createNode('condition', n='eyeAimBindLess' +prefix+ side + '_cnd')
-        # mc.setAttr(conditionAimSideLessC + '.operation', 4)
-        # mc.setAttr(conditionAimSideLessC + '.colorIfFalseR', 0)
-        # mc.setAttr(conditionAimSideLessC + '.colorIfFalseG', 0)
-        # mc.connectAttr(eyeAimCtrl + '.translateY', conditionAimSideLessC + '.firstTerm')
-        # else:
-        #     mc.connectAttr(conditionAimSideGreater + '.outColorR', lidLowBind03Grp + '.translateX')
-        #     mc.connectAttr(conditionAimSideGreater + '.outColorG', lidUpBind03Grp + '.translateX')
 
     def lid_follow_ctrl(self, eye_aim_follow, eye_ctrl, eye_aim_side_ctrl, side,
                         eyeAimCtrl, lid_low_ctrl03_grp_offset, lid_up_ctrl03_grp_offset):

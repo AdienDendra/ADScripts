@@ -267,7 +267,6 @@ class Bulge:
                                       )
 
         # PARENT
-        # mc.parent(bulgeSlideCtrl.parentControl[0], bulgeSoftModCtrl.control)
         mc.parent(bulge_soft_mod_ctrl.parent_control[0], bulge_slide_ctrl.control)
 
         mc.delete(mc.pointConstraint(bulge_position, bulge_slide_ctrl.parent_control[0]))
