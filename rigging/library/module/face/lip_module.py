@@ -520,40 +520,40 @@ class Lip:
         mc.setAttr(left_constraint + '.%sW1' % low_lip.reset_mouth_ctrl_grp_offset, 0.5)
 
         if condition_low_lip:
-            pac_reset_all_ctrl_cons = mc.parentConstraint(jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)
-            scl_reset_all_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)
-            pac_mouth_ctrl_cons = mc.parentConstraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
-            scl_mouth_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
+            pac_reset_all_ctrl_cons = au.parent_scale_constraint(jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)
+            # scl_reset_all_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)
+            pac_mouth_ctrl_cons = au.parent_scale_constraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
+            # scl_mouth_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
 
-            # rename constraint
-            au.constraint_rename([pac_reset_all_ctrl_cons[0], scl_reset_all_ctrl_cons[0], pac_mouth_ctrl_cons[0],
-                                  scl_mouth_ctrl_cons[0]])
+            # # rename constraint
+            # au.constraint_rename([pac_reset_all_ctrl_cons[0], scl_reset_all_ctrl_cons[0], pac_mouth_ctrl_cons[0],
+            #                       scl_mouth_ctrl_cons[0]])
 
         else:
             # parent constraint mouth reset grp and mouth ctrl all grp
-            cons_mouth_reset = mc.parentConstraint(head_low_jnt, jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)[0]
-            cons_mouth_reset_scl = mc.scaleConstraint(head_low_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)[0]
-            cons_mouth_ctrl = mc.parentConstraint(head_low_jnt, jaw_jnt, lip.mouth_ctrl_grp, mo=1)[0]
-            cons_mouth_ctrl_scl = mc.scaleConstraint(head_low_jnt, lip.mouth_ctrl_grp, mo=1)[0]
+            cons_mouth_reset = au.parent_scale_constraint(head_low_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)[0]
+            # cons_mouth_reset_scl = mc.scaleConstraint(head_low_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)[0]
+            cons_mouth_ctrl = au.parent_scale_constraint(head_low_jnt, lip.mouth_ctrl_grp, mo=1)[0]
+            # cons_mouth_ctrl_scl = mc.scaleConstraint(head_low_jnt, lip.mouth_ctrl_grp, mo=1)[0]
 
-            # condition low head joint
-            cnd_low_head = mc.createNode('condition', n=au.prefix_name(self.curve_up_lip) + 'DrvLowHead' + '_cnd')
-            mc.connectAttr(jaw_jnt + '.rotateX', cnd_low_head + '.firstTerm')
-            mc.setAttr(cnd_low_head + '.operation', 4)
-
-            mc.connectAttr(cnd_low_head + '.outColorR', cons_mouth_reset + '.%sW0' % head_low_jnt)
-            mc.connectAttr(cnd_low_head + '.outColorR', cons_mouth_ctrl + '.%sW0' % head_low_jnt)
-
-            # condition jaw joint
-            cnd_jaw = mc.createNode('condition', n=au.prefix_name(self.curve_up_lip) + 'DrvJaw' + '_cnd')
-            mc.connectAttr(jaw_jnt + '.rotateX', cnd_jaw + '.firstTerm')
-            mc.setAttr(cnd_jaw + '.operation', 3)
-
-            mc.connectAttr(cnd_jaw + '.outColorR', cons_mouth_reset + '.%sW1' % jaw_jnt)
-            mc.connectAttr(cnd_jaw + '.outColorR', cons_mouth_ctrl + '.%sW1' % jaw_jnt)
-
-            # rename constraint
-            au.constraint_rename([cons_mouth_reset, cons_mouth_reset_scl, cons_mouth_ctrl, cons_mouth_ctrl_scl])
+            # # condition low head joint
+            # cnd_low_head = mc.createNode('condition', n=au.prefix_name(self.curve_up_lip) + 'DrvLowHead' + '_cnd')
+            # mc.connectAttr(jaw_jnt + '.rotateX', cnd_low_head + '.firstTerm')
+            # mc.setAttr(cnd_low_head + '.operation', 4)
+            #
+            # mc.connectAttr(cnd_low_head + '.outColorR', cons_mouth_reset + '.%sW0' % head_low_jnt)
+            # mc.connectAttr(cnd_low_head + '.outColorR', cons_mouth_ctrl + '.%sW0' % head_low_jnt)
+            #
+            # # condition jaw joint
+            # cnd_jaw = mc.createNode('condition', n=au.prefix_name(self.curve_up_lip) + 'DrvJaw' + '_cnd')
+            # mc.connectAttr(jaw_jnt + '.rotateX', cnd_jaw + '.firstTerm')
+            # mc.setAttr(cnd_jaw + '.operation', 3)
+            #
+            # mc.connectAttr(cnd_jaw + '.outColorR', cons_mouth_reset + '.%sW1' % jaw_jnt)
+            # mc.connectAttr(cnd_jaw + '.outColorR', cons_mouth_ctrl + '.%sW1' % jaw_jnt)
+            #
+            # # rename constraint
+            # au.constraint_rename([cons_mouth_reset, cons_mouth_reset_scl, cons_mouth_ctrl, cons_mouth_ctrl_scl])
 
         # constraint rename
         au.constraint_rename([right_constraint, left_constraint, pac_mid_loc_constraint[0]])

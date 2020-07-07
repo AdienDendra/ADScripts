@@ -222,7 +222,8 @@ class Nose:
                            jaw_ctrl=jaw_ctrl,
                            value_upper_lip_min_half=nose_follow_mouth_value * (-6.0),
                            value_upper_lip_max_or_min_y_half=nose_follow_mouth_value * 6.0,
-                           value_corner_lip=nose_follow_mouth_value * 6.0)
+                           value_corner_lip=nose_follow_mouth_value * 6.0,
+                           nose_controller_LR='%s.%s' % (self.nose_ctrl, self.mouth_weight_lr))
         # NOSTRIL RIGHT
         self.nostril_setup(side=side_RGT, controller=lip_corner_ctrl_RGT,
                            attribute_offset=nostril_attr_ctrl_RGT,
@@ -238,7 +239,8 @@ class Nose:
                            jaw_ctrl=jaw_ctrl,
                            value_upper_lip_min_half=nose_follow_mouth_value * 6.0,
                            value_upper_lip_max_or_min_y_half=nose_follow_mouth_value * (-6.0),
-                           value_corner_lip=nose_follow_mouth_value * 6.0)
+                           value_corner_lip=nose_follow_mouth_value * 6.0,
+                           nose_controller_LR='%s.%s' % (self.nose_ctrl, self.mouth_weight_lr))
 
         # ==================================================================================================================
         #                                                   NOSE SETUP
@@ -348,16 +350,20 @@ class Nose:
                       getAttr_tz_ctrl_grp_zro_nostril,
                       value_mouth, value_mouth_three_times, value_upper_lip, jaw_ctrl, value_corner_lip,
                       value_upper_lip_max_or_min_y_half,
-                      value_upper_lip_min_half):
+                      value_upper_lip_min_half, nose_controller_LR):
 
         range = controller + '.%s' % attribute_offset
         mult_rev_nostril_trans_x = self.mdl_set_attr(name='nostrilWeight', prefix='TransX', name_expression='',
                                                      side=side,
                                                      input1=controller + '.translateX ', input2_set=multiplier)
         mult_rev_nostril_trans_x_out = mult_rev_nostril_trans_x + '.output'
+
+        multiply_corner_mouth_and_nose_LR = self.multiply_with_nose_controller(nose_controller_LR=nose_controller_LR,
+             corner_mouth_controller_nostril_range=range, name='nostrilWeight', prefix='NoseCornerMouth', side=side)
         # TRANS X
-        trans_x_great, trans_x_less = self.nostril(range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl,
-                                                   value_mouth_three_times, value_upper_lip, value_corner_lip,
+        trans_x_great, trans_x_less = self.nostril(range=multiply_corner_mouth_and_nose_LR+'.output', mouth_ctrl=mouth_ctrl, lip_up_all_ctrl=lip_up_all_ctrl, jaw_ctrl=jaw_ctrl,
+                                                   value_mouth=value_mouth_three_times, value_upper_lip=value_upper_lip,
+                                                   value_corner_lip=value_corner_lip,
                                                    value_upper_lip_min_half=value_upper_lip_min_half, side=side,
                                                    controller=mult_rev_nostril_trans_x_out,
                                                    translate='translateX', rotate='rotateX', prefix='TransX',
@@ -366,8 +372,10 @@ class Nose:
                                                    operation=1)
 
         # TRANS Y
-        trans_y_great, trans_y_less = self.nostril(range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl, value_mouth,
-                                                   value_upper_lip, value_corner_lip,
+        trans_y_great, trans_y_less = self.nostril(range=multiply_corner_mouth_and_nose_LR+'.output', mouth_ctrl=mouth_ctrl, lip_up_all_ctrl=lip_up_all_ctrl, jaw_ctrl=jaw_ctrl,
+                                                   value_mouth=value_mouth,
+                                                   value_upper_lip=value_upper_lip,
+                                                   value_corner_lip=value_corner_lip,
                                                    value_upper_lip_min_half=value_upper_lip_max_or_min_y_half,
                                                    side=side, controller=controller + '.translateY',
                                                    translate='translateY', rotate='rotateY', prefix='TransY',
@@ -376,8 +384,8 @@ class Nose:
                                                    operation=1)
 
         # TRANS Z
-        trans_z_great, trans_z_less = self.nostril(range, mouth_ctrl, lip_up_all_ctrl, jaw_ctrl, value_mouth,
-                                                   value_upper_lip, value_corner_lip,
+        trans_z_great, trans_z_less = self.nostril(range=multiply_corner_mouth_and_nose_LR+'.output', mouth_ctrl=mouth_ctrl, lip_up_all_ctrl=lip_up_all_ctrl, jaw_ctrl=jaw_ctrl, value_mouth=value_mouth,
+                                                   value_upper_lip=value_upper_lip, value_corner_lip=value_corner_lip,
                                                    value_upper_lip_min_half=value_upper_lip_min_half, side=side,
                                                    controller=controller + '.translateZ',
                                                    translate='translateZ', rotate='rotateZ', prefix='TransZ',
@@ -540,8 +548,18 @@ class Nose:
                                      operation=operation_sum, prefix=prefix, name_expression=name_expression)
         return nose_pma
 
+    def multiply_with_nose_controller(self, nose_controller_LR, corner_mouth_controller_nostril_range, name='noseCornerCtrl', prefix='', side=''):
+        node_mdn = mc.createNode('multDoubleLinear', n=au.prefix_name(name) + prefix + 'Ctrl'
+                                                       + side + '_mdl')
+
+        mc.connectAttr(nose_controller_LR, node_mdn + '.input1')
+        mc.connectAttr(corner_mouth_controller_nostril_range, node_mdn + '.input2')
+
+        return node_mdn
+
     def mult_or_div_connect_two_attr(self, name, input_1X, input_2X, input_1Y, input_2Y, operation=2, prefix='',
                                      name_expression='', side=''):
+
         ctrl_drv_mdn = mc.createNode('multiplyDivide',
                                      n=au.prefix_name(name) + prefix + name_expression + 'Ctrl' + side + '_mdn')
         mc.setAttr(ctrl_drv_mdn + '.operation', operation)
