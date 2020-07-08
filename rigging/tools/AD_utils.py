@@ -129,7 +129,7 @@ def create_follicle(snap=None, jntDel=None, scale=None, connectFol=['']):
             mc.delete(closest_node)
 
             if scale:
-                mc.scaleConstraint(scale, rename, mo=1)
+                scale_constraint(scale, rename, mo=1)
 
             if not jntDel:
                 continue
@@ -141,7 +141,7 @@ def create_follicle(snap=None, jntDel=None, scale=None, connectFol=['']):
 
 ############################################ follicle based on selection ######################################
 # CREATE FOLLICLE BASED ON OBJECT (JOINT OR TRANSFORM) SELECTED
-def create_follicle_selection(obj_select, obj_mesh, connect=None, prefix=None, suffix=None, connect_follicle=['']):
+def create_follicle_selection(obj_select, obj_mesh, connect=None, prefix=None, suffix=None, scale=None, connect_follicle=['']):
     obj_mesh = mc.listRelatives(obj_mesh, s=1)[0]
 
     closest_node = None
@@ -204,6 +204,9 @@ def create_follicle_selection(obj_select, obj_mesh, connect=None, prefix=None, s
         follicle_transform = mc.rename(follicle_transform, '%s_%s' % (prefix_name(prefix), suffix))
     else:
         follicle_transform = mc.rename(follicle_transform, '%s_%s' % (prefix_name(obj_select), 'fol'))
+
+    if scale:
+        scale_constraint(scale, follicle_transform, mo=1)
 
     # listing the shape of follicle
     follicle_shape = mc.listRelatives(follicle_transform, s=1)[0]

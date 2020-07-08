@@ -118,8 +118,9 @@ def build_rig(
 
         bulge_mesh,
         add_set_bulge,
-        suffix_joint
-):
+        follicle_mesh
+        ):
+
     # FINGER POSITION
     BaseF = 'Base'
     UpF = 'Up'
@@ -636,7 +637,8 @@ def build_rig(
                      corner_mouth_ctrl_LFT=lip.corner_lip_ctrl_LFT,
                      corner_mouth_ctrl_RGT=lip.corner_lip_ctrl_RGT,
                      scale=scale,
-                     add_set=add_set_bulge)
+                     add_set=add_set_bulge,
+                     follicle_mesh=follicle_mesh)
 
     print('100% | brows is done!')
 
@@ -741,7 +743,7 @@ def build_rig(
         mc.parent(head.neck_jnt_grp, 'spine04_skn')
         au.parent_scale_constraint('spine04_skn', head.neck_ctrl_grp, mo=1)
     else:
-        mc.parent(sj.neck, face_joint_grp)
+        mc.parent(head.neck_jnt_grp, face_joint_grp)
 
     # UNHIDE SKIN JOINT
     unhide = mc.ls('*skn')

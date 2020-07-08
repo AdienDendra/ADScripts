@@ -35,6 +35,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
               sAdd_prefix_value, fk, ik, detail,
               suffix_joint
               ):
+
     # CREATE BASE RIG
     base = gm.Base(scale=scale)
 

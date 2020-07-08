@@ -6,9 +6,9 @@ from rigging.library.utils import controller as ct
 from rigging.library.utils import transform as tf
 from rigging.tools import AD_utils as au
 
-reload (ct)
-reload (tf)
-reload (au)
+reload(ct)
+reload(tf)
+reload(au)
 
 
 class Bulge:
@@ -41,46 +41,74 @@ class Bulge:
                  corner_mouth_ctrl_LFT,
                  corner_mouth_ctrl_RGT,
                  scale,
-                 add_set):
+                 add_set,
+                 follicle_mesh
+                 ):
+
+        bulge_ctrl_grp = mc.group(em=1, n='bulgeCtrl_grp')
+        mc.parent(bulge_ctrl_grp, face_anim_ctrl_grp)
 
         bulge_grp = mc.group(em=1, n='bulgeHandle_grp')
         mc.parent(bulge_grp, face_utils_grp)
 
+        bulge_follicle_grp = mc.group(em=1, n='bulgeFollicle_grp')
+        mc.parent(bulge_follicle_grp, face_utils_grp)
+
         cheek_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=cheek_bulge_jnt_LFT, bulge_prefix=cheek_bulge_prefix,
-                                               side=side_LFT, scale=scale)
+                                               object_scale=head_low_ctrl_gimbal, side=side_LFT, scale=scale,
+                                               bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                               bulge_follicle_grp=bulge_follicle_grp)
 
         cheek_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=cheek_bulge_jnt_RGT, bulge_prefix=cheek_bulge_prefix,
-                                               side=side_RGT, scale=scale)
+                                               object_scale=head_low_ctrl_gimbal, side=side_RGT, scale=scale,
+                                               bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                               bulge_follicle_grp=bulge_follicle_grp)
 
         brow_in_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=brow_in_bulge_jnt_LFT,
                                                  bulge_prefix=brow_in_bulge_prefix,
-                                                 side=side_LFT, scale=scale)
+                                                 object_scale=head_up_ctrl_gimbal, side=side_LFT, scale=scale,
+                                                 bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                                 bulge_follicle_grp=bulge_follicle_grp)
 
         brow_in_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=brow_in_bulge_jnt_RGT,
                                                  bulge_prefix=brow_in_bulge_prefix,
-                                                 side=side_RGT, scale=scale)
+                                                 object_scale=head_up_ctrl_gimbal, side=side_RGT, scale=scale,
+                                                 bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                                 bulge_follicle_grp=bulge_follicle_grp)
 
         brow_out_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=brow_out_bulge_jnt_LFT,
                                                   bulge_prefix=brow_out_bulge_prefix,
-                                                  side=side_LFT, scale=scale)
+                                                  object_scale=head_up_ctrl_gimbal, side=side_LFT, scale=scale,
+                                                  bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                                  bulge_follicle_grp=bulge_follicle_grp)
 
         brow_out_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=brow_out_bulge_jnt_RGT,
                                                   bulge_prefix=brow_out_bulge_prefix,
-                                                  side=side_RGT, scale=scale)
+                                                  object_scale=head_up_ctrl_gimbal, side=side_RGT, scale=scale,
+                                                  bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                                  bulge_follicle_grp=bulge_follicle_grp)
 
         corner_mouth_bulge_ctrl_LFT = self.bulge_ctrl(bulge_position=corner_mouth_bulge_jnt_LFT,
                                                       bulge_prefix=corner_mouth_bulge_prefix,
-                                                      side=side_LFT, scale=scale)
+                                                      object_scale=corner_mouth_ctrl_LFT, side=side_LFT, scale=scale,
+                                                      bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                                      bulge_follicle_grp=bulge_follicle_grp)
 
         corner_mouth_bulge_ctrl_RGT = self.bulge_ctrl(bulge_position=corner_mouth_bulge_jnt_RGT,
                                                       bulge_prefix=corner_mouth_bulge_prefix,
-                                                      side=side_RGT, scale=scale)
+                                                      object_scale=corner_mouth_ctrl_RGT, side=side_RGT, scale=scale,
+                                                      bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                                      bulge_follicle_grp=bulge_follicle_grp)
 
         nose_bulge_ctrl = self.bulge_ctrl(bulge_position=nose_bulge_jnt, bulge_prefix=nose_bulge_prefix,
-                                          side=side_LFT, scale=scale)
+                                          object_scale=nose_drv03_ctrl, side=side_LFT, scale=scale,
+                                          bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                          bulge_follicle_grp=bulge_follicle_grp)
 
         chin_bulge_ctrl = self.bulge_ctrl(bulge_position=chin_bulge_jnt, bulge_prefix=chin_bulge_prefix,
-                                          side=side_RGT, scale=scale)
+                                          object_scale=chin_ctrl, side=side_RGT, scale=scale,
+                                          bulge_ctrl_grp=bulge_ctrl_grp, follicle_mesh=follicle_mesh,
+                                          bulge_follicle_grp=bulge_follicle_grp)
 
         self.cheek_bulge_ctrl_LFT_grp = cheek_bulge_ctrl_LFT[2]
         self.cheek_bulge_ctrl_RGT_grp = cheek_bulge_ctrl_RGT[2]
@@ -146,30 +174,30 @@ class Bulge:
                            bulge_slide_ctrl_parent=chin_bulge_ctrl[2],
                            bulge_slide_ctrl=chin_bulge_ctrl[1], bulge_soft_mod_ctrl=chin_bulge_ctrl[0],
                            bulge_mesh=bulge_mesh, add_set=add_set, bulge_grp=bulge_grp)
-
-        # PARENT CONSTRAINT
-        cheek_bulge_LFT = mc.parentConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_LFT[2], mo=1)[
-            0]
-        cheek_bulge_RGT = mc.parentConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_RGT[2], mo=1)[
-            0]
-        mc.setAttr(cheek_bulge_LFT + '.interpType', 2)
-        mc.setAttr(cheek_bulge_RGT + '.interpType', 2)
-        scale_cheek_bulge_LFT = mc.scaleConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_LFT[3],
-                                                   mo=1)
-        scale_cheek_bulge_RGT = mc.scaleConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_RGT[3],
-                                                   mo=1)
-
-        # PARENT
-        mc.parent(cheek_bulge_ctrl_LFT[2], cheek_bulge_ctrl_RGT[2], face_anim_ctrl_grp)
-        mc.parent(brow_in_bulge_ctrl_LFT[2], brow_in_bulge_ctrl_RGT[2], brow_out_bulge_ctrl_LFT[2],
-                  brow_out_bulge_ctrl_RGT[2], head_up_ctrl_gimbal)
-        mc.parent(nose_bulge_ctrl[2], nose_drv03_ctrl)
-        mc.parent(chin_bulge_ctrl[2], chin_ctrl)
-        mc.parent(corner_mouth_bulge_ctrl_LFT[2], corner_mouth_ctrl_LFT)
-        mc.parent(corner_mouth_bulge_ctrl_RGT[2], corner_mouth_ctrl_RGT)
-
-        # constraint rename
-        au.constraint_rename([cheek_bulge_LFT, cheek_bulge_RGT, scale_cheek_bulge_LFT[0], scale_cheek_bulge_RGT[0]])
+        # # PARENT
+        # # PARENT CONSTRAINT
+        # cheek_bulge_LFT = mc.parentConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_LFT[2], mo=1)[
+        #     0]
+        # cheek_bulge_RGT = mc.parentConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_RGT[2], mo=1)[
+        #     0]
+        # mc.setAttr(cheek_bulge_LFT + '.interpType', 2)
+        # mc.setAttr(cheek_bulge_RGT + '.interpType', 2)
+        # scale_cheek_bulge_LFT = mc.scaleConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_LFT[3],
+        #                                            mo=1)
+        # scale_cheek_bulge_RGT = mc.scaleConstraint(head_up_ctrl_gimbal, head_low_ctrl_gimbal, cheek_bulge_ctrl_RGT[3],
+        #                                            mo=1)
+        #
+        # # PARENT
+        # mc.parent(cheek_bulge_ctrl_LFT[2], cheek_bulge_ctrl_RGT[2], face_anim_ctrl_grp)
+        # mc.parent(brow_in_bulge_ctrl_LFT[2], brow_in_bulge_ctrl_RGT[2], brow_out_bulge_ctrl_LFT[2],
+        #           brow_out_bulge_ctrl_RGT[2], head_up_ctrl_gimbal)
+        # mc.parent(nose_bulge_ctrl[2], nose_drv03_ctrl)
+        # mc.parent(chin_bulge_ctrl[2], chin_ctrl)
+        # mc.parent(corner_mouth_bulge_ctrl_LFT[2], corner_mouth_ctrl_LFT)
+        # mc.parent(corner_mouth_bulge_ctrl_RGT[2], corner_mouth_ctrl_RGT)
+        #
+        # # constraint rename
+        # au.constraint_rename([cheek_bulge_LFT, cheek_bulge_RGT, scale_cheek_bulge_LFT[0], scale_cheek_bulge_RGT[0]])
 
     def soft_mod_node(self, bulge_jnt, bulge_prefix, bulge_slide_ctrl, bulge_soft_mod_ctrl, bulge_slide_ctrl_parent,
                       bulge_grp, bulge_mesh, add_set, side='',
@@ -240,6 +268,10 @@ class Bulge:
     def bulge_ctrl(self, bulge_position,
                    bulge_prefix,
                    scale,
+                   follicle_mesh,
+                   object_scale,
+                   bulge_ctrl_grp,
+                   bulge_follicle_grp,
                    side=''):
 
         # SOFT MOD BULGE
@@ -259,7 +291,6 @@ class Bulge:
         self.bulge = au.add_attribute(objects=[bulge_soft_mod_ctrl.control], long_name=['bulge'],
                                       attributeType="float", min=0, max=1, dv=1, keyable=True)
 
-
         # SLIDE BULGE
         bulge_slide_ctrl = ct.Control(prefix=bulge_prefix + 'BulgeSlide',
                                       shape=ct.JOINT, groups_ctrl=['', 'Offset'], ctrl_size=scale * 0.1,
@@ -270,6 +301,21 @@ class Bulge:
         mc.parent(bulge_soft_mod_ctrl.parent_control[0], bulge_slide_ctrl.control)
 
         mc.delete(mc.pointConstraint(bulge_position, bulge_slide_ctrl.parent_control[0]))
+
+        # CREATE FOLLICLE FOLLOW
+        follicle_bulge = au.create_follicle_selection(obj_select=bulge_position, obj_mesh=follicle_mesh,
+                                                      scale=object_scale,
+                                                      prefix=bulge_position + 'Bulge', suffix='fol',
+                                                      connect_follicle=['rotateConn', 'transConn'])
+
+        # PARENT AND SCALE CONSTRAINT WITH FOLLICLE
+        au.parent_scale_constraint(follicle_bulge[0], bulge_slide_ctrl.parent_control[0], mo=1)
+
+        # PARENT TO THE GROUP FACE CTRL
+        mc.parent(bulge_slide_ctrl.parent_control[0], bulge_ctrl_grp)
+
+        # PARENT FOLLICLE TO THE GROUP
+        mc.parent(follicle_bulge[0], bulge_follicle_grp)
 
         return bulge_soft_mod_ctrl.control, bulge_slide_ctrl.control, bulge_slide_ctrl.parent_control[0], \
                bulge_slide_ctrl.parent_control[1]

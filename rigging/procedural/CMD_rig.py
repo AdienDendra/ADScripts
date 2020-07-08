@@ -139,7 +139,7 @@ def biped(clavicle_left=True,
           size=1.0):
     ## CHECK IF THE RIG EXIST IN THE SCENE
     if mc.objExists('anim_ctrl'):
-        mc.error('Please rid off the old base and including the nodes before run the script!')
+        mc.error('Please rid off the body or facial rig and including the nodes before run the script!')
 
     print('------------------------------')
     print('Biped base script is running...')
@@ -245,11 +245,13 @@ def face_biped(  # LIP
         # BULGE DEFORMER
         bulge_mesh='headBulge_geo',
         add_set_bulge=['bodyPartGeoBulge_grp'],
+        follicle_mesh='bodyBulgeFol_geo',
 
         # UTILS
         side_LFT='LFT',
         side_RGT='RGT',
         scale=1.0):
+
     print('----------------------------------------')
     print('head and face base script is running...')
     print('----------------------------------------')
@@ -346,7 +348,7 @@ def face_biped(  # LIP
 
                             bulge_mesh=bulge_mesh,
                             add_set_bulge=add_set_bulge,
-                            suffix_joint=suffix_joint
+                            follicle_mesh=follicle_mesh
                             )
 
     print('------------------------------')
