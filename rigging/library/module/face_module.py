@@ -119,8 +119,7 @@ def build_rig(
         bulge_mesh,
         add_set_bulge,
         follicle_mesh
-        ):
-
+):
     # FINGER POSITION
     BaseF = 'Base'
     UpF = 'Up'
@@ -512,7 +511,8 @@ def build_rig(
                            ctrl_bind04_low=leftEyelid.low_lid_bind04_ctrl,
                            ctrl_bind05_low=leftEyelid.low_lid_bind05_ctrl,
                            lid_out_follow=leftEyelid.lid_out_up03_follow_attr,
-                           close_lid_attr=leftEyelid.up_lid_close_lid,
+                           close_lid_attr=leftEyelid.upLid_closer,
+                           eyeball_ctrl=leftEyelid.eyeball_controller,
                            lid_corner_in_ctrl=leftEyelid.lid_corner_in_ctrl,
                            lid_corner_out_ctrl=leftEyelid.lid_corner_out_ctrl,
                            wire_up_bind01_grp_offset=leftEyelid.up_lid_bind01_grp_offset,
@@ -549,6 +549,7 @@ def build_rig(
                             eye_ctrl=rightEyelid.eyeball_controller,
                             corner_lip=lip.corner_lip_ctrl_RGT,
                             corner_lip_attr=lip.lid_out_attr_ctrl_RGT,
+                            eyeball_ctrl=rightEyelid.eyeball_controller,
                             ctrl_bind01_up=rightEyelid.up_lid_bind01_ctrl,
                             ctrl_bind02_up=rightEyelid.up_lid_bind02_ctrl,
                             ctrl_bind03_up=rightEyelid.up_lid_bind03_ctrl,
@@ -560,7 +561,7 @@ def build_rig(
                             ctrl_bind04_low=rightEyelid.low_lid_bind04_ctrl,
                             ctrl_bind05_low=rightEyelid.low_lid_bind05_ctrl,
                             lid_out_follow=rightEyelid.lid_out_up03_follow_attr,
-                            close_lid_attr=rightEyelid.up_lid_close_lid,
+                            close_lid_attr=rightEyelid.upLid_closer,
                             lid_corner_in_ctrl=rightEyelid.lid_corner_in_ctrl,
                             lid_corner_out_ctrl=rightEyelid.lid_corner_out_ctrl,
                             wire_up_bind01_grp_offset=rightEyelid.up_lid_bind01_grp_offset,

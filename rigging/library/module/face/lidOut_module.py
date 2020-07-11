@@ -47,6 +47,7 @@ class LidOut:
                  ctrl_bind05_low,
                  lid_out_follow,
                  close_lid_attr,
+                 eyeball_ctrl,
                  lid_corner_in_ctrl,
                  lid_corner_out_ctrl,
                  wire_up_bind01_grp_offset,
@@ -228,6 +229,7 @@ class LidOut:
                                          ctrl_bind03=ctrl_bind03_up, ctrl_bind04=ctrl_bind04_up,
                                          ctrl_bind05=ctrl_bind05_up,
                                          lid_out_follow=lid_out_follow,
+                                         eyeball_ctrl=eyeball_ctrl,
                                          drv_bind01_grp_offset=wire_up.joint_bind01_grp_offset,
                                          drv_bind02_grp_offset=wire_up.joint_bind02_grp_offset,
                                          drv_bind03_grp_offset=wire_up.joint_bind03_grp_offset,
@@ -241,6 +243,7 @@ class LidOut:
                                          ctrl_bind03=ctrl_bind03_low, ctrl_bind04=ctrl_bind04_low,
                                          ctrl_bind05=ctrl_bind05_low,
                                          lid_out_follow=lid_out_follow,
+                                         eyeball_ctrl=eyeball_ctrl,
                                          drv_bind01_grp_offset=wire_low.joint_bind01_grp_offset,
                                          drv_bind02_grp_offset=wire_low.joint_bind02_grp_offset,
                                          drv_bind03_grp_offset=wire_low.joint_bind03_grp_offset,
@@ -300,7 +303,8 @@ class LidOut:
 
         mc.connectAttr(rotate + '.output', bind_grp_destination + '.rotate')
 
-    def all_ctrl_connecting_lid_out(self, wire, side, ctrl_bind01, ctrl_bind02, ctrl_bind03, ctrl_bind04, ctrl_bind05,
+    def all_ctrl_connecting_lid_out(self, wire, side, ctrl_bind01, ctrl_bind02, ctrl_bind03, eyeball_ctrl, ctrl_bind04,
+                                    ctrl_bind05,
                                     lid_out_follow, drv_bind01_grp_offset, drv_bind02_grp_offset, drv_bind03_grp_offset,
                                     drv_bind04_grp_offset, drv_bind05_grp_offset, close_lid_attr, upLid):
         if self.position > 0:
@@ -346,7 +350,7 @@ class LidOut:
                                            close_lid_attr=None,
                                            upLid=upLid, reverse_tx=True)
 
-        self.connecting_lid_to_lid_out(wire=wire, side=side, ctrl_bind=ctrl_bind03, number_ctrl='03',
+        self.connecting_lid_to_lid_out(wire=wire, side=side, ctrl_bind=eyeball_ctrl, number_ctrl='',
                                        lid_out_follow_attr=lid_out_follow,
                                        middle_bind_ctrl=True, drv_bind_offset=drv_bind03_grp_offset,
                                        close_lid_attr=close_lid_attr, upLid=upLid,
@@ -359,6 +363,7 @@ class LidOut:
             if upLid:
                 mdl_close_lid = self.close_lid(wire, side, ctrl_bind, number_ctrl=number_ctrl, sub_prefix='RevCloseLid',
                                                attribute=close_lid_attr, value=-0.125)
+
                 mdl_ty = self.close_lid(wire, side, ctrl_bind, number_ctrl=number_ctrl, sub_prefix='RevTy',
                                         attribute='translateY',
                                         value=1)

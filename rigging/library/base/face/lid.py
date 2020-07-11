@@ -86,8 +86,8 @@ class Build:
         au.add_attribute(objects=[self.lid_bind03.control], long_name=['lid'], nice_name=[' '], at="enum",
                          en='Eyelid', channel_box=True)
 
-        self.close_lid_attr = au.add_attribute(objects=[self.lid_bind03.control], long_name=['closeLid'],
-                                               attributeType="float", min=-1, max=1, dv=0, keyable=True)
+        # self.close_lid_attr = au.add_attribute(objects=[self.lid_bind03.control], long_name=['closeLid'],
+        #                                        attributeType="float", min=-1, max=1, dv=0, keyable=True)
 
         self.lid_out03_follow_attr = au.add_attribute(objects=[self.lid_bind03.control], long_name=['lidOutFollow'],
                                                       attributeType="float", min=0, dv=1, keyable=True)
@@ -389,7 +389,7 @@ class Build:
 
         # skinning the joint to the bind curve
         skin_cluster = mc.skinCluster([jnt05, jnt04, jnt01, jnt02, jnt03], deform_curve,
-                                      n='%s%s%s%s' % (au.prefix_name(crv_new_name), 'Wire', side, 'SkinCluster'),
+                                      n='%s%s%s%s' % (au.prefix_name(crv_new_name), 'Wire', side, '_sc'),
                                       tsb=True, bm=0, sm=0, nw=1, mi=3)
 
         # Distribute the skin

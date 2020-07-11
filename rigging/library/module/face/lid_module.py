@@ -13,6 +13,7 @@ reload(tf)
 reload(cl)
 reload(ip)
 
+
 class Lid:
     def __init__(self,
                  face_utils_grp,
@@ -105,7 +106,7 @@ class Lid:
         self.lid_out_up03_follow_attr = self.upLid.lid_out03_follow_attr
         self.lid_out_up04_follow_attr = self.upLid.lid_out04_follow_attr
         self.lid_out_up05_follow_attr = self.upLid.lid_out05_follow_attr
-        self.up_lid_close_lid = self.upLid.close_lid_attr
+        # self.up_lid_close_lid = self.upLid.close_lid_attr
 
         self.up_lid_bind01_ctrl = self.upLid.lid_bind01.control
         self.up_lid_bind02_ctrl = self.upLid.lid_bind02.control
@@ -142,7 +143,7 @@ class Lid:
         self.lid_out_low03_follow_attr = self.lowLid.lid_out03_follow_attr
         self.lid_out_low04_follow_attr = self.lowLid.lid_out04_follow_attr
         self.lid_out_low05_follow_attr = self.lowLid.lid_out05_follow_attr
-        self.low_lid_close_lid = self.lowLid.close_lid_attr
+        # self.low_lid_close_lid = self.lowLid.close_lid_attr
 
         self.low_lid_bind01_ctrl = self.lowLid.lid_bind01.control
         self.low_lid_bind02_ctrl = self.lowLid.lid_bind02.control
@@ -390,15 +391,22 @@ class Lid:
         au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lidDegree'], nice_name=[' '], at="enum",
                          en='Lid Degree', channel_box=True)
 
-        self.lid_position = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lidPos'],
-                                             attributeType="float", min=0, max=1, dv=0.5, keyable=True)
-
         self.eye_aim_follow = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['eyeAimFollow'],
                                                attributeType="float", min=0.001, dv=1, keyable=True)
 
         self.lid_out_follow = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lidOutFollow'],
-                                               attributeType="float", min=0, max=1, dv=0.5, keyable=True)
+                                               attributeType="float", min=0, dv=0.5, keyable=True)
 
+        # EYELID CLOSER
+        au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lidCloser'], nice_name=[' '], at="enum",
+                         en='Lid Closer', channel_box=True)
+
+        self.lid_position = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lidPos'],
+                                             attributeType="float", min=0, max=1, dv=0.5, keyable=True)
+        self.upLid_closer = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['upLid'],
+                                             attributeType="float", min=-1, max=1, dv=0, keyable=True)
+        self.lowLid_closer = au.add_attribute(objects=[self.eyeball_ctrl.control], long_name=['lowLid'],
+                                              attributeType="float", min=-1, max=1, dv=0, keyable=True)
         # ==============================================================================================================
         #                                                   EYE AIM
         # ==============================================================================================================
@@ -456,8 +464,52 @@ class Lid:
         curve_blink_up = mc.duplicate(curve_up, n='lidBlinkUp' + side + '_crv')[0]
         curve_blink_low = mc.duplicate(curve_low, n='lidBlinkLow' + side + '_crv')[0]
 
-        blink_bsn = mc.blendShape(upLid.deform_curve, lowLid.deform_curve, curve_blink_bind_mid, n=('lidBlink' + side + '_bsn'),
+        blink_bsn = \
+            mc.blendShape(upLid.deform_curve, lowLid.deform_curve, curve_blink_bind_mid, n=('lidBlink' + side + '_bsn'),
                           weight=[(0, 1), (1, 0)])[0]
+
+        # SKINNING UP AND DOWN BIND JOINT
+        # skinning the joint to the bind curve
+        skin_cluster = mc.skinCluster([upLid.jnt05, upLid.jnt04, upLid.jnt01, upLid.jnt02, upLid.jnt03, lowLid.jnt05,
+                                       lowLid.jnt04, lowLid.jnt01, lowLid.jnt02, lowLid.jnt03], curve_blink_bind_mid,
+                                      n='%s%s%s%s' % (
+                                          'lidBlink', 'Bind', side, '_sc'),
+                                      tsb=True, bm=0, sm=0, nw=1, mi=3)
+
+        # Distribute the skin
+        skin_percent_index0 = '%s.cv[0]' % curve_blink_bind_mid
+        skin_percent_index1 = '%s.cv[1]' % curve_blink_bind_mid
+        skin_percent_index2 = '%s.cv[2]' % curve_blink_bind_mid
+        skin_percent_index3 = '%s.cv[3]' % curve_blink_bind_mid
+        skin_percent_index4 = '%s.cv[4]' % curve_blink_bind_mid
+        skin_percent_index5 = '%s.cv[5]' % curve_blink_bind_mid
+        skin_percent_index6 = '%s.cv[6]' % curve_blink_bind_mid
+        skin_percent_index7 = '%s.cv[7]' % curve_blink_bind_mid
+        skin_percent_index8 = '%s.cv[8]' % curve_blink_bind_mid
+        skin_percent_index9 = '%s.cv[9]' % curve_blink_bind_mid
+        skin_percent_index10 = '%s.cv[10]' % curve_blink_bind_mid
+
+        mc.skinPercent(skin_cluster[0], skin_percent_index0, tv=[(upLid.jnt01, 0.5), (lowLid.jnt01, 0.5)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index1,
+                       tv=[(upLid.jnt01, 0.45), (upLid.jnt02, 0.05), (lowLid.jnt01, 0.45), (lowLid.jnt02, 0.05)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index2,
+                       tv=[(upLid.jnt01, 0.35), (upLid.jnt02, 0.15), (lowLid.jnt01, 0.35), (lowLid.jnt02, 0.15)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index3,
+                       tv=[(upLid.jnt02, 0.25), (upLid.jnt01, 0.125), (upLid.jnt03, 0.125), (lowLid.jnt02, 0.25),
+                           (lowLid.jnt01, 0.125), (lowLid.jnt03, 0.125)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index4,
+                       tv=[(upLid.jnt02, 0.15), (upLid.jnt03, 0.35), (lowLid.jnt02, 0.15), (lowLid.jnt03, 0.35)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index5, tv=[(upLid.jnt03, 0.5), (lowLid.jnt03, 0.5)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index6,
+                       tv=[(upLid.jnt04, 0.15), (upLid.jnt03, 0.35), (lowLid.jnt04, 0.15), (lowLid.jnt03, 0.35)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index7,
+                       tv=[(upLid.jnt04, 0.25), (upLid.jnt05, 0.125), (upLid.jnt03, 0.125), (lowLid.jnt04, 0.25),
+                           (lowLid.jnt05, 0.125), (lowLid.jnt03, 0.125)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index8,
+                       tv=[(upLid.jnt05, 0.35), (upLid.jnt04, 0.15), (lowLid.jnt05, 0.35), (lowLid.jnt04, 0.15)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index9,
+                       tv=[(upLid.jnt05, 0.45), (upLid.jnt04, 0.05), (lowLid.jnt05, 0.45), (lowLid.jnt04, 0.05)])
+        mc.skinPercent(skin_cluster[0], skin_percent_index10, tv=[(upLid.jnt05, 0.5), (lowLid.jnt05, 0.5)])
 
         mc.select(cl=1)
         # replace position LFT and RGT
@@ -503,12 +555,12 @@ class Lid:
         up_lid_bsn = mc.blendShape(curve_blink_up, curve_up, n=('lidBlinkUp' + side + '_bsn'),
                                    weight=[(0, 1)])[0]
 
-        mc.connectAttr(upLid.lid_bind03_ctrl + '.%s' % upLid.close_lid_attr, up_lid_bsn + '.%s' % curve_blink_up)
+        mc.connectAttr(self.eyeball_controller + '.%s' % self.upLid_closer, up_lid_bsn + '.%s' % curve_blink_up)
 
         low_lid_bsn = mc.blendShape(curve_blink_low, curve_low, n=('lidBlinkLow' + side + '_bsn'),
                                     weight=[(0, 1)])[0]
 
-        mc.connectAttr(lowLid.lid_bind03_ctrl + '.%s' % lowLid.close_lid_attr, low_lid_bsn + '.%s' % curve_blink_low)
+        mc.connectAttr(self.eyeball_controller + '.%s' % self.lowLid_closer, low_lid_bsn + '.%s' % curve_blink_low)
 
         # parent eyeblink crve to face curve grp
         mc.parent(curve_blink_bind_mid, mc.listConnections(sticky_mid_wire_deformer_low[0] + '.baseWire[0]')[0],

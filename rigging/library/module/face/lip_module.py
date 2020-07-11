@@ -205,16 +205,16 @@ class Lip:
 
         # CREATE JAW FOLLOW LOW LIP
         corner_adjust_LFT, jaw_following_LFT = self.multiply_lip_and_jaw(side=side_LFT, corner_adjust_ctrl='%s.%s' % (
-        corner_lip_ctrl_LFT.control, corner_lip_ctrl_LFT.jaw_ud_ctrl),
+            corner_lip_ctrl_LFT.control, corner_lip_ctrl_LFT.jaw_ud_ctrl),
                                                                          jaw_following_ctrl='%s.%s' % (
-                                                                         corner_lip_ctrl_LFT.control,
-                                                                         corner_lip_ctrl_LFT.jaw_following_ctrl))
+                                                                             corner_lip_ctrl_LFT.control,
+                                                                             corner_lip_ctrl_LFT.jaw_following_ctrl))
 
         corner_adjust_RGT, jaw_following_RGT = self.multiply_lip_and_jaw(side=side_RGT, corner_adjust_ctrl='%s.%s' % (
-        corner_lip_ctrl_RGT.control, corner_lip_ctrl_RGT.jaw_ud_ctrl),
+            corner_lip_ctrl_RGT.control, corner_lip_ctrl_RGT.jaw_ud_ctrl),
                                                                          jaw_following_ctrl='%s.%s' % (
-                                                                         corner_lip_ctrl_RGT.control,
-                                                                         corner_lip_ctrl_RGT.jaw_following_ctrl))
+                                                                             corner_lip_ctrl_RGT.control,
+                                                                             corner_lip_ctrl_RGT.jaw_following_ctrl))
 
         # UP LIP
         self.up_lip_jaw(side=side_LFT, mult_corner_adjust=corner_adjust_LFT, mult_jaw_following=jaw_following_LFT,
@@ -260,7 +260,7 @@ class Lip:
         sticky_lip_bind_crv = mc.curve(ep=[(xform_corner_lip_right), (xform_corner_lip_left)],
                                        degree=3, n='lipBindSticky_crv')
         mc.rebuildCurve(sticky_lip_bind_crv, ch=0, rpo=1, rt=0, end=1, kr=0, kcp=0,
-                        kep=1, kt=0, s=2, d=3, tol=0.01)
+                        kep=1, kt=0, s=8, d=3, tol=0.01)
 
         # STICKY BLENDSHAPE BIND UP AND LOW LIP
         mc.blendShape(upLip.deform_curve, lowLip.deform_curve, sticky_lip_bind_crv, n=('lipSticky' + '_bsn'),
