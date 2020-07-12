@@ -50,7 +50,7 @@ class Build:
 
         self.wire_bind_curve(lip_curve=curve_lip, offset_jnt02_bind_position=offset_jnt02_bind_position, scale=scale,
                              side_LFT=side_LFT, side_RGT=side_RGT, lip01_direction=lip01_cheek_direction,
-                             lip02_direction=lip02_cheek_direction)
+                             lip02_direction=lip02_cheek_direction, controller_lip_low=low_lip_controller)
 
         self.set_driver_locator(side_LFT=side_LFT, side_RGT=side_RGT)
 
@@ -464,7 +464,7 @@ class Build:
         mc.hide(self.grp_drv_locator)
 
     def wire_bind_curve(self, lip_curve, offset_jnt02_bind_position, lip01_direction, lip02_direction,
-                        scale, side_LFT, side_RGT):
+                        scale, side_LFT, side_RGT, controller_lip_low):
 
         joint_position_bind = len(self.all_joint)
 
@@ -580,11 +580,19 @@ class Build:
         jnt_mid_LFT_constraint = mc.parentConstraint(jnt_mid, jnt01_LFT, self.joint_bind02_LFT_grp[0], mo=1)[0]
         jnt_mid_RGT_constraint = mc.parentConstraint(jnt_mid, jnt01_RGT, self.joint_bind02_RGT_grp[0], mo=1)[0]
 
-        mc.setAttr('%s.%sW0' % (jnt_mid_LFT_constraint, jnt_mid), 0.75)
-        mc.setAttr('%s.%sW1' % (jnt_mid_LFT_constraint, jnt01_LFT), 0.25)
+        if controller_lip_low:
+            mc.setAttr('%s.%sW0' % (jnt_mid_LFT_constraint, jnt_mid), 0.75)
+            mc.setAttr('%s.%sW1' % (jnt_mid_LFT_constraint, jnt01_LFT), 0.25)
 
-        mc.setAttr('%s.%sW0' % (jnt_mid_RGT_constraint, jnt_mid), 0.75)
-        mc.setAttr('%s.%sW1' % (jnt_mid_RGT_constraint, jnt01_RGT), 0.25)
+            mc.setAttr('%s.%sW0' % (jnt_mid_RGT_constraint, jnt_mid), 0.75)
+            mc.setAttr('%s.%sW1' % (jnt_mid_RGT_constraint, jnt01_RGT), 0.25)
+
+        else:
+            mc.setAttr('%s.%sW0' % (jnt_mid_LFT_constraint, jnt_mid), 0.9)
+            mc.setAttr('%s.%sW1' % (jnt_mid_LFT_constraint, jnt01_LFT), 0.1)
+
+            mc.setAttr('%s.%sW0' % (jnt_mid_RGT_constraint, jnt_mid), 0.9)
+            mc.setAttr('%s.%sW1' % (jnt_mid_RGT_constraint, jnt01_RGT), 0.1)
 
         # CONSTRAINT RENAME
         au.constraint_rename([jnt_mid_LFT_constraint, jnt_mid_RGT_constraint])

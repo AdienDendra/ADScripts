@@ -98,8 +98,8 @@ class Build:
                                    groups_ctrl=['All', 'Offset'], ctrl_size=scale * 0.15,
                                    ctrl_color='red', lock_channels=['s', 'v'])
         # ADD ATTRIBUTE UPLIP FOLLOW
-        self.attr_upLip_follow = au.add_attribute(objects=[self.jaw_ctrl.control], long_name=['upperLipFollowing'],
-                                                  attributeType="float", min=0, max=1, dv=0.2, keyable=True)
+        self.attr_upLip_follow = au.add_attribute(objects=[self.jaw_ctrl.control], long_name=['upperLipFollowingJaw'],
+                                                  attributeType="float", min=0, max=1, dv=0, keyable=True)
 
         self.head_up_ctrl = ct.Control(match_obj_first_position=head_up_jnt, prefix=head_up_prefix,
                                        shape=ct.CIRCLEHALF, suffix=suffix_controller,

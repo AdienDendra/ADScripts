@@ -260,7 +260,6 @@ def build_rig(
                    up_lip_controller_all=lip.up_lip_controller_all,
                    mouth_ctrl=lip.mouth_ctrl,
                    nose_follow_mouth_value=nose_follow_mouth_value,
-                   up_lip_all_ctrl_grp_ctrl=lip.up_lip_mouth_ctrl_grp,
                    jaw_ctrl=head.jaw_ctrl,
                    suffix_controller=suffix_controller,
                    base_module_nonTransform=face_non_transform_grp,
