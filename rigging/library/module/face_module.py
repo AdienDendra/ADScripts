@@ -263,6 +263,7 @@ def build_rig(
                    jaw_ctrl=head.jaw_ctrl,
                    suffix_controller=suffix_controller,
                    base_module_nonTransform=face_non_transform_grp,
+                   mouth_ctrl_nose_follow=lip.mouth_ctrl_nose_follow
                    )
 
     print('25% | nose is done!')

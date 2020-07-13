@@ -215,7 +215,6 @@ class Lip:
                                                                          jaw_following_ctrl='%s.%s' % (
                                                                              corner_lip_ctrl_RGT.control,
                                                                              corner_lip_ctrl_RGT.jaw_following_ctrl))
-
         # UP LIP
         self.up_lip_jaw(side=side_LFT, mult_corner_adjust=corner_adjust_LFT, mult_jaw_following=jaw_following_LFT,
                         locator_set01=upLip.locator_set01_LFT,
@@ -318,6 +317,11 @@ class Lip:
 
         self.cheek_in_up_attr = au.add_attribute(objects=[self.mouth_controller.control], long_name=['cheekInUp'],
                                                  attributeType="float", dv=1, min=0.001, keyable=True)
+
+        self.nose_follow = au.add_attribute(objects=[self.mouth_controller.control], long_name=['noseFollow'],
+                                            attributeType="float", dv=1, min=0, keyable=True)
+
+        self.mouth_ctrl_nose_follow = '%s.%s' % (self.mouth_ctrl, self.nose_follow)
 
         # CONNECT ROLL ATTRIBUTE CONTROLLER MID TO MDL LIP ROLL
         mc.connectAttr(self.mouth_controller.control + '.%s' % self.controller_low_roll,
