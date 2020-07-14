@@ -91,6 +91,7 @@ class Head:
         self.jaw_ctrl_grp = head.jaw_ctrl.parent_control[0]
         self.jaw_ctrl = head.jaw_ctrl.control
         self.attr_upLip_follow = head.attr_upLip_follow
+        self.attr_degree_follow = head.attr_degree_follow
         self.headLow_normal_rotationGrp = head.headLow_normal_rotationGrp
 
         self.jaw_prefix = jaw_prefix

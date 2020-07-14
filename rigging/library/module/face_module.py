@@ -223,6 +223,7 @@ def build_rig(
                  suffix_controller=suffix_controller,
                  jaw_ctrl=head.jaw_ctrl,
                  prefix_upLip_follow=head.attr_upLip_follow,
+                 prefix_degree_follow=head.attr_degree_follow,
                  headLow_normal_rotationGrp=head.headLow_normal_rotationGrp,
                  base_module_nonTransform=face_non_transform_grp,
                  )

@@ -65,7 +65,7 @@ class Build:
                                                           prefix=jaw_tip_prefix, suffix='_jnt')
 
         ## CREATE CONTROLLER FOR THE JOINT
-
+        # NECK
         self.neck_ctrl = ct.Control(match_obj_first_position=neck_jnt, prefix=neck_prefix,
                                     shape=ct.CIRCLEPLUS,
                                     groups_ctrl=['All', 'Offset'], ctrl_size=scale * 1.0,
@@ -86,27 +86,34 @@ class Build:
 
         mc.connectAttr('%s.%s' % (self.neck_ctrl.control, neck_in_btw_attr),
                        self.neck_in_btw_ctrl.parent_control[0] + '.visibility')
-
+        # HEAD
         self.head_ctrl = ct.Control(match_obj_first_position=head_jnt, prefix=head_prefix,
                                     shape=ct.CUBE,
                                     groups_ctrl=['Zro', 'Global', 'Local'], ctrl_size=scale * 1.0,
                                     ctrl_color='blue', lock_channels=['v'], gimbal=True, suffix=suffix_controller,
                                     connection=['connectMatrixAll'])
 
+        # JAW
         self.jaw_ctrl = ct.Control(match_obj_first_position=jaw_tip_jnt, prefix=jaw_prefix,
                                    shape=ct.SQUAREPLUS, suffix=suffix_controller,
                                    groups_ctrl=['All', 'Offset'], ctrl_size=scale * 0.15,
                                    ctrl_color='red', lock_channels=['s', 'v'])
         # ADD ATTRIBUTE UPLIP FOLLOW
-        self.attr_upLip_follow = au.add_attribute(objects=[self.jaw_ctrl.control], long_name=['upperLipFollowingJaw'],
-                                                  attributeType="float", min=0, max=1, dv=0, keyable=True)
+        au.add_attribute(objects=[self.jaw_ctrl.control], long_name=['upLipSetup'],
+                         nice_name=[' '], at="enum",
+                         en='Up Lip Setup', channel_box=True)
 
+        self.attr_upLip_follow = au.add_attribute(objects=[self.jaw_ctrl.control], long_name=['upLipFollowingJaw'],
+                                                  attributeType="float", min=0, max=1, dv=1, keyable=True)
+        self.attr_degree_follow = au.add_attribute(objects=[self.jaw_ctrl.control], long_name=['degreeFollowing'],
+                                                  attributeType="float", min=0, max=10, dv=0, keyable=True)
+        # HEAD UP
         self.head_up_ctrl = ct.Control(match_obj_first_position=head_up_jnt, prefix=head_up_prefix,
                                        shape=ct.CIRCLEHALF, suffix=suffix_controller,
                                        groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 1.0,
                                        ctrl_color='red', lock_channels=['v'], gimbal=True,
                                        connection=['connectMatrixAll'])
-
+        # HEAD LOW
         self.head_low_ctrl = ct.Control(match_obj_first_position=head_low_jnt, prefix=head_low_prefix,
                                         shape=ct.CIRCLEHALF, suffix=suffix_controller,
                                         groups_ctrl=['Zro', 'Offset'], ctrl_size=scale * 1.0,
@@ -118,42 +125,42 @@ class Build:
         mc.delete(mc.pointConstraint(jaw_jnt, self.headLow_normal_rotationGrp))
 
         mc.parent(self.headLow_normal_rotationGrp, head_low_jnt)
-
+        # UPPER TEETH
         self.upper_teeth = ct.Control(match_obj_first_position=upper_teeth_jnt,
                                       prefix=upper_teeth_jnt, suffix=suffix_controller,
                                       shape=ct.CUBE, groups_ctrl=[''],
                                       ctrl_size=scale * 0.15,
                                       ctrl_color='yellow', lock_channels=['v'],
                                       connection=['connectAttr'])
-
+        # LOWER TEETH
         self.lower_teeth = ct.Control(match_obj_first_position=lower_teeth_jnt,
                                       prefix=lower_teeth_jnt, suffix=suffix_controller,
                                       shape=ct.CUBE, groups_ctrl=[''],
                                       ctrl_size=scale * 0.15,
                                       ctrl_color='yellow', lock_channels=['v'],
                                       connection=['connectAttr'])
-
+        # TONGUE 01
         self.tongue01 = ct.Control(match_obj_first_position=tongue01_jnt,
                                    prefix=tongue01_jnt, suffix=suffix_controller,
                                    shape=ct.SQUAREPLUS, groups_ctrl=[''],
                                    ctrl_size=scale * 0.15,
                                    ctrl_color='turquoiseBlue', lock_channels=['v'],
                                    connection=['connectAttr'])
-
+        # TONGUE 02
         self.tongue02 = ct.Control(match_obj_first_position=tongue02_jnt,
                                    prefix=tongue02_jnt, suffix=suffix_controller,
                                    shape=ct.SQUAREPLUS, groups_ctrl=[''],
                                    ctrl_size=scale * 0.15,
                                    ctrl_color='turquoiseBlue', lock_channels=['v'],
                                    connection=['connectAttr'])
-
+        # TONGUE 03
         self.tongue03 = ct.Control(match_obj_first_position=tongue03_jnt,
                                    prefix=tongue03_jnt, suffix=suffix_controller,
                                    shape=ct.SQUAREPLUS, groups_ctrl=[''],
                                    ctrl_size=scale * 0.15,
                                    ctrl_color='turquoiseBlue', lock_channels=['v'],
                                    connection=['connectAttr'])
-
+        # TONGUE 04
         self.tongue04 = ct.Control(match_obj_first_position=tongue04_jnt,
                                    prefix=tongue04_jnt, suffix=suffix_controller,
                                    shape=ct.SQUAREPLUS, groups_ctrl=[''],

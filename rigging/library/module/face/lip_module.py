@@ -35,6 +35,7 @@ class Lip:
                  suffix_controller,
                  jaw_ctrl,
                  prefix_upLip_follow,
+                 prefix_degree_follow,
                  headLow_normal_rotationGrp,
                  base_module_nonTransform,
                  ):
@@ -90,12 +91,14 @@ class Lip:
         #                                               UP LIP FOLLOW JAW
         # =================================================================================================================
         # CONTROLLER
-        self.upLip_follow_jaw(jaw_ctrl=jaw_ctrl, prefix_upLip_follow=prefix_upLip_follow, name='Ctrl', jaw_jnt=jaw_jnt,
+        self.upLip_follow_jaw(jaw_ctrl=jaw_ctrl, prefix_degree_follow=prefix_degree_follow,
+                              prefix_upLip_follow=prefix_upLip_follow, name='Ctrl', jaw_jnt=jaw_jnt,
                               headLow_normal_rotationGrp=headLow_normal_rotationGrp,
                               crv_up_lip=curve_up_lip, mouth_lip_grp=upLip.mouth_ctrl_grp,
                               mouth_offset_lip_grp=upLip.mouth_ctrl_grp_offset)
         # SETUP
-        self.upLip_follow_jaw(jaw_ctrl=jaw_ctrl, prefix_upLip_follow=prefix_upLip_follow, name='Setup', jaw_jnt=jaw_jnt,
+        self.upLip_follow_jaw(jaw_ctrl=jaw_ctrl, prefix_degree_follow=prefix_degree_follow,
+                              prefix_upLip_follow=prefix_upLip_follow, name='Setup', jaw_jnt=jaw_jnt,
                               headLow_normal_rotationGrp=headLow_normal_rotationGrp,
                               crv_up_lip=curve_up_lip, mouth_lip_grp=upLip.reset_all_mouth_ctrl_grp,
                               mouth_offset_lip_grp=upLip.reset_all_mouth_ctrl_grp_offset)
@@ -389,7 +392,8 @@ class Lip:
     # ==================================================================================================================
     #                                                   FUNCTIONS
     # ==================================================================================================================
-    def upLip_follow_jaw(self, jaw_ctrl, prefix_upLip_follow, name, jaw_jnt, headLow_normal_rotationGrp, crv_up_lip,
+    def upLip_follow_jaw(self, jaw_ctrl, prefix_upLip_follow, prefix_degree_follow, name, jaw_jnt,
+                         headLow_normal_rotationGrp, crv_up_lip,
                          mouth_offset_lip_grp, mouth_lip_grp):
 
         # UPPERLIP FOLLOWING JAW
@@ -403,19 +407,51 @@ class Lip:
         mc.parent(mouth_offset_lip_grp, upLipYZ_follow_jaw)
 
         # CONSTRAINT THE GROUP
-        oc_upperLipX = mc.orientConstraint(jaw_jnt, upLipX_follow_jaw, mo=1, skip=('y', 'z'))
+        oc_upperLipX = mc.orientConstraint(jaw_jnt, headLow_normal_rotationGrp, upLipX_follow_jaw, mo=1,
+                                           skip=('y', 'z'))
         oc_upperLipYZ = mc.orientConstraint(jaw_jnt, headLow_normal_rotationGrp, upLipYZ_follow_jaw, mo=1, skip='x')
 
         oc_upperLipX = au.constraint_rename(oc_upperLipX)[0]
         oc_upperLipYZ = au.constraint_rename(oc_upperLipYZ)[0]
 
+        # CREATE MULTIPLY DIVIDE NODE
+        scaling_value = mc.createNode('multiplyDivide', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotXY_rev_mdn' % name)
+        mc.setAttr(scaling_value + '.operation', 2)
+        mc.connectAttr(jaw_ctrl + '.%s' % prefix_degree_follow, scaling_value + '.input1X')
+        mc.setAttr(scaling_value + '.input2X', 10)
+
+        # CREATE CONDITION
+        condition = mc.createNode('condition', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotXY_cnd' % name)
+        mc.setAttr(condition + '.operation', 2)
+        mc.connectAttr(scaling_value + '.outputX', condition + '.colorIfTrueR')
+        mc.setAttr(condition + '.colorIfFalseR', 0)
+        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, condition + '.firstTerm')
+
         # CREATE REVERSE
-        reverse_follow_jaw = mc.createNode('reverse', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotXY_rev' % name)
-        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, reverse_follow_jaw + '.inputX')
+        reverse_follow_jaw_XY = mc.createNode('reverse', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotXY_rev' % name)
+        # mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, reverse_follow_jaw_XY + '.inputX')
+
+        mc.setDrivenKeyframe(reverse_follow_jaw_XY + '.inputX', cd=condition + '.outColorR', dv=0, v=0, itt='linear',
+                             ott='linear')
+        mc.setDrivenKeyframe(reverse_follow_jaw_XY + '.inputX', cd=condition + '.outColorR', dv=1, v=1, itt='linear',
+                             ott='linear')
+
+        mc.setDrivenKeyframe(oc_upperLipYZ + '.%sW0' % jaw_jnt, cd=condition + '.outColorR', dv=0, v=0, itt='linear',
+                             ott='linear')
+        mc.setDrivenKeyframe(oc_upperLipYZ + '.%sW0' % jaw_jnt, cd=condition + '.outColorR', dv=1, v=1, itt='linear',
+                             ott='linear')
+
+        # CONNECT REVERSE TO CONSTRAINT
+        mc.connectAttr(reverse_follow_jaw_XY + '.outputX', oc_upperLipYZ + '.%sW1' % headLow_normal_rotationGrp)
+
+        # CONNECT UPPER LIP FOLLOWING JAW CONSTRAINT
+        # CREATE REVERSE
+        reverse_follow_jaw_X = mc.createNode('reverse', n=au.prefix_name(crv_up_lip) + 'DrvUp%sJawRotX_rev' % name)
+        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, reverse_follow_jaw_X + '.inputX')
 
         # CONNECT TO OBJECT
-        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, oc_upperLipYZ + '.%sW0' % jaw_jnt)
-        mc.connectAttr(reverse_follow_jaw + '.outputX', oc_upperLipYZ + '.%sW1' % headLow_normal_rotationGrp)
+        mc.connectAttr(jaw_ctrl + '.%s' % prefix_upLip_follow, oc_upperLipX + '.%sW0' % jaw_jnt)
+        mc.connectAttr(reverse_follow_jaw_X + '.outputX', oc_upperLipX + '.%sW1' % headLow_normal_rotationGrp)
 
     def reverse_low_lid(self, control, input_2X, input_2Y, input_2Z, joint_bind_target, name, connect):
         mdn_reverse = mc.createNode('multiplyDivide', n=au.prefix_name(control) + 'ReverseAllMouth' + name + '_mdn')
@@ -525,39 +561,10 @@ class Lip:
 
         if condition_low_lip:
             pac_reset_all_ctrl_cons = au.parent_scale_constraint(jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)
-            # scl_reset_all_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)
             pac_mouth_ctrl_cons = au.parent_scale_constraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
-            # scl_mouth_ctrl_cons = mc.scaleConstraint(jaw_jnt, lip.mouth_ctrl_grp, mo=1)
-
-            # # rename constraint
-            # au.constraint_rename([pac_reset_all_ctrl_cons[0], scl_reset_all_ctrl_cons[0], pac_mouth_ctrl_cons[0],
-            #                       scl_mouth_ctrl_cons[0]])
-
         else:
-            # parent constraint mouth reset grp and mouth ctrl all grp
             cons_mouth_reset = au.parent_scale_constraint(head_low_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)[0]
-            # cons_mouth_reset_scl = mc.scaleConstraint(head_low_jnt, lip.reset_all_mouth_ctrl_grp, mo=1)[0]
             cons_mouth_ctrl = au.parent_scale_constraint(head_low_jnt, lip.mouth_ctrl_grp, mo=1)[0]
-            # cons_mouth_ctrl_scl = mc.scaleConstraint(head_low_jnt, lip.mouth_ctrl_grp, mo=1)[0]
-
-            # # condition low head joint
-            # cnd_low_head = mc.createNode('condition', n=au.prefix_name(self.curve_up_lip) + 'DrvLowHead' + '_cnd')
-            # mc.connectAttr(jaw_jnt + '.rotateX', cnd_low_head + '.firstTerm')
-            # mc.setAttr(cnd_low_head + '.operation', 4)
-            #
-            # mc.connectAttr(cnd_low_head + '.outColorR', cons_mouth_reset + '.%sW0' % head_low_jnt)
-            # mc.connectAttr(cnd_low_head + '.outColorR', cons_mouth_ctrl + '.%sW0' % head_low_jnt)
-            #
-            # # condition jaw joint
-            # cnd_jaw = mc.createNode('condition', n=au.prefix_name(self.curve_up_lip) + 'DrvJaw' + '_cnd')
-            # mc.connectAttr(jaw_jnt + '.rotateX', cnd_jaw + '.firstTerm')
-            # mc.setAttr(cnd_jaw + '.operation', 3)
-            #
-            # mc.connectAttr(cnd_jaw + '.outColorR', cons_mouth_reset + '.%sW1' % jaw_jnt)
-            # mc.connectAttr(cnd_jaw + '.outColorR', cons_mouth_ctrl + '.%sW1' % jaw_jnt)
-            #
-            # # rename constraint
-            # au.constraint_rename([cons_mouth_reset, cons_mouth_reset_scl, cons_mouth_ctrl, cons_mouth_ctrl_scl])
 
         # constraint rename
         au.constraint_rename([right_constraint, left_constraint, pac_mid_loc_constraint[0]])
@@ -626,6 +633,8 @@ class Lip:
 
         # MID
         mid_constraint = constraint[((len_constraint - 1) / 2)]
+        # before_mid = constraint[((len_constraint - 3) / 2)]
+
         # MID RIGHT
         self.set_keyframe_sticky_mid(result=result, mid_cons=mid_constraint,
                                      lip_sticky_origin_locator_name=lip_sticky_origin_locator_name,
@@ -646,14 +655,14 @@ class Lip:
 
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW0' % (lip_sticky_origin_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal - 1) * result) * offset_value, v=0.5, itt='auto', ott='auto')
+                             dv=((driverVal - 1) * result) * (offset_value*(result/4)), v=0.5, itt='auto', ott='auto')
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW0' % (lip_sticky_origin_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
                              dv=((driverVal - 1) * result) + result, v=0, itt='auto', ott='auto')
 
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW1' % (lip_sticky_mid_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal - 1) * result) * offset_value, v=0, itt='auto', ott='auto')
+                             dv=((driverVal- 1) * result) * (offset_value*(result/4)), v=0, itt='auto', ott='auto')
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW1' % (lip_sticky_mid_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
                              dv=((driverVal - 1) * result) + result, v=0.5, itt='auto', ott='auto')
