@@ -280,14 +280,14 @@ class Lip:
 
         # SET KEYFRAME FOR CONSTRAINT
         # LOW LIP SET
-        self.set_value_sticky(constraint=lowLip.cluster_constraint, offset_value=0.65,
+        self.set_value_sticky(constraint=lowLip.cluster_constraint, offset_value=0.5,
                               attribute_RGT=corner_lip_ctrl_RGT.sticky_ctrl,
                               attribute_LFT=corner_lip_ctrl_LFT.sticky_ctrl,
                               controller_RGT=corner_lip_ctrl_RGT.control, controller_LFT=corner_lip_ctrl_LFT.control,
                               lip_sticky_origin_locator_name='%sStickyOrigin' % au.prefix_name(curve_low_lip),
                               lip_sticky_mid_locator_name='%sStickyMid' % au.prefix_name(curve_low_lip))
         # UP LIP SET
-        self.set_value_sticky(constraint=upLip.cluster_constraint, offset_value=0.65,
+        self.set_value_sticky(constraint=upLip.cluster_constraint, offset_value=0.5,
                               attribute_RGT=corner_lip_ctrl_RGT.sticky_ctrl,
                               attribute_LFT=corner_lip_ctrl_LFT.sticky_ctrl,
                               controller_RGT=corner_lip_ctrl_RGT.control, controller_LFT=corner_lip_ctrl_LFT.control,
@@ -633,7 +633,6 @@ class Lip:
 
         # MID
         mid_constraint = constraint[((len_constraint - 1) / 2)]
-        # before_mid = constraint[((len_constraint - 3) / 2)]
 
         # MID RIGHT
         self.set_keyframe_sticky_mid(result=result, mid_cons=mid_constraint,
@@ -655,17 +654,17 @@ class Lip:
 
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW0' % (lip_sticky_origin_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal - 1) * result) * (offset_value*(result/4)), v=0.5, itt='auto', ott='auto')
+                             dv=((driverVal - 2) * result) * (offset_value*1.05), v=0.5, itt='auto', ott='auto')
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW0' % (lip_sticky_origin_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal - 1) * result) + result, v=0, itt='auto', ott='auto')
+                             dv=((driverVal - 2) * result) + result, v=0, itt='auto', ott='auto')
 
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW1' % (lip_sticky_mid_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal- 1) * result) * (offset_value*(result/4)), v=0, itt='auto', ott='auto')
+                             dv=((driverVal- 2) * result) * (offset_value*1.05), v=0, itt='auto', ott='auto')
         mc.setDrivenKeyframe(mid_cons + '.%s%s%sW1' % (lip_sticky_mid_locator_name, prefix, '_loc'),
                              cd='%s.%s' % (controller, attribute),
-                             dv=((driverVal - 1) * result) + result, v=0.5, itt='auto', ott='auto')
+                             dv=((driverVal - 2) * result) + result, v=0.5, itt='auto', ott='auto')
 
     def set_keyframe_sticky(self, result, constraint_side, lip_sticky_origin_locator_name, controller, attribute,
                             offset_value,
