@@ -221,7 +221,8 @@ class Nose:
                                                                   range_lip=nose_follow_mouth_value * -24,
                                                                   input_1X_lip=up_lip_controller_all + '.translateY',
                                                                   input_1X_jaw=jaw_ctrl + '.rotateX',
-                                                                  range_jaw=nose_follow_mouth_value * -6)
+                                                                  range_jaw=nose_follow_mouth_value * -6,
+                                                                  )
 
         sum_squash_stretch = self.squash_stretch_great_less(jaw_ctrl=jaw_ctrl,
                                                             input_1X_great=squash_stretch_node[2] + '.output1D',
@@ -282,6 +283,7 @@ class Nose:
         mouth_nose_follow = self.connect_value_weight(name='nostrilWeight', input_2X=mouth_ctrl_nose_follow,
                                                       input_1X=input_1X_mouth,
                                                       operation=2, prefix='SquashStretch', name_expression='NoseFollow',
+                                                      axis='',
                                                       side='')
 
         mouth = self.set_value_weight(name='nostrilWeight', input_2X_set=range_mouth,
@@ -346,7 +348,8 @@ class Nose:
                                                           input_1X_lip=controller_upper_lip + '.translateX',
                                                           prefix='TransX', side=side,
                                                           corner_lip_nostril_attribute=controller_lip_attribute,
-                                                          value_translate=value_translateX
+                                                          value_translate=value_translateX,
+                                                          axis='X'
                                                           )
         # TRANS Y
         y_origin = self.set_value_weight_mouth_corner_lip(range_mouth=nose_follow_mouth_value * 24,
@@ -357,7 +360,8 @@ class Nose:
                                                           input_1X_lip=controller_upper_lip + '.translateY',
                                                           prefix='TransY', side=side,
                                                           corner_lip_nostril_attribute=controller_lip_attribute,
-                                                          value_translate=value_translateY
+                                                          value_translate=value_translateY,
+                                                          axis='Y'
                                                           )
 
         # TRANS Z
@@ -369,7 +373,8 @@ class Nose:
                                                           input_1X_lip=controller_upper_lip + '.translateZ',
                                                           prefix='TransZ', side=side,
                                                           corner_lip_nostril_attribute=controller_lip_attribute,
-                                                          value_translate=value_translateZ
+                                                          value_translate=value_translateZ,
+                                                          axis='Z'
                                                           )
 
         return x_origin, y_origin, z_origin
@@ -377,7 +382,7 @@ class Nose:
     def set_value_weight_mouth_corner_lip(self, range_mouth, range_corner_lip, range_lip, input_1X_mouth,
                                           input_1X_corner_lip, input_1X_lip, prefix, side,
                                           corner_lip_nostril_attribute,
-                                          value_translate):
+                                          value_translate, axis):
         mouth = self.set_value_weight(name='nostrilWeight', input_2X_set=range_mouth,
                                       input_1X=input_1X_mouth, operation=2, prefix=prefix,
                                       name_expression='Mouth', side=side)
@@ -390,18 +395,19 @@ class Nose:
         # SUM ALL VALUE MULTIPLY
         all_combine_value_ctrl = self.add_all_value_controller(multiply_divide_output_mouth=mouth,
                                                                multiply_divide_output_corner_lip=corner_lip,
-                                                               multiply_divide_output_up_lip=up_lip, side=side)
+                                                               multiply_divide_output_up_lip=up_lip,
+                                                               axis= axis, side=side)
 
         # MULTIPLY WITH CORNER NOSTRIL ATTRIBUTE
         nostril_attribute_connect = self.connect_value_weight(name='nostrilWeight',
                                                               input_2X=corner_lip_nostril_attribute,
                                                               input_1X=all_combine_value_ctrl + '.output1D',
                                                               operation=1, prefix='CornerAttr', name_expression='',
-                                                              side=side)
+                                                              axis=axis, side=side)
         # SUM WITH ORIGIN VALUE
         origin_attribute_value = self.set_attribute_value_origin(value_translate=value_translate,
                                                                  nostril_attribute_mdn=nostril_attribute_connect,
-                                                                 side=side)
+                                                                 side=side, axis=axis)
 
         return origin_attribute_value
 
@@ -425,8 +431,8 @@ class Nose:
 
         return ctrl_drv_mdn
 
-    def set_attribute_value_origin(self, value_translate, nostril_attribute_mdn, side):
-        ctrl_drv_pma = mc.createNode('plusMinusAverage', n='nostriWeightSetOrigin' + side + '_pma')
+    def set_attribute_value_origin(self, value_translate, nostril_attribute_mdn, axis, side):
+        ctrl_drv_pma = mc.createNode('plusMinusAverage', n='nostriWeightSetOrigin' + axis + side + '_pma')
         mc.setAttr(ctrl_drv_pma + '.operation', 1)
         mc.setAttr(ctrl_drv_pma + '.input1D[0]', value_translate)
         mc.connectAttr(nostril_attribute_mdn + '.outputX', ctrl_drv_pma + '.input1D[1]')
@@ -443,8 +449,8 @@ class Nose:
         return ctrl_drv_pma
 
     def add_all_value_controller(self, multiply_divide_output_mouth, multiply_divide_output_corner_lip,
-                                 multiply_divide_output_up_lip, side):
-        ctrl_drv_pma = mc.createNode('plusMinusAverage', n='nostriWeightCombineCtrl' + side + '_pma')
+                                 multiply_divide_output_up_lip, axis, side):
+        ctrl_drv_pma = mc.createNode('plusMinusAverage', n='nostriWeightCombine' + axis  +'Ctrl'+ side + '_pma')
         mc.setAttr(ctrl_drv_pma + '.operation', 1)
         mc.connectAttr(multiply_divide_output_mouth + '.outputX', ctrl_drv_pma + '.input1D[0]')
         mc.connectAttr(multiply_divide_output_corner_lip + '.outputX', ctrl_drv_pma + '.input1D[1]')
@@ -460,8 +466,8 @@ class Nose:
 
         return ctrl_drv_mdn
 
-    def connect_value_weight(self, name, input_2X, input_1X, operation, prefix, name_expression, side):
-        ctrl_drv_mdn = mc.createNode('multiplyDivide', n=name + prefix + name_expression + 'Ctrl' + side + '_mdn')
+    def connect_value_weight(self, name, input_2X, input_1X, operation, prefix, name_expression, axis, side):
+        ctrl_drv_mdn = mc.createNode('multiplyDivide', n=name + prefix + name_expression+ axis + 'Ctrl' + side + '_mdn')
         mc.setAttr(ctrl_drv_mdn + '.operation', operation)
         mc.connectAttr(input_1X, ctrl_drv_mdn + '.input1X')
         mc.connectAttr(input_2X, ctrl_drv_mdn + '.input2X')
