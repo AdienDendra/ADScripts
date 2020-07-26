@@ -1033,9 +1033,9 @@ def add_attr_transform(obj, attr_name, attr_type, edit=False, keyable=False, cha
     if mc.nodeType(obj) == "transform":
         mc.addAttr(obj, ln=attr_name, at=attr_type, **kwargs)
         mc.setAttr('%s.%s' % (obj, attr_name), e=edit, k=keyable, cb=channel_box)
-        return obj
+        return attr_name
     else:
-        return
+        mc.error('object is not transform')
 
 
 # GENERAL FUNCTION: ADD ATTRIBUTE(S) ON MULTIPLE OBJECTS

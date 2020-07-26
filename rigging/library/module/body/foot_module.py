@@ -4,7 +4,7 @@ import maya.cmds as mc
 
 from rigging.library.base.body import foot as ft
 from rigging.library.module import base_module as gm, template_single_module as ds
-from rigging.library.utils import controller as ct, rotation_controller as rc, softIk_setup as rs
+from rigging.library.utils import controller as ct, rotation_controller as rc, softIk_setup as rs, adding_attr_message as am
 from rigging.tools import AD_utils as au
 
 reload(gm)
@@ -67,13 +67,32 @@ class Foot:
             # delete constraint softIk
             if not single_module:
                 mc.delete(leg.run_soft_ik[0], leg.run_soft_ik[1])
-
             get_value_tx_upper_limb_jnt = mc.xform(upper_limb_jnt, ws=1, q=1, t=1)[0]
 
             if get_value_tx_upper_limb_jnt > 0:
                 value_attribute = -1
             else:
                 value_attribute = 1
+
+            # ADD MESSAGE ATTRIBUTE
+            message = am.MessageAttribute(fkik_ctrl=controller_FkIk_limb_setup, ball=True)
+
+            # connect end limb fk joint
+            message.connect_message_to_attribute(object_connector=ball_fk_jnt,
+                                                 fkik_ctrl=controller_FkIk_limb_setup,
+                                                 object_target=message.end_limb_fk_jnt)
+            # connect end limb ik joint
+            message.connect_message_to_attribute(object_connector=ball_ik_jnt,
+                                                 fkik_ctrl=controller_FkIk_limb_setup,
+                                                 object_target=message.end_limb_ik_jnt)
+            # connect end limb fk ctrl
+            message.connect_message_to_attribute(object_connector=build_foot.control_fk,
+                                                 fkik_ctrl=controller_FkIk_limb_setup,
+                                                 object_target=message.end_limb_fk_ctrl)
+            # connect toe wiggle attribute
+            message.connect_message_to_attribute(object_connector=lower_limb_ik_control,
+                                                 fkik_ctrl=controller_FkIk_limb_setup,
+                                                 object_target=message.toe_wiggle_attr)
 
             # parenting controller Fk ball and Ik ball to respective parent
             mc.parent(build_foot.parent_base_fk, lower_gimbal_fk_ctrl)

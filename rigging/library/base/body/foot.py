@@ -69,7 +69,7 @@ class Build:
         au.add_attribute(objects=[controller_lower_limb_ik], long_name=['toeRoll'],
                          at="float", dv=0, keyable=True)
 
-        au.add_attribute(objects=[controller_lower_limb_ik], long_name=['toeWiggle'],
+        self.toe_wiggle_attr = au.add_attribute(objects=[controller_lower_limb_ik], long_name=['toeWiggle'],
                          at="float", dv=0, keyable=True)
 
         # create reverse node for FK on/off
