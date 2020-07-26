@@ -53,14 +53,14 @@ class Snapping:
 
             if fkik_ctrl_select[0] == self.fkik_arm_LFT_setup or fkik_ctrl_select[0] == self.fkik_arm_RGT_setup:
 
-                self.snap_to_fk(up_pos=upper_limb_fk_jnt, mid_pos=middle_limb_fk_jnt,
+                self.snap_to_fk = self.snap_to_fk(up_pos=upper_limb_fk_jnt, mid_pos=middle_limb_fk_jnt,
                                 low_pos=lower_limb_fk_jnt,
                                 controller_up_ik=upper_limb_ik_ctrl,
                                 controller_poleVector_ik=poleVector_ctrl,
                                 controller_low_ik=lower_limb_ik_ctrl)
 
 
-                self.snap_to_ik(up_pos=upper_limb_ik_jnt, mid_pos=middle_limb_ik_jnt,
+                self.snap_to_ik = self.snap_to_ik(up_pos=upper_limb_ik_jnt, mid_pos=middle_limb_ik_jnt,
                                 low_pos=lower_limb_ik_jnt,
                                 controller_up_fk=upper_limb_fk_ctrl,
                                 controller_mid_fk=middle_limb_fk_ctrl,
@@ -72,7 +72,7 @@ class Snapping:
                 end_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_fk_ctrl')[0]
                 toe_wiggle_attr = mc.listConnections(fkik_ctrl_select[0] + '.toe_wiggle_attr')[0]
 
-                self.snap_to_fk(up_pos=upper_limb_fk_jnt, mid_pos=middle_limb_fk_jnt,
+                self.snap_to_fk = self.snap_to_fk(up_pos=upper_limb_fk_jnt, mid_pos=middle_limb_fk_jnt,
                                 low_pos=lower_limb_fk_jnt,
                                 controller_up_ik=upper_limb_ik_ctrl,
                                 controller_poleVector_ik=poleVector_ctrl,
@@ -80,7 +80,7 @@ class Snapping:
                                 toe_wiggle_attr=toe_wiggle_attr, end_pos=end_limb_fk_jnt
                                 )
 
-                self.snap_to_ik(up_pos=upper_limb_ik_jnt, mid_pos=middle_limb_ik_jnt,
+                self.snap_to_ik = self.snap_to_ik(up_pos=upper_limb_ik_jnt, mid_pos=middle_limb_ik_jnt,
                                 low_pos=lower_limb_ik_jnt,
                                 controller_up_fk=upper_limb_fk_ctrl,
                                 controller_mid_fk=middle_limb_fk_ctrl,
