@@ -40,6 +40,7 @@ class Foot:
                  controller_lower_limb_ik=None,
                  position_soft_jnt=None,
                  part_joint_grp_module=None,
+                 end_limb_snap_jnt=None,
                  side=None,
                  single_module=False,
                  scale=1.0,
@@ -93,6 +94,10 @@ class Foot:
             message.connect_message_to_attribute(object_connector=lower_limb_ik_control,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
                                                  object_target=message.toe_wiggle_attr)
+            # connect end snap joint
+            message.connect_message_to_attribute(object_connector=end_limb_snap_jnt,
+                                                 fkik_ctrl=controller_FkIk_limb_setup,
+                                                 object_target=message.end_limb_snap_jnt)
 
             # parenting controller Fk ball and Ik ball to respective parent
             mc.parent(build_foot.parent_base_fk, lower_gimbal_fk_ctrl)

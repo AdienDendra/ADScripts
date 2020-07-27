@@ -118,13 +118,13 @@ class Build:
                              at="long", min=0, max=1, dv=0, keyable=True)
 
             self.limb_add_attr_ik(controller=self.controller_lower_limb_ik.control, follow='shoulder:hip:world:',
-                                  prefix=prefix, prefix_poleVector_ik=prefix_pole_vector_ik)
+                                  prefix=prefix)
         else:
             au.add_attribute(objects=[self.controller_pole_vector_ik.control], long_name=['follow'],
                              at="long", min=0, max=1, dv=1, keyable=True)
 
             self.limb_add_attr_ik(controller=self.controller_lower_limb_ik.control, follow='hip:world:',
-                                  prefix=prefix, prefix_poleVector_ik=prefix_pole_vector_ik)
+                                  prefix=prefix)
         # ==================================================================================================================
         #                                                  IK LIMB SETUP
         # ==================================================================================================================
@@ -414,7 +414,7 @@ class Build:
         ## SLIDE MIDDLE LIMB IK SETUP
         # setRange for slide middle limb
         slide_ik_set_range = mc.shadingNode('setRange', asUtility=1, n='%s%s%s_str' % (prefix, 'SlideIkMd', side))
-        mc.connectAttr(self.controller_lower_limb_ik.control + '.%s%s' % (prefix, 'Slide'),
+        mc.connectAttr(self.controller_lower_limb_ik.control + '.%s' %  self.slide_attr,
                        slide_ik_set_range + '.valueX')
         mc.setAttr(slide_ik_set_range + '.minX', -1)
         mc.setAttr(slide_ik_set_range + '.maxX', 1)
@@ -425,6 +425,7 @@ class Build:
         slide_ik_clamp = mc.shadingNode('clamp', asUtility=1, n='%s%s%s_clm' % (prefix, 'SlideIkDist', side))
         mc.connectAttr(self.scale_soft_slide_mdn + '.outputX', slide_ik_clamp + '.minR')
         mc.setAttr(slide_ik_clamp + '.maxR', distance_main_ik_value)
+        self.slide_ik_clamp = slide_ik_clamp
 
         # condition if stretch on when slide on max
         slide_ik_max_con = mc.shadingNode('condition', asUtility=1, n='%s%s%s_cnd' % (prefix, 'SlideIkStretchOn', side))
@@ -502,14 +503,12 @@ class Build:
         # snap upper limb
         self.limb_poleVector_snap_ik(obj_poleVector='Md', get_value_tx_upper_limb_jnt=get_value_tx_upper_limb_jnt,
                                      prefix=prefix, side=side,
-                                     prefix_pole_vector_ik=prefix_pole_vector_ik,
                                      slide_ik_pma_stretch=slide_ik_mid_pma_stretch, limb_ik_jnt=middle_limb_ik_jnt,
                                      scale_poleVector_snap_mdn=self.scale_poleVector_snap_middle_mdn)
 
         # snap middle limb
         self.limb_poleVector_snap_ik(obj_poleVector='Lr', get_value_tx_upper_limb_jnt=get_value_tx_upper_limb_jnt,
                                      prefix=prefix, side=side,
-                                     prefix_pole_vector_ik=prefix_pole_vector_ik,
                                      slide_ik_pma_stretch=slide_ik_lower_pma_stretch,
                                      limb_ik_jnt=lower_limb_ik_jnt,
                                      scale_poleVector_snap_mdn=self.scale_poleVector_snap_lower_mdn)
@@ -967,7 +966,7 @@ class Build:
         # connect condition  limb to pma stretchIkUrSum
         mc.connectAttr(slide_ik_stretch_condiiton + '.outColorR', stretch_ik_sum + '.input1D[1]')
 
-    def limb_add_attr_ik(self, controller, follow, prefix, prefix_poleVector_ik):
+    def limb_add_attr_ik(self, controller, follow, prefix):
         au.add_attribute(objects=[controller], long_name=['%s%s' % (prefix, 'IkSetup')], nice_name=[' '], at="enum",
                          en='%s%s' % (prefix.capitalize(), ' Ik Setup'), channel_box=True)
 
@@ -980,11 +979,11 @@ class Build:
         au.add_attribute(objects=[controller], long_name=['softIk'],
                          at="float", min=0, max=20, dv=0, keyable=True)
 
-        au.add_attribute(objects=[controller], long_name=['%s%s' % (prefix, 'Slide')],
+        self.slide_attr = au.add_attribute(objects=[controller], long_name=['slide'],
                          at="float", min=-10, max=10, dv=0, keyable=True)
 
-        au.add_attribute(objects=[controller], long_name=['%s%s' % (prefix_poleVector_ik, 'Snap')],
-                         at="float", min=0, max=1, dv=0, keyable=True)
+        self.ikSnap_attr = au.add_attribute(objects=[controller], long_name=['ikSnap'],
+                                            at="float", min=0, max=1, dv=0, keyable=True)
 
         au.add_attribute(objects=[controller], long_name=['twist'],
                          at="float", dv=0, keyable=True)
@@ -999,7 +998,7 @@ class Build:
 
         return distanceNode
 
-    def limb_poleVector_snap_ik(self, get_value_tx_upper_limb_jnt, prefix, side, obj_poleVector, prefix_pole_vector_ik,
+    def limb_poleVector_snap_ik(self, get_value_tx_upper_limb_jnt, prefix, side, obj_poleVector,
                                 slide_ik_pma_stretch,
                                 scale_poleVector_snap_mdn, limb_ik_jnt):
         # snaplimb to pole vector
@@ -1013,7 +1012,7 @@ class Build:
         else:
             mc.setAttr(poleVector_mult_rev + '.input2', -1)
 
-        mc.connectAttr(self.controller_lower_limb_ik.control + '.%s%s' % (prefix_pole_vector_ik, 'Snap'),
+        mc.connectAttr(self.controller_lower_limb_ik.control + '.%s' % self.ikSnap_attr,
                        poleVector_snap_bta + '.attributesBlender')
         mc.connectAttr(slide_ik_pma_stretch + '.output1D', poleVector_snap_bta + '.input[0]')
         mc.connectAttr(scale_poleVector_snap_mdn + '.outputX', poleVector_mult_rev + '.input1')
