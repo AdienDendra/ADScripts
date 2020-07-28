@@ -16,29 +16,29 @@ class MessageAttribute:
             self.lower_limb_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_jnt',
                                                            attr_type='message')
 
-        if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_fk_jnt')):
-            self.upper_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_fk_jnt',
-                                                           attr_type='message')
-
-        if not mc.objExists('%s.%s' % (fkik_ctrl, 'middle_limb_fk_jnt')):
-            self.middle_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='middle_limb_fk_jnt',
-                                                        attr_type='message')
-
-        if not mc.objExists('%s.%s' % (fkik_ctrl, 'lower_limb_fk_jnt')):
-            self.lower_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_fk_jnt',
-                                                           attr_type='message')
-
-        if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_ik_jnt')):
-            self.upper_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_ik_jnt',
-                                                       attr_type='message')
-
-        if not mc.objExists('%s.%s' % (fkik_ctrl, 'middle_limb_ik_jnt')):
-            self.middle_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='middle_limb_ik_jnt',
-                                                        attr_type='message')
-
-        if not mc.objExists('%s.%s' % (fkik_ctrl, 'lower_limb_ik_jnt')):
-            self.lower_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_ik_jnt',
-                                                       attr_type='message')
+        # if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_fk_jnt')):
+        #     self.upper_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_fk_jnt',
+        #                                                    attr_type='message')
+        #
+        # if not mc.objExists('%s.%s' % (fkik_ctrl, 'middle_limb_fk_jnt')):
+        #     self.middle_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='middle_limb_fk_jnt',
+        #                                                 attr_type='message')
+        #
+        # if not mc.objExists('%s.%s' % (fkik_ctrl, 'lower_limb_fk_jnt')):
+        #     self.lower_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_fk_jnt',
+        #                                                    attr_type='message')
+        #
+        # if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_ik_jnt')):
+        #     self.upper_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_ik_jnt',
+        #                                                attr_type='message')
+        #
+        # if not mc.objExists('%s.%s' % (fkik_ctrl, 'middle_limb_ik_jnt')):
+        #     self.middle_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='middle_limb_ik_jnt',
+        #                                                 attr_type='message')
+        #
+        # if not mc.objExists('%s.%s' % (fkik_ctrl, 'lower_limb_ik_jnt')):
+        #     self.lower_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_ik_jnt',
+        #                                                attr_type='message')
 
         if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_fk_ctrl')):
             self.upper_limb_fk_ctrl = au.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_fk_ctrl',
@@ -63,6 +63,7 @@ class MessageAttribute:
             self.lower_limb_ik_ctrl = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_ik_ctrl',
                                                         attr_type='message')
 
+        # use
         if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_snap_jnt')):
             self.upper_limb_snap_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_snap_jnt',
                                                         attr_type='message')
@@ -75,20 +76,29 @@ class MessageAttribute:
             self.lower_limb_snap_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='lower_limb_snap_jnt',
                                                         attr_type='message')
 
+        if not mc.objExists('%s.%s' % (fkik_ctrl, 'fk_ik_arm_ctrl')):
+            self.fk_ik_arm_ctrl = au.add_attr_transform(obj=fkik_ctrl, attr_name='fk_ik_arm_ctrl',
+                                                        attr_type='message')
+
+        if not mc.objExists('%s.%s' % (fkik_ctrl, 'fk_ik_leg_ctrl')):
+            self.fk_ik_leg_ctrl = au.add_attr_transform(obj=fkik_ctrl, attr_name='fk_ik_leg_ctrl',
+                                                        attr_type='message')
         if ball:
             if not mc.objExists('%s.%s' % (fkik_ctrl, 'end_limb_fk_jnt')):
                 self.end_limb_fk_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='end_limb_fk_jnt',
                                                          attr_type='message')
-            if not mc.objExists('%s.%s' % (fkik_ctrl, 'end_limb_ik_jnt')):
-                self.end_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='end_limb_ik_jnt',
-                                                         attr_type='message')
+            if not mc.objExists('%s.%s' % (fkik_ctrl, 'end_limb_jnt')):
+                self.end_limb_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='end_limb_jnt',
+                                                             attr_type='message')
+            # if not mc.objExists('%s.%s' % (fkik_ctrl, 'end_limb_ik_jnt')):
+            #     self.end_limb_ik_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='end_limb_ik_jnt',
+            #                                              attr_type='message')
             if not mc.objExists('%s.%s' % (fkik_ctrl, 'end_limb_fk_ctrl')):
                 self.end_limb_fk_ctrl = au.add_attr_transform(obj=fkik_ctrl, attr_name='end_limb_fk_ctrl',
                                                           attr_type='message')
             if not mc.objExists('%s.%s' % (fkik_ctrl, 'toe_wiggle_attr')):
                 self.toe_wiggle_attr = au.add_attr_transform(obj=fkik_ctrl, attr_name='toe_wiggle_attr',
                                                          attr_type='message')
-
             if not mc.objExists('%s.%s' % (fkik_ctrl, 'end_limb_snap_jnt')):
                 self.end_limb_snap_jnt = au.add_attr_transform(obj=fkik_ctrl, attr_name='end_limb_snap_jnt',
                                                                  attr_type='message')

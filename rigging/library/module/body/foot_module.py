@@ -82,10 +82,14 @@ class Foot:
             message.connect_message_to_attribute(object_connector=ball_fk_jnt,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
                                                  object_target=message.end_limb_fk_jnt)
-            # connect end limb ik joint
-            message.connect_message_to_attribute(object_connector=ball_ik_jnt,
+            # # connect end limb ik joint
+            # message.connect_message_to_attribute(object_connector=ball_ik_jnt,
+            #                                      fkik_ctrl=controller_FkIk_limb_setup,
+            #                                      object_target=message.end_limb_ik_jnt)
+            # connect end limb joint
+            message.connect_message_to_attribute(object_connector=ball_jnt,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
-                                                 object_target=message.end_limb_ik_jnt)
+                                                 object_target=message.end_limb_jnt)
             # connect end limb fk ctrl
             message.connect_message_to_attribute(object_connector=build_foot.control_fk,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
