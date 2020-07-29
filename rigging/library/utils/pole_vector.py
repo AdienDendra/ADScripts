@@ -7,26 +7,6 @@ import rigging.tools.AD_utils as au
 
 reload(au)
 
-def get_poleVector_position(root_pos, mid_pos, end_pos):
-    root_jnt_vector = om.MVector(root_pos[0], root_pos[1], root_pos[2])
-    mid_jnt_vector = om.MVector(mid_pos[0], mid_pos[1], mid_pos[2])
-    end_jnt_vector = om.MVector(end_pos[0], end_pos[1], end_pos[2])
-
-    line = (end_jnt_vector - root_jnt_vector)
-    point = (mid_jnt_vector - root_jnt_vector)
-
-    scale_value = (line * point) / (line * line)
-    projection_vector = line * scale_value + root_jnt_vector
-
-    root_to_mid_length = (mid_jnt_vector - root_jnt_vector).length()
-    mid_to_end_length = (end_jnt_vector - mid_jnt_vector).length()
-    total_length = root_to_mid_length + mid_to_end_length
-
-    pole_vector_position = (mid_jnt_vector - projection_vector).normal() + mid_jnt_vector
-
-    return pole_vector_position
-
-
 def get_poleVec_position(root_pos, mid_pos, end_pos, length):
     root_jnt_vector = om.MVector(root_pos[0], root_pos[1], root_pos[2])
     mid_jnt_vector = om.MVector(mid_pos[0], mid_pos[1], mid_pos[2])

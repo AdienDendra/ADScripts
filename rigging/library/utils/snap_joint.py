@@ -8,7 +8,7 @@ from rigging.tools import AD_utils as au
 reload(au)
 reload(tf)
 
-def snapping_joint(limb_jnt, side_LFT, side_RGT, side):
+def joint(limb_jnt, side_LFT, side_RGT, side):
     # create locator
     mc.select(cl=1)
     upper_limb_snap_jnt = mc.joint(n=au.prefix_name(
