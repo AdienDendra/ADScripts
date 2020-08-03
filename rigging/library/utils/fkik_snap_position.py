@@ -2,104 +2,104 @@ import maya.OpenMaya as om
 import maya.cmds as mc
 import pymel.core as pm
 
-def ik_to_fk():
+def ik_to_fk(*args):
 
     # listing fk ik setup selection`
     fkik_ctrl_select = pm.ls(sl=1)
 
     # assign as instance fkik leg setup
-    if fkik_ctrl_select:
+    # if fkik_ctrl_select:?
 
-        # listing the connection
-        try:
-            mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
-        except:
-            mc.error('To run the snapping fk/ik please select arm or leg setup controller!')
+    # listing the connection
+    try:
+        mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
+    except:
+        mc.error('To run the snapping fk/ik please select arm or leg setup controller!')
 
-        # condition of controller
-        getattr_ctrl = pm.getAttr(fkik_ctrl_select[0]+'.FkIk')
-        if getattr_ctrl == 0:
-            return fkik_ctrl_select[0]
-        else:
-            upper_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
-            middle_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.middle_limb_jnt')[0]
-            lower_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_jnt')[0]
-            upper_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_fk_ctrl')[0]
-            middle_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.middle_limb_fk_ctrl')[0]
-            lower_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_fk_ctrl')[0]
-            fk_ik_arm_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_arm_ctrl', s=1)
-            fk_ik_leg_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_leg_ctrl', s=1)
+    # condition of controller
+    getattr_ctrl = pm.getAttr(fkik_ctrl_select[0]+'.FkIk')
+    if getattr_ctrl == 0:
+        return fkik_ctrl_select[0]
+    else:
+        upper_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
+        middle_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.middle_limb_jnt')[0]
+        lower_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_jnt')[0]
+        upper_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_fk_ctrl')[0]
+        middle_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.middle_limb_fk_ctrl')[0]
+        lower_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_fk_ctrl')[0]
+        fk_ik_arm_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_arm_ctrl', s=1)
+        fk_ik_leg_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_leg_ctrl', s=1)
 
-            # run snap for arm
-            if fk_ik_arm_ctrl:
-                ik_to_fk_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
-                               lower_limb_snap_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
-                               lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl
-                               )
-            # run snap for leg
-            if fk_ik_leg_ctrl:
-                end_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_jnt')[0]
-                end_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_fk_ctrl')[0]
+        # run snap for arm
+        if fk_ik_arm_ctrl:
+            ik_to_fk_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
+                           lower_limb_snap_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
+                           lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl
+                           )
+        # run snap for leg
+        if fk_ik_leg_ctrl:
+            end_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_jnt')[0]
+            end_limb_fk_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_fk_ctrl')[0]
 
-                ik_to_fk_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
-                               lower_limb_snap_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
-                               lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
-                               end_limb_snap_jnt=end_limb_jnt, end_limb_ctrl=end_limb_fk_ctrl,
-                               leg=True)
+            ik_to_fk_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
+                           lower_limb_snap_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
+                           lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
+                           end_limb_snap_jnt=end_limb_jnt, end_limb_ctrl=end_limb_fk_ctrl,
+                           leg=True)
 
-            mc.setAttr(fkik_ctrl_select[0] + '.FkIk', 0)
+        mc.setAttr(fkik_ctrl_select[0] + '.FkIk', 0)
 
 def fk_to_ik(value_axis_middle_arm_jnt=2.25326085, value_axis_lower_arm_jnt=2.39415336,
              value_axis_middle_leg_jnt=5.36579657, value_axis_lower_leg_jnt=4.69395685,
-             axis='translateY'):
+             axis='translateY', *args):
     # listing fk ik setup selection
     fkik_ctrl_select = pm.ls(sl=1)
 
     # assign as instance fkik leg setup
-    if fkik_ctrl_select:
-        # query the connection
-        try:
-            mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
-        except:
-            mc.error('for run the snapping fk/ik please select arm or leg setup controller!')
+    # if fkik_ctrl_select:
+    # query the connection
+    try:
+        mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
+    except:
+        mc.error('for run the snapping fk/ik please select arm or leg setup controller!')
 
-        # condition of controller
-        getattr_ctrl = pm.getAttr(fkik_ctrl_select[0]+'.FkIk')
-        if getattr_ctrl == 1:
-            return fkik_ctrl_select[0]
-        else:
-            upper_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
-            middle_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.middle_limb_jnt')[0]
-            lower_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_jnt')[0]
-            poleVector_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.poleVector_ctrl')[0]
-            lower_limb_ik_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_ik_ctrl')[0]
-            upper_limb_ik_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_ik_ctrl')[0]
-            fk_ik_arm_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_arm_ctrl', s=1)
-            fk_ik_leg_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_leg_ctrl', s=1)
+    # condition of controller
+    getattr_ctrl = pm.getAttr(fkik_ctrl_select[0]+'.FkIk')
+    if getattr_ctrl == 1:
+        return fkik_ctrl_select[0]
+    else:
+        upper_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_jnt')[0]
+        middle_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.middle_limb_jnt')[0]
+        lower_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_jnt')[0]
+        poleVector_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.poleVector_ctrl')[0]
+        lower_limb_ik_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.lower_limb_ik_ctrl')[0]
+        upper_limb_ik_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.upper_limb_ik_ctrl')[0]
+        fk_ik_arm_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_arm_ctrl', s=1)
+        fk_ik_leg_ctrl = mc.listConnections(fkik_ctrl_select[0] + '.fk_ik_leg_ctrl', s=1)
 
-            # run for snap arm
-            if fk_ik_arm_ctrl:
-                fk_to_ik_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
-                               lower_limb_snap_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
-                               lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
-                               value_axis_towards_middle_jnt=value_axis_middle_arm_jnt,
-                               value_axis_towards_lower_jnt=value_axis_lower_arm_jnt,
-                               middle_limb_jnt=middle_limb_jnt, lower_limb_jnt=lower_limb_jnt, axis_towards=axis,
-                               )
-            # run for snap leg
-            if fk_ik_leg_ctrl:
-                end_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_jnt')[0]
-                toe_wiggle_attr = mc.listConnections(fkik_ctrl_select[0] + '.toe_wiggle_attr')[0]
+        # run for snap arm
+        if fk_ik_arm_ctrl:
+            fk_to_ik_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
+                           lower_limb_snap_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
+                           lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
+                           value_axis_towards_middle_jnt=value_axis_middle_arm_jnt,
+                           value_axis_towards_lower_jnt=value_axis_lower_arm_jnt,
+                           middle_limb_jnt=middle_limb_jnt, lower_limb_jnt=lower_limb_jnt, axis_towards=axis,
+                           )
+        # run for snap leg
+        if fk_ik_leg_ctrl:
+            end_limb_jnt = mc.listConnections(fkik_ctrl_select[0] + '.end_limb_jnt')[0]
+            toe_wiggle_attr = mc.listConnections(fkik_ctrl_select[0] + '.toe_wiggle_attr')[0]
 
-                fk_to_ik_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
-                               lower_limb_snap_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
-                               lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
-                               value_axis_towards_middle_jnt=value_axis_middle_leg_jnt,
-                               value_axis_towards_lower_jnt=value_axis_lower_leg_jnt,
-                               middle_limb_jnt=middle_limb_jnt, lower_limb_jnt=lower_limb_jnt, axis_towards=axis,
-                               end_limb_jnt=end_limb_jnt, end_limb_ctrl=toe_wiggle_attr, leg=True)
+            fk_to_ik_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
+                           lower_limb_snap_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
+                           lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
+                           value_axis_towards_middle_jnt=value_axis_middle_leg_jnt,
+                           value_axis_towards_lower_jnt=value_axis_lower_leg_jnt,
+                           middle_limb_jnt=middle_limb_jnt, lower_limb_jnt=lower_limb_jnt, axis_towards=axis,
+                           end_limb_jnt=end_limb_jnt, end_limb_ctrl=toe_wiggle_attr, leg=True)
 
-            mc.setAttr(fkik_ctrl_select[0] + '.FkIk', 1)
+        mc.setAttr(fkik_ctrl_select[0] + '.FkIk', 1)
 
 def ik_to_fk_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jnt,
                    middle_limb_ctrl, lower_limb_ctrl, upper_limb_ctrl,

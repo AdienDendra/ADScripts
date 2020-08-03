@@ -15,9 +15,10 @@ def display_ui():
 
     with pm.window(adien_snap_fkIk, title='Adien Fk/Ik Snap', width=275, height=50):
         with pm.columnLayout(rs=10, adjustableColumn=True):
-            pm.button(label='To Fk', width=275, height=50, backgroundColor=[0.46, 0.86, 0.46],
+            pm.text(l='Select Leg/Arm Ctrl Setup:')
+            pm.button(label='To Fk', width=275, height=40, backgroundColor=[0.46, 0.86, 0.46],
                       command=pm.Callback(sn.ik_to_fk))
-            pm.button(label='To Ik', width=275, height=50, backgroundColor=[0.86, 0.46, 0.46],
+            pm.button(label='To Ik', width=275, height=40, backgroundColor=[0.86, 0.46, 0.46],
                       command=pm.Callback(sn.fk_to_ik))
 
             pm.text(l='<a href="http://projects.adiendendra.com/">find out how to use it! >> </a>', hl=True)
