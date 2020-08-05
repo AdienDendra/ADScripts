@@ -12,7 +12,7 @@ def joint(limb_jnt, side_LFT, side_RGT, side):
     # create locator
     mc.select(cl=1)
     upper_limb_snap_jnt = mc.joint(n=au.prefix_name(
-        tf.reposition_side(object=limb_jnt, side_LFT=side_LFT, side_RGT=side_RGT)) + 'Snap' + side + '_jnt')
+        tf.reposition_side(object=limb_jnt, side_LFT=side_LFT, side_RGT=side_RGT)) + 'Ref' + side + '_jnt')
 
     # match position
     mc.delete(mc.parentConstraint(limb_jnt, upper_limb_snap_jnt))

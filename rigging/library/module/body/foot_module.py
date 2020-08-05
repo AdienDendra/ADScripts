@@ -78,25 +78,25 @@ class Foot:
             message = am.MessageAttribute(fkik_ctrl=controller_FkIk_limb_setup, ball=True)
 
             # connect end limb fk joint
-            message.connect_message_to_attribute(object_connector=ball_fk_jnt,
+            message.connect_message_to_attribute(object_target=ball_fk_jnt,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
-                                                 object_target=message.end_limb_fk_jnt)
+                                                 object_connector=message.end_limb_fk_jnt)
             # # connect end limb ik joint
             # message.connect_message_to_attribute(object_connector=ball_ik_jnt,
             #                                      fkik_ctrl=controller_FkIk_limb_setup,
             #                                      object_target=message.end_limb_ik_jnt)
             # connect end limb joint
-            message.connect_message_to_attribute(object_connector=ball_jnt,
+            message.connect_message_to_attribute(object_target=ball_jnt,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
-                                                 object_target=message.end_limb_jnt)
+                                                 object_connector=message.end_limb_jnt)
             # connect end limb fk ctrl
-            message.connect_message_to_attribute(object_connector=build_foot.control_fk,
+            message.connect_message_to_attribute(object_target=build_foot.control_fk,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
-                                                 object_target=message.end_limb_fk_ctrl)
+                                                 object_connector=message.end_limb_fk_ctrl)
             # connect toe wiggle attribute
-            message.connect_message_to_attribute(object_connector=lower_limb_ik_control,
+            message.connect_message_to_attribute(object_target=lower_limb_ik_control,
                                                  fkik_ctrl=controller_FkIk_limb_setup,
-                                                 object_target=message.toe_wiggle_attr)
+                                                 object_connector=message.toe_wiggle_attr)
             # # connect end snap joint
             # message.connect_message_to_attribute(object_connector=end_limb_snap_jnt,
             #                                      fkik_ctrl=controller_FkIk_limb_setup,

@@ -440,6 +440,9 @@ class Limb:
         # ADD MESSAGE ATTRIBUTE
         message = am.MessageAttribute(fkik_ctrl=self.FkIk_limb_setup_controller)
 
+        # add joint reference
+        message.add_joint_reference(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, side_LFT, side_RGT, side)
+
         if arm:
             self.shoulder_fk_locator = build_limb.shoulder_fk
             self.hip_fk_locator = build_limb.hip_fk
@@ -466,9 +469,9 @@ class Limb:
             au.constraint_rename(pac_clavicle_constraint)
 
             # connect fk ik arm controller
-            message.connect_message_to_attribute(object_connector=self.FkIk_limb_setup_controller,
+            message.connect_message_to_attribute(object_target=self.FkIk_limb_setup_controller,
                                                  fkik_ctrl=self.FkIk_limb_setup_controller,
-                                                 object_target=message.fk_ik_arm_ctrl)
+                                                 object_connector=message.fk_ik_arm_ctrl)
         else:
             self.hip_fk_locator = build_limb.hip_fk
             self.world_fk_locator = build_limb.world_fk
@@ -502,49 +505,57 @@ class Limb:
             au.constraint_rename(pac_pelvis_constraint)
 
             # connect fk ik arm controller
-            message.connect_message_to_attribute(object_connector=self.FkIk_limb_setup_controller,
+            message.connect_message_to_attribute(object_target=self.FkIk_limb_setup_controller,
                                                  fkik_ctrl=self.FkIk_limb_setup_controller,
-                                                 object_target=message.fk_ik_leg_ctrl)
+                                                 object_connector=message.fk_ik_leg_ctrl)
 
+        # connect middle ref joint
+        message.connect_message_to_attribute(object_target=message.middle_ref_joint,
+                                             fkik_ctrl=self.FkIk_limb_setup_controller,
+                                             object_connector=message.middle_ref_message_jnt)
+        # connect lower ref joint
+        message.connect_message_to_attribute(object_target=message.lower_ref_joint,
+                                             fkik_ctrl=self.FkIk_limb_setup_controller,
+                                             object_connector=message.lower_ref_message_jnt)
 
         # connect upper limb snap jnt
-        message.connect_message_to_attribute(object_connector=upper_limb_jnt,
+        message.connect_message_to_attribute(object_target=upper_limb_jnt,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.upper_limb_jnt)
+                                             object_connector=message.upper_limb_jnt)
 
         # connect middle limb joint
-        message.connect_message_to_attribute(object_connector=middle_limb_jnt,
+        message.connect_message_to_attribute(object_target=middle_limb_jnt,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.middle_limb_jnt)
+                                             object_connector=message.middle_limb_jnt)
         # connect lower limb joint
-        message.connect_message_to_attribute(object_connector=lower_limb_jnt,
+        message.connect_message_to_attribute(object_target=lower_limb_jnt,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.lower_limb_jnt)
+                                             object_connector=message.lower_limb_jnt)
 
         # connect upper limb fk ctrl
-        message.connect_message_to_attribute(object_connector=self.upper_limb_fk_control,
+        message.connect_message_to_attribute(object_target=self.upper_limb_fk_control,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.upper_limb_fk_ctrl)
+                                             object_connector=message.upper_limb_fk_ctrl)
         # connect middle limb fk ctrl
-        message.connect_message_to_attribute(object_connector=self.middle_limb_fk_control,
+        message.connect_message_to_attribute(object_target=self.middle_limb_fk_control,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.middle_limb_fk_ctrl)
+                                             object_connector=message.middle_limb_fk_ctrl)
         # connect lower limb fk ctrl
-        message.connect_message_to_attribute(object_connector=self.lower_limb_fk_control,
+        message.connect_message_to_attribute(object_target=self.lower_limb_fk_control,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.lower_limb_fk_ctrl)
+                                             object_connector=message.lower_limb_fk_ctrl)
         # connect upper limb ik ctrl
-        message.connect_message_to_attribute(object_connector=self.upper_limb_ik_control,
+        message.connect_message_to_attribute(object_target=self.upper_limb_ik_control,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.upper_limb_ik_ctrl)
+                                             object_connector=message.upper_limb_ik_ctrl)
         # connect pole vector ctrl
-        message.connect_message_to_attribute(object_connector=self.poleVector_ik_control,
+        message.connect_message_to_attribute(object_target=self.poleVector_ik_control,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.poleVector_ctrl)
+                                             object_connector=message.poleVector_ctrl)
         # connect lower limb ik ctrl
-        message.connect_message_to_attribute(object_connector=self.lower_limb_ik_control,
+        message.connect_message_to_attribute(object_target=self.lower_limb_ik_control,
                                              fkik_ctrl=self.FkIk_limb_setup_controller,
-                                             object_target=message.lower_limb_ik_ctrl)
+                                             object_connector=message.lower_limb_ik_ctrl)
 
         # control combine detail
         self.ctrl_combine_detail = build_limb.ctrl_mid_middle_limb.control

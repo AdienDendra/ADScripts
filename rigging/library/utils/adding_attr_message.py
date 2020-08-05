@@ -1,7 +1,18 @@
+from __builtin__ import reload
+
 import maya.cmds as mc
+from rigging.library.utils import snap_joint as sj
+reload(sj)
 
 class MessageAttribute:
     def __init__(self, fkik_ctrl, ball=False):
+
+        if not mc.objExists('%s.%s' % (fkik_ctrl, 'middle_ref_jnt')):
+            self.middle_ref_message_jnt =  self.add_attr_transform(obj=fkik_ctrl, attr_name='middle_ref_jnt',
+                                                        attr_type='message')
+        if not mc.objExists('%s.%s' % (fkik_ctrl, 'lower_ref_jnt')):
+            self.lower_ref_message_jnt =  self.add_attr_transform(obj=fkik_ctrl, attr_name='lower_ref_jnt',
+                                                        attr_type='message')
 
         if not mc.objExists('%s.%s' % (fkik_ctrl, 'upper_limb_jnt')):
             self.upper_limb_jnt =  self.add_attr_transform(obj=fkik_ctrl, attr_name='upper_limb_jnt',
@@ -60,8 +71,8 @@ class MessageAttribute:
                 self.toe_wiggle_attr =   self.add_attr_transform(obj=fkik_ctrl, attr_name='toe_wiggle_attr',
                                                          attr_type='message')
 
-    def connect_message_to_attribute(self, object_connector, fkik_ctrl, object_target):
-        mc.connectAttr('%s.message' % (object_connector), '%s.%s' % (fkik_ctrl, object_target))
+    def connect_message_to_attribute(self, object_target, fkik_ctrl, object_connector):
+        mc.connectAttr('%s.message' % (object_target), '%s.%s' % (fkik_ctrl, object_connector))
 
     # add attribute on transform
     def add_attr_transform(self, obj, attr_name, attr_type, edit=False, keyable=False, channel_box=False, **kwargs):
@@ -71,3 +82,17 @@ class MessageAttribute:
             return attr_name
         else:
             mc.error('object is not transform')
+
+    def add_joint_reference(self, upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, side_LFT, side_RGT, side):
+        upper_ref_joint = sj.joint(limb_jnt=upper_limb_jnt, side_LFT=side_LFT, side_RGT=side_RGT, side=side)
+        self.middle_ref_joint = sj.joint(limb_jnt=middle_limb_jnt, side_LFT=side_LFT, side_RGT=side_RGT, side=side)
+        self.lower_ref_joint = sj.joint(limb_jnt=lower_limb_jnt, side_LFT=side_LFT, side_RGT=side_RGT, side=side)
+
+        # parent
+        mc.parent(self.lower_ref_joint, self.middle_ref_joint)
+        mc.parent(self.middle_ref_joint, upper_ref_joint)
+
+        # lock attribute
+
+
+
