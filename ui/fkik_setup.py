@@ -5,19 +5,24 @@ import maya.cmds as mc
 
 class UI:
     def __init__(self):
-        adien_snap_fkIk = 'AdienSnapFkIk'
+        adien_snap_fkIk = 'AdienFkIkSnapSetup'
         pm.window(adien_snap_fkIk, exists=True)
 
         if pm.window(adien_snap_fkIk, exists=True):
             pm.deleteUI(adien_snap_fkIk)
-        with pm.window(adien_snap_fkIk, title='Adien Fk/Ik Setup', width=600, height=900):
+        with pm.window(adien_snap_fkIk, title='Adien Fk/Ik Snap Setup', width=600, height=900):
             with pm.columnLayout(rs=5, w=530, co=('both',5), h=500, adj=1):
-                with pm.rowColumnLayout(nc=2, co=(5,'both',5), cw=[(1,20), (2,500)],adj=1):
-                    self.object = pm.checkBox(l='')
-                    self.text_field_grp = mc.textFieldButtonGrp('zbw_tfbg_baseObj',  cal=(1, "right"), cw3=(190, 270, 50),
+                with pm.rowColumnLayout(nc=2, co=(5,'both',5), cw=[(1,500), (2, 500)],adj=1):
+                    self.checBox_arm = mc.checkBox(label='')
+                    self.text_field_grp =  mc.textFieldButtonGrp('zbw_tfbg_baseObj',  cal=(1, "right"), cw3=(190, 270, 50),
                                           label="Fk/Ik Arm Setup Controller:", w=490, bl="Get Object",
                                           bc='', adj=True, ip=1, it='None', ed=True)
 
+                    print self.enable_float_field(self.checBox_arm)
+
+                    #mc.textFieldButtonGrp(self.text_field_grp, edit=True, enable=self.enable_float_field(self.checBox_arm))
+
+                    #mc.button(label='', command=partial(self.disable_float_field, self.text_field_grp))
 
                 mc.textFieldButtonGrp('zbw_tfbg_baseObj', cal=(1, "right"), cw3=(190, 270, 50),
                                       label="Fk/Ik Leg Setup Controller: ", w=490, bl="Get Object",
@@ -42,7 +47,7 @@ class UI:
                                       w=490, bl="Get Object", bc='', adj=True)
 
                 # button to create new message/obj field groups
-                mc.separator(h=20, st="single")
+                mc.separator(h=20, st="in")
                 mc.button(w=150, l="add new message attr/obj", c=zbw_mmAddMObjs)
                 mc.separator(h=20, st="single")
 
@@ -53,17 +58,23 @@ class UI:
                 mc.setParent(u=True)
         pm.showWindow()
 
-    def query_text_field(self):
-        text = pm.textFieldButtonGrp(self.text_field_grp, q=1, ed=self.text_field_edit())
-        return text
+    def enable_float_field(self, float_field, *args):
+        mc.checkBox(float_field, q=True, v=True)
 
-    def text_field_edit(self):
-        if pm.checkBox(self.object, q=1, v=1, ofc=True):
-            print 'True'
-            return True
-        else:
-            print'False'
-            return False
+    def disable_float_field(self, float_field, *args):
+        mc.textFieldButtonGrp(float_field, edit=True, enable=False)
+
+    # def query_text_field(self):
+    #     text = pm.textFieldButtonGrp(self.text_field_grp, q=1, ed=self.text_field_edit())
+    #     return text
+    #
+    # def text_field_edit(self):
+    #     if pm.checkBox(self.object, q=1, v=1, ofc=True):
+    #         print 'True'
+    #         return True
+    #     else:
+    #         print'False'
+    #         return False
 
 
 def zbw_mmAddMObjs(*args):
@@ -101,7 +112,4 @@ def zbw_mmAddTarget(currentTFBG, *args):
         mc.textFieldButtonGrp(currentTFBG, e=True, tx=targetObj)
     else:
         mc.error("please select one object to send out message attr")
-
-
-display_ui()
 
