@@ -4,8 +4,6 @@ import pymel.core as pm
 
 layout = 500
 percentage = 0.01 * layout
-
-
 # class UI:
 def display_ui():
     adien_snap_fkIk = 'AdienFkIkSnapSetup'
@@ -53,7 +51,10 @@ def display_ui():
                                       columnAttach=[(1, 'both', 2 * percentage)]
                                       ):
                         pm.button("clear_all", bgc=(1, 1, 0), l="Clear All!",
-                                 c=partial(clear_text_field, 'arm_setup_ctrl', 'upper_limb_joint'))
+                                 c=partial(clear_text_field, 'arm_setup_ctrl', 'leg_setup_ctrl','upper_limb_joint',
+                                           'middle_limb_joint','lower_limb_joint', 'upper_limb_fk_ctrl',
+                                           'middle_limb_fk_ctrl', 'lower_limb_fk_ctrl', 'upperLimb_ik_ctrl',
+                                           'pole_vector_ik_ctrl', 'lower_limb_ik_ctrl'))
 
                 pm.separator(h=10, st="in", w=layout)
 
@@ -106,11 +107,14 @@ def define_object_text_field(define_object, label, add_feature=False, **kwargs):
                               bc=partial(add_object, define_object), **kwargs)
 
 def enable_text_field(object, value, *args):
-    pm.textFieldButtonGrp(object, edit=True, enable=value)
+    pm.textFieldButtonGrp(object, edit=True, enable=value, tx='')
 
 def clear_text_field(*args):
     for object in args:
-        pm.textFieldButtonGrp(object, edit=True, tx='')
+        if object:
+            pm.textFieldButtonGrp(object, edit=True, tx='')
+        else:
+            pass
 
 def add_text_field_grp(*args):
     child_array = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
@@ -162,7 +166,7 @@ def add_object(text_input, *args):
         object_selection = sel[0]
         pm.textFieldButtonGrp(text_input, e=True, tx=object_selection)
     else:
-        pm.error("please select one object only!")
+        pm.error("please select one object!")
 
 
 
