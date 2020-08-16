@@ -4,6 +4,8 @@ import pymel.core as pm
 
 layout = 500
 percentage = 0.01 * layout
+on_checkbox_selector = 0
+on_selector = 0
 
 
 # class UI:
@@ -14,26 +16,28 @@ def display_ui():
         pm.deleteUI(adien_snap_fkIk)
     with pm.window(adien_snap_fkIk, title='Adien Fk/Ik Snap Setup', width=600, height=800):
         with pm.scrollLayout('scroll'):
-            with pm.columnLayout( rowSpacing=1 * percentage, w=layout, co=('both', 1 * percentage), adj=1):
+            with pm.columnLayout(rowSpacing=1 * percentage, w=layout, co=('both', 1 * percentage), adj=1):
                 with pm.frameLayout(collapsable=True, l='Select Controller', mh=5):
                     with pm.rowColumnLayout('fkIk_controller_layout', nc=2, rowSpacing=(2, 1 * percentage),
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)], ca=True):
-
                         direction_control = pm.radioCollection()
-                        direction0 = pm.radioButton(label='', cc=partial(enable_text_field, ['FkIk_Arm_Setup_Controller']))
-                        define_object_text_field(define_object='FkIk_Arm_Setup_Controller', label="Fk/Ik Arm Setup Controller:",
+                        direction0 = pm.radioButton(label='',
+                                                    cc=partial(enable_text_field, ['FkIk_Arm_Setup_Controller']))
+                        define_object_text_field(define_object='FkIk_Arm_Setup_Controller',
+                                                 label="Fk/Ik Arm Setup Controller:",
                                                  add_feature=True, enable=False)
 
-                        direction1 = pm.radioButton(label='', cc=partial(enable_text_field, ['FkIk_Leg_Setup_Controller',
-                                                                                             'End_Limb_Joint','End_Limb_Fk_Ctrl',
-                                                                                             'End_Limb_Ik_Ctrl']))
-                        define_object_text_field(define_object='FkIk_Leg_Setup_Controller', label="Fk/Ik Leg Setup Controller:",
+                        direction1 = pm.radioButton(label='',
+                                                    cc=partial(enable_text_field, ['FkIk_Leg_Setup_Controller',
+                                                                                   'End_Limb_Joint', 'End_Limb_Fk_Ctrl',
+                                                                                   'End_Limb_Ik_Ctrl']))
+                        define_object_text_field(define_object='FkIk_Leg_Setup_Controller',
+                                                 label="Fk/Ik Leg Setup Controller:",
                                                  add_feature=True)
                 pm.separator(h=5, st="in", w=layout)
                 with pm.frameLayout(collapsable=True, l='Define Objects', mh=5):
-
-                    define_object_text_field(define_object='Upper_Limb_Joint', label="Upper Limb Joint")
+                    define_object_text_field(define_object='Upper_Limb_Joint', label="Upper Limb Joint:")
                     define_object_text_field(define_object='Middle_Limb_Joint', label="Middle Limb Joint:")
                     define_object_text_field(define_object='Lower_Limb_Joint', label="Lower Limb Joint:")
                     define_object_text_field(define_object='End_Limb_Joint', label="End Limb Joint:", enable=False)
@@ -41,7 +45,6 @@ def display_ui():
                     define_object_text_field(define_object='Middle_Limb_Fk_Ctrl', label="Middle Limb Fk Ctrl:")
                     define_object_text_field(define_object='Lower_Limb_Fk_Ctrl', label="Lower Limb Fk Ctrl:")
                     define_object_text_field(define_object='End_Limb_Fk_Ctrl', label="End Limb Fk Ctrl:", enable=False)
-
 
                     with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
                                             co=(1 * percentage, 'both', 1 * percentage),
@@ -54,31 +57,45 @@ def display_ui():
                     with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)]):
-                        pm.checkBox(label='', cc=partial(enable_text_field, ['End_Limb_Ik_Ctrl']), value=True)
+                        check_boxes = pm.checkBox('check_box_endlimb_ik', label='',
+                                                  cc=partial(enable_text_field, ['End_Limb_Ik_Ctrl']), value=True)
                         define_object_text_field(define_object='End_Limb_Ik_Ctrl', label="End Limb Ik Ctrl:",
                                                  add_feature=True)
                     direction_control = pm.radioCollection(direction_control, edit=True, select=direction1)
-
-                    # radio button translate
-                    with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage),
-                                                          (3, 'left', 2 * percentage), (4, 'left', 2 * percentage)],
-                                      cw4=(33 * percentage, 21.6 * percentage, 21.6 * percentage, 21.6 * percentage)):
-                        pm.text('Limb Aim Axis:')
-                        direction_control_translate = pm.radioCollection()
-                        direction_translateX = pm.radioButton(label='Translate X', onCommand=lambda x:selection_radio_button(1))
-                        direction_translateY = pm.radioButton(label='Translate Y', onCommand=lambda x:selection_radio_button(2))
-                        direction_translateZ = pm.radioButton(label='Translate Z', onCommand=lambda x:selection_radio_button(3))
-                        direction_control_translate = pm.radioCollection(direction_control_translate, edit=True,
-                                                                         select=direction_translateX)
 
                     with pm.rowLayout(nc=1, cw1=(35 * percentage), cl1=('center'),
                                       columnAttach=[(1, 'both', 2 * percentage)]
                                       ):
                         pm.button("clear_all_define_objects", bgc=(1, 1, 0), l="Clear All Define Objects!",
                                   c=partial(clear_text_field, 'Upper_Limb_Joint',
-                                            'Middle_Limb_Joint', 'Lower_Limb_Joint', 'End_Limb_Joint', 'Upper_Limb_Fk_Ctrl',
-                                            'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl', 'End_Limb_Fk_Ctrl', 'Upper_Limb_Ik_Ctrl',
-                                            'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl'))
+                                            'Middle_Limb_Joint', 'Lower_Limb_Joint', 'End_Limb_Joint',
+                                            'Upper_Limb_Fk_Ctrl',
+                                            'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl', 'End_Limb_Fk_Ctrl',
+                                            'Upper_Limb_Ik_Ctrl',
+                                            'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl', 'End_Limb_Ik_Ctrl'))
+
+                pm.separator(h=5, st="in", w=layout)
+                # radio button translate
+                with pm.frameLayout(collapsable=True, l='Additional Setup', mh=5):
+                    with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage),
+                                                          (3, 'left', 2 * percentage), (4, 'left', 2 * percentage)],
+                                      cw4=(33 * percentage, 21.6 * percentage, 21.6 * percentage, 21.6 * percentage)):
+                        pm.text('Limb Aim Axis:')
+                        direction_control_translate = pm.radioCollection()
+                        direction_translateX = pm.radioButton(label='Translate X',
+                                                              onCommand=lambda x: selection_radio_button(1))
+                        direction_translateY = pm.radioButton(label='Translate Y',
+                                                              onCommand=lambda x: selection_radio_button(2))
+                        direction_translateZ = pm.radioButton(label='Translate Z',
+                                                              onCommand=lambda x: selection_radio_button(3))
+                        direction_control_translate = pm.radioCollection(direction_control_translate, edit=True,
+                                                                         select=direction_translateX)
+
+                    with pm.rowLayout(nc=2, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage)],
+                                      cw2=(33 * percentage, 64.8)):
+                        pm.text('Ctrl Translate Fk is locked?:')
+                        pm.checkBox(label='', onc=lambda x: on_checkbox_button(1), ofc=lambda x: on_checkbox_button(0),
+                                    value=True)
 
                 pm.separator(h=5, st="in", w=layout)
 
@@ -107,7 +124,8 @@ def display_ui():
                                   c=partial(delete_setup))
 
                 pm.separator(h=10, st="in", w=layout)
-                with pm.rowLayout(nc=3, cw3=(32 * percentage, 32 * percentage, 32 * percentage), cl3=('left', 'center','right'),
+                with pm.rowLayout(nc=3, cw3=(32 * percentage, 32 * percentage, 32 * percentage),
+                                  cl3=('left', 'center', 'right'),
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
                                                 (3, 'both', 2 * percentage)]):
                     pm.text(l='Adien Dendra | 08/2020', al='left')
@@ -119,32 +137,50 @@ def display_ui():
             pm.setParent(u=True)
     pm.showWindow()
 
-def action_translate_query_value(object, *args):
+
+def action_translate_checkbox_button(object, *args):
+    pm.addAttr(ln='Translate_Fk_Ctrl_Exists', at='bool')
+    if on_checkbox_selector == 1:
+        pm.setAttr(object + '.Translate_Fk_Ctrl_Exists', 1, l=True)
+    elif on_checkbox_selector == 0:
+        pm.setAttr(object + '.Translate_Fk_Ctrl_Exists', 0, l=True)
+    else:
+        print('object has no value!')
+
+
+def on_checkbox_button(on_checkbox, *args):
+    global on_checkbox_selector
+    on_checkbox_selector = on_checkbox
+
+
+def action_translate_radio_button(object, *args):
     """
     query object with value on shape selector status
     """
-    value_translate, axis =[],[]
-    if shape_selector == 1:
+    value_translate, axis = [], []
+    if on_selector == 1:
         axis = 'translateX'
-        value_translate = pm.getAttr('%s.%s'% (object, axis))
-    elif shape_selector == 2:
+        value_translate = pm.getAttr('%s.%s' % (object, axis))
+    elif on_selector == 2:
         axis = 'translateY'
-        value_translate = pm.getAttr('%s.%s'% (object, axis))
-    elif shape_selector ==3:
+        value_translate = pm.getAttr('%s.%s' % (object, axis))
+    elif on_selector == 3:
         axis = 'translateZ'
-        value_translate = pm.getAttr('%s.%s'% (object, axis))
+        value_translate = pm.getAttr('%s.%s' % (object, axis))
     else:
-        print ('object has no value!')
+        print('object has no value!')
 
     return value_translate, axis
 
-def selection_radio_button(shape):
+
+def selection_radio_button(on):
     """
     Save the current shape selection
     into global variable "shape_selector"
     """
-    global shape_selector
-    shape_selector = shape
+    global on_selector
+    on_selector = on
+
 
 def define_object_text_field(define_object, label, add_feature=False, **kwargs):
     if not add_feature:
@@ -158,9 +194,11 @@ def define_object_text_field(define_object, label, add_feature=False, **kwargs):
                               w=93 * percentage, bl="Get Object",
                               bc=partial(add_object, define_object), **kwargs)
 
+
 def enable_text_field(object, value, *args):
     for item in object:
         pm.textFieldButtonGrp(item, edit=True, enable=value, tx='')
+
 
 def clear_text_field(*args):
     for object in args:
@@ -168,6 +206,7 @@ def clear_text_field(*args):
             pm.textFieldButtonGrp(object, edit=True, tx='')
         else:
             pass
+
 
 def add_text_field_grp(*args):
     child_array = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
@@ -188,7 +227,8 @@ def add_text_field_grp(*args):
     pm.textFieldGrp(current_attr, l="Attr:", cal=(1, "right"), cw2=(7 * percentage, 18 * percentage),
                     p="row_column_add_object")
     pm.floatFieldGrp(current_default_value, l="Default Value:", cal=(1, "right"), cw2=(17 * percentage, 8 * percentage),
-                    p="row_column_add_object", precision=2)
+                     p="row_column_add_object", precision=2)
+
 
 def delete_additional_attr(*args):
     """
@@ -209,6 +249,7 @@ def delete_additional_attr(*args):
     else:
         pass
 
+
 def add_object(text_input, *args):
     """
     select and add object
@@ -219,6 +260,7 @@ def add_object(text_input, *args):
         pm.textFieldButtonGrp(text_input, e=True, tx=object_selection)
     else:
         pm.error("please select one object!")
+
 
 def query_define_object(object_define, *args):
     text = []
@@ -231,6 +273,7 @@ def query_define_object(object_define, *args):
     else:
         pass
     return text, object_define
+
 
 def run_setup(*args):
     # query objects
@@ -247,90 +290,109 @@ def run_setup(*args):
     Upper_Limb_Ik_Ctrl_Define = query_define_object('Upper_Limb_Ik_Ctrl')
     Pole_Vector_Ik_Ctrl_Define = query_define_object('Pole_Vector_Ik_Ctrl')
     Lower_Limb_Ik_Ctrl_Define = query_define_object('Lower_Limb_Ik_Ctrl')
+    End_Limb_Ik_Ctrl_Define = query_define_object('End_Limb_Ik_Ctrl')
 
     label_list = [FkIk_Arm_Setup_Controller[1], FkIk_Leg_Setup_Controller[1],
-                         Upper_Limb_Joint_Define[1], Middle_Limb_Joint_Define[1], Lower_Limb_Joint_Define[1],
-                         Upper_Limb_Fk_Ctrl_Define[1], Middle_Limb_Fk_Ctrl_Define[1], Lower_Limb_Fk_Ctrl_Define[1],
-                         Upper_Limb_Ik_Ctrl_Define[1], Pole_Vector_Ik_Ctrl_Define[1], Lower_Limb_Ik_Ctrl_Define[1],
-                  End_Limb_Joint_Define[1], End_Limb_Fk_Ctrl_Define[1]]
+                  Upper_Limb_Joint_Define[1], Middle_Limb_Joint_Define[1], Lower_Limb_Joint_Define[1],
+                  Upper_Limb_Fk_Ctrl_Define[1], Middle_Limb_Fk_Ctrl_Define[1], Lower_Limb_Fk_Ctrl_Define[1],
+                  Upper_Limb_Ik_Ctrl_Define[1], Pole_Vector_Ik_Ctrl_Define[1], Lower_Limb_Ik_Ctrl_Define[1],
+                  End_Limb_Joint_Define[1], End_Limb_Fk_Ctrl_Define[1], End_Limb_Ik_Ctrl_Define[1]]
 
     object_list = [FkIk_Arm_Setup_Controller[0], FkIk_Leg_Setup_Controller[0],
-                         Upper_Limb_Joint_Define[0], Middle_Limb_Joint_Define[0], Lower_Limb_Joint_Define[0],
-                         Upper_Limb_Fk_Ctrl_Define[0], Middle_Limb_Fk_Ctrl_Define[0], Lower_Limb_Fk_Ctrl_Define[0],
-                         Upper_Limb_Ik_Ctrl_Define[0], Pole_Vector_Ik_Ctrl_Define[0], Lower_Limb_Ik_Ctrl_Define[0],
-                   End_Limb_Joint_Define[0], End_Limb_Fk_Ctrl_Define[0]]
+                   Upper_Limb_Joint_Define[0], Middle_Limb_Joint_Define[0], Lower_Limb_Joint_Define[0],
+                   Upper_Limb_Fk_Ctrl_Define[0], Middle_Limb_Fk_Ctrl_Define[0], Lower_Limb_Fk_Ctrl_Define[0],
+                   Upper_Limb_Ik_Ctrl_Define[0], Pole_Vector_Ik_Ctrl_Define[0], Lower_Limb_Ik_Ctrl_Define[0],
+                   End_Limb_Joint_Define[0], End_Limb_Fk_Ctrl_Define[0], End_Limb_Ik_Ctrl_Define[0]]
 
     # addding attribute
     if pm.objExists('%s.%s' % (FkIk_Arm_Setup_Controller[0], Upper_Limb_Joint_Define[1])):
-        print ('please delete the setup first!')
+        print('please delete the setup first!')
     else:
         if (pm.textFieldButtonGrp(FkIk_Arm_Setup_Controller[1], q=True, en=True)):
-            for item_label, object_label in zip (label_list[:-2], object_list[:-2]):
+            for item_label, object_label in zip(label_list[:-3], object_list[:-3]):
                 pm.addAttr(FkIk_Arm_Setup_Controller[0], ln=item_label, at='message')
                 if pm.textFieldButtonGrp(item_label, q=True, en=True):
-                    pm.connectAttr(object_label+'.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0], item_label))
-
+                    pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0], item_label))
+            action_translate_checkbox_button(FkIk_Arm_Setup_Controller[0])
             pm.addAttr(FkIk_Arm_Setup_Controller[0], ln='Middle_Translate_Aim_Joint', at='float')
             pm.addAttr(FkIk_Arm_Setup_Controller[0], ln='Lower_Translate_Aim_Joint', at='float')
             pm.addAttr(FkIk_Arm_Setup_Controller[0], ln='Aim_Axis', dt='string')
-            pm.setAttr('%s.Middle_Translate_Aim_Joint' % FkIk_Arm_Setup_Controller[0], action_translate_query_value(Middle_Limb_Joint_Define[0])[0], l=True)
-            pm.setAttr('%s.Lower_Translate_Aim_Joint' % FkIk_Arm_Setup_Controller[0], action_translate_query_value(Lower_Limb_Joint_Define[0])[0], l=True)
-            pm.setAttr('%s.Aim_Axis' % FkIk_Arm_Setup_Controller[0], action_translate_query_value(Lower_Limb_Joint_Define[0])[1], l=True)
+            pm.setAttr('%s.Middle_Translate_Aim_Joint' % FkIk_Arm_Setup_Controller[0],
+                       action_translate_radio_button(Middle_Limb_Joint_Define[0])[0], l=True)
+            pm.setAttr('%s.Lower_Translate_Aim_Joint' % FkIk_Arm_Setup_Controller[0],
+                       action_translate_radio_button(Lower_Limb_Joint_Define[0])[0], l=True)
+            pm.setAttr('%s.Aim_Axis' % FkIk_Arm_Setup_Controller[0],
+                       action_translate_radio_button(Lower_Limb_Joint_Define[0])[1], l=True)
 
         else:
-            for item_label, object_label in zip (label_list, object_list):
+            for item_label, object_label in zip(label_list, object_list):
                 pm.addAttr(FkIk_Leg_Setup_Controller[0], ln=item_label, at='message')
                 if pm.textFieldButtonGrp(item_label, q=True, en=True):
-                    pm.connectAttr(object_label+'.message', '%s.%s' % (FkIk_Leg_Setup_Controller[0], item_label))
+                    pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Leg_Setup_Controller[0], item_label))
 
+            action_translate_checkbox_button(FkIk_Leg_Setup_Controller[0])
             pm.addAttr(FkIk_Leg_Setup_Controller[0], ln='Middle_Translate_Aim_Joint', at='float')
             pm.addAttr(FkIk_Leg_Setup_Controller[0], ln='Lower_Translate_Aim_Joint', at='float')
             pm.addAttr(FkIk_Leg_Setup_Controller[0], ln='Aim_Axis', dt='string')
-            pm.setAttr('%s.Middle_Translate_Aim_Joint' % FkIk_Leg_Setup_Controller[0], action_translate_query_value(Middle_Limb_Joint_Define[0])[0], l=True)
-            pm.setAttr('%s.Lower_Translate_Aim_Joint' % FkIk_Leg_Setup_Controller[0], action_translate_query_value(Lower_Limb_Joint_Define[0])[0], l=True)
-            pm.setAttr('%s.Aim_Axis' % FkIk_Leg_Setup_Controller[0], action_translate_query_value(Lower_Limb_Joint_Define[0])[1],  l=True)
+            pm.setAttr('%s.Middle_Translate_Aim_Joint' % FkIk_Leg_Setup_Controller[0],
+                       action_translate_radio_button(Middle_Limb_Joint_Define[0])[0], l=True)
+            pm.setAttr('%s.Lower_Translate_Aim_Joint' % FkIk_Leg_Setup_Controller[0],
+                       action_translate_radio_button(Lower_Limb_Joint_Define[0])[0], l=True)
+            pm.setAttr('%s.Aim_Axis' % FkIk_Leg_Setup_Controller[0],
+                       action_translate_radio_button(Lower_Limb_Joint_Define[0])[1], l=True)
 
+    if pm.rowColumnLayout("row_column_add_object", q=True, ca=True):
+        child_define_object = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
+        number_of_object = (len(child_define_object) / 3)
+        if number_of_object:
+            for current_number in range(1, number_of_object + 1):
+                current_object = "object" + str(current_number)
+                current_attr = "attribute" + str(current_number)
+                current_default_value = "default_value" + str(current_number)
+
+                # baseObj = pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, tx=True)
+                object = pm.textFieldButtonGrp(current_object, q=True, tx=True)
+                attribute = pm.textFieldGrp(current_attr, q=True, tx=True)
+                default_value = pm.floatFieldGrp(current_default_value, q=True, value1=True)
+
+                attribute_compile_name = object + '_DOT_' + attribute
+                if object and attribute:
+                    if (pm.textFieldButtonGrp(FkIk_Arm_Setup_Controller[1], q=True, en=True)):
+                        pm.addAttr(FkIk_Arm_Setup_Controller[0], ln=attribute_compile_name, at='float')
+                        pm.setAttr('%s.%s' % (FkIk_Arm_Setup_Controller[0], attribute_compile_name), default_value,
+                                   l=True)
+                    else:
+                        pm.addAttr(FkIk_Leg_Setup_Controller[0], ln=attribute_compile_name, at='float')
+                        pm.setAttr('%s.%s' % (FkIk_Leg_Setup_Controller[0], attribute_compile_name), default_value,
+                                   l=True)
+                else:
+                    pm.warning("Line # " + str(number_of_object) + " is empty! skipped this attribute")
+
+
+def query_row_column_layout_add_object(*args):
     child_define_object = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
     number_of_object = (len(child_define_object) / 3)
+    objects, attribute, default_value, attribute_compile_name = [], [], [], []
     if number_of_object:
-        expression_list = []
         for current_number in range(1, number_of_object + 1):
             current_object = "object" + str(current_number)
             current_attr = "attribute" + str(current_number)
             current_default_value = "default_value" + str(current_number)
 
             # baseObj = pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, tx=True)
-            object = pm.textFieldButtonGrp(current_object, q=True, tx=True)
+            objects = pm.textFieldButtonGrp(current_object, q=True, tx=True)
             attribute = pm.textFieldGrp(current_attr, q=True, tx=True)
             default_value = pm.floatFieldGrp(current_default_value, q=True, value1=True)
 
-            if object and attribute and default_value:
-                compile = ("pm.setAttr(%s.%s, %s)" % (object, attribute, default_value))
-                expression_list.append(compile)
-            else:
-                pm.warning("Line # " + str(number_of_object) + " is empty! skipped this attribute")
-        if (pm.textFieldButtonGrp(FkIk_Leg_Setup_Controller[1], q=True, en=True)):
-            pm.expression(s=str(expression_list), n= FkIk_Leg_Setup_Controller[0] + '_expr', ae=0)
-        else:
-            pm.expression(s=str(expression_list), n= FkIk_Arm_Setup_Controller[0] + '_expr', ae=0)
+            attribute_compile_name = objects + '_DOT_' + attribute
+            return objects, attribute, default_value, attribute_compile_name, number_of_object
 
-            # expressionUpCheek = "$rangeZ = 2 / {0}.{6}; " \
-            #                     "$range = 2 / {0}.{7};" \
-            #                     "{1}.translateX = {2}.translateX {3} {0}.translateX /$range;" \
-            #                     "{1}.translateY = {2}.translateY + {0}.translateY /$range;" \
-            #                     "{1}.rotateX = {2}.rotateX;" \
-            #                     "{1}.rotateY = {2}.rotateY;" \
-            #                     "{1}.rotateZ = {2}.rotateZ;" \
-            #                     "if ({0}.translateY >= 0) " \
-            #                     "{1}.translateZ = {2}.translateZ + {0}.translateZ / ($range * 2) + {0}.translateY / ($range * {4} * $rangeZ); " \
-            #                     "else " \
-            #                     "{1}.translateZ = {2}.translateZ + {0}.translateZ / ($range * 2) + {0}.translateY / ($range * {5} * $rangeZ);" \
-            #     .format(controller, cheekJointParentOffset, driver, operator, tzRangeOne, tzRangeTwo, attributeOffset, attributeOffsetTwo)
-            #
-            # mc.expression(s=expressionUpCheek, n=nameExpr + side + '_expr', ae=0)
 
 def delete_setup(*args):
     sel = pm.ls(sl=1)
+    if not sel[0]:
+        pm.warning('please select arm or leg setup for delete the setup!')
+
     # query objects
     FkIk_Arm_Setup_Controller = ('FkIk_Arm_Setup_Controller')
     FkIk_Leg_Setup_Controller = ('FkIk_Leg_Setup_Controller')
@@ -346,87 +408,28 @@ def delete_setup(*args):
     Pole_Vector_Ik_Ctrl_Define = ('Pole_Vector_Ik_Ctrl')
     Lower_Limb_Ik_Ctrl_Define = ('Lower_Limb_Ik_Ctrl')
 
-    if pm.objExists('%s.%s' % (sel[0], Upper_Limb_Joint_Define)):
-        for item in [
-            FkIk_Arm_Setup_Controller, FkIk_Leg_Setup_Controller,
-                     Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
-                     Upper_Limb_Fk_Ctrl_Define, Middle_Limb_Fk_Ctrl_Define, Lower_Limb_Fk_Ctrl_Define,
-                     Upper_Limb_Ik_Ctrl_Define, Pole_Vector_Ik_Ctrl_Define, Lower_Limb_Ik_Ctrl_Define]:
-            pm.deleteAttr('%s.%s' % (sel[0], item))
-    if pm.objExists('%s.%s' % (sel[0], 'Middle_Translate_Aim_Joint')):
-        pm.deleteAttr('%s.%s' % (sel[0], 'Middle_Translate_Aim_Joint'))
-        pm.deleteAttr('%s.%s' % (sel[0], 'Lower_Translate_Aim_Joint'))
-        pm.deleteAttr('%s.%s' % (sel[0], 'Aim_Axis'))
+    object_text_field_list = ['FkIk_Arm_Setup_Controller', 'FkIk_Leg_Setup_Controller',
+                              'Upper_Limb_Joint', 'Middle_Limb_Joint', 'Lower_Limb_Joint',
+                              'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
+                              'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
+                              'End_Limb_Joint', 'End_Limb_Fk_Ctrl', 'End_Limb_Ik_Ctrl', 'Middle_Translate_Aim_Joint',
+                              'Lower_Translate_Aim_Joint', 'Aim_Axis']
 
-    if pm.objExists('%s.%s' % (sel[0], End_Limb_Joint_Define)):
-        pm.deleteAttr('%s.%s' % (sel[0], 'End_Limb_Joint'))
-        pm.deleteAttr('%s.%s' % (sel[0], 'End_Limb_Fk_Ctrl'))
+    for item in object_text_field_list:
+        if pm.attributeQuery(item, n=sel[0], ex=True):
+            # if pm.listAttr(l=True, ud=item):
+            #     pm.setAttr(item, lock=False)
+            pm.deleteAttr(item)
+
+    query_layout = query_row_column_layout_add_object()
+    if pm.attributeQuery(query_layout[3], n=sel[0], ex=True):
+        # if pm.listAttr(l=True, ud=query_layout[3]):
+        #     pm.setAttr(query_layout[3], lock=False)
+        pm.deleteAttr(query_layout[3])
 
     else:
-        pm.warning ('object already delete!')
+        pm.warning('object already delete!')
 
-
-
-
-
-    # pm.addAttr(FkIk_Arm_Setup_Controller, ln='Upper_Limb_Joint', at='message')
-    #
-    #
-    # if (pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, en=True)):
-    #     if(pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, tx=True)):
-    #         arm_setup_controller = pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, tx=True)
-    #         pm.addAttr(arm_setup_controller, ln='Upper_Limb_Joint', at='message')
-    #     else:
-    #         pm.error('FkIk setup controller can not be empty!')
-    # else:
-    #     if (pm.textFieldButtonGrp("FkIk_Leg_Setup_Controller", q=True, tx=True)):
-    #         arm_text_field = pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, tx=True)
-    #         arm_text_field = pm.textFieldButtonGrp("FkIk_Arm_Setup_Controller", q=True, tx=True)
-    #
-    #         print True
-    #     else:
-    #         print False
-
-    #
-        # # check there's a base obj
-        # if (cmds.textFieldButtonGrp("zbw_tfbg_baseObj", q=True, tx=True)):
-        #     # check there are any fields created
-        #     if (cmds.rowColumnLayout("mmRCLayout", q=True, ca=True)):
-        #
-        #         children = cmds.rowColumnLayout("mmRCLayout", q=True, ca=True)
-        #         numObj = (len(children) / 2)
-        #
-        #         if numObj:
-        #             for num in range(1, numObj + 1):
-        #                 attrTFG = "attr" + str(num)
-        #                 objTFBG = "obj" + str(num)
-        #                 baseObj = cmds.textFieldButtonGrp("zbw_tfbg_baseObj", q=True, tx=True)
-        #                 targetObj = cmds.textFieldButtonGrp(objTFBG, q=True, tx=True)
-        #                 baseAttr = cmds.textFieldGrp(attrTFG, q=True, tx=True)
-        #                 baseMAttr = baseObj + "." + baseAttr
-        #                 objMAttr = targetObj + ".message"
-        #                 # check to make sure there's something in each field, otherwise skip
-        #                 if baseAttr and targetObj:
-        #                     # check that attr doesnt' already exist with connection
-        #                     if (cmds.attributeQuery(baseAttr, n=baseObj, ex=True)):
-        #                         # delete the attr that exists, print note about it
-        #                         cmds.deleteAttr(baseMAttr)
-        #                         cmds.warning(baseMAttr + " already exists! Deleting for overwrite and reconnection")
-        #                     cmds.addAttr(baseObj, at="message", ln=baseAttr)
-        #                     cmds.connectAttr(objMAttr, baseMAttr, f=True)
-        #                     # print confirmation of connection
-        #                     print("Connected: " + objMAttr + "--->" + baseMAttr)
-        #
-        #                 else:
-        #                     cmds.warning("Line # " + str(num) + " was empty! Skipped that attr")
-        #             # leave a text field saying that it's done
-        #             zbw_mmDeleteConfirm()
-        #             cmds.separator("mmConfirmSep", h=20, st="single", p="mmAddNewConnections")
-        #             cmds.text("mmTextConfirm", l="MESSAGES MAPPED!", p="mmAddNewConnections")
-        #     else:
-        #         cmds.warning("Please create some attrs and objs to connect to base obj!")
-        # else:
-        #     cmds.warning("Please choose a base object to add attrs to!")
 
 def add_attr_transform(obj, attr_name, attr_type, edit=False, keyable=False, channel_box=False, **kwargs):
     if pm.nodeType(obj) == "transform":
@@ -435,75 +438,3 @@ def add_attr_transform(obj, attr_name, attr_type, edit=False, keyable=False, cha
         return attr_name
     else:
         pm.error('object is not transform')
-
-# def zbw_mmAddTarget(currentTFBG, *args):
-#     """
-#     uses the selected item to add full path into the textField of the UI target obj
-#     """
-#     # check selection is one object
-#     sel = pm.ls(sl=True, l=True)
-#     if len(sel) == 1:
-#         targetObj = sel[0]
-#         # add selected to textField
-#         pm.textFieldButtonGrp(currentTFBG, e=True, tx=targetObj)
-#     else:
-#         pm.error("please select one object to send out message attr")
-
-
-# def query_text_field(self):
-#     text = pm.textFieldButtonGrp(self.text_field_grp, q=1, ed=self.text_field_edit())
-#     return text
-#
-# def text_field_edit(self):
-#     if pm.checkBox(self.object, q=1, v=1, ofc=True):
-#         print 'True'
-#         return True
-#     else:
-#         print'False'
-#         return False
-
-# pm.checkBox(label='', cc=arm_enable_field, value=True)
-# pm.textFieldButtonGrp("arm_setup_ctrl", label="Fk/Ik Arm Setup Controller:",
-#                                         cal=(1, "right"), cw3=(190, 270, 50), w=490, bl="Get Object",
-#                                         bc='', adj=True, ip=1)
-#
-# pm.checkBox(label='', cc=leg_enable_field, value=True)
-# pm.textFieldButtonGrp('leg_setup_ctrl', label="Fk/Ik Leg Setup Controller:",
-#                                         cal=(1, "right"), cw3=(190, 270, 50), w=490, bl="Get Object",
-#                                         bc='', adj=True, ip=1)
-
-# def zbw_mmAddMObjs(*args):
-#     """
-#     adds textFields to the UI for adding target objects for the message attrs
-#     """
-#     # delete text confirm dialogue if it exists
-#     zbw_mmDeleteConfirm()
-#     # figure out what objects are already parented
-#     children = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
-#     # figure out where stuff goes (2 column layout, so divide by 2), 1 based
-#     if children:
-#         currentNum = len(children) / 2 + 1
-#         currentTFG = "attr" + str(currentNum)
-#         currentTFBG = "obj" + str(currentNum)
-#     # if no objects exist . . .
-#     else:
-#         currentTFG = "attr1"
-#         currentTFBG = "obj1"
-#
-#     pm.textFieldGrp(currentTFG, l="addedAttr (ln)", cal=(1, "left"), cw2=(100, 150), p="row_column_add_object")
-#     pm.textFieldButtonGrp(currentTFBG, l="messageObj", cal=(1, "left"), cw3=(75, 150, 50), p="row_column_add_object", bl="get",
-#                           bc=partial(zbw_mmAddTarget, currentTFBG))
-#
-#
-# def zbw_mmAddTarget(currentTFBG, *args):
-#     """
-#     uses the selected item to add full path into the textField of the UI target obj
-#     """
-#     # check selection is one object
-#     sel = pm.ls(sl=True, l=True)
-#     if len(sel) == 1:
-#         targetObj = sel[0]
-#         # add selected to textField
-#         pm.textFieldButtonGrp(currentTFBG, e=True, tx=targetObj)
-#     else:
-#         pm.error("please select one object to send out message attr")
