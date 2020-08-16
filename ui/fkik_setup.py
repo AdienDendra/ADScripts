@@ -91,7 +91,7 @@ def display_ui():
 
                     with pm.rowLayout(nc=2, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage)],
                                       cw2=(33 * percentage, 64.8)):
-                        pm.text('Ctrl Translate Fk is locked?:')
+                        pm.text('Does ctrl Translate Fk locked?:')
                         pm.checkBox(label='', onc=lambda x: on_checkbox_button(1), ofc=lambda x: on_checkbox_button(0))
 
                 pm.separator(h=5, st="in", w=layout)
