@@ -74,9 +74,10 @@ def ik_to_fk():
 
         pm.setAttr(fkik_ctrl_select[0] + '.FkIk', 0)
 
-def fk_to_ik():
+def fk_to_ik(axis_aim='translateY'):
     # listing fk ik setup selection
     fkik_ctrl_select = pm.ls(sl=1)
+
     # assign as instance fkik leg setup
     # if fkik_ctrl_select:
     # query the connection
@@ -96,9 +97,8 @@ def fk_to_ik():
         poleVector_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.Pole_Vector_Ik_Ctrl')[0]
         lower_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.Lower_Limb_Ik_Ctrl')[0]
         upper_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.Upper_Limb_Ik_Ctrl')[0]
-        middle_aim_axis_value = pm.listConnections(fkik_ctrl_select[0] + '.Middle_Translate_Aim_Joint')[0]
-        aim_axis = pm.listConnections(fkik_ctrl_select[0] + '.Aim_Axis')[0]
-        lower_aim_axis_value = pm.listConnections(fkik_ctrl_select[0] + '.Lower_Translate_Aim_Joint')[0]
+        middle_ref_jnt = pm.listConnections(fkik_ctrl_select[0] + '.middle_ref_jnt')[0]
+        lower_ref_jnt = pm.listConnections(fkik_ctrl_select[0] + '.lower_ref_jnt')[0]
         fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.FkIk_Arm_Setup_Controller', s=1)
         fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.FkIk_Leg_Setup_Controller', s=1)
 
@@ -107,9 +107,9 @@ def fk_to_ik():
             fk_to_ik_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
                            lower_limb_snap_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
                            lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
-                           value_axis_aim_middle=middle_aim_axis_value,
-                           value_axis_aim_lower=lower_aim_axis_value,
-                           aim_axis=aim_axis,
+                           value_axis_aim_middle_jnt=middle_ref_jnt,
+                           value_axis_aim_lower_jnt=lower_ref_jnt,
+                           axis_towards=axis_aim,
                            )
         # run for snap leg
         if fk_ik_leg_ctrl:
@@ -119,9 +119,9 @@ def fk_to_ik():
             fk_to_ik_setup(upper_limb_snap_jnt=upper_limb_jnt, middle_limb_snap_jnt=middle_limb_jnt,
                            lower_limb_snap_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
                            lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
-                           value_axis_aim_middle=middle_aim_axis_value,
-                           value_axis_aim_lower=lower_aim_axis_value,
-                           aim_axis=aim_axis,
+                           value_axis_aim_middle_jnt=middle_ref_jnt,
+                           value_axis_aim_lower_jnt=lower_ref_jnt,
+                           axis_towards=axis_aim,
                            end_limb_snap_jnt=end_limb_jnt, end_limb_ctrl=toe_wiggle_attr, leg=True)
 
         pm.setAttr(fkik_ctrl_select[0] + '.FkIk', 1)
@@ -156,11 +156,9 @@ def ik_to_fk_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jn
 
 def fk_to_ik_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jnt,
                    polevector_limb_ctrl, lower_limb_ctrl, upper_limb_ctrl,
-                   value_axis_aim_middle,
-                   value_axis_aim_lower,
-                   aim_axis, end_limb_snap_jnt=None, end_limb_ctrl=None, leg=None):
-
-
+                   value_axis_aim_middle_jnt,
+                   value_axis_aim_lower_jnt,
+                   axis_towards, end_limb_snap_jnt=None, end_limb_ctrl=None, leg=None):
     # set to default
     pm.setAttr(lower_limb_ctrl + '.stretch', 1)
     pm.setAttr(lower_limb_ctrl + '.softIk', 0)
@@ -205,13 +203,13 @@ def fk_to_ik_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jn
     pm.move(get_poleVector_position.x, get_poleVector_position.y, get_poleVector_position.z, polevector_limb_ctrl)
 
     # get attribute value of middle_ref_joint and lower_ref_joint
-    value_axis_middle_jnt = pm.getAttr(value_axis_aim_middle)
-    value_axis_lower_jnt = pm.getAttr(value_axis_aim_lower)
+    value_axis_middle_jnt = pm.getAttr('%s.%s' % (value_axis_aim_middle_jnt, axis_towards))
+    value_axis_lower_jnt = pm.getAttr('%s.%s' % (value_axis_aim_lower_jnt, axis_towards))
 
     # calculate for stretching and snapping the pole vector controller
     total_value_default = value_axis_middle_jnt + value_axis_lower_jnt
-    current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_snap_jnt, aim_axis))
-    current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_snap_jnt, aim_axis))
+    current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_snap_jnt, axis_towards))
+    current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_snap_jnt, axis_towards))
     total_current_value = current_value_axis_towards_middle_jnt + current_value_axis_towards_lower_jnt
 
     # negative position (right)
