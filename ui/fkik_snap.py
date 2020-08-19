@@ -1,35 +1,50 @@
-from __builtin__ import reload
+"""
+FkIk Snap by Adien Dendra | 2020.
+Stable on any version of Autodesk Maya.
+Script description :
+    This script purposes to match Fk/Ik task.
+Instruction to use:
+    You may go to the link for have more detail
+    >> project.adiendendra.com/snap_fkik
+Latest version:
+    Version 1.0 | 17 August 2020
+More question can contact me at :
+    e-mail : adien.dendra@gmail.com | hello@adiendendra.com
 
-import pymel.core as pm
+"""
 import maya.OpenMaya as om
-from rigging.tools import AD_utils as au
+import pymel.core as pm
 
-reload(au)
-
+layout = 200
+percentage = 0.01 * layout
 
 def display_ui():
-
     adien_snap_fkIk = 'AdienSnapFkIk'
     pm.window(adien_snap_fkIk, exists=True)
 
     if pm.window(adien_snap_fkIk, exists=True):
         pm.deleteUI(adien_snap_fkIk)
 
-    with pm.window(adien_snap_fkIk, title='Adien Fk/Ik Snap', width=275, height=150):
-        with pm.columnLayout(rs=5, co=('both',5), adj=True):
+    with pm.window(adien_snap_fkIk, title='Adien Fk/Ik Snap', width=layout + 10, height=150):
+        with pm.columnLayout(rs=5, co=('both', 5), adj=True):
             pm.text(l='Select Leg/Arm Ctrl Setup:')
-            pm.button(label='To Fk', width=265, height=40, backgroundColor=[0.46, 0.86, 0.46],
+            pm.button(label='To Fk', width=layout, height=40, backgroundColor=[0.46, 0.86, 0.46],
                       command=pm.Callback(ik_to_fk))
-            pm.button(label='To Ik', width=265, height=40, backgroundColor=[0.86, 0.46, 0.46],
+            pm.button(label='To Ik', width=layout, height=40, backgroundColor=[0.86, 0.46, 0.46],
                       command=pm.Callback(fk_to_ik))
-            pm.text(l='<a href="http://projects.adiendendra.com/">find out how to use it! >> </a>', hl=True)
+            with pm.rowLayout(nc=3, cw3=(18 * percentage, 48 * percentage, 22 * percentage),
+                              cl3=('left', 'center', 'right'),
+                              columnAttach=[(1, 'both', 1 * percentage), (2, 'both', 1 * percentage),
+                                            (3, 'both', 1 * percentage)], adj=True):
+                pm.text(l='08/2020')
+                pm.text(l='<a href="http://projects.adiendendra.com/">detail to use!>> </a>', hl=True)
+                pm.text(l='Ver. 1.0')
             pm.separator(h=2, st="single")
 
     pm.showWindow()
 
 def ik_to_fk():
-
-    # listing fk ik setup selection`
+    # listing fk ik setup selection
     fkik_ctrl_select = pm.ls(sl=1)
 
     # assign as instance fkik leg setup
@@ -39,10 +54,10 @@ def ik_to_fk():
     try:
         pm.listConnections(fkik_ctrl_select[0] + '.Upper_Limb_Joint')[0]
     except:
-        pm.error('To run the snapping fk/ik please select arm or leg setup controller!')
+        pm.error('Select arm or leg setup controller for snapping to Fk!')
 
     # condition of controller
-    getattr_ctrl = pm.getAttr(fkik_ctrl_select[0]+'.FkIk')
+    getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.FkIk')
     if getattr_ctrl == 0:
         return fkik_ctrl_select[0]
     else:
@@ -83,10 +98,10 @@ def fk_to_ik():
     try:
         pm.listConnections(fkik_ctrl_select[0] + '.Upper_Limb_Joint')[0]
     except:
-        pm.error('for run the snapping fk/ik please select arm or leg setup controller!')
+        pm.error('Select arm or leg setup controller for snapping to Ik!')
 
     # condition of controller
-    getattr_ctrl = pm.getAttr(fkik_ctrl_select[0]+'.FkIk')
+    getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.FkIk')
     if getattr_ctrl == 1:
         return fkik_ctrl_select[0]
     else:
@@ -126,10 +141,10 @@ def fk_to_ik():
 
         pm.setAttr(fkik_ctrl_select[0] + '.FkIk', 1)
 
+
 def ik_to_fk_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jnt,
                    middle_limb_ctrl, lower_limb_ctrl, upper_limb_ctrl,
                    end_limb_snap_jnt=None, end_limb_ctrl=None, leg=None):
-
     # query world position
     xform_upper_limb_rot = pm.xform(upper_limb_snap_jnt, ws=1, q=1, ro=1)
     xform_middle_limb_rot = pm.xform(middle_limb_snap_jnt, ws=1, q=1, ro=1)
@@ -157,31 +172,40 @@ def ik_to_fk_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jn
 def fk_to_ik_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jnt,
                    polevector_limb_ctrl, lower_limb_ctrl, upper_limb_ctrl,
                    value_axis_aim_middle,
-                   value_axis_aim_lower,
+                   value_axis_aim_lower, fkik_setup_controller,
                    aim_axis, end_limb_snap_jnt=None, end_limb_ctrl=None, leg=None):
-
-
     # set to default
-    pm.setAttr(lower_limb_ctrl + '.stretch', 1)
-    pm.setAttr(lower_limb_ctrl + '.softIk', 0)
-    pm.setAttr(lower_limb_ctrl + '.ikSnap', 0)
-    pm.setAttr(lower_limb_ctrl + '.slide', 0)
-    pm.setAttr(lower_limb_ctrl + '.twist', 0)
+    selection = fkik_setup_controller[0]
+    list_attribute_additional = pm.listAttr(selection)
+    if filter(lambda x: '_DOT_IK_' in x, list_attribute_additional):
+        filtering = filter(lambda x: '_DOT_IK_' in x, list_attribute_additional)
+        for item in filtering:
+            value_attr = pm.getAttr('%s.%s' % (selection, item))
+            replace_dot = item.replace('_DOT_IK_', '.')
+            pm.setAttr(replace_dot, value_attr)
 
-    # set to default leg
-    if leg :
-        pm.setAttr(lower_limb_ctrl+'.footRoll', 0)
-        pm.setAttr(lower_limb_ctrl+'.ballStartLift', 30)
-        pm.setAttr(lower_limb_ctrl+'.toeStartStraight', 60)
-        pm.setAttr(lower_limb_ctrl+'.tilt', 0)
-        pm.setAttr(lower_limb_ctrl+'.heelSpin', 0)
-        pm.setAttr(lower_limb_ctrl+'.toeSpin', 0)
-        pm.setAttr(lower_limb_ctrl+'.toeSpin', 0)
-        pm.setAttr(lower_limb_ctrl+'.toeRoll', 0)
-        pm.setAttr(lower_limb_ctrl+'.toeWiggle', 0)
+    #
+    # pm.setAttr(lower_limb_ctrl + '.stretch', 1)
+    # pm.setAttr(lower_limb_ctrl + '.softIk', 0)
+    # pm.setAttr(lower_limb_ctrl + '.ikSnap', 0)
+    # pm.setAttr(lower_limb_ctrl + '.slide', 0)
+    # pm.setAttr(lower_limb_ctrl + '.twist', 0)
+    #
+    # # set to default leg
+    # if leg :
+    #     pm.setAttr(lower_limb_ctrl+'.footRoll', 0)
+    #     pm.setAttr(lower_limb_ctrl+'.ballStartLift', 30)
+    #     pm.setAttr(lower_limb_ctrl+'.toeStartStraight', 60)
+    #     pm.setAttr(lower_limb_ctrl+'.tilt', 0)
+    #     pm.setAttr(lower_limb_ctrl+'.heelSpin', 0)
+    #     pm.setAttr(lower_limb_ctrl+'.toeSpin', 0)
+    #     pm.setAttr(lower_limb_ctrl+'.toeSpin', 0)
+    #     pm.setAttr(lower_limb_ctrl+'.toeRoll', 0)
+    #     pm.setAttr(lower_limb_ctrl+'.toeWiggle', 0)
+    #
 
-        xform_end_limb_rot = pm.getAttr(end_limb_snap_jnt + '.rotateX')
-        pm.setAttr('%s.toeWiggle' % (end_limb_ctrl),(-1*xform_end_limb_rot))
+    # ####    xform_end_limb_rot = pm.getAttr(end_limb_snap_jnt + '.rotateX')
+    # ####    pm.setAttr('%s.toeWiggle' % (end_limb_ctrl),(-1*xform_end_limb_rot))
 
     # query position and rotation
     xform_upper_limb_rot = pm.xform(upper_limb_snap_jnt, ws=1, q=1, ro=1)
@@ -216,14 +240,14 @@ def fk_to_ik_setup(upper_limb_snap_jnt, middle_limb_snap_jnt, lower_limb_snap_jn
 
     # negative position (right)
     if current_value_axis_towards_middle_jnt < 0:
-        if abs(total_current_value+total_value_default) > 0.01:
-            pm.setAttr(lower_limb_ctrl+'.ikSnap', 1)
+        if abs(total_current_value + total_value_default) > 0.01:
+            pm.setAttr(lower_limb_ctrl + '.ikSnap', 1)
             pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
                                                     xform_middle_limb_pos[2]))
     # positive position (left)
     else:
-        if abs(total_current_value-total_value_default) > 0.01:
-            pm.setAttr(lower_limb_ctrl+'.ikSnap', 1)
+        if abs(total_current_value - total_value_default) > 0.01:
+            pm.setAttr(lower_limb_ctrl + '.ikSnap', 1)
             pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
                                                     xform_middle_limb_pos[2]))
 
