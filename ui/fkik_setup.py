@@ -89,15 +89,27 @@ def display_ui():
                 pm.separator(h=5, st="in", w=layout)
                 # radio button translate
                 with pm.frameLayout(collapsable=True, l='Additional Setup', mh=5):
+                    with pm.rowLayout(nc=5, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage),
+                                                          (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
+                                                          (5, 'left', 1 * percentage)],
+                                      cw5=(33 * percentage, 14 * percentage, 14 * percentage, 16 * percentage, 15 * percentage)):
+                        pm.text("Elbow/Knee Snap Ctrl Name:")
+                        pm.textField('Ik_Snap_Ctrl_Name', w=(14 * percentage), tx='wristIk_ctrl')
+                        pm.textFieldGrp('Ik_Snap_Attr_Name', l='Attr:', cw2=(4 * percentage, 8 * percentage), tx='iKSnap')
+                        pm.floatFieldGrp('Ik_Snap_Min', l="Min Value:", cal=(1, "left"),
+                                         cw2=(9 * percentage, 5 * percentage), precision=1)
+                        pm.floatFieldGrp('Ik_Snap_Max', l="Max Value:", cal=(1, "left"),
+                                         cw2=(9 * percentage, 5 * percentage), precision=1, value1=1)
+
                     with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage),
                                                           (3, 'left', 2 * percentage), (4, 'left', 2 * percentage)],
-                                      cw4=(33 * percentage, 15 * percentage, 26 * percentage, 26.6 * percentage)):
+                                      cw4=(33 * percentage, 10 * percentage, 15 * percentage, 15 * percentage)):
                         pm.text("Fk/Ik Controller Attr Name:")
                         pm.textField('Fk_Ik_Attr_Name', w=(8 * percentage), tx='FkIk')
                         pm.floatFieldGrp('Fk_Value', l="Fk Value:", cal=(1, "left"),
-                                         cw2=(10 * percentage, 7 * percentage), precision=1)
+                                         cw2=(8 * percentage, 5 * percentage), precision=1)
                         pm.floatFieldGrp('Ik_Value', l="Ik Value:", cal=(1, "left"),
-                                         cw2=(10 * percentage, 7 * percentage), precision=1, value1=1)
+                                         cw2=(8 * percentage, 5 * percentage), precision=1, value1=1)
 
                     with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage),
                                                           (3, 'left', 2 * percentage), (4, 'left', 2 * percentage)],
@@ -319,6 +331,10 @@ def additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, fkIk_set
     value_fk_attr = pm.floatFieldGrp('Ik_Value', q=True, value1=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Value', at='float')
     pm.setAttr('%s.Ik_Value' % fkIk_setup_ctrl[0], value_fk_attr, l=True)
+
+ik_snap_name = pm.textField('Ik_Snap_Ctrl_Name', q=True, tx=True)
+pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Ctrl_Name', dt='string')
+pm.setAttr('%s.Ik_Snap_Ctrl_Name' % fkIk_setup_ctrl[0], ik_snap_name, l=True)
 
     pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Translate_Aim_Joint', at='float')
     pm.setAttr('%s.Middle_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
