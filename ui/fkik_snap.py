@@ -92,7 +92,6 @@ def ad_fk_to_ik():
     value_ik_attr = pm.getAttr(fkik_ctrl_select[0]+'Ik_Value')
 
     if pm.objExists(fkik_ctrl_select[0] + '.Upper_Limb_Joint'):
-
         # condition of controller
         getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.'+ fk_ik_attr_name)
         if getattr_ctrl == 1:
