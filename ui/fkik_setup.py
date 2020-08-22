@@ -34,17 +34,17 @@ def ad_setup_fkik_ui():
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)], ca=True):
                         direction_control = pm.radioCollection()
-                        pm.radioButton(label='', cc=partial(ad_enabling_text_field_from_fkik_ctrl,
+                        pm.radioButton(label='', cc=partial(ad_enabling_disabling_UI,
                                                             ['FkIk_Arm_Setup_Controller']))
                         ad_defining_object_text_field(define_object='FkIk_Arm_Setup_Controller',
                                                       label="Fk/Ik Arm Setup Controller:",
                                                       add_feature=True, enable=False)
 
-                        direction1 = pm.radioButton(label='', cc=partial(ad_enabling_text_field_from_fkik_ctrl,
-                                                                         ['FkIk_Leg_Setup_Controller',
-                                                                          'endlimb_fk_joint_ctrl_layout',
-                                                                          'endlimb_ik_ctrl_layout', 'ik_ball_layout',
-                                                                          'ik_ball_rotation_layout']))
+                        direction1 = pm.radioButton(label='', cc=partial(ad_enabling_disabling_UI, ['FkIk_Leg_Setup_Controller',
+                                                                                                    'endlimb_fk_joint_ctrl_layout',
+                                                                                                    'endlimb_ik_ctrl_layout',
+                                                                                                    'ik_ball_rotation_layout',
+                                                                                                    'ik_ball_layout']))
 
                         ad_defining_object_text_field(define_object='FkIk_Leg_Setup_Controller',
                                                       label="Fk/Ik Leg Setup Controller:",
@@ -62,7 +62,7 @@ def ad_setup_fkik_ui():
                     with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)]):
-                        pm.checkBox(label='', cc=partial(ad_enabling_text_field_from_fkik_ctrl, ['Upper_Limb_Ik_Ctrl']),
+                        pm.checkBox(label='', cc=partial(ad_enabling_disabling_UI, ['Upper_Limb_Ik_Ctrl']),
                                     value=True)
                         ad_defining_object_text_field(define_object='Upper_Limb_Ik_Ctrl', label="Upper Limb Ik Ctrl:",
                                                       add_feature=True)
@@ -81,7 +81,7 @@ def ad_setup_fkik_ui():
 
                     with pm.rowColumnLayout('endlimb_ik_ctrl_layout', nc=2, rowSpacing=(2, 1 * percentage), co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)]):
-                        pm.checkBox(label='', cc=partial(ad_enabling_text_field_from_fkik_ctrl, ['End_Limb_Ik_Ctrl']), value=True)
+                        pm.checkBox(label='', cc=partial(ad_enabling_disabling_UI, ['End_Limb_Ik_Ctrl','ik_ball_layout', 'ik_ball_rotation_layout']), value=True)
                         ad_defining_object_text_field(define_object='End_Limb_Ik_Ctrl', label="End Limb Ik Ctrl:", add_feature=True)
 
                     pm.radioCollection(direction_control, edit=True, select=direction1)
@@ -100,11 +100,6 @@ def ad_setup_fkik_ui():
                 pm.separator(h=5, st="in", w=layout)
                 # radio button translate
                 with pm.frameLayout(collapsable=True, l='Additional Setup', mh=5):
-                    # with pm.rowLayout(nc=2, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage)],
-                    #                       cw2=(33 * percentage, 64.8)):
-                    #     # pm.text("Doesn't has Ik ball ctrl?:")
-                    #     pm.checkBox('Ik_Ball_Controller', label='', cc=partial(ad_enabling_row_layout, ['ik_ball_layout', 'ik_ball_rotation_layout']),
-                    #                 value=True)
                     with pm.rowLayout('ik_ball_layout', nc=3, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
                                                           (3, 'left', 1 * percentage)], cw3=(33 * percentage, 20 * percentage, 30 * percentage)):
                         pm.text('Ik_Ball_Toe_Wiggle_Name', l="Ik Ball Toe Wiggle Name:")
@@ -287,15 +282,15 @@ def ad_defining_object_text_field(define_object, label, add_feature=False, *args
 #     for item in object:
 #         pm.rowLayout(item, edit=True, enable=value)
 
-def ad_enabling_text_field_from_fkik_ctrl(object, value, *args):
+def ad_enabling_disabling_UI(object, value, *args):
     for item in object:
         objectType = pm.objectTypeUI(item)
         if objectType == 'rowGroupLayout':
             pm.textFieldButtonGrp(item, edit=True, enable=value, tx='')
-        elif objectType == 'rowLayout':
-            pm.rowLayout(item, edit=True, enable=value)
         elif objectType == 'rowColumnLayout':
             pm.rowColumnLayout(item, edit=True, enable=value)
+        elif objectType == 'rowLayout':
+            pm.rowLayout(item, edit=True, enable=value)
         else:
             pass
 
