@@ -233,25 +233,6 @@ def ad_setup_fkik_ui():
             pm.setParent(u=True)
     pm.showWindow()
 
-
-# def action_checkbox_button(*args):
-#     if on_selector == 1:
-#         value = 1
-#     else:
-#         value = 0
-#
-#     return value
-# def ad_action_checkbox(selector, *args):
-#     row=[]
-#     if selector == 1:
-#         row = 1
-#     elif selector == 0:
-#         row = 0
-#     else:
-#         pass
-#     return row
-
-
 def ad_action_translate_rotate_radio_button(object, *args):
     """
     query object with value on shape selector status
@@ -421,12 +402,8 @@ def ad_query_define_textfield_object(object_define, *args):
     return text, object_define
 
 
-def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define, fkIk_setup_ctrl):
+def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define, ik_snap_ctrl, fkIk_setup_ctrl):
     if pm.rowLayout('ik_ball_layout', q=True, enable=True):
-        # ball_toe_wiggle_name = pm.textField('Ik_Toe_Wiggle_Ctrl', q=True, tx=True)
-        # pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Toe_Wiggle_Ctrl', dt='string')
-        # pm.setAttr('%s.Ik_Toe_Wiggle_Ctrl' % fkIk_setup_ctrl[0], ball_toe_wiggle_name, l=True)
-
         toe_wiggle_attr_name = pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', q=True, tx=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Toe_Wiggle_Attr_Name', dt='string')
         pm.setAttr('%s.Ik_Toe_Wiggle_Attr_Name' % fkIk_setup_ctrl[0], toe_wiggle_attr_name, l=True)
@@ -445,8 +422,11 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     pm.setAttr('%s.Translate_Fk_Ctrl_Exists' % fkIk_setup_ctrl[0], translate_fk_ctrl, l=True)
 
     fk_ik_attr_name = pm.textFieldGrp('Fk_Ik_Attr_Name', q=True, tx=True)
-    pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Ik_Attr_Name', dt='string')
-    pm.setAttr('%s.Fk_Ik_Attr_Name' % fkIk_setup_ctrl[0], fk_ik_attr_name, l=True)
+    if pm.objExists(fkIk_setup_ctrl[0]+'.'+fk_ik_attr_name):
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Ik_Attr_Name', dt='string')
+        pm.setAttr('%s.Fk_Ik_Attr_Name' % fkIk_setup_ctrl[0], fk_ik_attr_name, l=True)
+    else:
+        pm.error("There is no attribute name '%s' in the scene. Please check your Fk/Ik input attribute name!" % fk_ik_attr_name)
 
     value_fk_attr = pm.floatFieldGrp('Fk_Value_On', q=True, value1=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Value_On', at='float')
@@ -456,13 +436,12 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Value_On', at='float')
     pm.setAttr('%s.Ik_Value_On' % fkIk_setup_ctrl[0], value_ik_attr, l=True)
 
-    # ik_snap_ctrl_name = pm.textField('Ik_Snap_Ctrl_Name', q=True, tx=True)
-    # pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Ctrl_Name', dt='string')
-    # pm.setAttr('%s.Ik_Snap_Ctrl_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_name, l=True)
-
     ik_snap_ctrl_attr = pm.textFieldGrp('Ik_Snap_Attr_Name', q=True, tx=True)
-    pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Attr_Name', dt='string')
-    pm.setAttr('%s.Ik_Snap_Attr_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_attr, l=True)
+    if pm.objExists(ik_snap_ctrl +'.'+ik_snap_ctrl_attr):
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Attr_Name', dt='string')
+        pm.setAttr('%s.Ik_Snap_Attr_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_attr, l=True)
+    else:
+        pm.error("There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" % (ik_snap_ctrl,ik_snap_ctrl_attr))
 
     ik_snap_min_value = pm.floatFieldGrp('Ik_Snap_Off', q=True, value1=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Off', at='float')
@@ -527,7 +506,7 @@ def ad_run_setup(*args):
 
     # addding attribute
     if pm.objExists('%s.%s' % (FkIk_Arm_Setup_Controller[0], Upper_Limb_Joint_Define[1])):
-        pm.warning('please delete the setup first!')
+        pm.error('Please delete the previous setup first before run the setup!')
     else:
         if (pm.textFieldButtonGrp(FkIk_Arm_Setup_Controller[1], q=True, en=True)):
             for item_label, object_label in zip(label_list[:12], object_list[:12]):
@@ -536,6 +515,7 @@ def ad_run_setup(*args):
                     pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0], item_label))
 
             ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
+                                ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                 fkIk_setup_ctrl=FkIk_Arm_Setup_Controller)
 
         else:
@@ -545,6 +525,7 @@ def ad_run_setup(*args):
                     pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Leg_Setup_Controller[0], item_label))
 
             ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
+                                ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                 fkIk_setup_ctrl=FkIk_Leg_Setup_Controller)
 
     if pm.rowColumnLayout("row_column_add_object", q=True, ca=True):
@@ -564,14 +545,20 @@ def ad_run_setup(*args):
                 default_value = pm.floatFieldGrp(current_default_value, q=True, value1=True)
                 radio_collection = pm.radioCollection(current_collection_fk_ik, q=True, select=True)
 
+                object_compile_name, value_compile_name=[],[]
                 if radio_collection == current_fk:
-                    object_compile_name = '_DOTFK_AT_' + attribute
-                    value_compile_name = '_DOTFK_VA_' + attribute
+                    if pm.objExists(object+'.'+attribute):
+                        object_compile_name = '_DOTFK_AT_' + attribute
+                        value_compile_name = '_DOTFK_VA_' + attribute
+                    else:
+                        pm.error("There is no object '%s' with attribute name '%s' in the scene. Please check both of the input name!"  % (object, attribute))
 
                 else:
-                    object_compile_name = '_DOTIK_AT_' + attribute
-                    value_compile_name = '_DOTIK_VA_' + attribute
-
+                    if pm.objExists(object+'.'+attribute):
+                        object_compile_name = '_DOTIK_AT_' + attribute
+                        value_compile_name = '_DOTIK_VA_' + attribute
+                    else:
+                        pm.error("There is no object '%s' with attribute name '%s' in the scene. Please check both of the input name!" % (object, attribute))
 
                 # attribute_compile_name = object + '_DOT_' + attribute
                 if object and attribute:
@@ -585,7 +572,7 @@ def ad_run_setup(*args):
                             pm.setAttr('%s.%s' % (FkIk_Arm_Setup_Controller[0], value_compile_name), default_value,
                                        l=True)
                         else:
-                            pm.warning("Line # " + str(number_of_object) + " same attribute! skipped this attribute")
+                            pm.warning("Line # " + str(number_of_object) + " same attribute! Skipped this attribute.")
 
                     else:
                         if not pm.objExists(FkIk_Arm_Setup_Controller[0] + '.' + object_compile_name):
@@ -597,10 +584,10 @@ def ad_run_setup(*args):
                             pm.setAttr('%s.%s' % (FkIk_Leg_Setup_Controller[0], value_compile_name), default_value,
                                        l=True)
                         else:
-                            pm.warning("Line # " + str(number_of_object) + " same attribute! skipped this attribute")
+                            pm.warning("Line # " + str(number_of_object) + " same attribute! Skipped this attribute.")
 
                 else:
-                    pm.warning("Line # " + str(number_of_object) + " is empty! skipped this attribute")
+                    pm.warning("Line # " + str(number_of_object) + " is empty! Skipped this attribute.")
 
 
 def ad_delete_setup(*args):
@@ -637,6 +624,6 @@ def ad_delete_setup(*args):
                     pm.deleteAttr('%s.%s' % (sel[0], item))
         else:
             pm.warning(
-                'There is no setup added! Either you have selected wrong controller object or the setup already deleted!')
+                'There are no setup exists! Either you have selected wrong controller object or the setup already deleted.')
     else:
         pm.warning('Please select either arm or leg setup to clean up the setup!')
