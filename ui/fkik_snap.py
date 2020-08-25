@@ -37,8 +37,7 @@ def ad_snap_fkik_ui():
                       command=pm.Callback(ad_fk_to_ik))
             with pm.rowLayout(nc=2, cw2=(32 * percentage, 32 * percentage),
                               cl2=('left', 'center'),
-                              columnAttach=[(1, 'both', 1 * percentage), (2, 'both', 1 * percentage)],
-                              adj=True):
+                              columnAttach=[(1, 'both', 1 * percentage), (2, 'both', 1 * percentage)], adj=True):
                 pm.text(l='Adien Dendra | 08/2020 | Ver. 1.0')
                 pm.text(l='<a href="http://projects.adiendendra.com/">detail to use>> </a>', hl=True)
             pm.separator(h=2, st="single")
@@ -70,8 +69,7 @@ def ad_ik_to_fk():
             if fk_ik_arm_ctrl:
                 ad_ik_to_fk_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
-                                  lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl
-                                  )
+                                  lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl)
             # run snap for leg
             if fk_ik_leg_ctrl:
                 end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'End_Limb_Joint')[0]
@@ -80,8 +78,7 @@ def ad_ik_to_fk():
                 ad_ik_to_fk_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
-                                  end_limb_jnt=end_limb_jnt, end_limb_ctrl=end_limb_fk_ctrl,
-                                  leg=True)
+                                  end_limb_jnt=end_limb_jnt, end_limb_ctrl=end_limb_fk_ctrl, leg=True)
 
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_fk_attr)
 
@@ -116,8 +113,6 @@ def ad_fk_to_ik():
             ik_snap_attr_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Snap_Attr_Name')
             ik_snap_on = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Snap_On')
 
-            print (ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
-
             # run for snap arm
             if fk_ik_arm_ctrl:
                 ad_fk_to_ik_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
@@ -128,11 +123,14 @@ def ad_fk_to_ik():
                                   aim_axis=aim_axis, fkik_setup_controller=fkik_ctrl_select,
                                   ik_snap_ctrl_name=ik_snap_ctrl_name,
                                   ik_snap_attr_name=ik_snap_attr_name,
-                                  ik_snap_on= ik_snap_on
-                                  )
+                                  ik_snap_on= ik_snap_on)
             # run for snap leg
             if fk_ik_leg_ctrl:
                 end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'End_Limb_Joint')[0]
+                end_limb_ik_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + 'End_Limb_Ik_Ctrl')
+                rotation_wiggle = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Rotation_Wiggle')
+                ik_toe_wiggle_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Toe_Wiggle_Ctrl')
+                ik_toe_wiggle_attr_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Toe_Wiggle_Attr_Name')
 
                 ad_fk_to_ik_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt, polevector_limb_ctrl=poleVector_ctrl,
@@ -143,6 +141,9 @@ def ad_fk_to_ik():
                                   ik_snap_ctrl_name=ik_snap_ctrl_name,
                                   ik_snap_attr_name=ik_snap_attr_name,
                                   ik_snap_on=ik_snap_on,
+                                  end_limb_ik_ctrl=end_limb_ik_ctrl, rotation_wiggle=rotation_wiggle,
+                                  ik_toe_wiggle_ctrl=ik_toe_wiggle_ctrl,
+                                  ik_toe_wiggle_attr_name=ik_toe_wiggle_attr_name,
                                   end_limb_jnt=end_limb_jnt, leg=True)
 
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_ik_attr)
@@ -150,9 +151,8 @@ def ad_fk_to_ik():
         pm.error('Select arm or leg setup controller for snapping to Ik!')
 
 
-def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
-                      middle_limb_ctrl, lower_limb_ctrl, upper_limb_ctrl,
-                      end_limb_jnt=None, end_limb_ctrl=None, leg=None):
+def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_limb_ctrl, lower_limb_ctrl,
+                      upper_limb_ctrl, end_limb_jnt=None, end_limb_ctrl=None, leg=None):
     # query world position
     xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
     xform_middle_limb_rot = pm.xform(middle_limb_jnt, ws=1, q=1, ro=1)
@@ -177,15 +177,11 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
         pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
 
-def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
-                      polevector_limb_ctrl, lower_limb_ctrl, upper_limb_ctrl,
-                      value_axis_aim_middle,
-                      value_axis_aim_lower, fkik_setup_controller,
-                      aim_axis, ik_snap_ctrl_name,
-                      ik_snap_attr_name,
-                      ik_snap_on,
-                      end_limb_jnt=None, leg=None
-                      ):
+def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevector_limb_ctrl, lower_limb_ctrl,
+                      upper_limb_ctrl, value_axis_aim_middle, value_axis_aim_lower, fkik_setup_controller,
+                      aim_axis, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on=None, end_limb_ik_ctrl=None,
+                      rotation_wiggle=None, ik_toe_wiggle_ctrl=None, ik_toe_wiggle_attr_name=None,
+                      end_limb_jnt=None, leg=None):
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
@@ -199,24 +195,18 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
             pm.setAttr('%s%s' % (get_item_attr, replace_dot_attr), get_value_attr)
 
     if leg:
-        if not pm.objExists(fkik_setup_controller[0] +'.'+ 'End_Limb_Ik_Ctrl'):
-            xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + (fkik_setup_controller[0] +'.'+ 'Rotation_Wiggle'))
-            if fkik_setup_controller[0] + '.Reverse_Wiggle_Value':
-                pm.setAttr('%s.%s' % ((fkik_setup_controller[0] +'.'+ 'Ik_Toe_Wiggle_Ctrl',
-                                       (fkik_setup_controller[0] +'.'+ 'Ik_Toe_Wiggle_Attr_Name'))),
-                           (-1 * xform_end_limb_rot))
+        if not pm.listConnections(selection +'.'+'End_Limb_Ik_Ctrl', s=1):
+            xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
+            if (fkik_setup_controller[0] +'.'+'Reverse_Wiggle_Value'):
+                pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
             else:
-                pm.setAttr('%s.%s' % ((fkik_setup_controller[0] +'.'+ 'Ik_Toe_Wiggle_Ctrl',
-                                       (fkik_setup_controller[0] +'.'+ 'Ik_Toe_Wiggle_Attr_Name'))),
-                           (xform_end_limb_rot))
+                pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
         else:
             xform_end_limb_pos = pm.xform(end_limb_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_jnt, ws=1, q=1, ro=1)
 
-            pm.xform((fkik_setup_controller[0] +'.'+ 'End_Limb_Ik_Ctrl'), ws=1,
-                     ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
-            pm.xform((fkik_setup_controller[0] +'.'+ 'End_Limb_Ik_Ctrl'), ws=1,
-                     t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
+            pm.xform((end_limb_ik_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
+            pm.xform((end_limb_ik_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
     # query position and rotation
     xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
@@ -245,23 +235,16 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
     current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
     total_current_value = current_value_axis_towards_middle_jnt + current_value_axis_towards_lower_jnt
 
-    # negative position (right)
-    if current_value_axis_towards_middle_jnt < 0:
-        if abs(total_current_value + total_value_default) > 0.01:
-            ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
-
-    # positive position (left)
-    else:
-        if abs(total_current_value - total_value_default) > 0.01:
-            ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
+    # conditon snap elbow or knee
+    if abs(total_current_value - total_value_default) > 0.01:
+        ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
 
 
 def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name,ik_snap_attr_name,
                       ik_snap_on):
 
     pm.setAttr('%s.%s' % (ik_snap_ctrl_name, ik_snap_attr_name), ik_snap_on)
-    pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
-                                            xform_middle_limb_pos[2]))
+    pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1], xform_middle_limb_pos[2]))
 
 
 def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):

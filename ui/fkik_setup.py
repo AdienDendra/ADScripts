@@ -36,20 +36,19 @@ def ad_setup_fkik_ui():
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)], ca=True):
                         direction_control = pm.radioCollection()
-                        pm.radioButton(label='', cc=partial(ad_enabling_disabling_ui,
-                                                            ['FkIk_Arm_Setup_Controller',
-                                                             'ik_ball_rotation_layout',
-                                                             'ik_ball_layout']))
+                        pm.radioButton(label='', cc=partial(ad_enabling_disabling_ui, ['FkIk_Arm_Setup_Controller',
+                                                                                       'ik_ball_rotation_layout',
+                                                                                       'ik_ball_layout']))
                         ad_defining_object_text_field(define_object='FkIk_Arm_Setup_Controller',
                                                       label="Fk/Ik Arm Setup Controller:",
                                                       add_feature=True, enable=False)
 
-                        direction1 = pm.radioButton(label='',
-                                                    cc=partial(ad_enabling_disabling_ui, ['FkIk_Leg_Setup_Controller',
-                                                                                          'endlimb_fk_ctrl_layout',
-                                                                                          'endlimb_joint_ctrl_layout',
-                                                                                          'endlimb_ik_ctrl_layout',
-                                                                                          'endlimb_ik_ctrl']))
+                        direction1 = pm.radioButton(label='', cc=partial(ad_enabling_disabling_ui,
+                                                                         ['FkIk_Leg_Setup_Controller',
+                                                                          'endlimb_fk_ctrl_layout',
+                                                                          'endlimb_joint_ctrl_layout',
+                                                                          'endlimb_ik_ctrl_layout',
+                                                                          'endlimb_ik_ctrl']))
 
                         ad_defining_object_text_field(define_object='FkIk_Leg_Setup_Controller',
                                                       label="Fk/Ik Leg Setup Controller:",
@@ -86,23 +85,20 @@ def ad_setup_fkik_ui():
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)]):
                         pm.checkBox('endlimb_ik_ctrl', label='', cc=partial(ad_enabling_disabling_ui,
                                                                             ['End_Limb_Ik_Ctrl', 'ik_ball_layout',
-                                                                             'ik_ball_rotation_layout']),
-                                    )
+                                                                             'ik_ball_rotation_layout']))
                         pm.checkBox('endlimb_ik_ctrl', edit=True, value=False)
 
                         ad_defining_object_text_field(define_object='End_Limb_Ik_Ctrl', label="End Limb Ik Ctrl:",
                                                       add_feature=True, enable=False)
 
                     with pm.rowLayout(nc=1, cw1=(35 * percentage), cl1=('center'),
-                                      columnAttach=[(1, 'both', 2 * percentage)]
-                                      ):
+                                      columnAttach=[(1, 'both', 2 * percentage)]):
                         pm.button(bgc=(1, 1, 0), l="Clear All Define Objects!",
-                                  c=partial(ad_clearing_all_text_field, 'Upper_Limb_Joint',
-                                            'Middle_Limb_Joint', 'Lower_Limb_Joint', 'End_Limb_Joint',
-                                            'Upper_Limb_Fk_Ctrl',
+                                  c=partial(ad_clearing_all_text_field, 'Upper_Limb_Joint', 'Middle_Limb_Joint',
+                                            'Lower_Limb_Joint', 'End_Limb_Joint', 'Upper_Limb_Fk_Ctrl',
                                             'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl', 'End_Limb_Fk_Ctrl',
-                                            'Upper_Limb_Ik_Ctrl',
-                                            'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl', 'End_Limb_Ik_Ctrl'))
+                                            'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
+                                            'End_Limb_Ik_Ctrl'))
 
                 pm.separator(h=5, st="in", w=layout)
                 # radio button translate
@@ -128,43 +124,34 @@ def ad_setup_fkik_ui():
                         # pm.text("Fk/Ik Controller Attr Name:")
                         pm.textFieldGrp('Fk_Ik_Attr_Name', l="Fk/Ik Controller Attr Name:",
                                         cw2=(30 * percentage, 10 * percentage), tx='FkIk',
-                                        cat=[(1, 'right', 2), (2, 'both', 5)],
-
-                                        )
+                                        cat=[(1, 'right', 2), (2, 'both', 5)])
                         pm.floatFieldGrp('Fk_Value_On', l="Fk Value On:", cal=(1, "left"),
                                          cw2=(11 * percentage, 5 * percentage), precision=1)
                         pm.floatFieldGrp('Ik_Value_On', l="Ik Value On:", cal=(1, "left"),
                                          cw2=(11 * percentage, 5 * percentage), precision=1, value1=1)
 
                     with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
-                                                          (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
-                                                          ],
-                                      cw4=(52 * percentage, 15 * percentage, 12 * percentage, 12 * percentage
-                                           )):
-
-                        # pm.text('Ik_Snap', l="Elbow/Knee Snap Ctrl Name:")
+                                                          (3, 'left', 1 * percentage), (4, 'left', 1 * percentage)],
+                                      cw4=(52 * percentage, 15 * percentage, 12 * percentage, 12 * percentage)):
 
                         pm.textFieldButtonGrp('Ik_Snap_Ctrl_Name', l="Elbow/Knee Snap Ctrl Name:", cal=(1, "right"),
-                              cw3=(30 * percentage, 16 * percentage, 6 * percentage),
-                              cat=[(1, 'right', 1), (2, 'both', 5)],
-                              bl="<<",
-                              bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Snap_Ctrl_Name'),
-                                               tx='wristIk_ctrl')
+                                              cw3=(30 * percentage, 16 * percentage, 6 * percentage),
+                                              cat=[(1, 'right', 1), (2, 'both', 5)],
+                                              bl="<<",
+                                              bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Snap_Ctrl_Name'),
+                                              tx='wristIk_ctrl')
 
-                        pm.textFieldGrp('Ik_Snap_Attr_Name', l='Attr:', cw2=(4 * percentage, 9 * percentage),
-                                        tx='iKSnap')
-                        pm.floatFieldGrp('Ik_Snap_Off', l="Off:", cal=(1, "right"),
-                                         cw2=(4 * percentage, 5 * percentage), precision=1)
-                        pm.floatFieldGrp('Ik_Snap_On', l="On:", cal=(1, "right"),
-                                         cw2=(4 * percentage, 5 * percentage), precision=1, value1=1)
+                        pm.textFieldGrp('Ik_Snap_Attr_Name', l='Attr:', cw2=(4 * percentage, 9 * percentage),tx='iKSnap')
+                        pm.floatFieldGrp('Ik_Snap_Off', l="Off:", cal=(1, "right"),cw2=(4 * percentage, 5 * percentage),
+                                         precision=1)
+                        pm.floatFieldGrp('Ik_Snap_On', l="On:", cal=(1, "right"),cw2=(4 * percentage, 5 * percentage),
+                                         precision=1, value1=1)
 
                     pm.separator(h=5, st="in", w=layout)
 
-                    with pm.rowLayout('ik_ball_layout', nc=3,
-                                      columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage)],
+                    with pm.rowLayout('ik_ball_layout', nc=3,columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage)],
                                       cw2=(52 * percentage, 20 * percentage)):
-                        # pm.text('Ik_Ball_Toe_Wiggle_Name', l="Ik Ball Toe Wiggle Name:")
-                        pm.textFieldButtonGrp('Ik_Toe_Wiggle_Ctrl', l="Ik Ball Toe Wiggle Name:",
+                        pm.textFieldButtonGrp('Ik_Toe_Wiggle_Ctrl', l="Ik Ball Toe Wiggle Ctrl Name:",
                                               cal=(1, "right"),
                                               cw3=(30 * percentage, 16 * percentage, 6 * percentage),
                                               cat=[(1, 'right', 1), (2, 'both', 5)],
@@ -172,8 +159,7 @@ def ad_setup_fkik_ui():
                                               bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Toe_Wiggle_Ctrl'),
                                               tx='wristIk_ctrl')
                         pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', l='Attr Toe Wiggle:',
-                                        cw2=(14 * percentage, 12 * percentage),
-                                        tx='toeWiggle')
+                                        cw2=(14 * percentage, 12 * percentage),tx='toeWiggle')
                     with pm.rowLayout('ik_ball_rotation_layout', nc=5,
                                       columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
                                                     (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
@@ -182,8 +168,7 @@ def ad_setup_fkik_ui():
                                            16 * percentage)):
                         pm.text('Rotation_Toe_Wiggle', l="Rotation Toe Wiggle:")
                         radio_collection_rotate_ball_ik_ctrl = pm.radioCollection()
-                        ball_ik_ctrl_rotateX = pm.radioButton(label='Rotate X',
-                                                              onCommand=lambda x: ad_on_selection_button(1))
+                        ball_ik_ctrl_rotateX = pm.radioButton(label='Rotate X',onCommand=lambda x: ad_on_selection_button(1))
                         pm.radioButton(label='Rotate Y', onCommand=lambda x: ad_on_selection_button(2))
                         pm.radioButton(label='Rotate Z', onCommand=lambda x: ad_on_selection_button(3))
                         pm.radioCollection(radio_collection_rotate_ball_ik_ctrl, edit=True, select=ball_ik_ctrl_rotateX)
@@ -195,8 +180,7 @@ def ad_setup_fkik_ui():
 
                 with pm.frameLayout(collapsable=True, l='Additional Attributes', mh=5):
                     with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
-                                      columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]
-                                      ):
+                                      columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
                         pm.button(l="Add Object And Set Default Attribute Value", bgc=(0, 0, 0.5),
                                   c=ad_additional_attr_adding)
 
@@ -212,12 +196,9 @@ def ad_setup_fkik_ui():
                 with pm.frameLayout(collapsable=True, l='Setup', mh=5):
                     pm.text(l='Select Leg/Arm Ctrl Setup :')
                     with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
-                                      columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]
-                                      ):
-                        pm.button("run_setup", bgc=(0, 0.5, 0), l="Run Setup",
-                                  c=partial(ad_run_setup))
-                        pm.button("delete_setup", bgc=(0.5, 0, 0), l="Delete Setup",
-                                  c=partial(ad_delete_setup))
+                                      columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
+                        pm.button("run_setup", bgc=(0, 0.5, 0), l="Run Setup",c=partial(ad_run_setup))
+                        pm.button("delete_setup", bgc=(0.5, 0, 0), l="Delete Setup",c=partial(ad_delete_setup))
 
                 pm.separator(h=10, st="in", w=layout)
                 with pm.rowLayout(nc=3, cw3=(32 * percentage, 32 * percentage, 32 * percentage),
@@ -232,6 +213,7 @@ def ad_setup_fkik_ui():
                 pm.separator(h=1, st="none", w=layout)
             pm.setParent(u=True)
     pm.showWindow()
+
 
 def ad_action_translate_rotate_radio_button(object, *args):
     """
@@ -283,6 +265,7 @@ def ad_defining_object_text_field(define_object, label, add_feature=False, *args
                               cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                               bl="Get Object",
                               bc=partial(ad_adding_object_sel_to_textfield, define_object), **kwargs)
+
 
 def ad_enabling_disabling_ui(object, value, *args):
     for item in object:
@@ -376,9 +359,9 @@ def ad_adding_object_sel_to_textfield(text_input, *args):
     """
     select and add object
     """
-    sel = pm.ls(sl=True, l=True, tr=True)
-    if len(sel) == 1:
-        object_selection = sel[0]
+    select = pm.ls(sl=True, l=True, tr=True)
+    if len(select) == 1:
+        object_selection = select[0]
         pm.textFieldButtonGrp(text_input, e=True, tx=object_selection)
     else:
         pm.error("please select one object!")
@@ -402,7 +385,8 @@ def ad_query_define_textfield_object(object_define, *args):
     return text, object_define
 
 
-def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define, ik_snap_ctrl, fkIk_setup_ctrl):
+def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define, ik_snap_ctrl,
+                        fkIk_setup_ctrl):
     if pm.rowLayout('ik_ball_layout', q=True, enable=True):
         toe_wiggle_attr_name = pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', q=True, tx=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Toe_Wiggle_Attr_Name', dt='string')
@@ -422,11 +406,13 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     pm.setAttr('%s.Translate_Fk_Ctrl_Exists' % fkIk_setup_ctrl[0], translate_fk_ctrl, l=True)
 
     fk_ik_attr_name = pm.textFieldGrp('Fk_Ik_Attr_Name', q=True, tx=True)
-    if pm.objExists(fkIk_setup_ctrl[0]+'.'+fk_ik_attr_name):
+    if pm.objExists(fkIk_setup_ctrl[0] + '.' + fk_ik_attr_name):
         pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Ik_Attr_Name', dt='string')
         pm.setAttr('%s.Fk_Ik_Attr_Name' % fkIk_setup_ctrl[0], fk_ik_attr_name, l=True)
     else:
-        pm.error("There is no attribute name '%s' in the scene. Please check your Fk/Ik input attribute name!" % fk_ik_attr_name)
+        pm.error(
+            "There is no attribute name '%s' in the scene. "
+            "Please check your Fk/Ik input attribute name!" % fk_ik_attr_name)
 
     value_fk_attr = pm.floatFieldGrp('Fk_Value_On', q=True, value1=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Value_On', at='float')
@@ -437,11 +423,13 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     pm.setAttr('%s.Ik_Value_On' % fkIk_setup_ctrl[0], value_ik_attr, l=True)
 
     ik_snap_ctrl_attr = pm.textFieldGrp('Ik_Snap_Attr_Name', q=True, tx=True)
-    if pm.objExists(ik_snap_ctrl +'.'+ik_snap_ctrl_attr):
+    if pm.objExists(ik_snap_ctrl + '.' + ik_snap_ctrl_attr):
         pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Attr_Name', dt='string')
         pm.setAttr('%s.Ik_Snap_Attr_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_attr, l=True)
     else:
-        pm.error("There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" % (ik_snap_ctrl,ik_snap_ctrl_attr))
+        pm.error(
+            "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" % (
+            ik_snap_ctrl, ik_snap_ctrl_attr))
 
     ik_snap_min_value = pm.floatFieldGrp('Ik_Snap_Off', q=True, value1=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Off', at='float')
@@ -515,9 +503,7 @@ def ad_run_setup(*args):
                     pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0], item_label))
 
             ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
-                                ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
-                                fkIk_setup_ctrl=FkIk_Arm_Setup_Controller)
-
+                                ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],fkIk_setup_ctrl=FkIk_Arm_Setup_Controller)
         else:
             for item_label, object_label in zip(label_list, object_list):
                 pm.addAttr(FkIk_Leg_Setup_Controller[0], ln=item_label, at='message')
@@ -525,8 +511,7 @@ def ad_run_setup(*args):
                     pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Leg_Setup_Controller[0], item_label))
 
             ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
-                                ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
-                                fkIk_setup_ctrl=FkIk_Leg_Setup_Controller)
+                                ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],fkIk_setup_ctrl=FkIk_Leg_Setup_Controller)
 
     if pm.rowColumnLayout("row_column_add_object", q=True, ca=True):
         child_define_object = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
@@ -545,20 +530,23 @@ def ad_run_setup(*args):
                 default_value = pm.floatFieldGrp(current_default_value, q=True, value1=True)
                 radio_collection = pm.radioCollection(current_collection_fk_ik, q=True, select=True)
 
-                object_compile_name, value_compile_name=[],[]
+                object_compile_name, value_compile_name = [], []
                 if radio_collection == current_fk:
-                    if pm.objExists(object+'.'+attribute):
+                    if pm.objExists(object + '.' + attribute):
                         object_compile_name = '_DOTFK_AT_' + attribute
                         value_compile_name = '_DOTFK_VA_' + attribute
                     else:
-                        pm.error("There is no object '%s' with attribute name '%s' in the scene. Please check both of the input name!"  % (object, attribute))
-
+                        pm.error(
+                            "There is no object '%s' with attribute name '%s' in the scene. "
+                            "Please check both of the input name!" % (object, attribute))
                 else:
-                    if pm.objExists(object+'.'+attribute):
+                    if pm.objExists(object + '.' + attribute):
                         object_compile_name = '_DOTIK_AT_' + attribute
                         value_compile_name = '_DOTIK_VA_' + attribute
                     else:
-                        pm.error("There is no object '%s' with attribute name '%s' in the scene. Please check both of the input name!" % (object, attribute))
+                        pm.error(
+                            "There is no object '%s' with attribute name '%s' in the scene. "
+                            "Please check both of the input name!" % (object, attribute))
 
                 # attribute_compile_name = object + '_DOT_' + attribute
                 if object and attribute:
@@ -567,19 +555,16 @@ def ad_run_setup(*args):
                             pm.addAttr(FkIk_Arm_Setup_Controller[0], ln=object_compile_name, at='message')
                             pm.connectAttr(object + '.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0],
                                                                            object_compile_name))
-
                             pm.addAttr(FkIk_Arm_Setup_Controller[0], ln=value_compile_name, at='float')
                             pm.setAttr('%s.%s' % (FkIk_Arm_Setup_Controller[0], value_compile_name), default_value,
                                        l=True)
                         else:
                             pm.warning("Line # " + str(number_of_object) + " same attribute! Skipped this attribute.")
-
                     else:
-                        if not pm.objExists(FkIk_Arm_Setup_Controller[0] + '.' + object_compile_name):
+                        if not pm.objExists(FkIk_Leg_Setup_Controller[0] + '.' + object_compile_name):
                             pm.addAttr(FkIk_Leg_Setup_Controller[0], ln=object_compile_name, at='message')
                             pm.connectAttr(object + '.message', '%s.%s' % (FkIk_Leg_Setup_Controller[0],
                                                                            object_compile_name))
-
                             pm.addAttr(FkIk_Leg_Setup_Controller[0], ln=value_compile_name, at='float')
                             pm.setAttr('%s.%s' % (FkIk_Leg_Setup_Controller[0], value_compile_name), default_value,
                                        l=True)
@@ -588,42 +573,52 @@ def ad_run_setup(*args):
 
                 else:
                     pm.warning("Line # " + str(number_of_object) + " is empty! Skipped this attribute.")
-
+    pm.confirmDialog(title='Progress', icon="information", message='Adding setup FkIk has done!')
 
 def ad_delete_setup(*args):
-    sel = pm.ls(sl=1)
-    if sel:
-        object_text_field_list = ['FkIk_Arm_Setup_Controller', 'FkIk_Leg_Setup_Controller',
-                                  'Upper_Limb_Joint', 'Middle_Limb_Joint', 'Lower_Limb_Joint',
-                                  'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
-                                  'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
-                                  'End_Limb_Joint', 'End_Limb_Fk_Ctrl', 'End_Limb_Ik_Ctrl',
-                                  'Middle_Translate_Aim_Joint', 'Ik_Snap_Ctrl_Name', 'Ik_Snap_Attr_Name',
-                                  'Ik_Snap_Off', 'Ik_Snap_On',
-                                  'Lower_Translate_Aim_Joint', 'Aim_Axis', 'Translate_Fk_Ctrl_Exists',
-                                  'Fk_Ik_Attr_Name',
-                                  'Fk_Value_On', 'Ik_Value_On', 'Ik_Toe_Wiggle_Ctrl', 'Ik_Toe_Wiggle_Attr_Name',
-                                  'Rotation_Wiggle',
-                                  'Reverse_Wiggle_Value']
+    if pm.ls(sl=1):
+        select = pm.ls(sl=1)[0]
+        if select:
+            dialog_confirm = pm.confirmDialog(title='Delete', message='Are you sure to delete setup?', button=['Yes', 'No'],
+                             defaultButton='Yes', icon="warning",
+                             cancelButton='No', dismissString='No')
+            if dialog_confirm =='Yes':
+                object_text_field_list = ['FkIk_Arm_Setup_Controller', 'FkIk_Leg_Setup_Controller',
+                                          'Upper_Limb_Joint', 'Middle_Limb_Joint', 'Lower_Limb_Joint',
+                                          'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
+                                          'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
+                                          'End_Limb_Joint', 'End_Limb_Fk_Ctrl', 'End_Limb_Ik_Ctrl',
+                                          'Middle_Translate_Aim_Joint', 'Ik_Snap_Ctrl_Name', 'Ik_Snap_Attr_Name',
+                                          'Ik_Snap_Off', 'Ik_Snap_On',
+                                          'Lower_Translate_Aim_Joint', 'Aim_Axis', 'Translate_Fk_Ctrl_Exists',
+                                          'Fk_Ik_Attr_Name',
+                                          'Fk_Value_On', 'Ik_Value_On', 'Ik_Toe_Wiggle_Ctrl', 'Ik_Toe_Wiggle_Attr_Name',
+                                          'Rotation_Wiggle',
+                                          'Reverse_Wiggle_Value']
 
-        if pm.objExists(sel[0] + '.' + 'FkIk_Arm_Setup_Controller'):
-            for item in object_text_field_list:
-                if pm.attributeQuery(item, n=sel[0], ex=True):
-                    list_attr = pm.listAttr('%s.%s' % (sel[0], item), l=True)
-                    if list_attr:
-                        pm.setAttr('%s.%s' % (sel[0], list_attr[0]), l=False)
-                    pm.deleteAttr('%s.%s' % (sel[0], item))
+                if pm.objExists(select + '.' + 'FkIk_Arm_Setup_Controller'):
+                    for item in object_text_field_list:
+                        if pm.attributeQuery(item, n=select, ex=True):
+                            list_attr = pm.listAttr('%s.%s' % (select, item), l=True)
+                            if list_attr:
+                                pm.setAttr('%s.%s' % (select, list_attr[0]), l=False)
+                            pm.deleteAttr('%s.%s' % (select, item))
 
-            list_attribute_additional = pm.listAttr(sel[0])
-            if filter(lambda x: '_DOTFK_AT_' in x or '_DOTFK_VA_' in x or '_DOTIK_AT_' in x or '_DOTIK_VA_' in x, list_attribute_additional):
-                filtering = filter(lambda x: '_DOTFK_AT_' in x or '_DOTFK_VA_' in x or '_DOTIK_AT_' in x or '_DOTIK_VA_' in x, list_attribute_additional)
-                for item in filtering:
-                    list_attr_layout = pm.listAttr('%s.%s' % (sel[0], item), l=True)
-                    if list_attr_layout:
-                        pm.setAttr('%s.%s' % (sel[0], list_attr_layout[0]), l=False)
-                    pm.deleteAttr('%s.%s' % (sel[0], item))
+                    list_attribute_additional = pm.listAttr(select)
+                    if filter(lambda x: '_DOTFK_AT_' in x or '_DOTFK_VA_' in x or '_DOTIK_AT_' in x or '_DOTIK_VA_' in x,
+                              list_attribute_additional):
+                        filtering = filter(
+                            lambda x: '_DOTFK_AT_' in x or '_DOTFK_VA_' in x or '_DOTIK_AT_' in x or '_DOTIK_VA_' in x,
+                            list_attribute_additional)
+                        for item in filtering:
+                            list_attr_layout = pm.listAttr('%s.%s' % (select, item), l=True)
+                            if list_attr_layout:
+                                pm.setAttr('%s.%s' % (select, list_attr_layout[0]), l=False)
+                            pm.deleteAttr('%s.%s' % (select, item))
+            else:
+                return select
         else:
             pm.warning(
                 'There are no setup exists! Either you have selected wrong controller object or the setup already deleted.')
     else:
-        pm.warning('Please select either arm or leg setup to clean up the setup!')
+        pm.error('Please select either arm or leg setup to clean up the setup!')
