@@ -171,7 +171,7 @@ def ad_setup_fkik_ui():
                                               tx='wristIk_ctrl')
                         # attribute
                         pm.textFieldGrp('Ik_Snap_Attr_Name', l='Attr:', cw2=(4 * percentage, 9 * percentage),
-                                        tx='iKSnap')
+                                        tx='ikSnap')
                         # ik snap off
                         pm.floatFieldGrp('Ik_Snap_Off', l="Off:", cal=(1, "right"),
                                          cw2=(4 * percentage, 5 * percentage),
@@ -181,6 +181,8 @@ def ad_setup_fkik_ui():
                                          precision=1, value1=1)
 
                     pm.separator(h=5, st="in", w=layout)
+
+                    pm.radioCollection(direction_control, edit=True, select=direction1)
 
                     # condition if end limb ik controller off. query toe wiggle controller name and toe wiggle attribute name
                     with pm.rowLayout('ik_ball_layout', nc=3,
@@ -217,7 +219,6 @@ def ad_setup_fkik_ui():
                         # reverse checkbox
                         pm.checkBox('Reverse_Wiggle_Value', l='Reverse')
 
-                    pm.radioCollection(direction_control, edit=True, select=direction1)
 
                 pm.separator(h=5, st="in", w=layout)
 
@@ -263,25 +264,20 @@ def ad_setup_fkik_ui():
 
 def ad_action_translate_rotate_radio_button(object, *args):
     # query object with value on shape selector status
-    value_translate, axis_translate, value_rotate, axis_rotate = [], [], [], []
+    value_translate, axis_translate, value_rotate, axis_rotate =[],[],[],[]
     if on_selector == 1:
         axis_translate = 'translateX'
         axis_rotate = 'rotateX'
-        value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
-        value_rotate = pm.getAttr('%s.%s' % (object, axis_rotate))
     elif on_selector == 2:
         axis_translate = 'translateY'
         axis_rotate = 'rotateY'
-        value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
-        value_rotate = pm.getAttr('%s.%s' % (object, axis_rotate))
     elif on_selector == 3:
         axis_translate = 'translateZ'
         axis_rotate = 'rotateZ'
-        value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
-        value_rotate = pm.getAttr('%s.%s' % (object, axis_rotate))
     else:
         pass
-
+    value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
+    value_rotate = pm.getAttr('%s.%s' % (object, axis_rotate))
     return value_translate, axis_translate, value_rotate, axis_rotate
 
 
@@ -378,7 +374,6 @@ def ad_additional_attr_adding(*args):
 def ad_additional_attr_deleting(*args):
     # delete add_text_field_grp
     child_array = pm.rowColumnLayout("row_column_add_object", q=True, ca=True)
-
     if child_array:
         child_array_num = len(child_array)
         delete_default_value = "default_value" + str(child_array_num / 5)
@@ -388,13 +383,8 @@ def ad_additional_attr_deleting(*args):
         delete_ik = "ik_add_setup" + str(child_array_num / 5)
         delete_collection_fk_ik = "fk_ik_choose" + str(child_array_num / 5)
 
-        pm.deleteUI(delete_default_value)
-        pm.deleteUI(delete_attr)
-        pm.deleteUI(delete_object)
-        pm.deleteUI(delete_fk)
-        pm.deleteUI(delete_ik)
-        pm.deleteUI(delete_collection_fk_ik)
-
+        # delete ui
+        pm.deleteUI(delete_default_value, delete_attr, delete_object, delete_fk, delete_ik, delete_collection_fk_ik)
     else:
         pass
 
@@ -427,23 +417,22 @@ def ad_query_define_textfield_object(object_define, *args):
 
 def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define, ik_snap_ctrl,
                         fkIk_setup_ctrl):
-    if pm.rowLayout('ik_ball_layout', q=True, enable=True):
-        toe_wiggle_attr_name = pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', q=True, tx=True)
-        pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Toe_Wiggle_Attr_Name', dt='string')
-        pm.setAttr('%s.Ik_Toe_Wiggle_Attr_Name' % fkIk_setup_ctrl[0], toe_wiggle_attr_name, l=True)
-
-    if pm.rowLayout('ik_ball_rotation_layout', q=True, enable=True):
-        pm.addAttr(fkIk_setup_ctrl[0], ln='Rotation_Wiggle', dt='string')
-        pm.setAttr('%s.Rotation_Wiggle' % fkIk_setup_ctrl[0],
-                   ad_action_translate_rotate_radio_button(End_Limb_Joint_Define[0])[3], l=True)
-
-        reverse_wiggle_value = pm.checkBox('Reverse_Wiggle_Value', q=True, value=True)
-        pm.addAttr(fkIk_setup_ctrl[0], ln='Reverse_Wiggle_Value', at='bool')
-        pm.setAttr('%s.Reverse_Wiggle_Value' % fkIk_setup_ctrl[0], reverse_wiggle_value, l=True)
 
     translate_fk_ctrl = pm.checkBox('Translate_Fk', q=True, value=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Translate_Fk_Ctrl_Exists', at='bool')
     pm.setAttr('%s.Translate_Fk_Ctrl_Exists' % fkIk_setup_ctrl[0], translate_fk_ctrl, l=True)
+
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Aim_Axis', dt='string')
+    pm.setAttr('%s.Aim_Axis' % fkIk_setup_ctrl[0],
+               ad_action_translate_rotate_radio_button(Lower_Limb_Joint_Define[0])[1], l=True)
+
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Translate_Aim_Joint', at='float')
+    pm.setAttr('%s.Middle_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
+               ad_action_translate_rotate_radio_button(Middle_Limb_Joint_Define[0])[0], l=True)
+
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Translate_Aim_Joint', at='float')
+    pm.setAttr('%s.Lower_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
+               ad_action_translate_rotate_radio_button(Lower_Limb_Joint_Define[0])[0], l=True)
 
     fk_ik_attr_name = pm.textFieldGrp('Fk_Ik_Attr_Name', q=True, tx=True)
     if pm.objExists(fkIk_setup_ctrl[0] + '.' + fk_ik_attr_name):
@@ -479,18 +468,19 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_On', at='float')
     pm.setAttr('%s.Ik_Snap_On' % fkIk_setup_ctrl[0], ik_snap_max_value, l=True)
 
-    pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Translate_Aim_Joint', at='float')
-    pm.setAttr('%s.Middle_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
-               ad_action_translate_rotate_radio_button(Middle_Limb_Joint_Define[0])[0], l=True)
+    if pm.rowLayout('ik_ball_layout', q=True, enable=True):
+        toe_wiggle_attr_name = pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', q=True, tx=True)
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Toe_Wiggle_Attr_Name', dt='string')
+        pm.setAttr('%s.Ik_Toe_Wiggle_Attr_Name' % fkIk_setup_ctrl[0], toe_wiggle_attr_name, l=True)
 
-    pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Translate_Aim_Joint', at='float')
-    pm.setAttr('%s.Lower_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
-               ad_action_translate_rotate_radio_button(Lower_Limb_Joint_Define[0])[0], l=True)
+    if pm.rowLayout('ik_ball_rotation_layout', q=True, enable=True):
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Rotation_Wiggle', dt='string')
+        pm.setAttr('%s.Rotation_Wiggle' % fkIk_setup_ctrl[0],
+                   ad_action_translate_rotate_radio_button(End_Limb_Joint_Define[0])[3], l=True)
 
-    pm.addAttr(fkIk_setup_ctrl[0], ln='Aim_Axis', dt='string')
-    pm.setAttr('%s.Aim_Axis' % fkIk_setup_ctrl[0],
-               ad_action_translate_rotate_radio_button(Lower_Limb_Joint_Define[0])[1], l=True)
-
+        reverse_wiggle_value = pm.checkBox('Reverse_Wiggle_Value', q=True, value=True)
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Reverse_Wiggle_Value', at='bool')
+        pm.setAttr('%s.Reverse_Wiggle_Value' % fkIk_setup_ctrl[0], reverse_wiggle_value, l=True)
 
 def ad_run_setup(*args):
     # query objects
@@ -621,7 +611,7 @@ def ad_run_setup(*args):
 
                 else:
                     pm.warning("Line # " + str(number_of_object) + " is empty! Skipped this attribute.")
-    pm.confirmDialog(title='Add Inform', icon="information", message='Adding setup FkIk has done!')
+    pm.confirmDialog(title='Add Inform', icon="information", message='Adding setup Fk Ik has done!')
 
 
 def ad_delete_setup(*args):
