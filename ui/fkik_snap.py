@@ -1,16 +1,27 @@
 """
-FkIk Snap script.
-Stable on any version of Autodesk Maya.
-Script description :
-    This script purposes to match Fk/Ik task.
-Instruction to use:
+DESCRIPTION:
+    FkIk snap is tool for matching fkik.
+    Works properly in any version of Autodesk Maya.
+
+USAGE:
     You may go to this link for have more detail >>
     project.adiendendra.com/snap_fkik
 
-Author:   Adien Dendra
-Contact:  adien.dendra@gmail.com | hello@adiendendra.com
-Date:     17 / 08 / 2020
-Version:  1.0
+AUTHOR:
+    Adien Dendra
+
+CONTACT:
+    adien.dendra@gmail.com | hello@adiendendra.com
+
+VERSION:
+    1.0 - 17 August 2020 - Initial Release
+
+***************************************************************
+Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+
+This is commercial license can not be copied and/or
+distributed without the express permission of Adien Dendra
+***************************************************************
 
 """
 
@@ -31,8 +42,10 @@ def ad_snap_fkik_ui():
     with pm.window(adien_snap_fkIk, title='AD Fk/Ik Snap', width=layout + 10, height=150):
         with pm.columnLayout(rs=5, co=('both', 5), adj=True):
             pm.text(l='Select Leg/Arm Ctrl Setup:')
+            # button to Fk
             pm.button(label='To Fk', width=layout, height=40, backgroundColor=[0.46, 0.86, 0.46],
                       command=pm.Callback(ad_ik_to_fk))
+            # button to Ik
             pm.button(label='To Ik', width=layout, height=40, backgroundColor=[0.86, 0.46, 0.46],
                       command=pm.Callback(ad_fk_to_ik))
             with pm.rowLayout(nc=2, cw2=(32 * percentage, 32 * percentage),
@@ -47,23 +60,23 @@ def ad_snap_fkik_ui():
 
 def ad_ik_to_fk():
     fkik_ctrl_select = pm.ls(sl=1)
-    fk_ik_attr_name = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Fk_Ik_Attr_Name')
-    value_fk_attr = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Fk_Value_On')
+    fk_ik_attr_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Fk_Ik_Attr_Name')
+    value_fk_attr = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Fk_Value_On')
 
-    if pm.objExists(fkik_ctrl_select[0] +'.'+ 'Upper_Limb_Joint'):
+    if pm.objExists(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint'):
         # condition of controller
         getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name)
         if getattr_ctrl == 0:
             return fkik_ctrl_select[0]
         else:
-            upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Upper_Limb_Joint')[0]
-            middle_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Middle_Limb_Joint')[0]
-            lower_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Lower_Limb_Joint')[0]
-            upper_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Upper_Limb_Fk_Ctrl')[0]
-            middle_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Middle_Limb_Fk_Ctrl')[0]
-            lower_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Lower_Limb_Fk_Ctrl')[0]
-            fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'FkIk_Arm_Setup_Controller', s=1)
-            fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'FkIk_Leg_Setup_Controller', s=1)
+            upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint')[0]
+            middle_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Middle_Limb_Joint')[0]
+            lower_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Joint')[0]
+            upper_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Fk_Ctrl')[0]
+            middle_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Middle_Limb_Fk_Ctrl')[0]
+            lower_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Fk_Ctrl')[0]
+            fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Arm_Setup_Controller', s=1)
+            fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Leg_Setup_Controller', s=1)
 
             # run snap for arm
             if fk_ik_arm_ctrl:
@@ -72,8 +85,8 @@ def ad_ik_to_fk():
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl)
             # run snap for leg
             if fk_ik_leg_ctrl:
-                end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'End_Limb_Joint')[0]
-                end_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'End_Limb_Fk_Ctrl')[0]
+                end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Joint')[0]
+                end_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Fk_Ctrl')[0]
 
                 ad_ik_to_fk_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
@@ -89,26 +102,26 @@ def ad_ik_to_fk():
 def ad_fk_to_ik():
     # listing fk ik setup selection
     fkik_ctrl_select = pm.ls(sl=1)
-    fk_ik_attr_name = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Fk_Ik_Attr_Name')
-    value_ik_attr = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Ik_Value_On')
+    fk_ik_attr_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Fk_Ik_Attr_Name')
+    value_ik_attr = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Value_On')
 
-    if pm.objExists(fkik_ctrl_select[0] +'.'+ 'Upper_Limb_Joint'):
+    if pm.objExists(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint'):
         # condition of controller
         getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name)
         if getattr_ctrl == 1:
             return fkik_ctrl_select[0]
         else:
-            upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Upper_Limb_Joint')[0]
-            middle_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Middle_Limb_Joint')[0]
-            lower_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Lower_Limb_Joint')[0]
-            poleVector_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Pole_Vector_Ik_Ctrl')[0]
-            lower_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Lower_Limb_Ik_Ctrl')[0]
-            upper_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'Upper_Limb_Ik_Ctrl')[0]
-            aim_axis = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Aim_Axis')
-            middle_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Middle_Translate_Aim_Joint')
-            lower_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] +'.'+ 'Lower_Translate_Aim_Joint')
-            fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'FkIk_Arm_Setup_Controller', s=1)
-            fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'FkIk_Leg_Setup_Controller', s=1)
+            upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint')[0]
+            middle_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Middle_Limb_Joint')[0]
+            lower_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Joint')[0]
+            poleVector_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Pole_Vector_Ik_Ctrl')[0]
+            lower_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Ik_Ctrl')[0]
+            upper_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Ik_Ctrl')[0]
+            aim_axis = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Aim_Axis')
+            middle_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Middle_Translate_Aim_Joint')
+            lower_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Lower_Translate_Aim_Joint')
+            fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Arm_Setup_Controller', s=1)
+            fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Leg_Setup_Controller', s=1)
             ik_snap_ctrl_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Snap_Ctrl_Name')
             ik_snap_attr_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Snap_Attr_Name')
             ik_snap_on = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Snap_On')
@@ -123,10 +136,10 @@ def ad_fk_to_ik():
                                   aim_axis=aim_axis, fkik_setup_controller=fkik_ctrl_select,
                                   ik_snap_ctrl_name=ik_snap_ctrl_name,
                                   ik_snap_attr_name=ik_snap_attr_name,
-                                  ik_snap_on= ik_snap_on)
+                                  ik_snap_on=ik_snap_on)
             # run for snap leg
             if fk_ik_leg_ctrl:
-                end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] +'.'+ 'End_Limb_Joint')[0]
+                end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Joint')[0]
                 end_limb_ik_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + 'End_Limb_Ik_Ctrl')
                 rotation_wiggle = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Rotation_Wiggle')
                 ik_toe_wiggle_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Toe_Wiggle_Ctrl')
@@ -188,16 +201,17 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
     if filter(lambda x: '_DOTIK_AT_' in x or '_DOTIK_VA_' in x, list_attribute_additional):
         filtering_attr = filter(lambda x: '_DOTIK_AT_' in x, list_attribute_additional)
         filtering_value = filter(lambda x: '_DOTIK_VA_' in x, list_attribute_additional)
-        for item_attr, item_value in zip (filtering_attr, filtering_value):
+        for item_attr, item_value in zip(filtering_attr, filtering_value):
             get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
             get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
             replace_dot_attr = item_attr.replace('_DOTIK_AT_', '.')
             pm.setAttr('%s%s' % (get_item_attr, replace_dot_attr), get_value_attr)
 
+    # condition leg true
     if leg:
-        if not pm.listConnections(selection +'.'+'End_Limb_Ik_Ctrl', s=1):
+        if not pm.listConnections(selection + '.' + 'End_Limb_Ik_Ctrl', s=1):
             xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
-            if (fkik_setup_controller[0] +'.'+'Reverse_Wiggle_Value'):
+            if (fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value'):
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
             else:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
@@ -235,16 +249,16 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
     current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
     total_current_value = current_value_axis_towards_middle_jnt + current_value_axis_towards_lower_jnt
 
-    # conditon snap elbow or knee
+    # condition snap elbow or knee
     if abs(total_current_value - total_value_default) > 0.01:
         ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
 
 
-def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name,ik_snap_attr_name,
+def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name,
                       ik_snap_on):
-
     pm.setAttr('%s.%s' % (ik_snap_ctrl_name, ik_snap_attr_name), ik_snap_on)
-    pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1], xform_middle_limb_pos[2]))
+    pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
+                                            xform_middle_limb_pos[2]))
 
 
 def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):
