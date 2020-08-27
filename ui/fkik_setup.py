@@ -43,7 +43,8 @@ def ad_setup_fkik_ui():
         with pm.scrollLayout('scroll'):
             with pm.columnLayout(rowSpacing=1 * percentage, w=layout, co=('both', 1 * percentage), adj=1):
                 # frame layout message fkik arm and leg
-                with pm.frameLayout(collapsable=True, l='Select Controller', mh=5):
+                pm.text('Setup Fk/Ik Controller for Arm or Leg:')
+                with pm.frameLayout(collapsable=True, l='Define Fk/Ik Controller', mh=5):
                     with pm.rowColumnLayout('fkIk_controller_layout', nc=2, rowSpacing=(2, 1 * percentage),
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)], ca=True):
@@ -127,10 +128,28 @@ def ad_setup_fkik_ui():
                 # frame layout additional setup
                 with pm.frameLayout(collapsable=True, l='Additional Setup', mh=5):
                     # translate fk lock/unlock
-                    with pm.rowLayout(nc=2, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage)],
-                                      cw2=(30 * percentage, 64.8)):
-                        pm.text('Does Translate Fk ctrl locked?:')
-                        pm.checkBox('Translate_Fk', label='')
+                    with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                          (3, 'both', 1 * percentage), (4, 'both', 1 * percentage)],
+                                      cw4=(30 * percentage, 5*percentage, 29 * percentage, 29 * percentage)):
+                        pm.text('Does Translate Fk ctrl is locked?:')
+                        pm.checkBox('Translate_Fk', label='', cc=partial(ad_enabling_disabling_ui,['button_add_ctrl_stretch',
+                                                                                                   'button_delete_ctrl_stretch']))
+                        pm.button('button_add_ctrl_stretch', l="Add Ctrl Fk Stretch Attr", bgc=(0, 0, 0.5), en=False,
+                                  c=ad_scale_fk_ctrl_limb_attr_adding)
+                        pm.button('button_delete_ctrl_stretch',l="Delete Ctrl Fk Stretch Attr", bgc=(0.5, 0, 0), en=False,
+                                  c=ad_scale_fk_ctrl_limb_attr_deleting)
+
+                    # additional attributes
+                    with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
+                                      columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
+
+                        pm.setParent(u=True)
+                        pm.rowColumnLayout("row_column_scale_fk_add_object", nc=4,
+                                           cw=[(1, 37 * percentage), (2, 22 * percentage), (3, 19 * percentage),
+                                               (4, 17 * percentage)])
+                        pm.setParent(u=True)
+
+                    pm.separator(h=5, st="in", w=layout)
 
                     # radio button get attribute value of translate joint
                     with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
@@ -224,14 +243,14 @@ def ad_setup_fkik_ui():
                 pm.separator(h=5, st="in", w=layout)
 
                 # additional attributes
-                with pm.frameLayout(collapsable=True, l='Additional Attributes', mh=5):
+                with pm.frameLayout(collapsable=True, l='Additional Attributes Set to Default', mh=5):
                     with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
                                       columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
                         pm.button(l="Add Object And Set Default Attribute Value", bgc=(0, 0, 0.5),
                                   c=ad_additional_attr_adding)
 
                         # create button to delete last pair of text fields
-                        pm.button(l="Delete", bgc=(0.5, 0, 0), c=ad_additional_attr_deleting)
+                        pm.button(l="Delete Object And Set Default Attribute Value", bgc=(0.5, 0, 0), c=ad_additional_attr_deleting)
                         pm.setParent(u=True)
                         pm.rowColumnLayout("row_column_add_object", nc=5,
                                            cw=[(1, 37 * percentage), (2, 22 * percentage), (3, 25 * percentage),
@@ -331,9 +350,14 @@ def ad_enabling_disabling_ui(object, value, *args):
                 pm.rowLayout(item, edit=True, enable=False)
             else:
                 pm.rowLayout(item, edit=True, enable=True)
+        elif objectType == 'button':
+            pm.button(item, edit=True, enable=value)
+            child_array = pm.rowColumnLayout("row_column_scale_fk_add_object", q=True, ca=True)
+            if child_array:
+                # delete ui
+                pm.deleteUI(child_array)
         else:
             pass
-
 
 def ad_clearing_all_text_field(*args):
     # clearing object text field
@@ -342,6 +366,55 @@ def ad_clearing_all_text_field(*args):
             pm.textFieldButtonGrp(object, edit=True, tx='')
         else:
             pass
+
+def ad_scale_fk_ctrl_limb_attr_adding(*args):
+    child_array = pm.rowColumnLayout("row_column_scale_fk_add_object", q=True, ca=True)
+    if child_array:
+        current_number = len(child_array) / 4 + 1
+        current_attr = "attribute_fk_ctrl" + str(current_number)
+        current_object = "object_fk_ctrl" + str(current_number)
+        current_default_value_off = "default_value_off_fk_ctrl" + str(current_number)
+        current_default_value_on = "default_value_on_fk_ctrl" + str(current_number)
+
+    else:
+        current_default_value_off = "default_value_off_fk_ctrl1"
+        current_default_value_on = "default_value_on_fk_ctrl1"
+        current_attr = "attribute_fk_ctrl1"
+        current_object = "object_fk_ctrl1"
+
+    # controller additional
+    pm.textFieldButtonGrp(current_object, l="Ctrl Fk:", cal=(1, "right"),
+                          cw3=(8 * percentage, 22 * percentage, 7 * percentage), p="row_column_scale_fk_add_object",
+                          cat=[(3, 'left', 2)], tx='upperArmFk_ctrl',
+                          bl="<<",
+                          bc=partial(ad_adding_object_sel_to_textfield, current_object))
+    # attribute additional
+    pm.textFieldGrp(current_attr, l="Attr:", cal=(1, "right"), cw2=(6 * percentage, 12 * percentage),
+                    p="row_column_scale_fk_add_object", tx='stretch',)
+    # set default value
+    pm.floatFieldGrp(current_default_value_off, l="Off Value:", cal=(1, "right"),
+                     cw2=(10 * percentage, 5 * percentage),
+                     p="row_column_scale_fk_add_object", precision=1)
+
+    # set default value
+    pm.floatFieldGrp(current_default_value_on, l="On Value:", cal=(1, "right"),
+                     cw2=(10 * percentage, 5 * percentage),
+                     p="row_column_scale_fk_add_object", precision=1, value1=1)
+
+def ad_scale_fk_ctrl_limb_attr_deleting(*args):
+    # delete add_text_field_grp
+    child_array = pm.rowColumnLayout("row_column_scale_fk_add_object", q=True, ca=True)
+    if child_array:
+        child_array_num = len(child_array)
+        delete_default_value_on = "default_value_on_fk_ctrl" + str(child_array_num / 4)
+        delete_default_value_off = "default_value_off_fk_ctrl" + str(child_array_num / 4)
+        delete_attr = "attribute_fk_ctrl" + str(child_array_num / 4)
+        delete_object = "object_fk_ctrl" + str(child_array_num / 4)
+
+        # delete ui
+        pm.deleteUI(delete_default_value_on, delete_attr, delete_object, delete_default_value_off)
+    else:
+        pass
 
 
 def ad_additional_attr_adding(*args):
