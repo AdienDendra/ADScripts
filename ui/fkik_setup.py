@@ -31,6 +31,7 @@ import pymel.core as pm
 layout = 600
 percentage = 0.01 * layout
 on_selector = 0
+on_selector_rotate = 0
 
 
 def ad_setup_fkik_ui():
@@ -195,7 +196,7 @@ def ad_setup_fkik_ui():
                                               cat=[(1, 'right', 1), (2, 'both', 5)],
                                               bl="<<",
                                               bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Toe_Wiggle_Ctrl'),
-                                              tx='wristIk_ctrl')
+                                              tx='ankleIk_ctrl')
                         # attribute
                         pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', l='Attr Toe Wiggle:',
                                         cw2=(14 * percentage, 12 * percentage), tx='toeWiggle')
@@ -211,9 +212,9 @@ def ad_setup_fkik_ui():
                         pm.text('Rotation_Toe_Wiggle', l="Rotation Toe Wiggle:")
                         radio_collection_rotate_ball_ik_ctrl = pm.radioCollection()
                         ball_ik_ctrl_rotateX = pm.radioButton(label='Rotate X',
-                                                              onCommand=lambda x: ad_on_selection_button(1))
-                        pm.radioButton(label='Rotate Y', onCommand=lambda x: ad_on_selection_button(2))
-                        pm.radioButton(label='Rotate Z', onCommand=lambda x: ad_on_selection_button(3))
+                                                              onCommand=lambda x: ad_on_selection_rotate_button(1))
+                        pm.radioButton(label='Rotate Y', onCommand=lambda x: ad_on_selection_rotate_button(2))
+                        pm.radioButton(label='Rotate Z', onCommand=lambda x: ad_on_selection_rotate_button(3))
                         pm.radioCollection(radio_collection_rotate_ball_ik_ctrl, edit=True, select=ball_ik_ctrl_rotateX)
 
                         # reverse checkbox
@@ -263,23 +264,34 @@ def ad_setup_fkik_ui():
 
 
 def ad_action_translate_rotate_radio_button(object, *args):
+    value_translate, axis_translate, value_rotate, axis_rotate = [], [],[],[]
     # query object with value on shape selector status
-    value_translate, axis_translate, value_rotate, axis_rotate =[],[],[],[]
     if on_selector == 1:
         axis_translate = 'translateX'
-        axis_rotate = 'rotateX'
     elif on_selector == 2:
         axis_translate = 'translateY'
-        axis_rotate = 'rotateY'
     elif on_selector == 3:
         axis_translate = 'translateZ'
+    else:
+        pass
+
+    if on_selector_rotate == 1:
+        axis_rotate = 'rotateX'
+    elif on_selector_rotate == 2:
+        axis_rotate = 'rotateY'
+    elif on_selector_rotate == 3:
         axis_rotate = 'rotateZ'
     else:
         pass
+
     value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
     value_rotate = pm.getAttr('%s.%s' % (object, axis_rotate))
+
     return value_translate, axis_translate, value_rotate, axis_rotate
 
+def ad_on_selection_rotate_button(on):
+    global on_selector_rotate
+    on_selector_rotate = on
 
 def ad_on_selection_button(on):
     # save the current shape selection into global variable
