@@ -77,12 +77,25 @@ def ad_ik_to_fk():
             lower_limb_fk_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Fk_Ctrl')[0]
             fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Arm_Setup_Controller', s=1)
             fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Leg_Setup_Controller', s=1)
+            aim_axis = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Aim_Axis')
+            middle_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Middle_Translate_Aim_Joint')
+            lower_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Lower_Translate_Aim_Joint')
+            fk_ctrl_up_stretch = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Fk_Ctrl_Up_Stretch', s=1)
+            fk_ctrl_mid_stretch = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Fk_Ctrl_Mid_Stretch', s=1)
 
             # run snap for arm
             if fk_ik_arm_ctrl:
+                # run snap for arm
                 ad_ik_to_fk_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
-                                  lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl)
+                                  lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
+                                  fkik_setup_controller=fkik_ctrl_select,
+                                  aim_axis=aim_axis,
+                                  value_axis_aim_middle=middle_aim_axis_value,
+                                  value_axis_aim_lower=lower_aim_axis_value,
+                                  fk_ctrl_up_stretch=fk_ctrl_up_stretch,
+                                  fk_ctrl_mid_stretch=fk_ctrl_mid_stretch,
+                                  )
             # run snap for leg
             if fk_ik_leg_ctrl:
                 end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Joint')[0]
@@ -91,6 +104,12 @@ def ad_ik_to_fk():
                 ad_ik_to_fk_setup(upper_limb_jnt=upper_limb_jnt, middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
+                                  fkik_setup_controller=fkik_ctrl_select,
+                                  aim_axis=aim_axis,
+                                  value_axis_aim_middle=middle_aim_axis_value,
+                                  value_axis_aim_lower=lower_aim_axis_value,
+                                  fk_ctrl_up_stretch=fk_ctrl_up_stretch,
+                                  fk_ctrl_mid_stretch=fk_ctrl_mid_stretch,
                                   end_limb_jnt=end_limb_jnt, end_limb_ctrl=end_limb_fk_ctrl, leg=True)
 
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_fk_attr)
@@ -114,9 +133,9 @@ def ad_fk_to_ik():
             upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint')[0]
             middle_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Middle_Limb_Joint')[0]
             lower_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Joint')[0]
+            upper_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Ik_Ctrl', s=1)
             poleVector_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Pole_Vector_Ik_Ctrl')[0]
             lower_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Ik_Ctrl')[0]
-            upper_limb_ik_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Ik_Ctrl')[0]
             aim_axis = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Aim_Axis')
             middle_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Middle_Translate_Aim_Joint')
             lower_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Lower_Translate_Aim_Joint')
@@ -165,7 +184,21 @@ def ad_fk_to_ik():
 
 
 def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_limb_ctrl, lower_limb_ctrl,
-                      upper_limb_ctrl, end_limb_jnt=None, end_limb_ctrl=None, leg=None):
+                      fkik_setup_controller, upper_limb_ctrl, aim_axis, value_axis_aim_middle, value_axis_aim_lower,
+                      fk_ctrl_up_stretch, fk_ctrl_mid_stretch, end_limb_jnt=None, end_limb_ctrl=None, leg=None):
+    # set to default
+    selection = fkik_setup_controller[0]
+    list_attribute_additional = pm.listAttr(selection)
+    if filter(lambda x: '_DOTAT_' and '_FK_' in x or '_DOTVA_' and '_FK_' in x, list_attribute_additional):
+        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_FK_' in x, list_attribute_additional)
+        filtering_value = filter(lambda x: '_DOTVA_' in x and '_FK_' in x, list_attribute_additional)
+        for item_attr, item_value in zip(filtering_attr, filtering_value):
+            get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
+            get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
+            item_list = item_attr.replace('_DOTAT_', ',').replace('_FK_', ',').split(',')
+            item_attribute, item_controller = ' '.join(item_list).split()
+            pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
+
     # query world position
     xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
     xform_middle_limb_rot = pm.xform(middle_limb_jnt, ws=1, q=1, ro=1)
@@ -178,9 +211,24 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
     pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
     pm.xform(middle_limb_ctrl, ws=1, ro=(xform_middle_limb_rot[0], xform_middle_limb_rot[1], xform_middle_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
-    pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
-    pm.xform(middle_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1], xform_middle_limb_pos[2]))
-    pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
+
+    if pm.getAttr(selection + '.' + 'Translate_Fk_Ctrl_Exists'):
+        upper_stretch_attr = pm.getAttr(selection + '.' + 'Fk_Attr_Up_Stretch')
+        middle_stretch_attr = pm.getAttr(selection + '.' + 'Fk_Attr_Mid_Stretch')
+
+        current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_jnt, aim_axis))
+        current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
+
+        length_factor_middle_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_middle
+        length_factor_lower_jnt = current_value_axis_towards_lower_jnt / value_axis_aim_lower
+        pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
+        pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
+
+    else:
+        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
+        pm.xform(middle_limb_ctrl, ws=1,
+                 t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1], xform_middle_limb_pos[2]))
+        pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
 
     # exeption for the leg
     if leg:
@@ -198,14 +246,15 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
-    if filter(lambda x: '_DOTIK_AT_' in x or '_DOTIK_VA_' in x, list_attribute_additional):
-        filtering_attr = filter(lambda x: '_DOTIK_AT_' in x, list_attribute_additional)
-        filtering_value = filter(lambda x: '_DOTIK_VA_' in x, list_attribute_additional)
+    if filter(lambda x: '_DOTAT_' and '_IK_' in x or '_DOTVA_' and '_IK_' in x, list_attribute_additional):
+        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_IK_' in x, list_attribute_additional)
+        filtering_value = filter(lambda x: '_DOTVA_' in x and '_IK_' in x, list_attribute_additional)
         for item_attr, item_value in zip(filtering_attr, filtering_value):
             get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
             get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
-            replace_dot_attr = item_attr.replace('_DOTIK_AT_', '.')
-            pm.setAttr('%s%s' % (get_item_attr, replace_dot_attr), get_value_attr)
+            item_list = item_attr.replace('_DOTAT_', ',').replace('_IK_', ',').split(',')
+            item_attribute, item_controller = ' '.join(item_list).split()
+            pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
     # condition leg true
     if leg:
@@ -230,10 +279,12 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
     xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
 
     # set position and rotation
-    pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
-    pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
+
+    if selection + '.' + 'Upper_Limb_Ik_Ctrl':
+        pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
+        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
 
     # for pole vector position
     up_joint_position = pm.xform(upper_limb_jnt, q=1, ws=1, t=1)
@@ -254,8 +305,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
         ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
 
 
-def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name,
-                      ik_snap_on):
+def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on):
     pm.setAttr('%s.%s' % (ik_snap_ctrl_name, ik_snap_attr_name), ik_snap_on)
     pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
                                             xform_middle_limb_pos[2]))
