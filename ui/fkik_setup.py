@@ -67,6 +67,8 @@ def ad_setup_fkik_ui():
                                                                           'endlimb_ik_ctrl',
                                                                           'End_Limb_Joint',
                                                                           'End_Limb_Fk_Ctrl',
+                                                                          'end_fk_ctrl_offset',
+                                                                          'end_ik_ctrl_offset'
                                                                           ]))
                         # fkik leg controller text field
                         ad_defining_object_text_field(define_object='FkIk_Leg_Setup_Controller',
@@ -127,6 +129,28 @@ def ad_setup_fkik_ui():
 
                 # frame layout additional setup
                 with pm.frameLayout(collapsable=True, l='Additional Setup', mh=5):
+                    # offset controller position or rotation
+                    with pm.rowLayout(nc=5, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                          (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
+                                                          (5, 'left', 1 * percentage)],
+                                      cw5=(30 * percentage, 17 * percentage, 17 * percentage, 17 * percentage, 17 * percentage)):
+                        pm.text('Fk Controller Offset:')
+                        pm.checkBox('upper_fk_ctrl_offset', label='Upper Fk Ctrl')
+                        pm.checkBox('middle_fk_ctrl_offset', label='Middle Fk Ctrl')
+                        pm.checkBox('lower_fk_ctrl_offset', label='Lower Fk Ctrl')
+                        pm.checkBox('end_fk_ctrl_offset', label='End Fk Ctrl')
+
+                    with pm.rowLayout(nc=5, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                          (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
+                                                          (5, 'left', 1 * percentage)],
+                                      cw5=(30 * percentage, 17 * percentage, 17 * percentage, 17 * percentage, 17 * percentage)):
+                        pm.text('Ik Controller Offset:')
+                        pm.checkBox('upper_ik_ctrl_offset', label='Upper Ik Ctrl')
+                        pm.checkBox('middle_ik_ctrl_offset', label='Middle Ik Ctrl')
+                        pm.checkBox('lower_ik_ctrl_offset', label='Lower Ik Ctrl')
+                        pm.checkBox('end_ik_ctrl_offset', label='End Ik Ctrl')
+
+                    pm.separator(h=5, st="in", w=layout)
                     # radio button get attribute value of translate joint
                     with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
                                                           (3, 'left', 1 * percentage), (4, 'left', 1 * percentage)],
@@ -473,8 +497,105 @@ def ad_query_define_textfield_object(object_define, *args):
     return text, object_define
 
 
-def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define, ik_snap_ctrl,
-                        fk_ctrl_up_stretch, fk_ctrl_mid_stretch, fkIk_setup_ctrl, ik_toe_wiggle_ctrl=None):
+def ad_additional_controller_offset(fkIk_setup_ctrl, joint, controller, attribute):
+    pm.select(fkIk_setup_ctrl[0])
+    pm.addAttr(longName='Translate'+'_'+attribute, attributeType='double3')
+    pm.addAttr(longName='Translate'+'_'+attribute+'_x', attributeType='double', parent='Translate'+'_'+attribute)
+    pm.addAttr(longName='Translate'+'_'+attribute+'_y', attributeType='double', parent='Translate'+'_'+attribute)
+    pm.addAttr(longName='Translate'+'_'+attribute+'_z', attributeType='double', parent='Translate'+'_'+attribute)
+    pm.addAttr(longName='Rotate'+'_'+attribute, attributeType='double3')
+    pm.addAttr(longName='Rotate'+'_'+attribute+'_x', attributeType='double', parent='Rotate'+'_'+attribute)
+    pm.addAttr(longName='Rotate'+'_'+attribute+'_y', attributeType='double', parent='Rotate'+'_'+attribute)
+    pm.addAttr(longName='Rotate'+'_'+attribute+'_z', attributeType='double', parent='Rotate'+'_'+attribute)
+
+    xform_joint_translate = pm.xform(joint, ws=1, q=1, t=1)
+    xform_joint_rotate = pm.xform(joint, ws=1, q=1, ro=1)
+
+    xform_controller_translate = pm.xform(controller, ws=1, q=1, t=1)
+    xform_controller_rotate = pm.xform(controller, ws=1, q=1, ro=1)
+
+    translate_x = xform_controller_translate[0] - xform_joint_translate[0]
+    translate_y = xform_controller_translate[1] - xform_joint_translate[1]
+    translate_z = xform_controller_translate[2] - xform_joint_translate[2]
+
+    rotate_x = xform_controller_rotate[0] - xform_joint_rotate[0]
+    rotate_y = xform_controller_rotate[1] - xform_joint_rotate[1]
+    rotate_z = xform_controller_rotate[2] - xform_joint_rotate[2]
+
+    pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Translate'+'_'+attribute+'_x'), translate_x, l=True)
+    pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Translate'+'_'+attribute+'_y'), translate_y, l=True)
+    pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Translate'+'_'+attribute+'_z'), translate_z, l=True)
+    pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Rotate'+'_'+attribute+'_x'), rotate_x, l=True)
+    pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Rotate'+'_'+attribute+'_y'), rotate_y, l=True)
+    pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Rotate'+'_'+attribute+'_z'), rotate_z, l=True)
+
+def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
+                        Upper_Limb_Ik_Ctrl_Define, Pole_Vector_Ik_Ctrl_Define, Lower_Limb_Ik_Ctrl_Define,
+                        End_Limb_Ik_Ctrl_Define, Upper_Limb_Fk_Ctrl_Define, Middle_Limb_Fk_Ctrl_Define,
+                        Lower_Limb_Fk_Ctrl_Define, End_Limb_Fk_Ctrl_Define,
+                        ik_snap_ctrl, fk_ctrl_up_stretch, fk_ctrl_mid_stretch, fkIk_setup_ctrl,
+                        ik_toe_wiggle_ctrl=None):
+    # ik offset
+    upper_ik_ctrl_offset = pm.checkBox('upper_ik_ctrl_offset', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Upper_Ik_Ctrl_Offset', at='bool')
+    pm.setAttr('%s.Upper_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], upper_ik_ctrl_offset, l=True)
+    if upper_ik_ctrl_offset:
+        ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Upper_Limb_Joint_Define[0],
+                                        attribute='Upper_Limb_Ik_Ctrl', controller=Upper_Limb_Ik_Ctrl_Define[0])
+
+
+    middle_ik_ctrl_offset = pm.checkBox('middle_ik_ctrl_offset', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Ik_Ctrl_Offset', at='bool')
+    pm.setAttr('%s.Middle_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], middle_ik_ctrl_offset, l=True)
+    if middle_ik_ctrl_offset:
+        ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Middle_Limb_Joint_Define[0],
+                                        attribute='Pole_Vector_Ik_Ctrl', controller=Pole_Vector_Ik_Ctrl_Define[0])
+
+    lower_ik_ctrl_offset = pm.checkBox('lower_ik_ctrl_offset', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Ik_Ctrl_Offset', at='bool')
+    pm.setAttr('%s.Lower_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], lower_ik_ctrl_offset, l=True)
+    if lower_ik_ctrl_offset:
+        ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Lower_Limb_Joint_Define[0],
+                                        attribute='Lower_Limb_Ik_Ctrl', controller=Lower_Limb_Ik_Ctrl_Define[0])
+
+    if pm.checkBox('end_ik_ctrl_offset', q=True, enable=True):
+        end_ik_ctrl_offset = pm.checkBox('end_ik_ctrl_offset', q=True, value=True)
+        pm.addAttr(fkIk_setup_ctrl[0], ln='End_Ik_Ctrl_Offset', at='bool')
+        pm.setAttr('%s.End_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], end_ik_ctrl_offset, l=True)
+        if end_ik_ctrl_offset:
+            ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=End_Limb_Joint_Define[0],
+                                            attribute='End_Limb_Ik_Ctrl', controller=End_Limb_Ik_Ctrl_Define[0])
+
+    # fk offset
+    upper_fk_ctrl_offset = pm.checkBox('upper_fk_ctrl_offset', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Upper_Fk_Ctrl_Offset', at='bool')
+    pm.setAttr('%s.Upper_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], upper_fk_ctrl_offset, l=True)
+    if upper_fk_ctrl_offset:
+        ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Upper_Limb_Joint_Define[0],
+                                        attribute='Upper_Limb_Fk_Ctrl', controller=Upper_Limb_Fk_Ctrl_Define[0])
+
+    middle_fk_ctrl_offset = pm.checkBox('middle_fk_ctrl_offset', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Fk_Ctrl_Offset', at='bool')
+    pm.setAttr('%s.Middle_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], middle_fk_ctrl_offset, l=True)
+    if middle_fk_ctrl_offset:
+        ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Middle_Limb_Joint_Define[0],
+                                        attribute='Middle_Limb_Fk_Ctrl', controller=Middle_Limb_Fk_Ctrl_Define[0])
+
+    lower_fk_ctrl_offset = pm.checkBox('lower_fk_ctrl_offset', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Fk_Ctrl_Offset', at='bool')
+    pm.setAttr('%s.Lower_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], lower_fk_ctrl_offset, l=True)
+    if lower_fk_ctrl_offset:
+        ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Lower_Limb_Joint_Define[0],
+                                        attribute='Lower_Limb_Fk_Ctrl', controller=Lower_Limb_Fk_Ctrl_Define[0])
+
+    if pm.checkBox('end_fk_ctrl_offset', q=True, enable=True):
+        end_fk_ctrl_offset = pm.checkBox('end_fk_ctrl_offset', q=True, value=True)
+        pm.addAttr(fkIk_setup_ctrl[0], ln='End_Fk_Ctrl_Offset', at='bool')
+        pm.setAttr('%s.End_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], end_fk_ctrl_offset, l=True)
+        if end_fk_ctrl_offset:
+            ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=End_Limb_Joint_Define[0],
+                                            attribute='End_Limb_Fk_Ctrl', controller=End_Limb_Fk_Ctrl_Define[0])
+
     translate_fk_ctrl = pm.checkBox('Translate_Fk', q=True, value=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Translate_Fk_Ctrl_Exists', at='bool')
     pm.setAttr('%s.Translate_Fk_Ctrl_Exists' % fkIk_setup_ctrl[0], translate_fk_ctrl, l=True)
@@ -622,11 +743,15 @@ def ad_run_setup(*args):
                 if pm.textFieldButtonGrp(item_label, q=True, en=True):
                     pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0], item_label))
 
-            ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
+            ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
+                                End_Limb_Joint_Define,Upper_Limb_Ik_Ctrl_Define, Pole_Vector_Ik_Ctrl_Define,
+                                Lower_Limb_Ik_Ctrl_Define, End_Limb_Ik_Ctrl_Define, Upper_Limb_Fk_Ctrl_Define,
+                                Middle_Limb_Fk_Ctrl_Define,Lower_Limb_Fk_Ctrl_Define, End_Limb_Fk_Ctrl_Define,
                                 ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                 fk_ctrl_up_stretch=Fk_Ctrl_Up_Stretch[0],
                                 fk_ctrl_mid_stretch=Fk_Ctrl_Mid_Stretch[0],
                                 fkIk_setup_ctrl=FkIk_Arm_Setup_Controller)
+
         else:
             # condition if ik toe wiggle controller exists
             Ik_Toe_Wiggle_Ctrl_Define_0 = []
@@ -643,7 +768,10 @@ def ad_run_setup(*args):
                 if pm.textFieldButtonGrp(item_label, q=True, en=True):
                     pm.connectAttr(object_label + '.message', '%s.%s' % (FkIk_Leg_Setup_Controller[0], item_label))
 
-            ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
+            ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
+                                End_Limb_Joint_Define, Upper_Limb_Ik_Ctrl_Define, Pole_Vector_Ik_Ctrl_Define,
+                                Lower_Limb_Ik_Ctrl_Define, End_Limb_Ik_Ctrl_Define, Upper_Limb_Fk_Ctrl_Define,
+                                Middle_Limb_Fk_Ctrl_Define, Lower_Limb_Fk_Ctrl_Define, End_Limb_Fk_Ctrl_Define,
                                 ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                 fk_ctrl_up_stretch=Fk_Ctrl_Up_Stretch[0],
                                 fk_ctrl_mid_stretch=Fk_Ctrl_Mid_Stretch[0],
@@ -735,7 +863,19 @@ def ad_delete_setup(*args):
                                       'Fk_Ik_Attr_Name', 'Fk_Ctrl_Up_Stretch', 'Fk_Ctrl_Mid_Stretch',
                                       'Fk_Value_Up_Stretch', 'Fk_Value_Mid_Stretch', 'Fk_Attr_Up_Stretch',
                                       'Fk_Attr_Mid_Stretch', 'Fk_Value_On', 'Ik_Value_On', 'Ik_Toe_Wiggle_Ctrl',
-                                      'Ik_Toe_Wiggle_Attr_Name', 'Rotation_Wiggle', 'Reverse_Wiggle_Value']
+                                      'Ik_Toe_Wiggle_Attr_Name', 'Rotation_Wiggle', 'Reverse_Wiggle_Value',
+                                      'Upper_Ik_Ctrl_Offset', 'Middle_Ik_Ctrl_Offset', 'Lower_Ik_Ctrl_Offset',
+                                      'End_Ik_Ctrl_Offset', 'Upper_Fk_Ctrl_Offset', 'Middle_Fk_Ctrl_Offset',
+                                      'Lower_Fk_Ctrl_Offset', 'End_Fk_Ctrl_Offset',
+                                      'Translate_Upper_Limb_Ik_Ctrl', 'Translate_Pole_Vector_Ik_Ctrl',
+                                      'Translate_Lower_Limb_Ik_Ctrl', 'Translate_End_Limb_Ik_Ctrl',
+                                      'Rotate_Upper_Limb_Ik_Ctrl', 'Rotate_Pole_Vector_Ik_Ctrl',
+                                      'Rotate_Lower_Limb_Ik_Ctrl', 'Rotate_End_Limb_Ik_Ctrl',
+                                      'Translate_Upper_Limb_Fk_Ctrl', 'Translate_Middle_Limb_Fk_Ctrl',
+                                      'Translate_Lower_Limb_Fk_Ctrl', 'Translate_End_Limb_Fk_Ctrl',
+                                      'Rotate_Upper_Limb_Fk_Ctrl', 'Rotate_Middle_Limb_Fk_Ctrl',
+                                      'Rotate_Lower_Limb_Fk_Ctrl', 'Rotate_End_Limb_Fk_Ctrl',
+                                      ]
 
             if pm.objExists(select + '.' + 'FkIk_Arm_Setup_Controller'):
                 dialog_confirm = pm.confirmDialog(title='Delete Confirm', message='Are you sure to delete setup?',

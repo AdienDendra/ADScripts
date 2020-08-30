@@ -186,6 +186,14 @@ def ad_fk_to_ik():
 def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_limb_ctrl, lower_limb_ctrl,
                       fkik_setup_controller, upper_limb_ctrl, aim_axis, value_axis_aim_middle, value_axis_aim_lower,
                       fk_ctrl_up_stretch, fk_ctrl_mid_stretch, end_limb_jnt=None, end_limb_ctrl=None, leg=None):
+    # query world position
+    xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
+    xform_middle_limb_rot = pm.xform(middle_limb_jnt, ws=1, q=1, ro=1)
+    xform_low_limb_rot = pm.xform(lower_limb_jnt, ws=1, q=1, ro=1)
+    xform_upper_limb_pos = pm.xform(upper_limb_jnt, ws=1, q=1, t=1)
+    xform_middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
+    xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
+
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
@@ -198,14 +206,6 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
             item_list = item_attr.replace('_DOTAT_', ',').replace('_FK_', ',').split(',')
             item_attribute, item_controller = ' '.join(item_list).split()
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
-
-    # query world position
-    xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
-    xform_middle_limb_rot = pm.xform(middle_limb_jnt, ws=1, q=1, ro=1)
-    xform_low_limb_rot = pm.xform(lower_limb_jnt, ws=1, q=1, ro=1)
-    xform_upper_limb_pos = pm.xform(upper_limb_jnt, ws=1, q=1, t=1)
-    xform_middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
-    xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
 
     # set the position
     pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
@@ -243,6 +243,13 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
                       aim_axis, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on=None, end_limb_ik_ctrl=None,
                       rotation_wiggle=None, ik_toe_wiggle_ctrl=None, ik_toe_wiggle_attr_name=None,
                       end_limb_jnt=None, leg=None):
+    # query position and rotation
+    xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
+    xform_low_limb_rot = pm.xform(lower_limb_jnt, ws=1, q=1, ro=1)
+    xform_upper_limb_pos = pm.xform(upper_limb_jnt, ws=1, q=1, t=1)
+    xform_middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
+    xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
+
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
@@ -271,16 +278,102 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
             pm.xform((end_limb_ik_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
             pm.xform((end_limb_ik_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
-    # query position and rotation
-    xform_upper_limb_rot = pm.xform(upper_limb_jnt, ws=1, q=1, ro=1)
-    xform_low_limb_rot = pm.xform(lower_limb_jnt, ws=1, q=1, ro=1)
-    xform_upper_limb_pos = pm.xform(upper_limb_jnt, ws=1, q=1, t=1)
-    xform_middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
-    xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
 
-    # set position and rotation
+
+    # xform_ik_lower_ctrl_rot = pm.xform(lower_limb_ctrl, ws=1, q=1, ro=1)
+    # xform_ik_lower_ctrl_trans = pm.xform(lower_limb_ctrl, ws=1, q=1, t=1)
+    #
+    # # adding offset lower controller
+    # if selection+'.'+'Lower_Ik_Ctrl_Offset':
+    #     value_attribute_translate = pm.getAttr(selection+'.'+'Translate_Lower_Limb_Ik_Ctrl')
+    #     value_attribute_rotate = pm.getAttr(selection+'.'+'Rotate_Lower_Limb_Ik_Ctrl')
+    #     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
+    #     pm.xform(lower_limb_ctrl, ws=1, ro=(value_attribute_rotate[0]+xform_low_limb_rot[0],
+    #                                         value_attribute_rotate[1]+xform_low_limb_rot[1],
+    #                                         value_attribute_rotate[2]+xform_low_limb_rot[2]))
+
+        # pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0] + value_attribute_rotate[0],
+        #                                     xform_low_limb_rot[1] + value_attribute_rotate[1],
+        #                                     xform_low_limb_rot[2] + value_attribute_rotate[2]))
+
+        # pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] - value_attribute_translate[0],
+        #                                    xform_low_limb_pos[1] - value_attribute_translate[1],
+        #                                    xform_low_limb_pos[2] - value_attribute_translate[2]))
+        #
+        # pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] + value_attribute_translate[0],
+        #                                    xform_low_limb_pos[1] + value_attribute_translate[1],
+        #                                    xform_low_limb_pos[2] + value_attribute_translate[2]))
+        # if value_attribute_translate[0] >= 0:
+        #     # set position and rotation
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0]-value_attribute_rotate[0],
+        #                                         xform_low_limb_rot[1]-value_attribute_rotate[1],
+        #                                         xform_low_limb_rot[2]-value_attribute_rotate[1]))
+        #
+        #     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0]-value_attribute_translate[0],
+        #                                        xform_low_limb_pos[1]-value_attribute_translate[1],
+        #                                        xform_low_limb_pos[2]-value_attribute_translate[2]))
+        # else:
+        #     # set position and rotation
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0] + value_attribute_rotate[0],
+        #                                         xform_low_limb_rot[1] + value_attribute_rotate[1],
+        #                                         xform_low_limb_rot[2] + value_attribute_rotate[1]))
+        #
+        #     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] + value_attribute_translate[0],
+        #                                        xform_low_limb_pos[1] + value_attribute_translate[1],
+        #                                        xform_low_limb_pos[2] + value_attribute_translate[2]))
+        # if value_attribute_rotate[0] >= 0:
+        #     # set position and rotation
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0] - value_attribute_rotate[0]))
+        # else:
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0] + value_attribute_rotate[0]))
+        # if value_attribute_rotate[1] >= 0:
+        #     # set position and rotation
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[1] - value_attribute_rotate[1]))
+        # else:
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[1] + value_attribute_rotate[1]))
+        # if value_attribute_rotate[2] >= 0:
+        #     # set position and rotation
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[2] - value_attribute_rotate[2]))
+        # else:
+        #     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[2] + value_attribute_rotate[2]))
+    # else:
+        # set position and rotation
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
+
+        # get_tx = pm.getAttr(lower_limb_ctrl + '.translateX')
+        # get_ty = pm.getAttr(lower_limb_ctrl + '.translateY')
+        # get_tz = pm.getAttr(lower_limb_ctrl + '.translateZ')
+        #
+        # get_rx = pm.getAttr(lower_limb_ctrl + '.rotateX')
+        # get_ry = pm.getAttr(lower_limb_ctrl + '.rotateY')
+        # get_rz = pm.getAttr(lower_limb_ctrl + '.rotateZ')
+        #
+        # if value_attribute_translate[0] >= 0:
+        #     pm.setAttr(lower_limb_ctrl+'.translateX', (get_tx-value_attribute_translate[0]))
+        # else:
+        #     pm.setAttr(lower_limb_ctrl+'.translateX', (get_tx+value_attribute_translate[0]))
+        # if value_attribute_translate[1] >= 0:
+        #     pm.setAttr(lower_limb_ctrl+'.translateY', (get_ty-value_attribute_translate[1]))
+        # else:
+        #     pm.setAttr(lower_limb_ctrl+'.translateY', (get_ty+value_attribute_translate[1]))
+        # if value_attribute_translate[2] >= 0:
+        #     pm.setAttr(lower_limb_ctrl+'.translateZ', (get_tz-value_attribute_translate[2]))
+        # else:
+        #     pm.setAttr(lower_limb_ctrl+'.translateZ', (get_tz+value_attribute_translate[2]))
+        #
+        # if value_attribute_rotate[0] >= 0:
+        #     pm.setAttr(lower_limb_ctrl+'.rotateX', (value_attribute_rotate[0]-get_rx))
+        # else:
+        #     pm.setAttr(lower_limb_ctrl+'.rotateX', (value_attribute_rotate[0]+get_rx))
+        # if value_attribute_rotate[1] >= 0:
+        #     pm.setAttr(lower_limb_ctrl+'.rotateY', (value_attribute_rotate[1]-get_ry))
+        # else:
+        #     pm.setAttr(lower_limb_ctrl+'.rotateY', (value_attribute_rotate[1]+get_ry))
+        # if value_attribute_rotate[2] >= 0:
+        #     pm.setAttr(lower_limb_ctrl+'.rotateZ', (value_attribute_rotate[2]-get_rz))
+        # else:
+        #     pm.setAttr(lower_limb_ctrl+'.rotateZ', (value_attribute_rotate[2]+get_rz))
 
     if selection + '.' + 'Upper_Limb_Ik_Ctrl':
         pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
@@ -302,6 +395,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
 
     # condition snap elbow or knee
     if abs(total_current_value - total_value_default) > 0.01:
+        print abs(total_current_value - total_value_default)
         ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
 
 
