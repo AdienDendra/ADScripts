@@ -542,6 +542,66 @@ def ad_additional_setup(
                         Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
                         ik_snap_ctrl, fk_ctrl_up_stretch, fk_ctrl_mid_stretch, fkIk_setup_ctrl,
                         ik_toe_wiggle_ctrl=None):
+    # # ik offset
+    # upper_ik_ctrl_offset = pm.checkBox('upper_ik_ctrl_offset', q=True, value=True)
+    # pm.addAttr(fkIk_setup_ctrl[0], ln='Upper_Ik_Ctrl_Offset', at='bool')
+    # pm.setAttr('%s.Upper_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], upper_ik_ctrl_offset, l=True)
+    # if upper_ik_ctrl_offset:
+    #     ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Upper_Limb_Joint_Define[0],
+    #                                     attribute='Upper_Limb_Ik_Ctrl', controller=Upper_Limb_Ik_Ctrl_Define[0])
+    #
+    #
+    # middle_ik_ctrl_offset = pm.checkBox('middle_ik_ctrl_offset', q=True, value=True)
+    # pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Ik_Ctrl_Offset', at='bool')
+    # pm.setAttr('%s.Middle_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], middle_ik_ctrl_offset, l=True)
+    # if middle_ik_ctrl_offset:
+    #     ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Middle_Limb_Joint_Define[0],
+    #                                     attribute='Pole_Vector_Ik_Ctrl', controller=Pole_Vector_Ik_Ctrl_Define[0])
+    #
+    # lower_ik_ctrl_offset = pm.checkBox('lower_ik_ctrl_offset', q=True, value=True)
+    # pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Ik_Ctrl_Offset', at='bool')
+    # pm.setAttr('%s.Lower_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], lower_ik_ctrl_offset, l=True)
+    # if lower_ik_ctrl_offset:
+    #     ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Lower_Limb_Joint_Define[0],
+    #                                     attribute='Lower_Limb_Ik_Ctrl', controller=Lower_Limb_Ik_Ctrl_Define[0])
+    #
+    # if pm.checkBox('end_ik_ctrl_offset', q=True, enable=True):
+    #     end_ik_ctrl_offset = pm.checkBox('end_ik_ctrl_offset', q=True, value=True)
+    #     pm.addAttr(fkIk_setup_ctrl[0], ln='End_Ik_Ctrl_Offset', at='bool')
+    #     pm.setAttr('%s.End_Ik_Ctrl_Offset' % fkIk_setup_ctrl[0], end_ik_ctrl_offset, l=True)
+    #     if end_ik_ctrl_offset:
+    #         ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=End_Limb_Joint_Define[0],
+    #                                         attribute='End_Limb_Ik_Ctrl', controller=End_Limb_Ik_Ctrl_Define[0])
+    #
+    # # fk offset
+    # upper_fk_ctrl_offset = pm.checkBox('upper_fk_ctrl_offset', q=True, value=True)
+    # pm.addAttr(fkIk_setup_ctrl[0], ln='Upper_Fk_Ctrl_Offset', at='bool')
+    # pm.setAttr('%s.Upper_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], upper_fk_ctrl_offset, l=True)
+    # if upper_fk_ctrl_offset:
+    #     ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Upper_Limb_Joint_Define[0],
+    #                                     attribute='Upper_Limb_Fk_Ctrl', controller=Upper_Limb_Fk_Ctrl_Define[0])
+    #
+    # middle_fk_ctrl_offset = pm.checkBox('middle_fk_ctrl_offset', q=True, value=True)
+    # pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Fk_Ctrl_Offset', at='bool')
+    # pm.setAttr('%s.Middle_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], middle_fk_ctrl_offset, l=True)
+    # if middle_fk_ctrl_offset:
+    #     ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Middle_Limb_Joint_Define[0],
+    #                                     attribute='Middle_Limb_Fk_Ctrl', controller=Middle_Limb_Fk_Ctrl_Define[0])
+    #
+    # lower_fk_ctrl_offset = pm.checkBox('lower_fk_ctrl_offset', q=True, value=True)
+    # pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Fk_Ctrl_Offset', at='bool')
+    # pm.setAttr('%s.Lower_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], lower_fk_ctrl_offset, l=True)
+    # if lower_fk_ctrl_offset:
+    #     ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=Lower_Limb_Joint_Define[0],
+    #                                     attribute='Lower_Limb_Fk_Ctrl', controller=Lower_Limb_Fk_Ctrl_Define[0])
+    #
+    # if pm.checkBox('end_fk_ctrl_offset', q=True, enable=True):
+    #     end_fk_ctrl_offset = pm.checkBox('end_fk_ctrl_offset', q=True, value=True)
+    #     pm.addAttr(fkIk_setup_ctrl[0], ln='End_Fk_Ctrl_Offset', at='bool')
+    #     pm.setAttr('%s.End_Fk_Ctrl_Offset' % fkIk_setup_ctrl[0], end_fk_ctrl_offset, l=True)
+    #     if end_fk_ctrl_offset:
+    #         ad_additional_controller_offset(fkIk_setup_ctrl=fkIk_setup_ctrl, joint=End_Limb_Joint_Define[0],
+    #                                         attribute='End_Limb_Fk_Ctrl', controller=End_Limb_Fk_Ctrl_Define[0])
 
     ik_snap_exists = pm.checkBox('Ik_Snap_Checkbox', q=True, value=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Checkbox', at='bool')
@@ -580,23 +640,22 @@ def ad_additional_setup(
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Value_On', at='float')
     pm.setAttr('%s.Ik_Value_On' % fkIk_setup_ctrl[0], value_ik_attr, l=True)
 
-    if pm.rowColumnLayout('ik_snap_row', q=True, enable=True):
-        ik_snap_ctrl_attr = pm.textFieldGrp('Ik_Snap_Attr_Name', q=True, tx=True)
-        if pm.objExists(ik_snap_ctrl + '.' + ik_snap_ctrl_attr):
-            pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Attr_Name', dt='string')
-            pm.setAttr('%s.Ik_Snap_Attr_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_attr, l=True)
-        else:
-            pm.error(
-                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" % (
-                    ik_snap_ctrl, ik_snap_ctrl_attr))
+    ik_snap_ctrl_attr = pm.textFieldGrp('Ik_Snap_Attr_Name', q=True, tx=True)
+    if pm.objExists(ik_snap_ctrl + '.' + ik_snap_ctrl_attr):
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Attr_Name', dt='string')
+        pm.setAttr('%s.Ik_Snap_Attr_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_attr, l=True)
+    else:
+        pm.error(
+            "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" % (
+                ik_snap_ctrl, ik_snap_ctrl_attr))
 
-        ik_snap_min_value = pm.floatFieldGrp('Ik_Snap_Off', q=True, value1=True)
-        pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Off', at='float')
-        pm.setAttr('%s.Ik_Snap_Off' % fkIk_setup_ctrl[0], ik_snap_min_value, l=True)
+    ik_snap_min_value = pm.floatFieldGrp('Ik_Snap_Off', q=True, value1=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Off', at='float')
+    pm.setAttr('%s.Ik_Snap_Off' % fkIk_setup_ctrl[0], ik_snap_min_value, l=True)
 
-        ik_snap_max_value = pm.floatFieldGrp('Ik_Snap_On', q=True, value1=True)
-        pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_On', at='float')
-        pm.setAttr('%s.Ik_Snap_On' % fkIk_setup_ctrl[0], ik_snap_max_value, l=True)
+    ik_snap_max_value = pm.floatFieldGrp('Ik_Snap_On', q=True, value1=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_On', at='float')
+    pm.setAttr('%s.Ik_Snap_On' % fkIk_setup_ctrl[0], ik_snap_max_value, l=True)
 
     if pm.rowLayout('ik_ball_layout', q=True, enable=True):
         toe_wiggle_attr_name = pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', q=True, tx=True)
@@ -618,27 +677,27 @@ def ad_additional_setup(
         pm.setAttr('%s.Reverse_Wiggle_Value' % fkIk_setup_ctrl[0], reverse_wiggle_value, l=True)
 
     if pm.rowColumnLayout('row_column_stretch_fk_add_object', q=True, enable=True):
-        attr_fk_up = pm.textFieldGrp('Fk_Attr_Up_Stretch', q=True, tx=True)
-        if pm.objExists(fk_ctrl_up_stretch + '.' + attr_fk_up):
+        attr_fk_mid = pm.textFieldGrp('Fk_Attr_Up_Stretch', q=True, tx=True)
+        if pm.objExists(fk_ctrl_up_stretch + '.' + attr_fk_mid):
             pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Attr_Up_Stretch', dt='string')
-            pm.setAttr('%s.Fk_Attr_Up_Stretch' % fkIk_setup_ctrl[0], attr_fk_up, l=True)
+            pm.setAttr('%s.Fk_Attr_Up_Stretch' % fkIk_setup_ctrl[0], attr_fk_mid, l=True)
         else:
             pm.error(
                 "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" %
-                (fk_ctrl_up_stretch, attr_fk_up))
+                (fk_ctrl_up_stretch, attr_fk_mid))
 
-        value_fk_up = pm.floatFieldGrp('Fk_Value_Up_Stretch', q=True, value1=True)
+        value_fk_mid = pm.floatFieldGrp('Fk_Value_Up_Stretch', q=True, value1=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Value_Up_Stretch', at='float')
-        pm.setAttr('%s.Fk_Value_Up_Stretch' % fkIk_setup_ctrl[0], value_fk_up, l=True)
+        pm.setAttr('%s.Fk_Value_Up_Stretch' % fkIk_setup_ctrl[0], value_fk_mid, l=True)
 
-        attr_fk_mid = pm.textFieldGrp('Fk_Attr_Mid_Stretch', q=True, tx=True)
-        if pm.objExists(fk_ctrl_mid_stretch + '.' + attr_fk_mid):
+        attr_fk_low = pm.textFieldGrp('Fk_Attr_Mid_Stretch', q=True, tx=True)
+        if pm.objExists(fk_ctrl_mid_stretch + '.' + attr_fk_low):
             pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Attr_Mid_Stretch', dt='string')
-            pm.setAttr('%s.Fk_Attr_Mid_Stretch' % fkIk_setup_ctrl[0], attr_fk_mid, l=True)
+            pm.setAttr('%s.Fk_Attr_Mid_Stretch' % fkIk_setup_ctrl[0], attr_fk_low, l=True)
         else:
             pm.error(
                 "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" %
-                (fk_ctrl_mid_stretch, attr_fk_mid))
+                (fk_ctrl_mid_stretch, attr_fk_low))
 
         value_fk_mid = pm.floatFieldGrp('Fk_Value_Mid_Stretch', q=True, value1=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Value_Mid_Stretch', at='float')
@@ -829,7 +888,7 @@ def ad_delete_setup(*args):
                                       # 'Upper_Ik_Ctrl_Offset', 'Middle_Ik_Ctrl_Offset', 'Lower_Ik_Ctrl_Offset',
                                       # 'End_Ik_Ctrl_Offset', 'Upper_Fk_Ctrl_Offset', 'Middle_Fk_Ctrl_Offset',
                                       # 'Lower_Fk_Ctrl_Offset', 'End_Fk_Ctrl_Offset',
-                                      'Ik_Snap_Checkbox',
+
                                       'Translate_Upper_Limb_Ik_Ctrl', 'Translate_Pole_Vector_Ik_Ctrl',
                                       'Translate_Lower_Limb_Ik_Ctrl', 'Translate_End_Limb_Ik_Ctrl',
                                       'Rotate_Upper_Limb_Ik_Ctrl', 'Rotate_Pole_Vector_Ik_Ctrl',
