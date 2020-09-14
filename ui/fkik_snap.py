@@ -66,7 +66,7 @@ def ad_ik_to_fk():
     if pm.objExists(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint'):
         # condition of controller
         getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name)
-        if getattr_ctrl == 0:
+        if getattr_ctrl == value_fk_attr:
             return fkik_ctrl_select[0]
         else:
             upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint')[0]
@@ -127,7 +127,7 @@ def ad_fk_to_ik():
     if pm.objExists(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint'):
         # condition of controller
         getattr_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name)
-        if getattr_ctrl == 1:
+        if getattr_ctrl == value_ik_attr:
             return fkik_ctrl_select[0]
         else:
             upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint')[0]
@@ -208,6 +208,10 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
     # set the position
+    # ad_set_rotation_order(upper_limb_jnt, target=upper_limb_ctrl)
+    # ad_set_rotation_order(middle_limb_jnt, target=middle_limb_ctrl)
+    # ad_set_rotation_order(lower_limb_jnt, target=lower_limb_ctrl)
+
     pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
     pm.xform(middle_limb_ctrl, ws=1, ro=(xform_middle_limb_rot[0], xform_middle_limb_rot[1], xform_middle_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
@@ -272,6 +276,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
     xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
 
 
+
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
@@ -294,6 +299,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
             else:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
         else:
+            # ad_set_rotation_order(end_limb_jnt, target=end_limb_ik_ctrl)
             xform_end_limb_pos = pm.xform(end_limb_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_jnt, ws=1, q=1, ro=1)
 
@@ -301,6 +307,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
             pm.xform((end_limb_ik_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
     if selection + '.' + 'Upper_Limb_Ik_Ctrl':
+        # ad_set_rotation_order(upper_limb_jnt, target=upper_limb_ctrl)
         pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
         pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
 
@@ -326,6 +333,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
         if abs(total_current_value - total_value_default) > 0.01:
             ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
 
+    # ad_set_rotation_order(lower_limb_jnt, target=lower_limb_ctrl)
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
 
@@ -334,6 +342,10 @@ def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_
     pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
                                             xform_middle_limb_pos[2]))
 
+# def ad_set_rotation_order(object, target=None):
+#     get_rotate_order = pm.getAttr(object + '.rotateOrder')
+#     set_rotate_order = pm.setAttr(target+ '.rotateOrder', get_rotate_order)
+#     return set_rotate_order
 
 def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):
     root_jnt_vector = om.MVector(root_pos[0], root_pos[1], root_pos[2])
