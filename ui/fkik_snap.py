@@ -227,7 +227,7 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
             # pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
             # pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
 
-        if pm.getAttr(selection + '.' + 'Fk_Value_Up_Stretch') < 1:
+        if pm.getAttr(selection + '.' + 'Fk_Value_Up_Stretch') < 1.0:
             length_factor_middle_jnt = current_value_axis_towards_middle_jnt - value_axis_aim_middle
             length_factor_middle_jnt_result = length_factor_middle_jnt / value_axis_aim_middle
             length_middle_result = length_factor_middle_jnt_result*10.0
@@ -236,7 +236,7 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
             length_factor_middle_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_middle
             pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
 
-        if pm.getAttr(selection + '.' + 'Fk_Attr_Mid_Stretch') < 1:
+        if pm.getAttr(selection + '.' + 'Fk_Attr_Mid_Stretch') < 1.0:
             length_factor_lower_jnt = current_value_axis_towards_lower_jnt -value_axis_aim_lower
             length_factor_lower_jnt_result = length_factor_lower_jnt / value_axis_aim_lower
             length_lower_result = length_factor_lower_jnt_result*10.0
