@@ -208,9 +208,9 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
     # set the position
-    # ad_set_rotation_order(upper_limb_jnt, target=upper_limb_ctrl)
-    # ad_set_rotation_order(middle_limb_jnt, target=middle_limb_ctrl)
-    # ad_set_rotation_order(lower_limb_jnt, target=lower_limb_ctrl)
+    ad_set_rotation_order(upper_limb_jnt, target=upper_limb_ctrl)
+    ad_set_rotation_order(middle_limb_jnt, target=middle_limb_ctrl)
+    ad_set_rotation_order(lower_limb_jnt, target=lower_limb_ctrl)
 
     pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
     pm.xform(middle_limb_ctrl, ws=1, ro=(xform_middle_limb_rot[0], xform_middle_limb_rot[1], xform_middle_limb_rot[2]))
@@ -236,15 +236,14 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
             length_factor_middle_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_middle
             pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
 
-        if pm.getAttr(selection + '.' + 'Fk_Attr_Mid_Stretch') < 1.0:
-            length_factor_lower_jnt = current_value_axis_towards_lower_jnt -value_axis_aim_lower
+        if pm.getAttr(selection + '.' + 'Fk_Value_Mid_Stretch') < 1.0:
+            length_factor_lower_jnt = current_value_axis_towards_lower_jnt - value_axis_aim_lower
             length_factor_lower_jnt_result = length_factor_lower_jnt / value_axis_aim_lower
             length_lower_result = length_factor_lower_jnt_result*10.0
             pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_lower_result)
         else:
             length_factor_lower_jnt = current_value_axis_towards_lower_jnt / value_axis_aim_lower
             pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
-
 
     else:
         pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
@@ -254,6 +253,7 @@ def ad_ik_to_fk_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, middle_li
 
     # exeption for the leg
     if leg:
+        ad_set_rotation_order(end_limb_jnt, target=end_limb_ctrl)
         xform_end_limb_rot = pm.xform(end_limb_jnt, ws=1, q=1, ro=1)
         xform_end_limb_pos = pm.xform(end_limb_jnt, ws=1, q=1, t=1)
         pm.xform(end_limb_ctrl, ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
@@ -274,8 +274,6 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
     xform_upper_limb_pos = pm.xform(upper_limb_jnt, ws=1, q=1, t=1)
     xform_middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
     xform_low_limb_pos = pm.xform(lower_limb_jnt, ws=1, q=1, t=1)
-
-
 
     # set to default
     selection = fkik_setup_controller[0]
@@ -299,15 +297,15 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
             else:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
         else:
-            # ad_set_rotation_order(end_limb_jnt, target=end_limb_ik_ctrl)
+            ad_set_rotation_order(end_limb_jnt, target=end_limb_ik_ctrl)
             xform_end_limb_pos = pm.xform(end_limb_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_jnt, ws=1, q=1, ro=1)
 
             pm.xform((end_limb_ik_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
             pm.xform((end_limb_ik_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
-    if selection + '.' + 'Upper_Limb_Ik_Ctrl':
-        # ad_set_rotation_order(upper_limb_jnt, target=upper_limb_ctrl)
+    if pm.listConnections(selection + '.' + 'Upper_Limb_Ik_Ctrl', s=1):
+        ad_set_rotation_order(upper_limb_jnt, target=upper_limb_ctrl)
         pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
         pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
 
@@ -333,7 +331,7 @@ def ad_fk_to_ik_setup(upper_limb_jnt, middle_limb_jnt, lower_limb_jnt, polevecto
         if abs(total_current_value - total_value_default) > 0.01:
             ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on)
 
-    # ad_set_rotation_order(lower_limb_jnt, target=lower_limb_ctrl)
+    ad_set_rotation_order(lower_limb_jnt, target=lower_limb_ctrl)
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
 
@@ -342,10 +340,9 @@ def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_
     pm.xform(polevector_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1],
                                             xform_middle_limb_pos[2]))
 
-# def ad_set_rotation_order(object, target=None):
-#     get_rotate_order = pm.getAttr(object + '.rotateOrder')
-#     set_rotate_order = pm.setAttr(target+ '.rotateOrder', get_rotate_order)
-#     return set_rotate_order
+def ad_set_rotation_order(object, target=None):
+    get_rotate_order = pm.getAttr(object + '.rotateOrder')
+    pm.setAttr(target+ '.rotateOrder', get_rotate_order)
 
 def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):
     root_jnt_vector = om.MVector(root_pos[0], root_pos[1], root_pos[2])
