@@ -220,7 +220,9 @@ class Limb:
                                                         detail_limb_deformer=detail_limb_deformer,
                                                         number_detail_ctrl=number_detail_ctrl,
                                                         parallel_axis='y', tip_pos='-',
-                                                        side='LFT', size=size)
+                                                        side='LFT', size=size,
+                                                        side_LFT=side_LFT,
+                                                        side_RGT=side_RGT)
                         if end_limb:
                             mc.delete(legLFT[0], legLFT[1])
                             fm.Foot(leg=True, foot=True, upper_limb_jnt=self.sj.upLeg_LFT,
@@ -274,7 +276,9 @@ class Limb:
                                                         detail_limb_deformer=detail_limb_deformer,
                                                         number_detail_ctrl=number_detail_ctrl,
                                                         parallel_axis='y', tip_pos='-',
-                                                        side='RGT', size=size)
+                                                        side='RGT', size=size,
+                                                        side_LFT=side_LFT,
+                                                        side_RGT=side_RGT)
                         if end_limb:
                             mc.delete(legRGT[0], legRGT[1])
                             fm.Foot(leg=True, foot=True, upper_limb_jnt=self.sj.upLeg_RGT,
@@ -434,7 +438,6 @@ class Limb:
         # limb ikh
         self.lower_limb_ik_hdl = build_limb.lower_limb_ik_hdl[0]
         self.end_limb_ik_hdl = build_limb.end_limb_ik_hdl[0]
-
 
         ##### CONNECT MESSAGE ATTRIBUTE TO FK/IK CONTROLLER ATTRIBUTE
         # ADD MESSAGE ATTRIBUTE
@@ -1028,7 +1031,7 @@ class Limb:
                           lower_limb_ik_jnt,
                           end_limb_ik_jnt, upper_limb_twist_help_driver_jnt, middle_limb_twist_help_driver_jnt,
                           detail_limb_deformer, number_detail_ctrl, clav_jnt, parallel_axis, tip_pos,
-                          side, size,
+                          side, size, side_RGT, side_LFT
                           ):
 
         self.module(arm=True, prefix='arm', base_controller=base_controller, prefix_upper_limb='upperArm',
@@ -1048,7 +1051,7 @@ class Limb:
                     number_detail_ctrl=number_detail_ctrl - 2, clav_jnt=clav_jnt, pelvis_gimbal_ctrl=None,
                     root_gimbal_ctrl=None, parallel_axis=parallel_axis, tip_pos=tip_pos,
                     prefix_upper_limb_detail='upperArmDtl', prefix_middle_limb_detail='forearmDtl', size=size,
-                    )
+                    side_LFT=side_LFT, side_RGT=side_RGT)
 
         self.run_soft_ik_arm = rs.run_soft_ik_joint(prefix='arm', side=side,
                                                     lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
@@ -1067,7 +1070,7 @@ class Limb:
                           lower_limb_ik_jnt, end_limb_ik_jnt, upper_limb_twist_help_driver_jnt,
                           middle_limb_twist_help_driver_jnt,
                           detail_limb_deformer, number_detail_ctrl, parallel_axis, tip_pos,
-                          side, size,
+                          side, size, side_LFT, side_RGT
                           ):
 
         self.module(arm=False, prefix='leg', side=side, base_controller=base_controller,
@@ -1089,7 +1092,7 @@ class Limb:
                     tip_pos=tip_pos,
                     prefix_upper_limb_detail='upperLegDtl',
                     prefix_middle_limb_detail='lowerLegDtl', size=size,
-                    )
+                    side_LFT=side_LFT, side_RGT=side_RGT)
 
         run_soft_ik_leg = rs.run_soft_ik_joint(prefix='leg', side=side, lower_limb_ik_gimbal=self.lower_limb_ik_gimbal,
                                                foot_reverse_joint_or_position_soft_jnt=self.pos_soft_jnt,

@@ -177,7 +177,7 @@ class Build:
         # softIk distance
         mc.select(cl=1)
         self.position_softIk_jnt = \
-        mc.duplicate(self.pos_lower_limb_jnt, name='%s%s%s_jnt' % (prefix, 'SoftIkDist', side))[0]
+            mc.duplicate(self.pos_lower_limb_jnt, name='%s%s%s_jnt' % (prefix, 'SoftIkDist', side))[0]
 
         # limb distance
         mc.select(cl=1)
@@ -414,7 +414,7 @@ class Build:
         ## SLIDE MIDDLE LIMB IK SETUP
         # setRange for slide middle limb
         slide_ik_set_range = mc.shadingNode('setRange', asUtility=1, n='%s%s%s_str' % (prefix, 'SlideIkMd', side))
-        mc.connectAttr(self.controller_lower_limb_ik.control + '.%s' %  self.slide_attr,
+        mc.connectAttr(self.controller_lower_limb_ik.control + '.%s' % self.slide_attr,
                        slide_ik_set_range + '.valueX')
         mc.setAttr(slide_ik_set_range + '.minX', -1)
         mc.setAttr(slide_ik_set_range + '.maxX', 1)
@@ -669,21 +669,33 @@ class Build:
         # ==================================================================================================================
         #### FK
         # Fk controller
-        self.limb_rotation_order(self.controller_upper_limb_fk.control)
-        self.limb_rotation_order(self.controller_middle_limb_fk.control)
-        self.limb_rotation_order(self.controller_lower_limb_fk.control)
+        mc.setAttr(self.controller_upper_limb_fk.control + '.rotateOrder', k=True)
+        mc.setAttr(self.controller_middle_limb_fk.control + '.rotateOrder', k=True)
+        mc.setAttr(self.controller_lower_limb_fk.control + '.rotateOrder', k=True)
+
+        # self.limb_rotation_order(self.controller_upper_limb_fk.control)
+        # self.limb_rotation_order(self.controller_middle_limb_fk.control)
+        # self.limb_rotation_order(self.controller_lower_limb_fk.control)
 
         ## Fk gimbal
-        self.limb_rotation_order(self.controller_upper_limb_fk.control_gimbal)
-        self.limb_rotation_order(self.controller_middle_limb_fk.control_gimbal)
-        self.limb_rotation_order(self.controller_lower_limb_fk.control_gimbal)
+        mc.setAttr(self.controller_upper_limb_fk.control_gimbal + '.rotateOrder', k=True)
+        mc.setAttr(self.controller_middle_limb_fk.control_gimbal + '.rotateOrder', k=True)
+        mc.setAttr(self.controller_lower_limb_fk.control_gimbal + '.rotateOrder', k=True)
+
+        # self.limb_rotation_order(self.controller_upper_limb_fk.control_gimbal)
+        # self.limb_rotation_order(self.controller_middle_limb_fk.control_gimbal)
+        # self.limb_rotation_order(self.controller_lower_limb_fk.control_gimbal)
 
         #### IK
         # Ik controller
-        self.limb_rotation_order(self.controller_lower_limb_ik.control)
+        mc.setAttr(self.controller_lower_limb_ik.control + '.rotateOrder', k=True)
+
+        # self.limb_rotation_order(self.controller_lower_limb_ik.control)
 
         # Ik gimbal
-        self.limb_rotation_order(self.controller_lower_limb_ik.control_gimbal)
+        mc.setAttr(self.controller_lower_limb_ik.control_gimbal + '.rotateOrder', k=True)
+
+        # self.limb_rotation_order(self.controller_lower_limb_ik.control_gimbal)
 
         # ==================================================================================================================
         #                                                   DETAIL CONTROLLER
@@ -768,11 +780,11 @@ class Build:
     # ==================================================================================================================
     #                                                   CLASS FUNCTION
     # ==================================================================================================================
-    def limb_rotation_order(self, controller_target):
-        au.add_attribute(objects=[controller_target], long_name=['rotationOrder'],
-                         at="enum", en='xyz:yzx:zxy:xzy:yxz:zyx:', keyable=True)
-
-        mc.connectAttr(controller_target + '.rotationOrder', controller_target + '.rotateOrder')
+    # def limb_rotation_order(self, controller_target):
+    #     au.add_attribute(objects=[controller_target], long_name=['rotationOrder'],
+    #                      at="enum", en='xyz:yzx:zxy:xzy:yxz:zyx:', keyable=True)
+    #
+    #     mc.connectAttr(controller_target + '.rotationOrder', controller_target + '.rotateOrder')
 
     def limb_follow_fk(self, prefix_upper_limb_fk, upper_limb_fk_jnt, locator_name, prefix, side, second_term):
         # create locator
@@ -980,7 +992,7 @@ class Build:
                          at="float", min=0, max=20, dv=0, keyable=True)
 
         self.slide_attr = au.add_attribute(objects=[controller], long_name=['slide'],
-                         at="float", min=-10, max=10, dv=0, keyable=True)
+                                           at="float", min=-10, max=10, dv=0, keyable=True)
 
         self.ikSnap_attr = au.add_attribute(objects=[controller], long_name=['ikSnap'],
                                             at="float", min=0, max=1, dv=0, keyable=True)
@@ -1006,7 +1018,7 @@ class Build:
                                              n='%s%s%s%s_bta' % (prefix, 'PoleVecSnapIk', obj_poleVector, side))
         poleVector_mult_rev = mc.shadingNode('multDoubleLinear', asUtility=1,
                                              n='%s%s%s%s%s_mdl' % (
-                                             prefix, 'PoleVecSnapIk', obj_poleVector, 'Rev', side))
+                                                 prefix, 'PoleVecSnapIk', obj_poleVector, 'Rev', side))
         if get_value_tx_upper_limb_jnt > 0:
             mc.setAttr(poleVector_mult_rev + '.input2', 1)
         else:

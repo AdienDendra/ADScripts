@@ -190,7 +190,7 @@ def ad_fk_to_ik():
                                   value_axis_aim_middle=middle_aim_axis_value,
                                   value_axis_aim_lower=lower_aim_axis_value,
                                   aim_axis=aim_axis, fkik_setup_controller=fkik_ctrl_select,
-                                  end_limb_ctrl=end_limb_ik_ctrl, rotation_wiggle=rotation_wiggle,
+                                  end_limb_ik_ctrl=end_limb_ik_ctrl, rotation_wiggle=rotation_wiggle,
                                   ik_toe_wiggle_ctrl=ik_toe_wiggle_ctrl,
                                   ik_toe_wiggle_attr_name=ik_toe_wiggle_attr_name,
                                   end_limb_ik_jnt=end_limb_ik_jnt, leg=True,
@@ -243,6 +243,11 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
         middle_stretch_attr = pm.getAttr(selection + '.' + 'Fk_Attr_Mid_Stretch')
         current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_jnt, aim_axis))
         current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
+        # if default value stretch is 1
+        # length_factor_middle_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_middle
+        # length_factor_lower_jnt = current_value_axis_towards_lower_jnt / value_axis_aim_lower
+        # pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
+        # pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
 
         if pm.getAttr(selection + '.' + 'Fk_Value_Up_Stretch') < 1.0:
             length_factor_middle_jnt = current_value_axis_towards_middle_jnt - value_axis_aim_middle
@@ -282,7 +287,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
                       upper_limb_ctrl, value_axis_aim_middle, value_axis_aim_lower, fkik_setup_controller,
                       aim_axis,
                       upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
-                      end_limb_ctrl=None,
+                      end_limb_ik_ctrl=None,
                       rotation_wiggle=None, ik_toe_wiggle_ctrl=None, ik_toe_wiggle_attr_name=None,
                       end_limb_ik_jnt=None, leg=None):
     # query position and rotation
@@ -314,12 +319,12 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
             else:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
         else:
-            ad_set_rotation_order(end_limb_ik_jnt, target=end_limb_ctrl)
+            ad_set_rotation_order(end_limb_ik_jnt, target=end_limb_ik_ctrl)
             xform_end_limb_pos = pm.xform(end_limb_ik_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_ik_jnt, ws=1, q=1, ro=1)
 
-            pm.xform((end_limb_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
-            pm.xform((end_limb_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
+            pm.xform((end_limb_ik_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
+            pm.xform((end_limb_ik_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
     if pm.listConnections(selection + '.' + 'Upper_Limb_Ik_Ctrl', s=1):
         ad_set_rotation_order(upper_limb_ik_jnt, target=upper_limb_ctrl[0])
@@ -341,8 +346,8 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
     total_current_value = current_value_axis_towards_middle_jnt + current_value_axis_towards_lower_jnt
 
     # condition snap elbow or knee
-    if pm.getAttr(selection + '.' + 'Ik_Snap_Checkbox'):
-        ik_snap_ctrl_name = pm.listConnections(selection + '.' + 'Ik_Snap_Ctrl_Name', s=1)[0]
+    if pm.getAttr(selection+'.'+'Ik_Snap_Checkbox'):
+        ik_snap_ctrl_name = pm.listConnections(selection+ '.' + 'Ik_Snap_Ctrl_Name', s=1)[0]
         ik_snap_attr_name = pm.getAttr(selection + '.' + 'Ik_Snap_Attr_Name')
         ik_snap_on = pm.getAttr(selection + '.' + 'Ik_Snap_On')
         if abs(total_current_value - total_value_default) > 0.01:
@@ -363,7 +368,6 @@ def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_
 def ad_set_rotation_order(object, target=None):
     get_rotate_order = pm.getAttr(object + '.rotateOrder')
     pm.setAttr(target + '.rotateOrder', get_rotate_order)
-
 
 def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):
     root_jnt_vector = om.MVector(root_pos[0], root_pos[1], root_pos[2])

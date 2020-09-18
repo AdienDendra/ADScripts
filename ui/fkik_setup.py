@@ -677,6 +677,9 @@ def ad_joint_guide(name, side, fk_or_ik_controller, object_joint):
     else:
         pm.delete(pm.parentConstraint(object_joint, create_joint_guide, mo=0))
 
+    # freeze transform
+    pm.makeIdentity(create_joint_guide, apply=True, translate=True, rotate=True)
+
     # parent to object
     pm.parent(create_joint_guide, object_joint)
 
@@ -684,53 +687,69 @@ def ad_joint_guide(name, side, fk_or_ik_controller, object_joint):
     get_rotate_order = pm.getAttr(object_joint + '.rotateOrder')
     pm.setAttr(create_joint_guide + '.rotateOrder', get_rotate_order)
 
-    # freeze transform
-    pm.makeIdentity(create_joint_guide, apply=True, translate=True, rotate=True)
+    # resize and hide joint
+    pm.setAttr(create_joint_guide + '.radius', 0.1)
+    pm.setAttr(create_joint_guide + '.drawStyle', 2)
 
     return create_joint_guide, label_name
 
+
 def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_Define,
                         Upper_Limb_Joint_Define,
-                        Middle_Limb_Fk_Ctrl_Define, Middle_Limb_Joint_Define,
+                        Middle_Limb_Fk_Ctrl_Define, Middle_Limb_Ik_Ctrl_Define,
+                        Middle_Limb_Joint_Define,
                         Lower_Limb_Fk_Ctrl_Define, Lower_Limb_Ik_Ctrl_Define,
                         Lower_Limb_Joint_Define, leg=False, End_Limb_Joint_Define=None,
                         End_Limb_Fk_Ctrl_Define=None, End_Limb_Ik_Ctrl_Define=None
                         ):
     upperLimb_fk_GDE_jnt = ad_joint_guide(name="upper%s_Fk" % prefix, side=ad_action_position_radio_button(),
-                                         fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],
-                                         object_joint=Upper_Limb_Joint_Define[0])
+                                          fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],
+                                          object_joint=Upper_Limb_Joint_Define[0])
+    upperLimb_fk_GDE_name_box = 'Upper_Limb_Fk_Guide_Joint'
 
-    upperLimb_ik_GDE_jnt = ad_joint_guide(name="upper%s_Ik"% prefix, side=ad_action_position_radio_button(),
-                                         fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
-                                         object_joint=Upper_Limb_Joint_Define[0])
+    upperLimb_ik_GDE_jnt = ad_joint_guide(name="upper%s_Ik" % prefix, side=ad_action_position_radio_button(),
+                                          fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
+                                          object_joint=Upper_Limb_Joint_Define[0])
+    upperLimb_ik_GDE_name_box = 'Upper_Limb_Ik_Guide_Joint'
 
-    middleLimb_fk_GDE_jnt = ad_joint_guide(name="middle%s_Fk"% prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Middle_Limb_Fk_Ctrl_Define[0],
-                                          object_joint=Middle_Limb_Joint_Define[0])
+    middleLimb_fk_GDE_jnt = ad_joint_guide(name="middle%s_Fk" % prefix, side=ad_action_position_radio_button(),
+                                           fk_or_ik_controller=Middle_Limb_Fk_Ctrl_Define[0],
+                                           object_joint=Middle_Limb_Joint_Define[0])
+    middleLimb_fk_GDE_name_box = 'Middle_Limb_Fk_Guide_Joint'
 
-    middleLimb_ik_GDE_jnt = ad_joint_guide(name="middle%s_Ik"% prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Middle_Limb_Joint_Define[0],
-                                          object_joint=Middle_Limb_Joint_Define[0])
+    middleLimb_ik_GDE_jnt = ad_joint_guide(name="middle%s_Ik" % prefix, side=ad_action_position_radio_button(),
+                                           fk_or_ik_controller=Middle_Limb_Ik_Ctrl_Define[0],
+                                           object_joint=Middle_Limb_Joint_Define[0])
+    middleLimb_ik_GDE_name_box = 'Middle_Limb_Ik_Guide_Joint'
 
-    lowerLimb_fk_GDE_jnt = ad_joint_guide(name="lower%s_Fk"% prefix, side=ad_action_position_radio_button(),
-                                         fk_or_ik_controller=Lower_Limb_Fk_Ctrl_Define[0],
-                                         object_joint=Lower_Limb_Joint_Define[0])
+    lowerLimb_fk_GDE_jnt = ad_joint_guide(name="lower%s_Fk" % prefix, side=ad_action_position_radio_button(),
+                                          fk_or_ik_controller=Lower_Limb_Fk_Ctrl_Define[0],
+                                          object_joint=Lower_Limb_Joint_Define[0])
+    lowerLimb_fk_GDE_name_box = 'Lower_Limb_Fk_Guide_Joint'
 
-    lowerLimb_ik_GDE_jnt = ad_joint_guide(name="lower%s_Ik"% prefix, side=ad_action_position_radio_button(),
-                                         fk_or_ik_controller=Lower_Limb_Ik_Ctrl_Define[0],
-                                         object_joint=Lower_Limb_Joint_Define[0])
+    lowerLimb_ik_GDE_jnt = ad_joint_guide(name="lower%s_Ik" % prefix, side=ad_action_position_radio_button(),
+                                          fk_or_ik_controller=Lower_Limb_Ik_Ctrl_Define[0],
+                                          object_joint=Lower_Limb_Joint_Define[0])
+    lowerLimb_ik_GDE_name_box = 'Lower_Limb_Ik_Guide_Joint'
+
     if leg:
         endLimb_fk_GDE_jnt = ad_joint_guide(name="end%s_Fk" % prefix, side=ad_action_position_radio_button(),
-                                              fk_or_ik_controller=End_Limb_Fk_Ctrl_Define[0],
-                                              object_joint=End_Limb_Joint_Define[0])
+                                            fk_or_ik_controller=End_Limb_Fk_Ctrl_Define[0],
+                                            object_joint=End_Limb_Joint_Define[0])
+        endLimb_fk_GDE_name_box = 'End_Limb_Fk_Guide_Joint'
+
         if End_Limb_Ik_Ctrl_Define[0]:
             endLimb_ik_GDE_jnt = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                                  fk_or_ik_controller=End_Limb_Ik_Ctrl_Define[0],
-                                                  object_joint=End_Limb_Joint_Define[0])
+                                                fk_or_ik_controller=End_Limb_Ik_Ctrl_Define[0],
+                                                object_joint=End_Limb_Joint_Define[0])
+            endLimb_ik_GDE_name_box = 'End_Limb_Ik_Guide_Joint'
+
         else:
             endLimb_ik_GDE_jnt = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                                  fk_or_ik_controller=End_Limb_Joint_Define[0],
-                                                  object_joint=End_Limb_Joint_Define[0])
+                                                fk_or_ik_controller=End_Limb_Joint_Define[0],
+                                                object_joint=End_Limb_Joint_Define[0])
+            endLimb_ik_GDE_name_box = 'End_Limb_Ik_Guide_Joint'
+
         return {'upperLimb_fk_GDE_jnt': upperLimb_fk_GDE_jnt,
                 'upperLimb_ik_GDE_jnt': upperLimb_ik_GDE_jnt,
                 'middleLimb_fk_GDE_jnt': middleLimb_fk_GDE_jnt,
@@ -739,6 +758,15 @@ def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_De
                 'lowerLimb_ik_GDE_jnt': lowerLimb_ik_GDE_jnt,
                 'endLimb_fk_GDE_jnt': endLimb_fk_GDE_jnt,
                 'endLimb_ik_GDE_jnt': endLimb_ik_GDE_jnt,
+
+                'upperLimb_fk_GDE_name_box': upperLimb_fk_GDE_name_box,
+                'upperLimb_ik_GDE_name_box': upperLimb_ik_GDE_name_box,
+                'middleLimb_fk_GDE_name_box': middleLimb_fk_GDE_name_box,
+                'middleLimb_ik_GDE_name_box': middleLimb_ik_GDE_name_box,
+                'lowerLimb_fk_GDE_name_box': lowerLimb_fk_GDE_name_box,
+                'lowerLimb_ik_GDE_name_box': lowerLimb_ik_GDE_name_box,
+                'endLimb_fk_GDE_name_box': endLimb_fk_GDE_name_box,
+                'endLimb_ik_GDE_name_box': endLimb_ik_GDE_name_box
                 }
 
     return {'upperLimb_fk_GDE_jnt': upperLimb_fk_GDE_jnt,
@@ -746,7 +774,16 @@ def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_De
             'middleLimb_fk_GDE_jnt': middleLimb_fk_GDE_jnt,
             'middleLimb_ik_GDE_jnt': middleLimb_ik_GDE_jnt,
             'lowerLimb_fk_GDE_jnt': lowerLimb_fk_GDE_jnt,
-            'lowerLimb_ik_GDE_jnt': lowerLimb_ik_GDE_jnt}
+            'lowerLimb_ik_GDE_jnt': lowerLimb_ik_GDE_jnt,
+
+            'upperLimb_fk_GDE_name_box': upperLimb_fk_GDE_name_box,
+            'upperLimb_ik_GDE_name_box': upperLimb_ik_GDE_name_box,
+            'middleLimb_fk_GDE_name_box': middleLimb_fk_GDE_name_box,
+            'middleLimb_ik_GDE_name_box': middleLimb_ik_GDE_name_box,
+            'lowerLimb_fk_GDE_name_box': lowerLimb_fk_GDE_name_box,
+            'lowerLimb_ik_GDE_name_box': lowerLimb_ik_GDE_name_box,
+            }
+
 
 def ad_run_setup(*args):
     # query objects
@@ -768,23 +805,21 @@ def ad_run_setup(*args):
     Fk_Ctrl_Up_Stretch = ad_query_define_textfield_object('Fk_Ctrl_Up_Stretch')
     Fk_Ctrl_Mid_Stretch = ad_query_define_textfield_object('Fk_Ctrl_Mid_Stretch')
 
-    label_list = [
-        # Upper_Limb_Joint_Define[1], Middle_Limb_Joint_Define[1], Lower_Limb_Joint_Define[1],
-        FkIk_Arm_Setup_Controller[1], FkIk_Leg_Setup_Controller[1],
-        Upper_Limb_Fk_Ctrl_Define[1], Middle_Limb_Fk_Ctrl_Define[1], Lower_Limb_Fk_Ctrl_Define[1],
-        Upper_Limb_Ik_Ctrl_Define[1], Pole_Vector_Ik_Ctrl_Define[1], Lower_Limb_Ik_Ctrl_Define[1],
-        Ik_Snap_Ctrl_Name_Define[1], Fk_Ctrl_Up_Stretch[1], Fk_Ctrl_Mid_Stretch[1],
-        End_Limb_Joint_Define[1], End_Limb_Fk_Ctrl_Define[1], End_Limb_Ik_Ctrl_Define[1]
-    ]
+    label_list = [FkIk_Arm_Setup_Controller[1], FkIk_Leg_Setup_Controller[1],
+                  Upper_Limb_Joint_Define[1], Middle_Limb_Joint_Define[1], Lower_Limb_Joint_Define[1],
+                  Upper_Limb_Fk_Ctrl_Define[1], Middle_Limb_Fk_Ctrl_Define[1], Lower_Limb_Fk_Ctrl_Define[1],
+                  Upper_Limb_Ik_Ctrl_Define[1], Pole_Vector_Ik_Ctrl_Define[1], Lower_Limb_Ik_Ctrl_Define[1],
+                  Ik_Snap_Ctrl_Name_Define[1], Fk_Ctrl_Up_Stretch[1], Fk_Ctrl_Mid_Stretch[1],
+                  End_Limb_Joint_Define[1], End_Limb_Fk_Ctrl_Define[1], End_Limb_Ik_Ctrl_Define[1]
+                  ]
 
-    object_list = [
-        # Upper_Limb_Joint_Define[0], Middle_Limb_Joint_Define[0], Lower_Limb_Joint_Define[0],
-        FkIk_Arm_Setup_Controller[0], FkIk_Leg_Setup_Controller[0],
-        Upper_Limb_Fk_Ctrl_Define[0], Middle_Limb_Fk_Ctrl_Define[0], Lower_Limb_Fk_Ctrl_Define[0],
-        Upper_Limb_Ik_Ctrl_Define[0], Pole_Vector_Ik_Ctrl_Define[0], Lower_Limb_Ik_Ctrl_Define[0],
-        Ik_Snap_Ctrl_Name_Define[0], Fk_Ctrl_Up_Stretch[0], Fk_Ctrl_Mid_Stretch[0],
-        End_Limb_Joint_Define[0], End_Limb_Fk_Ctrl_Define[0], End_Limb_Ik_Ctrl_Define[0]
-    ]
+    object_list = [FkIk_Arm_Setup_Controller[0], FkIk_Leg_Setup_Controller[0],
+                   Upper_Limb_Joint_Define[0], Middle_Limb_Joint_Define[0], Lower_Limb_Joint_Define[0],
+                   Upper_Limb_Fk_Ctrl_Define[0], Middle_Limb_Fk_Ctrl_Define[0], Lower_Limb_Fk_Ctrl_Define[0],
+                   Upper_Limb_Ik_Ctrl_Define[0], Pole_Vector_Ik_Ctrl_Define[0], Lower_Limb_Ik_Ctrl_Define[0],
+                   Ik_Snap_Ctrl_Name_Define[0], Fk_Ctrl_Up_Stretch[0], Fk_Ctrl_Mid_Stretch[0],
+                   End_Limb_Joint_Define[0], End_Limb_Fk_Ctrl_Define[0], End_Limb_Ik_Ctrl_Define[0]
+                   ]
 
     # adding attribute
     # query the object is exists
@@ -793,46 +828,53 @@ def ad_run_setup(*args):
     elif pm.objExists('%s.%s' % (FkIk_Leg_Setup_Controller[0], Upper_Limb_Joint_Define[1])):
         pm.error('Please delete the previous setup first before run the setup!')
     else:
-        fkik_limb_object_ctrl_list = [Upper_Limb_Fk_Ctrl_Define[1], Middle_Limb_Fk_Ctrl_Define[1],
+        fkik_limb_object_ctrl_list = [Upper_Limb_Fk_Ctrl_Define[1],
+                                      Upper_Limb_Ik_Ctrl_Define[1],
+                                      Middle_Limb_Fk_Ctrl_Define[1],
+                                      Pole_Vector_Ik_Ctrl_Define[1],
                                       Lower_Limb_Fk_Ctrl_Define[1],
-                                      Upper_Limb_Ik_Ctrl_Define[1], Pole_Vector_Ik_Ctrl_Define[1],
                                       Lower_Limb_Ik_Ctrl_Define[1],
-                                      End_Limb_Fk_Ctrl_Define[1], End_Limb_Ik_Ctrl_Define[1]]
+                                      End_Limb_Fk_Ctrl_Define[1],
+                                      End_Limb_Ik_Ctrl_Define[1]]
 
         # fkik arm setup controller
         if (pm.textFieldButtonGrp(FkIk_Arm_Setup_Controller[1], q=True, en=True)):
             # adding joint guide
-            jnt_gde = listing_joint_guide(prefix='Arm', Upper_Limb_Fk_Ctrl_Define=Upper_Limb_Fk_Ctrl_Define,
-                                Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
-                                Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
-                                Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
-                                Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
-                                Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
-                                Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
-                                Lower_Limb_Joint_Define=Lower_Limb_Joint_Define,
-                                )
+            jnt_gde = listing_joint_guide(prefix='Arm',
+                                          Upper_Limb_Fk_Ctrl_Define=Upper_Limb_Fk_Ctrl_Define,
+                                          Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
+                                          Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
+                                          Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
+                                          Middle_Limb_Ik_Ctrl_Define=Middle_Limb_Joint_Define,
+                                          Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
+                                          Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
+                                          Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
+                                          Lower_Limb_Joint_Define=Lower_Limb_Joint_Define,
+                                          )
 
             # listing the joint guide
-            list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0], jnt_gde['middleLimb_fk_GDE_jnt'][0],
-                                jnt_gde['lowerLimb_fk_GDE_jnt'][0], jnt_gde['upperLimb_ik_GDE_jnt'][0],
+            list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0],
+                                jnt_gde['upperLimb_ik_GDE_jnt'][0],
+                                jnt_gde['middleLimb_fk_GDE_jnt'][0],
                                 jnt_gde['middleLimb_ik_GDE_jnt'][0],
+                                jnt_gde['lowerLimb_fk_GDE_jnt'][0],
                                 jnt_gde['lowerLimb_ik_GDE_jnt'][0]]
 
-
-            list_label_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][1], jnt_gde['middleLimb_fk_GDE_jnt'][1],
-                                jnt_gde['lowerLimb_fk_GDE_jnt'][1], jnt_gde['upperLimb_ik_GDE_jnt'][1],
-                                jnt_gde['middleLimb_ik_GDE_jnt'][1],
-                                jnt_gde['lowerLimb_ik_GDE_jnt'][1]]
-
+            list_label_guide_joint = [jnt_gde['upperLimb_fk_GDE_name_box'],
+                                      jnt_gde['upperLimb_ik_GDE_name_box'],
+                                      jnt_gde['middleLimb_fk_GDE_name_box'],
+                                      jnt_gde['middleLimb_ik_GDE_name_box'],
+                                      jnt_gde['lowerLimb_fk_GDE_name_box'],
+                                      jnt_gde['lowerLimb_ik_GDE_name_box']]
 
             # adding loop the list controller
-            for label_item, object_item, in zip(label_list[:11], object_list[:11]):
+            for label_item, object_item, in zip(label_list[:14], object_list[:14]):
                 pm.addAttr(FkIk_Arm_Setup_Controller[0], ln=label_item, at='message')
                 if pm.textFieldButtonGrp(label_item, q=True, en=True):
                     pm.connectAttr(object_item + '.message', '%s.%s' % (FkIk_Arm_Setup_Controller[0], label_item))
 
             # adding loop the joint guide
-            for ref_object_ctrl, guide_joint, label_joint in zip(fkik_limb_object_ctrl_list[:5],
+            for ref_object_ctrl, guide_joint, label_joint in zip(fkik_limb_object_ctrl_list,
                                                                  list_guide_joint,
                                                                  list_label_guide_joint,
                                                                  ):
@@ -840,7 +882,6 @@ def ad_run_setup(*args):
                 if pm.textFieldButtonGrp(ref_object_ctrl, q=True, en=True):
                     pm.connectAttr(guide_joint + '.message',
                                    '%s.%s' % (FkIk_Arm_Setup_Controller[0], label_joint))
-
 
             ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                 End_Limb_Joint_Define,
@@ -854,6 +895,7 @@ def ad_run_setup(*args):
                                           Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
                                           Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
                                           Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
+                                          Middle_Limb_Ik_Ctrl_Define=Middle_Limb_Joint_Define,
                                           Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
                                           Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
                                           Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
@@ -865,19 +907,23 @@ def ad_run_setup(*args):
                                           )
 
             # listing the joint guide
-            list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0], jnt_gde['middleLimb_fk_GDE_jnt'][0],
-                                jnt_gde['lowerLimb_fk_GDE_jnt'][0], jnt_gde['upperLimb_ik_GDE_jnt'][0],
+            list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0],
+                                jnt_gde['upperLimb_ik_GDE_jnt'][0],
+                                jnt_gde['middleLimb_fk_GDE_jnt'][0],
                                 jnt_gde['middleLimb_ik_GDE_jnt'][0],
+                                jnt_gde['lowerLimb_fk_GDE_jnt'][0],
                                 jnt_gde['lowerLimb_ik_GDE_jnt'][0],
                                 jnt_gde['endLimb_fk_GDE_jnt'][0],
                                 jnt_gde['endLimb_ik_GDE_jnt'][0]]
 
-            list_label_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][1], jnt_gde['middleLimb_fk_GDE_jnt'][1],
-                                      jnt_gde['lowerLimb_fk_GDE_jnt'][1], jnt_gde['upperLimb_ik_GDE_jnt'][1],
-                                      jnt_gde['middleLimb_ik_GDE_jnt'][1],
-                                      jnt_gde['lowerLimb_ik_GDE_jnt'][1],
-                                      jnt_gde['endLimb_fk_GDE_jnt'][1],
-                                      jnt_gde['endLimb_ik_GDE_jnt'][1]]
+            list_label_guide_joint = [jnt_gde['upperLimb_fk_GDE_name_box'],
+                                      jnt_gde['upperLimb_ik_GDE_name_box'],
+                                      jnt_gde['middleLimb_fk_GDE_name_box'],
+                                      jnt_gde['middleLimb_ik_GDE_name_box'],
+                                      jnt_gde['lowerLimb_fk_GDE_name_box'],
+                                      jnt_gde['lowerLimb_ik_GDE_name_box'],
+                                      jnt_gde['endLimb_fk_GDE_name_box'],
+                                      jnt_gde['endLimb_ik_GDE_name_box']]
 
             # condition if ik toe wiggle controller exists
             Ik_Toe_Wiggle_Ctrl_Define_0 = []
@@ -988,6 +1034,7 @@ def ad_run_setup(*args):
                     pm.warning("Line # " + str(number_of_object) + " is empty! Skipped this attribute.")
 
     pm.confirmDialog(title='Add Inform', icon="information", message='Adding setup Fk Ik has done!')
+    pm.select(cl=1)
 
 
 def ad_delete_setup(*args):
@@ -997,19 +1044,20 @@ def ad_delete_setup(*args):
         if select:
             object_text_field_list = ['FkIk_Arm_Setup_Controller', 'FkIk_Leg_Setup_Controller',
                                       'Upper_Limb_Joint', 'Middle_Limb_Joint', 'Lower_Limb_Joint',
-                                      'upperArm_Fk_Guide_Joint', 'upperArm_Ik_Guide_Joint',
-                                      'middleArm_Fk_Guide_Joint', 'middleArm_Ik_Guide_Joint',
-                                      'lowerArm_Fk_Guide_Joint', 'lowerArm_Ik_Guide_Joint',
-                                      'endArm_Fk_Guide_Joint', 'endArm_Ik_Guide_Joint',
+                                      'Upper_Limb_Fk_Guide_Joint', 'Upper_Limb_Ik_Guide_Joint',
+                                      'Middle_Limb_Fk_Guide_Joint', 'Middle_Limb_Ik_Guide_Joint',
+                                      'Lower_Limb_Fk_Guide_Joint', 'Lower_Limb_Ik_Guide_Joint',
+                                      'End_Limb_Fk_Guide_Joint', 'End_Limb_Ik_Guide_Joint',
 
-                                      'upperLeg_Fk_Guide_Joint', 'upperLeg_Ik_Guide_Joint',
-                                      'middleLeg_Fk_Guide_Joint', 'middleLeg_Ik_Guide_Joint',
-                                      'lowerLeg_Fk_Guide_Joint', 'lowerLeg_Ik_Guide_Joint',
-                                      'endLeg_Fk_Guide_Joint', 'endLeg_Ik_Guide_Joint',
+                                      # 'upperLeg_Fk_Guide_Joint', 'upperLeg_Ik_Guide_Joint',
+                                      # 'middleLeg_Fk_Guide_Joint', 'middleLeg_Ik_Guide_Joint',
+                                      # 'lowerLeg_Fk_Guide_Joint', 'lowerLeg_Ik_Guide_Joint',
+                                      # 'endLeg_Fk_Guide_Joint', 'endLeg_Ik_Guide_Joint',
 
                                       'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
                                       'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
-                                      'End_Limb_Joint', 'End_Limb_Fk_Ctrl', 'End_Limb_Ik_Ctrl',
+                                      'End_Limb_Joint',
+                                      'End_Limb_Fk_Ctrl', 'End_Limb_Ik_Ctrl',
                                       'Middle_Translate_Aim_Joint', 'Ik_Snap_Ctrl_Name', 'Ik_Snap_Attr_Name',
                                       'Ik_Snap_Off', 'Ik_Snap_On',
                                       'Lower_Translate_Aim_Joint', 'Aim_Axis', 'Translate_Fk_Ctrl_Exists',
