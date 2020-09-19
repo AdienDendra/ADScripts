@@ -69,6 +69,7 @@ def ad_ik_to_fk():
         if getattr_ctrl == value_fk_attr:
             return fkik_ctrl_select[0]
         else:
+            fk_stretch_axis = []
             upper_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Upper_Limb_Joint')[0]
             middle_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Middle_Limb_Joint')[0]
             lower_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Lower_Limb_Joint')[0]
@@ -82,10 +83,15 @@ def ad_ik_to_fk():
             fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Arm_Setup_Controller', s=1)
             fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Leg_Setup_Controller', s=1)
             aim_axis = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Aim_Axis')
-            middle_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Middle_Translate_Aim_Joint')
-            lower_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Lower_Translate_Aim_Joint')
+            middle_aim_translate_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Middle_Translate_Aim_Joint')
+            lower_aim_translate_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Lower_Translate_Aim_Joint')
+            upper_aim_scale_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Upper_Scale_Aim_Joint')
+            middle_aim_scale_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Middle_Scale_Aim_Joint')
             fk_ctrl_up_stretch = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Fk_Ctrl_Up_Stretch', s=1)
             fk_ctrl_mid_stretch = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Fk_Ctrl_Mid_Stretch', s=1)
+
+            if fk_ctrl_up_stretch:
+                fk_stretch_axis = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Stretch_Attr')
 
             # run snap for arm
             if fk_ik_arm_ctrl:
@@ -95,12 +101,16 @@ def ad_ik_to_fk():
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
                                   fkik_setup_controller=fkik_ctrl_select,
                                   aim_axis=aim_axis,
-                                  value_axis_aim_middle=middle_aim_axis_value,
-                                  value_axis_aim_lower=lower_aim_axis_value,
+                                  value_axis_aim_translate_middle=middle_aim_translate_axis_value,
+                                  value_axis_aim_translate_lower=lower_aim_translate_axis_value,
+                                  value_axis_aim_scale_upper=upper_aim_scale_axis_value,
+                                  value_axis_aim_scale_middle=middle_aim_scale_axis_value,
                                   fk_ctrl_up_stretch=fk_ctrl_up_stretch,
                                   fk_ctrl_mid_stretch=fk_ctrl_mid_stretch,
                                   middle_limb_jnt=middle_limb_jnt,
-                                  lower_limb_jnt=lower_limb_jnt
+                                  upper_limb_jnt=upper_limb_jnt,
+                                  lower_limb_jnt=lower_limb_jnt,
+                                  fk_stretch_axis=fk_stretch_axis
                                   )
             # run snap for leg
             if fk_ik_leg_ctrl:
@@ -113,15 +123,20 @@ def ad_ik_to_fk():
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
                                   fkik_setup_controller=fkik_ctrl_select,
                                   aim_axis=aim_axis,
-                                  value_axis_aim_middle=middle_aim_axis_value,
-                                  value_axis_aim_lower=lower_aim_axis_value,
+                                  value_axis_aim_translate_middle=middle_aim_translate_axis_value,
+                                  value_axis_aim_translate_lower=lower_aim_translate_axis_value,
+                                  value_axis_aim_scale_upper=upper_aim_scale_axis_value,
+                                  value_axis_aim_scale_middle=middle_aim_scale_axis_value,
                                   fk_ctrl_up_stretch=fk_ctrl_up_stretch,
                                   fk_ctrl_mid_stretch=fk_ctrl_mid_stretch,
                                   end_limb_fk_jnt=end_limb_fk_jnt,
                                   end_limb_ctrl=end_limb_fk_ctrl,
                                   leg=True,
+                                  upper_limb_jnt=upper_limb_jnt,
                                   middle_limb_jnt=middle_limb_jnt,
-                                  lower_limb_jnt=lower_limb_jnt
+                                  lower_limb_jnt=lower_limb_jnt,
+                                  fk_stretch_axis=fk_stretch_axis
+
                                   )
 
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_fk_attr)
@@ -160,7 +175,6 @@ def ad_fk_to_ik():
             lower_aim_axis_value = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Lower_Translate_Aim_Joint')
             fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Arm_Setup_Controller', s=1)
             fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Leg_Setup_Controller', s=1)
-            # ik_snap_ctrl_name = pm.listConnections(fkik_ctrl_select[0] + '.' + 'Ik_Snap_Ctrl_Name', s=1)
 
             # run for snap arm
             if fk_ik_arm_ctrl:
@@ -175,9 +189,9 @@ def ad_fk_to_ik():
                                   )
             # run for snap leg
             if fk_ik_leg_ctrl:
-                rotation_wiggle=[]
-                ik_toe_wiggle_attr_name=[]
-                ik_toe_wiggle_ctrl=[]
+                rotation_wiggle = []
+                ik_toe_wiggle_attr_name = []
+                ik_toe_wiggle_ctrl = []
 
                 end_limb_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Joint')[0]
                 if pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Ik_Guide_Joint', s=1):
@@ -191,10 +205,6 @@ def ad_fk_to_ik():
                     rotation_wiggle = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Rotation_Wiggle')
                     ik_toe_wiggle_attr_name = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Toe_Wiggle_Attr_Name')
                     ik_toe_wiggle_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + 'Ik_Toe_Wiggle_Ctrl')
-
-                # if pm.attributeQuery('Ik_Toe_Wiggle_Ctrl', n=fkik_ctrl_select[0], ex=True):
-                # else:
-                #     ik_toe_wiggle_ctrl = None
 
                 ad_fk_to_ik_setup(upper_limb_ik_jnt=upper_limb_ik_jnt, middle_limb_ik_jnt=middle_limb_ik_jnt,
                                   lower_limb_ik_jnt=lower_limb_ik_jnt, polevector_limb_ctrl=poleVector_ctrl,
@@ -217,9 +227,11 @@ def ad_fk_to_ik():
 
 
 def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, middle_limb_ctrl, lower_limb_ctrl,
-                      fkik_setup_controller, upper_limb_ctrl, aim_axis, value_axis_aim_middle, value_axis_aim_lower,
-                      fk_ctrl_up_stretch, fk_ctrl_mid_stretch, middle_limb_jnt, lower_limb_jnt,
-                      end_limb_fk_jnt=None, end_limb_ctrl=None, leg=None):
+                      fkik_setup_controller, upper_limb_ctrl, aim_axis, value_axis_aim_translate_middle,
+                      value_axis_aim_translate_lower,
+                      value_axis_aim_scale_upper, value_axis_aim_scale_middle,
+                      fk_ctrl_up_stretch, fk_ctrl_mid_stretch, upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
+                      end_limb_fk_jnt=None, end_limb_ctrl=None, leg=None, fk_stretch_axis=None):
     # query world position
     xform_upper_limb_rot = pm.xform(upper_limb_fk_jnt, ws=1, q=1, ro=1)
     xform_middle_limb_rot = pm.xform(middle_limb_fk_jnt, ws=1, q=1, ro=1)
@@ -241,11 +253,6 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
             item_attribute, item_controller = ' '.join(item_list).split()
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
-    # set the position
-    # ad_set_rotation_order(upper_limb_fk_jnt, target=upper_limb_ctrl)
-    # ad_set_rotation_order(middle_limb_fk_jnt, target=middle_limb_ctrl)
-    # ad_set_rotation_order(lower_limb_fk_jnt, target=lower_limb_ctrl)
-
     pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
     pm.xform(middle_limb_ctrl, ws=1, ro=(xform_middle_limb_rot[0], xform_middle_limb_rot[1], xform_middle_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
@@ -253,26 +260,46 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
     if pm.getAttr(selection + '.' + 'Translate_Fk_Ctrl_Exists'):
         upper_stretch_attr = pm.getAttr(selection + '.' + 'Fk_Attr_Up_Stretch')
         middle_stretch_attr = pm.getAttr(selection + '.' + 'Fk_Attr_Mid_Stretch')
-        current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_jnt, aim_axis))
-        current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
+        current_value_axis_towards_upper_jnt = pm.getAttr('%s.%s' % (upper_limb_jnt, fk_stretch_axis))
+        current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_jnt, fk_stretch_axis))
+        current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, fk_stretch_axis))
 
-        if pm.getAttr(selection + '.' + 'Fk_Value_Up_Stretch') < 1.0:
-            length_factor_middle_jnt = current_value_axis_towards_middle_jnt - value_axis_aim_middle
-            length_factor_middle_jnt_result = length_factor_middle_jnt / value_axis_aim_middle
-            length_middle_result = length_factor_middle_jnt_result * 10.0
-            pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_middle_result)
-        else:
-            length_factor_middle_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_middle
-            pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
+        if 'scale' in fk_stretch_axis:
+            if pm.getAttr(selection + '.' + 'Fk_Value_Up_Stretch') < 1.0:
+                length_factor_middle_jnt = current_value_axis_towards_upper_jnt - value_axis_aim_scale_upper
+                length_factor_middle_jnt_result = length_factor_middle_jnt / value_axis_aim_scale_upper
+                length_middle_result = length_factor_middle_jnt_result * 10.0
+                pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_middle_result)
+            else:
+                length_factor_middle_jnt = current_value_axis_towards_upper_jnt / value_axis_aim_scale_upper
+                pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
 
-        if pm.getAttr(selection + '.' + 'Fk_Value_Mid_Stretch') < 1.0:
-            length_factor_lower_jnt = current_value_axis_towards_lower_jnt - value_axis_aim_lower
-            length_factor_lower_jnt_result = length_factor_lower_jnt / value_axis_aim_lower
-            length_lower_result = length_factor_lower_jnt_result * 10.0
-            pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_lower_result)
+            if pm.getAttr(selection + '.' + 'Fk_Value_Mid_Stretch') < 1.0:
+                length_factor_lower_jnt = current_value_axis_towards_middle_jnt - value_axis_aim_scale_middle
+                length_factor_lower_jnt_result = length_factor_lower_jnt / value_axis_aim_scale_middle
+                length_lower_result = length_factor_lower_jnt_result * 10.0
+                pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_lower_result)
+            else:
+                length_factor_lower_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_scale_middle
+                pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
         else:
-            length_factor_lower_jnt = current_value_axis_towards_lower_jnt / value_axis_aim_lower
-            pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
+            if pm.getAttr(selection + '.' + 'Fk_Value_Up_Stretch') < 1.0:
+                length_factor_middle_jnt = current_value_axis_towards_middle_jnt - value_axis_aim_translate_middle
+                length_factor_middle_jnt_result = length_factor_middle_jnt / value_axis_aim_translate_middle
+                length_middle_result = length_factor_middle_jnt_result * 10.0
+                pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_middle_result)
+            else:
+                length_factor_middle_jnt = current_value_axis_towards_middle_jnt / value_axis_aim_translate_middle
+                pm.setAttr(fk_ctrl_up_stretch[0] + '.' + upper_stretch_attr, length_factor_middle_jnt)
+
+            if pm.getAttr(selection + '.' + 'Fk_Value_Mid_Stretch') < 1.0:
+                length_factor_lower_jnt = current_value_axis_towards_lower_jnt - value_axis_aim_translate_lower
+                length_factor_lower_jnt_result = length_factor_lower_jnt / value_axis_aim_translate_lower
+                length_lower_result = length_factor_lower_jnt_result * 10.0
+                pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_lower_result)
+            else:
+                length_factor_lower_jnt = current_value_axis_towards_lower_jnt / value_axis_aim_translate_lower
+                pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
 
     else:
         pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
@@ -297,7 +324,6 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
                       end_limb_ctrl=None,
                       rotation_wiggle=None, ik_toe_wiggle_ctrl=None, ik_toe_wiggle_attr_name=None,
                       end_limb_ik_jnt=None, leg=None):
-
     # query position and rotation
     xform_upper_limb_rot = pm.xform(upper_limb_ik_jnt, ws=1, q=1, ro=1)
     xform_low_limb_rot = pm.xform(lower_limb_ik_jnt, ws=1, q=1, ro=1)
@@ -344,7 +370,8 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
             pm.xform((end_limb_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
     # for pole vector position
-    get_poleVector_position = ad_get_pole_vector_position(xform_upper_limb_pos, xform_middle_limb_pos, xform_low_limb_pos)
+    get_poleVector_position = ad_get_pole_vector_position(xform_upper_limb_pos, xform_middle_limb_pos,
+                                                          xform_low_limb_pos)
     pm.move(get_poleVector_position.x, get_poleVector_position.y, get_poleVector_position.z, polevector_limb_ctrl)
 
     # calculate for stretching and snapping the pole vector controller
@@ -363,7 +390,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
             ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name,
                               ik_snap_attr_name, ik_snap_on)
         else:
-            pm.setAttr(ik_snap_ctrl_name+'.'+ik_snap_attr_name, ik_snap_off)
+            pm.setAttr(ik_snap_ctrl_name + '.' + ik_snap_attr_name, ik_snap_off)
 
 
 def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name, ik_snap_attr_name, ik_snap_on):

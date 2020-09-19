@@ -34,6 +34,7 @@ percentage = 0.01 * layout
 on_selector = 0
 on_side = 0
 on_selector_rotate = 0
+on_stretch = 0
 
 
 def ad_setup_fkik_ui():
@@ -239,12 +240,26 @@ def ad_setup_fkik_ui():
 
                     pm.separator(h=5, st="in", w=layout)
                     # translate fk lock/unlock
-                    with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
-                                                          (3, 'both', 1 * percentage), (4, 'both', 1 * percentage)],
-                                      cw4=(30 * percentage, 5 * percentage, 30 * percentage, 30 * percentage)):
-                        pm.text('Does Translate Fk ctrl is locked?:')
+                    with pm.rowLayout(nc=2, columnAttach=[(1, 'left', 0), (2, 'right', 1 * percentage),
+                                                          ],
+                                      cw2=(5 * percentage, 55 * percentage)):
                         pm.checkBox('Translate_Fk', label='', cc=partial(ad_enabling_disabling_ui,
-                                                                         ['row_column_stretch_fk_add_object']))
+                                                                         ['row_column_stretch_fk_add_object',
+                                                                          'stretch_attribute_connected_with']))
+                        pm.text('Using stretch attribute instead of Fk controller translate?')
+
+                    # connected stretch
+                    with pm.rowColumnLayout('stretch_attribute_connected_with',
+                                            nc=3, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                                (3, 'left', 1.5 * percentage)],
+                                            cw=[(1, 30 * percentage), (2, 18 * percentage), (3, 18 * percentage)],
+                                            en=False):
+                        pm.text('Which attribute connected with?:')
+                        direction_stretch = pm.radioCollection()
+                        direction_stretch_scale = pm.radioButton(label='Scale',
+                                                                 onCommand=lambda x: ad_scale_or_translate_stretch(1))
+                        pm.radioButton(label='Translate', onCommand=lambda x: ad_scale_or_translate_stretch(2))
+                        pm.radioCollection(direction_stretch, edit=True, select=direction_stretch_scale)
 
                     with pm.rowColumnLayout("row_column_stretch_fk_add_object", nc=3,
                                             cw=[(1, 42 * percentage), (2, 28 * percentage), (3, 19 * percentage)],
@@ -255,7 +270,7 @@ def ad_setup_fkik_ui():
                                               bl="<<",
                                               bc=partial(ad_adding_object_sel_to_textfield, 'Fk_Ctrl_Up_Stretch'))
                         # attribute additional
-                        pm.textFieldGrp('Fk_Attr_Up_Stretch', l="Attribute:", cal=(1, "right"),
+                        pm.textFieldGrp('Fk_Attr_Up_Stretch', l="Attr Name:", cal=(1, "right"),
                                         cw2=(12 * percentage, 10 * percentage),
                                         tx='stretch', )
                         # set default value
@@ -270,7 +285,7 @@ def ad_setup_fkik_ui():
                                               bl="<<",
                                               bc=partial(ad_adding_object_sel_to_textfield, 'Fk_Ctrl_Mid_Stretch'))
                         # attribute additional
-                        pm.textFieldGrp('Fk_Attr_Mid_Stretch', l="Attribute:", cal=(1, "right"),
+                        pm.textFieldGrp('Fk_Attr_Mid_Stretch', l="Attr Name:", cal=(1, "right"),
                                         cw2=(12 * percentage, 10 * percentage),
                                         tx='stretch', )
                         # set default value
@@ -332,8 +347,19 @@ def ad_action_position_radio_button(*args):
     return side
 
 
-def ad_action_rotate_translate_radio_button(object, *args):
-    value_translate, axis_translate, value_rotate, axis_rotate = [], [], [], []
+def ad_action_stretch_radio_button(axis, *args):
+    stretch = []
+    if on_stretch == 1:
+        stretch = 'scale' + axis
+    elif on_stretch == 2:
+        stretch = 'translate' + axis
+    else:
+        pass
+    return stretch
+
+
+def ad_action_rotate_translate_scale_radio_button(object, *args):
+    value_translate, axis_translate, value_rotate, axis_rotate, value_scale, axis_scale = [], [], [], [], [], []
     # query object with value on shape selector status
     if on_selector == 1:
         axis_translate = 'translateX'
@@ -353,10 +379,20 @@ def ad_action_rotate_translate_radio_button(object, *args):
     else:
         pass
 
+    if on_selector == 1:
+        axis_scale = 'scaleX'
+    elif on_selector == 2:
+        axis_scale = 'scaleY'
+    elif on_selector == 3:
+        axis_scale = 'scaleZ'
+    else:
+        pass
+
     value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
     value_rotate = pm.getAttr('%s.%s' % (object, axis_rotate))
+    value_scale = pm.getAttr('%s.%s' % (object, axis_scale))
 
-    return value_translate, axis_translate, value_rotate, axis_rotate
+    return value_translate, axis_translate, value_rotate, axis_rotate, value_scale, axis_scale,
 
 
 def ad_on_selection_rotate_button(on):
@@ -376,6 +412,11 @@ def ad_on_position_button(on):
     on_side = on
 
 
+def ad_scale_or_translate_stretch(on):
+    global on_stretch
+    on_stretch = on
+
+
 def ad_defining_object_text_field(define_object, label, add_feature=False, *args, **kwargs):
     if not add_feature:
         # if object doesn't has checkbox
@@ -391,6 +432,7 @@ def ad_defining_object_text_field(define_object, label, add_feature=False, *args
                               cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                               bl="Get Object",
                               bc=partial(ad_adding_object_sel_to_textfield, define_object), **kwargs)
+
 
 def ad_enabling_disabling_ui(object, value, *args):
     # query for enabling and disabling layout
@@ -539,7 +581,8 @@ def ad_additional_controller_offset(fkIk_setup_ctrl, joint, controller, attribut
     pm.setAttr('%s.%s' % (fkIk_setup_ctrl[0], 'Rotate' + '_' + attribute + '_z'), rotate_z, l=True)
 
 
-def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_Limb_Joint_Define,
+def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
+                        End_Limb_Joint_Define,
                         ik_snap_ctrl, fk_ctrl_up_stretch, fk_ctrl_mid_stretch, fkIk_setup_ctrl,
                         ik_toe_wiggle_ctrl=None):
     #############
@@ -550,15 +593,23 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
 
     pm.addAttr(fkIk_setup_ctrl[0], ln='Aim_Axis', dt='string')
     pm.setAttr('%s.Aim_Axis' % fkIk_setup_ctrl[0],
-               ad_action_rotate_translate_radio_button(Lower_Limb_Joint_Define[0])[1], l=True)
+               ad_action_rotate_translate_scale_radio_button(Lower_Limb_Joint_Define[0])[1], l=True)
 
     pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Translate_Aim_Joint', at='float')
     pm.setAttr('%s.Middle_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
-               ad_action_rotate_translate_radio_button(Middle_Limb_Joint_Define[0])[0], l=True)
+               ad_action_rotate_translate_scale_radio_button(Middle_Limb_Joint_Define[0])[0], l=True)
 
     pm.addAttr(fkIk_setup_ctrl[0], ln='Lower_Translate_Aim_Joint', at='float')
     pm.setAttr('%s.Lower_Translate_Aim_Joint' % fkIk_setup_ctrl[0],
-               ad_action_rotate_translate_radio_button(Lower_Limb_Joint_Define[0])[0], l=True)
+               ad_action_rotate_translate_scale_radio_button(Lower_Limb_Joint_Define[0])[0], l=True)
+
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Upper_Scale_Aim_Joint', at='float')
+    pm.setAttr('%s.Upper_Scale_Aim_Joint' % fkIk_setup_ctrl[0],
+               ad_action_rotate_translate_scale_radio_button(Upper_Limb_Joint_Define[0])[4], l=True)
+
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Middle_Scale_Aim_Joint', at='float')
+    pm.setAttr('%s.Middle_Scale_Aim_Joint' % fkIk_setup_ctrl[0],
+               ad_action_rotate_translate_scale_radio_button(Middle_Limb_Joint_Define[0])[4], l=True)
 
     fk_ik_attr_name = pm.textFieldGrp('Fk_Ik_Attr_Name', q=True, tx=True)
     if pm.objExists(fkIk_setup_ctrl[0] + '.' + fk_ik_attr_name):
@@ -614,7 +665,7 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     if pm.rowLayout('ik_ball_rotation_layout', q=True, enable=True):
         pm.addAttr(fkIk_setup_ctrl[0], ln='Rotation_Wiggle', dt='string')
         pm.setAttr('%s.Rotation_Wiggle' % fkIk_setup_ctrl[0],
-                   ad_action_rotate_translate_radio_button(End_Limb_Joint_Define[0])[3], l=True)
+                   ad_action_rotate_translate_scale_radio_button(End_Limb_Joint_Define[0])[3], l=True)
 
         reverse_wiggle_value = pm.checkBox('Reverse_Wiggle_Value', q=True, value=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Reverse_Wiggle_Value', at='bool')
@@ -624,6 +675,14 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
     translate_fk_ctrl = pm.checkBox('Translate_Fk', q=True, value=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Translate_Fk_Ctrl_Exists', at='bool')
     pm.setAttr('%s.Translate_Fk_Ctrl_Exists' % fkIk_setup_ctrl[0], translate_fk_ctrl, l=True)
+
+    if pm.rowColumnLayout('stretch_attribute_connected_with', q=True, enable=True):
+        get_attribute_aim_axis = pm.getAttr('%s.Aim_Axis' % fkIk_setup_ctrl[0])
+        get_axis = get_attribute_aim_axis.replace('translate', '')
+
+        pm.addAttr(fkIk_setup_ctrl[0], ln='Stretch_Attr', dt='string')
+        pm.setAttr('%s.Stretch_Attr' % fkIk_setup_ctrl[0],
+                   ad_action_stretch_radio_button(axis=get_axis), l=True)
 
     if pm.rowColumnLayout('row_column_stretch_fk_add_object', q=True, enable=True):
 
@@ -699,8 +758,8 @@ def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_De
     upperLimb_fk_GDE_name_box = 'Upper_Limb_Fk_Guide_Joint'
 
     upperLimb_ik_GDE_jnt = ad_joint_guide(name="upper%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                      fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
-                                      object_joint=Upper_Limb_Joint_Define[0])
+                                          fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
+                                          object_joint=Upper_Limb_Joint_Define[0])
     upperLimb_ik_GDE_name_box = 'Upper_Limb_Ik_Guide_Joint'
 
     middleLimb_fk_GDE_jnt = ad_joint_guide(name="middle%s_Fk" % prefix, side=ad_action_position_radio_button(),
@@ -879,7 +938,7 @@ def ad_run_setup(*args):
                 if not pm.listConnections(guide_joint + '.message'):
                     pm.delete(guide_joint)
 
-            ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
+            ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                 End_Limb_Joint_Define,
                                 ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                 fk_ctrl_up_stretch=Fk_Ctrl_Up_Stretch[0],
@@ -952,7 +1011,8 @@ def ad_run_setup(*args):
                     pm.delete(guide_joint)
 
             if pm.rowLayout('ik_ball_layout', q=True, enable=True):
-                ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
+                ad_additional_setup(Upper_Limb_Joint_Define,
+                                    Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                     End_Limb_Joint_Define,
                                     ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                     fk_ctrl_up_stretch=Fk_Ctrl_Up_Stretch[0],
@@ -961,7 +1021,8 @@ def ad_run_setup(*args):
                                     ik_toe_wiggle_ctrl=Ik_Toe_Wiggle_Ctrl_Define_0
                                     )
             else:
-                ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
+                ad_additional_setup(Upper_Limb_Joint_Define,
+                                    Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                     End_Limb_Joint_Define,
                                     ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
                                     fk_ctrl_up_stretch=Fk_Ctrl_Up_Stretch[0],
@@ -1049,7 +1110,8 @@ def ad_delete_setup(*args):
                                       'Middle_Limb_Fk_Guide_Joint', 'Middle_Limb_Ik_Guide_Joint',
                                       'Lower_Limb_Fk_Guide_Joint', 'Lower_Limb_Ik_Guide_Joint',
                                       'End_Limb_Fk_Guide_Joint', 'End_Limb_Ik_Guide_Joint',
-
+                                      'Stretch_Attr',
+                                      'Upper_Scale_Aim_Joint', 'Middle_Scale_Aim_Joint',
                                       'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
                                       'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
                                       'End_Limb_Joint',
@@ -1094,7 +1156,7 @@ def ad_delete_setup(*args):
                         if joint_guide_query:
                             pm.delete(joint_guide_query)
 
-                    for item in  object_text_field_list:
+                    for item in object_text_field_list:
                         # query the attribute exists
                         if pm.attributeQuery(item, n=select, ex=True):
                             # unlock then delete attribute
@@ -1102,7 +1164,6 @@ def ad_delete_setup(*args):
                             if list_attr:
                                 pm.setAttr('%s.%s' % (select, list_attr[0]), l=False)
                             pm.deleteAttr('%s.%s' % (select, item))
-
 
                     # listing attribute selection
                     if filter(lambda x: '_DOTAT_' in x or '_DOTVA_' in x, list_attribute_additional):
