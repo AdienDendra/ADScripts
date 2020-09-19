@@ -392,15 +392,6 @@ def ad_defining_object_text_field(define_object, label, add_feature=False, *args
                               bl="Get Object",
                               bc=partial(ad_adding_object_sel_to_textfield, define_object), **kwargs)
 
-
-# def ad_enabling_disabling_translate_fk_exists(object, value, *args):
-#     objectType = pm.objectTypeUI(object)
-#     if objectType == 'rowColumnLayout':
-#         pm.rowColumnLayout(object, edit=True, enable=value)
-#     else:
-#         pass
-
-
 def ad_enabling_disabling_ui(object, value, *args):
     # query for enabling and disabling layout
     for item in object:
@@ -664,7 +655,6 @@ def ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define, End_L
 
 
 def ad_joint_guide(name, side, fk_or_ik_controller, object_joint):
-    print fk_or_ik_controller
     pm.select(cl=1)
     create_joint_guide = pm.joint(n=name + '_' + side + '_GDE_jnt')
     # label name
@@ -673,22 +663,20 @@ def ad_joint_guide(name, side, fk_or_ik_controller, object_joint):
     # parent to object
     pm.parent(create_joint_guide, object_joint)
 
-    # freeze transform
-    pm.makeIdentity(create_joint_guide, apply=True, translate=True, rotate=True)
-
     # match rotation and position
     if fk_or_ik_controller:
         pm.delete(pm.parentConstraint(fk_or_ik_controller, create_joint_guide, mo=0))
-        pm.connectAttr(fk_or_ik_controller + '.rotateOrder', create_joint_guide + '.rotateOrder')
 
     else:
         pm.delete(pm.parentConstraint(object_joint, create_joint_guide, mo=0))
-        pm.connectAttr(object_joint + '.rotateOrder', create_joint_guide + '.rotateOrder')
 
-    # connect rotate order
-    # # set rotate order
-    # get_rotate_order = pm.getAttr(object_joint + '.rotateOrder')
-    # pm.setAttr(create_joint_guide + '.rotateOrder', get_rotate_order)
+    # freeze transform
+    pm.makeIdentity(create_joint_guide, apply=True, translate=True, rotate=True)
+
+    if fk_or_ik_controller:
+        pm.connectAttr(fk_or_ik_controller + '.rotateOrder', create_joint_guide + '.rotateOrder')
+    else:
+        pm.connectAttr(object_joint + '.rotateOrder', create_joint_guide + '.rotateOrder')
 
     # resize and hide joint
     pm.setAttr(create_joint_guide + '.radius', 0.1)
@@ -711,8 +699,8 @@ def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_De
     upperLimb_fk_GDE_name_box = 'Upper_Limb_Fk_Guide_Joint'
 
     upperLimb_ik_GDE_jnt = ad_joint_guide(name="upper%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
-                                          object_joint=Upper_Limb_Joint_Define[0])
+                                      fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
+                                      object_joint=Upper_Limb_Joint_Define[0])
     upperLimb_ik_GDE_name_box = 'Upper_Limb_Ik_Guide_Joint'
 
     middleLimb_fk_GDE_jnt = ad_joint_guide(name="middle%s_Fk" % prefix, side=ad_action_position_radio_button(),
@@ -881,10 +869,15 @@ def ad_run_setup(*args):
                                                                  list_guide_joint,
                                                                  list_label_guide_joint,
                                                                  ):
+                # insert guide joint to attribute
                 pm.addAttr(FkIk_Arm_Setup_Controller[0], ln=label_joint, at='message')
                 if pm.textFieldButtonGrp(ref_object_ctrl, q=True, en=True):
                     pm.connectAttr(guide_joint + '.message',
                                    '%s.%s' % (FkIk_Arm_Setup_Controller[0], label_joint))
+
+                # delete disconnected guide joint
+                if not pm.listConnections(guide_joint + '.message'):
+                    pm.delete(guide_joint)
 
             ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                 End_Limb_Joint_Define,
@@ -948,10 +941,15 @@ def ad_run_setup(*args):
                                                                  list_guide_joint,
                                                                  list_label_guide_joint,
                                                                  ):
+                # insert guide joint to attribute
                 pm.addAttr(FkIk_Leg_Setup_Controller[0], ln=label_joint, at='message')
                 if pm.textFieldButtonGrp(ref_object_ctrl, q=True, en=True):
                     pm.connectAttr(guide_joint + '.message',
                                    '%s.%s' % (FkIk_Leg_Setup_Controller[0], label_joint))
+
+                # delete disconnected guide joint
+                if not pm.listConnections(guide_joint + '.message'):
+                    pm.delete(guide_joint)
 
             if pm.rowLayout('ik_ball_layout', q=True, enable=True):
                 ad_additional_setup(Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
@@ -1052,11 +1050,6 @@ def ad_delete_setup(*args):
                                       'Lower_Limb_Fk_Guide_Joint', 'Lower_Limb_Ik_Guide_Joint',
                                       'End_Limb_Fk_Guide_Joint', 'End_Limb_Ik_Guide_Joint',
 
-                                      # 'upperLeg_Fk_Guide_Joint', 'upperLeg_Ik_Guide_Joint',
-                                      # 'middleLeg_Fk_Guide_Joint', 'middleLeg_Ik_Guide_Joint',
-                                      # 'lowerLeg_Fk_Guide_Joint', 'lowerLeg_Ik_Guide_Joint',
-                                      # 'endLeg_Fk_Guide_Joint', 'endLeg_Ik_Guide_Joint',
-
                                       'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
                                       'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
                                       'End_Limb_Joint',
@@ -1069,9 +1062,6 @@ def ad_delete_setup(*args):
                                       'Fk_Attr_Mid_Stretch', 'Fk_Value_On', 'Ik_Value_On', 'Ik_Toe_Wiggle_Ctrl',
                                       'Ik_Toe_Wiggle_Attr_Name', 'Rotation_Wiggle', 'Reverse_Wiggle_Value',
 
-                                      # 'Upper_Ik_Ctrl_Offset', 'Middle_Ik_Ctrl_Offset', 'Lower_Ik_Ctrl_Offset',
-                                      # 'End_Ik_Ctrl_Offset', 'Upper_Fk_Ctrl_Offset', 'Middle_Fk_Ctrl_Offset',
-                                      # 'Lower_Fk_Ctrl_Offset', 'End_Fk_Ctrl_Offset',
                                       'Snapping_Position',
                                       'Ik_Snap_Checkbox',
                                       'Translate_Upper_Limb_Ik_Ctrl', 'Translate_Pole_Vector_Ik_Ctrl',
@@ -1081,11 +1071,12 @@ def ad_delete_setup(*args):
                                       'Translate_Upper_Limb_Fk_Ctrl', 'Translate_Middle_Limb_Fk_Ctrl',
                                       'Translate_Lower_Limb_Fk_Ctrl', 'Translate_End_Limb_Fk_Ctrl',
                                       'Rotate_Upper_Limb_Fk_Ctrl', 'Rotate_Middle_Limb_Fk_Ctrl',
-                                      'Rotate_Lower_Limb_Fk_Ctrl', 'Rotate_End_Limb_Fk_Ctrl',
-                                      ]
-            # object_joint_guide = ['upperArm_Fk_Guide_Joint', 'upperArm_Ik_Guide_Joint',
-            #                       'middleArm_Fk_Guide_Joint', 'middleArm_Ik_Guide_Joint',
-            #                       'lowerArm_Fk_Guide_Joint', 'lowerArm_Ik_Guide_Joint']
+                                      'Rotate_Lower_Limb_Fk_Ctrl', 'Rotate_End_Limb_Fk_Ctrl']
+
+            # object_guide_joint = [ 'Upper_Limb_Fk_Guide_Joint', 'Upper_Limb_Ik_Guide_Joint',
+            #                        'Middle_Limb_Fk_Guide_Joint', 'Middle_Limb_Ik_Guide_Joint',
+            #                        'Lower_Limb_Fk_Guide_Joint', 'Lower_Limb_Ik_Guide_Joint',
+            #                        'End_Limb_Fk_Guide_Joint', 'End_Limb_Ik_Guide_Joint']
 
             if pm.objExists(select + '.' + 'FkIk_Arm_Setup_Controller'):
                 dialog_confirm = pm.confirmDialog(title='Delete Confirm', message='Are you sure to delete setup?',
@@ -1093,27 +1084,27 @@ def ad_delete_setup(*args):
                                                   defaultButton='Yes', icon="warning",
                                                   cancelButton='No', dismissString='No')
                 if dialog_confirm == 'Yes':
-                    # deleting joint guide
-                    listing_joint = pm.ls(type='joint')
-                    for item in listing_joint:
-                        if item.endswith('_GDE_jnt'):
-                            pm.delete(item)
-
-                    # for item in object_joint_guide:
-                    #     if pm.attributeQuery(item, n=select, ex=True):
-                    #         object_guide_joint = pm.listConnections('%s.%s' % (select, item), s=True)
-                    #         pm.delete(object_guide_joint)
-
                     # deleting all attribute added
-                    for item in object_text_field_list:
+                    list_attribute_additional = pm.listAttr(select)
+
+                    filtering_guide_joint = filter(lambda x: '_Guide_Joint' in x, list_attribute_additional)
+                    for guide_joint in filtering_guide_joint:
+                        # delete item guide joint
+                        joint_guide_query = pm.listConnections(select + '.' + guide_joint, s=1)
+                        if joint_guide_query:
+                            pm.delete(joint_guide_query)
+
+                    for item in  object_text_field_list:
+                        # query the attribute exists
                         if pm.attributeQuery(item, n=select, ex=True):
+                            # unlock then delete attribute
                             list_attr = pm.listAttr('%s.%s' % (select, item), l=True)
                             if list_attr:
                                 pm.setAttr('%s.%s' % (select, list_attr[0]), l=False)
                             pm.deleteAttr('%s.%s' % (select, item))
 
+
                     # listing attribute selection
-                    list_attribute_additional = pm.listAttr(select)
                     if filter(lambda x: '_DOTAT_' in x or '_DOTVA_' in x, list_attribute_additional):
 
                         # filtering the object
