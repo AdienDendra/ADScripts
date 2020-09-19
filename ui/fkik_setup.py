@@ -670,22 +670,25 @@ def ad_joint_guide(name, side, fk_or_ik_controller, object_joint):
     # label name
     label_name = name + '_Guide_Joint'
 
-    # match rotation and position
-    if fk_or_ik_controller:
-        pm.delete(pm.parentConstraint(fk_or_ik_controller, create_joint_guide, mo=0))
-
-    else:
-        pm.delete(pm.parentConstraint(object_joint, create_joint_guide, mo=0))
+    # parent to object
+    pm.parent(create_joint_guide, object_joint)
 
     # freeze transform
     pm.makeIdentity(create_joint_guide, apply=True, translate=True, rotate=True)
 
-    # parent to object
-    pm.parent(create_joint_guide, object_joint)
+    # match rotation and position
+    if fk_or_ik_controller:
+        pm.delete(pm.parentConstraint(fk_or_ik_controller, create_joint_guide, mo=0))
+        pm.connectAttr(fk_or_ik_controller + '.rotateOrder', create_joint_guide + '.rotateOrder')
 
-    # set rotate order
-    get_rotate_order = pm.getAttr(object_joint + '.rotateOrder')
-    pm.setAttr(create_joint_guide + '.rotateOrder', get_rotate_order)
+    else:
+        pm.delete(pm.parentConstraint(object_joint, create_joint_guide, mo=0))
+        pm.connectAttr(object_joint + '.rotateOrder', create_joint_guide + '.rotateOrder')
+
+    # connect rotate order
+    # # set rotate order
+    # get_rotate_order = pm.getAttr(object_joint + '.rotateOrder')
+    # pm.setAttr(create_joint_guide + '.rotateOrder', get_rotate_order)
 
     # resize and hide joint
     pm.setAttr(create_joint_guide + '.radius', 0.1)

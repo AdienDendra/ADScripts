@@ -230,9 +230,9 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
     # set the position
-    ad_set_rotation_order(upper_limb_fk_jnt, target=upper_limb_ctrl)
-    ad_set_rotation_order(middle_limb_fk_jnt, target=middle_limb_ctrl)
-    ad_set_rotation_order(lower_limb_fk_jnt, target=lower_limb_ctrl)
+    # ad_set_rotation_order(upper_limb_fk_jnt, target=upper_limb_ctrl)
+    # ad_set_rotation_order(middle_limb_fk_jnt, target=middle_limb_ctrl)
+    # ad_set_rotation_order(lower_limb_fk_jnt, target=lower_limb_ctrl)
 
     pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
     pm.xform(middle_limb_ctrl, ws=1, ro=(xform_middle_limb_rot[0], xform_middle_limb_rot[1], xform_middle_limb_rot[2]))
@@ -270,7 +270,7 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
 
     # exeption for the leg
     if leg:
-        ad_set_rotation_order(end_limb_fk_jnt, target=end_limb_ctrl)
+        # ad_set_rotation_order(end_limb_fk_jnt, target=end_limb_ctrl)
         xform_end_limb_rot = pm.xform(end_limb_fk_jnt, ws=1, q=1, ro=1)
         xform_end_limb_pos = pm.xform(end_limb_fk_jnt, ws=1, q=1, t=1)
         pm.xform(end_limb_ctrl, ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
@@ -314,7 +314,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
             else:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
         else:
-            ad_set_rotation_order(end_limb_ik_jnt, target=end_limb_ctrl)
+            # ad_set_rotation_order(end_limb_ik_jnt, target=end_limb_ctrl)
             xform_end_limb_pos = pm.xform(end_limb_ik_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_ik_jnt, ws=1, q=1, ro=1)
 
@@ -322,7 +322,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
             pm.xform((end_limb_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
 
     if pm.listConnections(selection + '.' + 'Upper_Limb_Ik_Ctrl', s=1):
-        ad_set_rotation_order(upper_limb_ik_jnt, target=upper_limb_ctrl[0])
+        # ad_set_rotation_order(upper_limb_ik_jnt, target=upper_limb_ctrl[0])
         pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
         pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
 
@@ -349,7 +349,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
             ad_ik_snap_set_on(polevector_limb_ctrl, mid_joint_position, ik_snap_ctrl_name,
                               ik_snap_attr_name, ik_snap_on)
 
-    ad_set_rotation_order(lower_limb_ik_jnt, target=lower_limb_ctrl)
+    # ad_set_rotation_order(lower_limb_ik_jnt, target=lower_limb_ctrl)
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
     pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
 
@@ -360,9 +360,9 @@ def ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_
                                             xform_middle_limb_pos[2]))
 
 
-def ad_set_rotation_order(object, target=None):
-    get_rotate_order = pm.getAttr(object + '.rotateOrder')
-    pm.setAttr(target + '.rotateOrder', get_rotate_order)
+# def ad_set_rotation_order(object, target=None):
+#     get_rotate_order = pm.getAttr(object + '.rotateOrder')
+#     pm.setAttr(target + '.rotateOrder', get_rotate_order)
 
 
 def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):
