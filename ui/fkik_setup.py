@@ -493,7 +493,7 @@ def ad_additional_attr_adding(*args):
     # set default value
     pm.floatFieldGrp(current_default_value, l="Set Default Value:", cal=(1, "right"),
                      cw2=(16 * percentage, 6 * percentage),
-                     p="row_column_add_object", precision=1)
+                     p="row_column_add_object", precision=3)
     # choose ik or ik radio button
     fk_ik_choose_additional = pm.radioCollection(current_collection_fk_ik, p='row_column_add_object')
     pm.radioButton(current_fk, label='Fk', p='row_column_add_object')
@@ -1089,15 +1089,15 @@ def ad_run_setup(*args):
                 object_compile_name, value_compile_name = [], []
                 if radio_collection == current_fk:
                     if pm.objExists(object + '.' + attribute):
-                        object_compile_name = '_DOTAT_' + attribute + '_FK_' + object
-                        value_compile_name = '_DOTVA_' + attribute + '_FK_' + object
+                        object_compile_name = '_DOTAT_' + attribute + '_DOFK_' + object
+                        value_compile_name = '_DOTVA_' + attribute + '_DOFK_' + object
                     else:
                         pm.error("There is no object '%s' with attribute name '%s' in the scene. "
                                  "Please check both of the input name!" % (object, attribute))
                 else:
                     if pm.objExists(object + '.' + attribute):
-                        object_compile_name = '_DOTAT_' + attribute + '_IK_' + object
-                        value_compile_name = '_DOTVA_' + attribute + '_IK_' + object
+                        object_compile_name = '_DOTAT_' + attribute + '_DOTIK_' + object
+                        value_compile_name = '_DOTVA_' + attribute + '_DOTIK_' + object
                     else:
                         pm.error("There is no object '%s' with attribute name '%s' in the scene. "
                                  "Please check both of the input name!" % (object, attribute))

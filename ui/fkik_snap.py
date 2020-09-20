@@ -199,7 +199,6 @@ def ad_fk_to_ik():
                     end_limb_ik_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Ik_Guide_Joint')[0]
                 else:
                     end_limb_ik_jnt = pm.listConnections(fkik_ctrl_select[0] + '.' + 'End_Limb_Joint')[0]
-                print end_limb_ik_jnt
                 end_limb_ik_ctrl = pm.getAttr(fkik_ctrl_select[0] + '.' + 'End_Limb_Ik_Ctrl')
 
                 if pm.attributeQuery('Rotation_Wiggle', n=fkik_ctrl_select[0], ex=True):
@@ -220,7 +219,8 @@ def ad_fk_to_ik():
                                   ik_toe_wiggle_attr_name=ik_toe_wiggle_attr_name,
                                   end_limb_ik_jnt=end_limb_ik_jnt, leg=True,
                                   middle_limb_jnt=middle_limb_jnt,
-                                  lower_limb_jnt=lower_limb_jnt
+                                  lower_limb_jnt=lower_limb_jnt,
+                                  end_limb_jnt=end_limb_jnt
                                   )
 
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_ik_attr)
@@ -247,13 +247,13 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
-    if filter(lambda x: '_DOTAT_' and '_FK_' in x or '_DOTVA_' and '_FK_' in x, list_attribute_additional):
-        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_FK_' in x, list_attribute_additional)
-        filtering_value = filter(lambda x: '_DOTVA_' in x and '_FK_' in x, list_attribute_additional)
+    if filter(lambda x: '_DOTAT_' and '_DOFK_' in x or '_DOTVA_' and '_DOFK_' in x, list_attribute_additional):
+        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_DOFK_' in x, list_attribute_additional)
+        filtering_value = filter(lambda x: '_DOTVA_' in x and '_DOFK_' in x, list_attribute_additional)
         for item_attr, item_value in zip(filtering_attr, filtering_value):
             get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
             get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
-            item_list = item_attr.replace('_DOTAT_', ',').replace('_FK_', ',').split(',')
+            item_list = item_attr.replace('_DOTAT_', ',').replace('_DOFK_', ',').split(',')
             item_attribute, item_controller = ' '.join(item_list).split()
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
@@ -326,7 +326,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
                       value_axis_aim_middle, value_axis_aim_lower,
                       fkik_setup_controller,
                       aim_axis,
-                      middle_limb_jnt, lower_limb_jnt,
+                      middle_limb_jnt, lower_limb_jnt, end_limb_jnt=None,
                       end_limb_ctrl=None,
                       rotation_wiggle=None, ik_toe_wiggle_ctrl=None, ik_toe_wiggle_attr_name=None,
                       end_limb_ik_jnt=None, leg=None):
@@ -340,13 +340,13 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
-    if filter(lambda x: '_DOTAT_' and '_IK_' in x or '_DOTVA_' and '_IK_' in x, list_attribute_additional):
-        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_IK_' in x, list_attribute_additional)
-        filtering_value = filter(lambda x: '_DOTVA_' in x and '_IK_' in x, list_attribute_additional)
+    if filter(lambda x: '_DOTAT_' and '_DOIK_' in x or '_DOTVA_' and '_DOIK_' in x, list_attribute_additional):
+        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_DOIK_' in x, list_attribute_additional)
+        filtering_value = filter(lambda x: '_DOTVA_' in x and '_DOIK_' in x, list_attribute_additional)
         for item_attr, item_value in zip(filtering_attr, filtering_value):
             get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
             get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
-            item_list = item_attr.replace('_DOTAT_', ',').replace('_IK_', ',').split(',')
+            item_list = item_attr.replace('_DOTAT_', ',').replace('_DOIK_', ',').split(',')
             item_attribute, item_controller = ' '.join(item_list).split()
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
@@ -362,8 +362,10 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
     # condition leg true
     if leg:
         if not pm.listConnections(selection + '.' + 'End_Limb_Ik_Ctrl', s=1):
-            xform_end_limb_rot = pm.getAttr(end_limb_ik_jnt + '.' + rotation_wiggle)
-            if (fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value'):
+            xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
+            get_reverse_wiggle = pm.getAttr(fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value')
+
+            if get_reverse_wiggle:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
             else:
                 pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
