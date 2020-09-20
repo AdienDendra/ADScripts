@@ -14,7 +14,7 @@ CONTACT:
     adien.dendra@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 17 August 2020 - Initial Release
+    1.0 - 20 September 2020 - Initial Release
 
 ***************************************************************
 Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
@@ -100,7 +100,7 @@ def ad_ik_to_fk():
                                   lower_limb_fk_jnt=lower_limb_fk_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
                                   fkik_setup_controller=fkik_ctrl_select,
-                                  aim_axis=aim_axis,
+                                  # aim_axis=aim_axis,
                                   value_axis_aim_translate_middle=middle_aim_translate_axis_value,
                                   value_axis_aim_translate_lower=lower_aim_translate_axis_value,
                                   value_axis_aim_scale_upper=upper_aim_scale_axis_value,
@@ -122,7 +122,7 @@ def ad_ik_to_fk():
                                   lower_limb_fk_jnt=lower_limb_fk_jnt, middle_limb_ctrl=middle_limb_fk_ctrl,
                                   lower_limb_ctrl=lower_limb_fk_ctrl, upper_limb_ctrl=upper_limb_fk_ctrl,
                                   fkik_setup_controller=fkik_ctrl_select,
-                                  aim_axis=aim_axis,
+                                  # aim_axis=aim_axis,
                                   value_axis_aim_translate_middle=middle_aim_translate_axis_value,
                                   value_axis_aim_translate_lower=lower_aim_translate_axis_value,
                                   value_axis_aim_scale_upper=upper_aim_scale_axis_value,
@@ -183,7 +183,8 @@ def ad_fk_to_ik():
                                   lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
                                   value_axis_aim_middle=middle_aim_axis_value,
                                   value_axis_aim_lower=lower_aim_axis_value,
-                                  aim_axis=aim_axis, fkik_setup_controller=fkik_ctrl_select,
+                                  aim_axis=aim_axis,
+                                  fkik_setup_controller=fkik_ctrl_select,
                                   middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt
                                   )
@@ -211,7 +212,8 @@ def ad_fk_to_ik():
                                   lower_limb_ctrl=lower_limb_ik_ctrl, upper_limb_ctrl=upper_limb_ik_ctrl,
                                   value_axis_aim_middle=middle_aim_axis_value,
                                   value_axis_aim_lower=lower_aim_axis_value,
-                                  aim_axis=aim_axis, fkik_setup_controller=fkik_ctrl_select,
+                                  aim_axis=aim_axis,
+                                  fkik_setup_controller=fkik_ctrl_select,
                                   end_limb_ctrl=end_limb_ik_ctrl,
                                   rotation_wiggle=rotation_wiggle,
                                   ik_toe_wiggle_ctrl=ik_toe_wiggle_ctrl,
@@ -227,7 +229,9 @@ def ad_fk_to_ik():
 
 
 def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, middle_limb_ctrl, lower_limb_ctrl,
-                      fkik_setup_controller, upper_limb_ctrl, aim_axis, value_axis_aim_translate_middle,
+                      fkik_setup_controller, upper_limb_ctrl,
+                      # aim_axis,
+                      value_axis_aim_translate_middle,
                       value_axis_aim_translate_lower,
                       value_axis_aim_scale_upper, value_axis_aim_scale_middle,
                       fk_ctrl_up_stretch, fk_ctrl_mid_stretch, upper_limb_jnt, middle_limb_jnt, lower_limb_jnt,
@@ -318,7 +322,9 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
 
 def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
                       polevector_limb_ctrl, lower_limb_ctrl,
-                      upper_limb_ctrl, value_axis_aim_middle, value_axis_aim_lower, fkik_setup_controller,
+                      upper_limb_ctrl,
+                      value_axis_aim_middle, value_axis_aim_lower,
+                      fkik_setup_controller,
                       aim_axis,
                       middle_limb_jnt, lower_limb_jnt,
                       end_limb_ctrl=None,
@@ -375,10 +381,15 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
     pm.move(get_poleVector_position.x, get_poleVector_position.y, get_poleVector_position.z, polevector_limb_ctrl)
 
     # calculate for stretching and snapping the pole vector controller
-    total_value_default = value_axis_aim_middle + value_axis_aim_lower
-    current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_jnt, aim_axis))
-    current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
-    total_current_value = current_value_axis_towards_middle_jnt + current_value_axis_towards_lower_jnt
+    total_value_default = pm.getAttr('%s.Joint_Distance_Value_Static' % selection)
+    total_current_value = pm.getAttr('%s.Joint_Distance_Value_Dynamic' % selection)
+
+    # total_value_default = value_axis_aim_middle + value_axis_aim_lower
+    # current_value_axis_towards_middle_jnt = pm.getAttr('%s.%s' % (middle_limb_jnt, aim_axis))
+    # current_value_axis_towards_lower_jnt = pm.getAttr('%s.%s' % (lower_limb_jnt, aim_axis))
+    # total_current_value = current_value_axis_towards_middle_jnt + current_value_axis_towards_lower_jnt
+
+    # middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
 
     # condition snap elbow or knee
     if pm.getAttr(selection + '.' + 'Ik_Snap_Checkbox'):
@@ -386,7 +397,8 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
         ik_snap_attr_name = pm.getAttr(selection + '.' + 'Ik_Snap_Attr_Name')
         ik_snap_on = pm.getAttr(selection + '.' + 'Ik_Snap_On')
         ik_snap_off = pm.getAttr(selection + '.' + 'Ik_Snap_Off')
-        if abs(total_current_value - total_value_default) > 0.01:
+        # if abs(total_current_value - total_value_default) > 0.01:
+        if abs(total_current_value) > total_value_default:
             ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name,
                               ik_snap_attr_name, ik_snap_on)
         else:

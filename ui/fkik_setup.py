@@ -14,7 +14,7 @@ CONTACT:
     adien.dendra@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 17 August 2020 - Initial Release
+    1.0 - 20 September 2020 - Initial Release
 
 ***************************************************************
 Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
@@ -61,17 +61,17 @@ def ad_setup_fkik_ui():
                                                       label="Fk/Ik Arm Setup Controller:",
                                                       add_feature=True, enable=False)
 
-                        direction1 = pm.radioButton(label='', cc=partial(ad_enabling_disabling_ui,
-                                                                         ['FkIk_Leg_Setup_Controller',
-                                                                          'endlimb_fk_ctrl_layout',
-                                                                          'endlimb_joint_ctrl_layout',
-                                                                          'endlimb_ik_ctrl_layout',
-                                                                          'endlimb_ik_ctrl',
-                                                                          'End_Limb_Joint',
-                                                                          'End_Limb_Fk_Ctrl',
-                                                                          # 'end_fk_ctrl_offset',
-                                                                          # 'end_ik_ctrl_offset'
-                                                                          ]))
+                        direction1 = pm.radioButton(label='',
+                                                    cc=partial(ad_enabling_disabling_ui, ['FkIk_Leg_Setup_Controller',
+                                                                                          'endlimb_fk_ctrl_layout',
+                                                                                          'endlimb_joint_ctrl_layout',
+                                                                                          'endlimb_ik_ctrl_layout',
+                                                                                          'endlimb_ik_ctrl',
+                                                                                          'End_Limb_Joint',
+                                                                                          'End_Limb_Fk_Ctrl',
+                                                                                          # 'end_fk_ctrl_offset',
+                                                                                          # 'end_ik_ctrl_offset'
+                                                                                          ]))
                         # fkik leg controller text field
                         ad_defining_object_text_field(define_object='FkIk_Leg_Setup_Controller',
                                                       label="Fk/Ik Leg Setup Controller:",
@@ -264,7 +264,7 @@ def ad_setup_fkik_ui():
                     with pm.rowColumnLayout("row_column_stretch_fk_add_object", nc=3,
                                             cw=[(1, 42 * percentage), (2, 28 * percentage), (3, 19 * percentage)],
                                             en=False):
-                        pm.textFieldButtonGrp('Fk_Ctrl_Up_Stretch', l="Ctrl Mid Stretch:", cal=(1, "right"),
+                        pm.textFieldButtonGrp('Fk_Ctrl_Up_Stretch', l="Ctrl 1st Stretch:", cal=(1, "right"),
                                               cw3=(16 * percentage, 18 * percentage, 10 * percentage),
                                               cat=[(3, 'left', 2)], tx='upperFk_ctrl',
                                               bl="<<",
@@ -278,7 +278,7 @@ def ad_setup_fkik_ui():
                                          cw2=(12 * percentage, 5 * percentage),
                                          precision=1, value1=1)
 
-                        pm.textFieldButtonGrp('Fk_Ctrl_Mid_Stretch', l="Ctrl Low Stretch:", cal=(1, "right"),
+                        pm.textFieldButtonGrp('Fk_Ctrl_Mid_Stretch', l="Ctrl 2nd Stretch:", cal=(1, "right"),
                                               cw3=(16 * percentage, 18 * percentage, 10 * percentage),
 
                                               cat=[(3, 'left', 2)], tx='middleFk_ctrl',
@@ -640,8 +640,8 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
             pm.setAttr('%s.Ik_Snap_Attr_Name' % fkIk_setup_ctrl[0], ik_snap_ctrl_attr, l=True)
         else:
             pm.error(
-                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" % (
-                    ik_snap_ctrl, ik_snap_ctrl_attr))
+                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"
+                % (ik_snap_ctrl, ik_snap_ctrl_attr))
 
         ik_snap_min_value = pm.floatFieldGrp('Ik_Snap_Off', q=True, value1=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Off', at='float')
@@ -659,8 +659,8 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
             pm.setAttr('%s.Ik_Toe_Wiggle_Attr_Name' % fkIk_setup_ctrl[0], toe_wiggle_attr_name, l=True)
         else:
             pm.error(
-                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" %
-                (ik_toe_wiggle_ctrl, toe_wiggle_attr_name))
+                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"
+                % (ik_toe_wiggle_ctrl, toe_wiggle_attr_name))
 
     if pm.rowLayout('ik_ball_rotation_layout', q=True, enable=True):
         pm.addAttr(fkIk_setup_ctrl[0], ln='Rotation_Wiggle', dt='string')
@@ -692,8 +692,8 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
             pm.setAttr('%s.Fk_Attr_Up_Stretch' % fkIk_setup_ctrl[0], attr_fk_up_attribute, l=True)
         else:
             pm.error(
-                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" %
-                (fk_ctrl_up_stretch, attr_fk_up_attribute))
+                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"
+                % (fk_ctrl_up_stretch, attr_fk_up_attribute))
 
         value_fk_up = pm.floatFieldGrp('Fk_Value_Up_Stretch', q=True, value1=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Value_Up_Stretch', at='float')
@@ -705,8 +705,8 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
             pm.setAttr('%s.Fk_Attr_Mid_Stretch' % fkIk_setup_ctrl[0], attr_fk_mid_attribute, l=True)
         else:
             pm.error(
-                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!" %
-                (fk_ctrl_mid_stretch, attr_fk_mid_attribute))
+                "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"
+                % (fk_ctrl_mid_stretch, attr_fk_mid_attribute))
 
         value_fk_mid = pm.floatFieldGrp('Fk_Value_Mid_Stretch', q=True, value1=True)
         pm.addAttr(fkIk_setup_ctrl[0], ln='Fk_Value_Mid_Stretch', at='float')
@@ -744,14 +744,14 @@ def ad_joint_guide(name, side, fk_or_ik_controller, object_joint):
     return create_joint_guide, label_name
 
 
-def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_Define,
-                        Upper_Limb_Joint_Define,
-                        Middle_Limb_Fk_Ctrl_Define, Middle_Limb_Ik_Ctrl_Define,
-                        Middle_Limb_Joint_Define,
-                        Lower_Limb_Fk_Ctrl_Define, Lower_Limb_Ik_Ctrl_Define,
-                        Lower_Limb_Joint_Define, leg=False, End_Limb_Joint_Define=None,
-                        End_Limb_Fk_Ctrl_Define=None, End_Limb_Ik_Ctrl_Define=None
-                        ):
+def ad_listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_Define,
+                           Upper_Limb_Joint_Define,
+                           Middle_Limb_Fk_Ctrl_Define, Middle_Limb_Ik_Ctrl_Define,
+                           Middle_Limb_Joint_Define,
+                           Lower_Limb_Fk_Ctrl_Define, Lower_Limb_Ik_Ctrl_Define,
+                           Lower_Limb_Joint_Define, leg=False, End_Limb_Joint_Define=None,
+                           End_Limb_Fk_Ctrl_Define=None, End_Limb_Ik_Ctrl_Define=None
+                           ):
     upperLimb_fk_GDE_jnt = ad_joint_guide(name="upper%s_Fk" % prefix, side=ad_action_position_radio_button(),
                                           fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],
                                           object_joint=Upper_Limb_Joint_Define[0])
@@ -835,6 +835,29 @@ def listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl_De
             }
 
 
+def ad_distance_uplimb_to_lowlimb(prefix, Upper_Limb_Joint_Define, Lower_Limb_Joint_Define, Setup_Controller):
+    distanceNode = pm.shadingNode('distanceBetween', asUtility=1,
+                                  n='%s_AD_MEASURE_%s_dist' % (prefix, ad_action_position_radio_button()))
+    pm.connectAttr(Upper_Limb_Joint_Define + '.worldMatrix[0]', distanceNode + '.inMatrix1')
+    pm.connectAttr(Lower_Limb_Joint_Define + '.worldMatrix[0]', distanceNode + '.inMatrix2')
+    pm.connectAttr(Upper_Limb_Joint_Define + '.rotatePivotTranslate', distanceNode + '.point1')
+    pm.connectAttr(Lower_Limb_Joint_Define + '.rotatePivotTranslate', distanceNode + '.point2')
+
+    # create attribute dynamic
+    pm.addAttr(Setup_Controller, ln='Joint_Distance_Value_Dynamic', at='float')
+    pm.connectAttr(distanceNode + '.distance', '%s.Joint_Distance_Value_Dynamic' % Setup_Controller, l=True)
+
+    # get value of distance node and set value static
+    value_distance = pm.getAttr('%s.Joint_Distance_Value_Dynamic' % Setup_Controller)
+    pm.addAttr(Setup_Controller, ln='Joint_Distance_Value_Static', at='float')
+    pm.setAttr('%s.Joint_Distance_Value_Static' % Setup_Controller, value_distance, l=True)
+
+    pm.addAttr(Setup_Controller, ln='Distance_Node', at='message')
+    pm.connectAttr(distanceNode + '.message', '%s.Distance_Node' % (Setup_Controller))
+
+    return distanceNode
+
+
 def ad_run_setup(*args):
     # query objects
     FkIk_Arm_Setup_Controller = ad_query_define_textfield_object('FkIk_Arm_Setup_Controller')
@@ -890,17 +913,17 @@ def ad_run_setup(*args):
         # fkik arm setup controller
         if (pm.textFieldButtonGrp(FkIk_Arm_Setup_Controller[1], q=True, en=True)):
             # adding joint guide
-            jnt_gde = listing_joint_guide(prefix='Arm',
-                                          Upper_Limb_Fk_Ctrl_Define=Upper_Limb_Fk_Ctrl_Define,
-                                          Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
-                                          Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
-                                          Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
-                                          Middle_Limb_Ik_Ctrl_Define=Middle_Limb_Joint_Define,
-                                          Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
-                                          Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
-                                          Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
-                                          Lower_Limb_Joint_Define=Lower_Limb_Joint_Define,
-                                          )
+            jnt_gde = ad_listing_joint_guide(prefix='Arm',
+                                             Upper_Limb_Fk_Ctrl_Define=Upper_Limb_Fk_Ctrl_Define,
+                                             Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
+                                             Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
+                                             Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
+                                             Middle_Limb_Ik_Ctrl_Define=Middle_Limb_Joint_Define,
+                                             Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
+                                             Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
+                                             Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
+                                             Lower_Limb_Joint_Define=Lower_Limb_Joint_Define,
+                                             )
 
             # listing the joint guide
             list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0],
@@ -938,6 +961,13 @@ def ad_run_setup(*args):
                 if not pm.listConnections(guide_joint + '.message'):
                     pm.delete(guide_joint)
 
+            # add distance node
+            ad_distance_uplimb_to_lowlimb(prefix='Arm',
+                                          Upper_Limb_Joint_Define=Upper_Limb_Joint_Define[0],
+                                          Lower_Limb_Joint_Define=Lower_Limb_Joint_Define[0],
+                                          Setup_Controller=FkIk_Arm_Setup_Controller[0])
+
+            # adding additional joint
             ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                 End_Limb_Joint_Define,
                                 ik_snap_ctrl=Ik_Snap_Ctrl_Name_Define[0],
@@ -946,20 +976,20 @@ def ad_run_setup(*args):
                                 fkIk_setup_ctrl=FkIk_Arm_Setup_Controller)
 
         else:
-            jnt_gde = listing_joint_guide(prefix='Leg', Upper_Limb_Fk_Ctrl_Define=Upper_Limb_Fk_Ctrl_Define,
-                                          Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
-                                          Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
-                                          Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
-                                          Middle_Limb_Ik_Ctrl_Define=Middle_Limb_Joint_Define,
-                                          Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
-                                          Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
-                                          Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
-                                          Lower_Limb_Joint_Define=Lower_Limb_Joint_Define,
-                                          leg=True,
-                                          End_Limb_Fk_Ctrl_Define=End_Limb_Fk_Ctrl_Define,
-                                          End_Limb_Ik_Ctrl_Define=End_Limb_Ik_Ctrl_Define,
-                                          End_Limb_Joint_Define=End_Limb_Joint_Define
-                                          )
+            jnt_gde = ad_listing_joint_guide(prefix='Leg', Upper_Limb_Fk_Ctrl_Define=Upper_Limb_Fk_Ctrl_Define,
+                                             Upper_Limb_Ik_Ctrl_Define=Upper_Limb_Ik_Ctrl_Define,
+                                             Upper_Limb_Joint_Define=Upper_Limb_Joint_Define,
+                                             Middle_Limb_Fk_Ctrl_Define=Middle_Limb_Fk_Ctrl_Define,
+                                             Middle_Limb_Ik_Ctrl_Define=Middle_Limb_Joint_Define,
+                                             Middle_Limb_Joint_Define=Middle_Limb_Joint_Define,
+                                             Lower_Limb_Fk_Ctrl_Define=Lower_Limb_Fk_Ctrl_Define,
+                                             Lower_Limb_Ik_Ctrl_Define=Lower_Limb_Ik_Ctrl_Define,
+                                             Lower_Limb_Joint_Define=Lower_Limb_Joint_Define,
+                                             leg=True,
+                                             End_Limb_Fk_Ctrl_Define=End_Limb_Fk_Ctrl_Define,
+                                             End_Limb_Ik_Ctrl_Define=End_Limb_Ik_Ctrl_Define,
+                                             End_Limb_Joint_Define=End_Limb_Joint_Define
+                                             )
 
             # listing the joint guide
             list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0],
@@ -1010,6 +1040,13 @@ def ad_run_setup(*args):
                 if not pm.listConnections(guide_joint + '.message'):
                     pm.delete(guide_joint)
 
+            # add distance node
+            ad_distance_uplimb_to_lowlimb(prefix='Leg',
+                                          Upper_Limb_Joint_Define=Upper_Limb_Joint_Define[0],
+                                          Lower_Limb_Joint_Define=Lower_Limb_Joint_Define[0],
+                                          Setup_Controller=FkIk_Leg_Setup_Controller[0])
+
+            # add additional setup
             if pm.rowLayout('ik_ball_layout', q=True, enable=True):
                 ad_additional_setup(Upper_Limb_Joint_Define,
                                     Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
@@ -1077,8 +1114,8 @@ def ad_run_setup(*args):
                             pm.setAttr('%s.%s' % (FkIk_Arm_Setup_Controller[0], value_compile_name), default_value,
                                        l=True)
                         else:
-                            pm.warning("Text field # " + str(
-                                number_of_object) + " same object and attribute! Skipped this attribute.")
+                            pm.warning("Text field # " + str(number_of_object) +
+                                       " same object and attribute! Skipped this attribute.")
                     else:
                         # leg
                         if not pm.objExists(FkIk_Leg_Setup_Controller[0] + '.' + object_compile_name):
@@ -1112,6 +1149,10 @@ def ad_delete_setup(*args):
                                       'End_Limb_Fk_Guide_Joint', 'End_Limb_Ik_Guide_Joint',
                                       'Stretch_Attr',
                                       'Upper_Scale_Aim_Joint', 'Middle_Scale_Aim_Joint',
+
+                                      'Joint_Distance_Value_Dynamic',
+                                      'Joint_Distance_Value_Static', 'Distance_Node',
+
                                       'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
                                       'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
                                       'End_Limb_Joint',
@@ -1149,7 +1190,8 @@ def ad_delete_setup(*args):
                     # deleting all attribute added
                     list_attribute_additional = pm.listAttr(select)
 
-                    filtering_guide_joint = filter(lambda x: '_Guide_Joint' in x, list_attribute_additional)
+                    filtering_guide_joint = filter(lambda x: '_Guide_Joint' in x or 'AD_MEASURE' in x,
+                                                   list_attribute_additional)
                     for guide_joint in filtering_guide_joint:
                         # delete item guide joint
                         joint_guide_query = pm.listConnections(select + '.' + guide_joint, s=1)
