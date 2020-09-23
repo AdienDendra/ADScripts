@@ -282,11 +282,12 @@ class Bulge:
         mc.hide(soft_mod[1])
 
         # ADD SET LIST OBJECT
-        if add_set:
-            for i in add_set:
-                setObj = mc.listConnections(soft_mod[0], type='objectSet')[0]
-                mc.sets(i, add=setObj)
-
+        try:
+            if add_set:
+                for i in add_set:
+                    setObj = mc.listConnections(soft_mod[0], type='objectSet')[0]
+        except:
+            pass
         # PARENT TO THE GRP
         mc.parent(soft_mod[1], bulge_grp)
 
