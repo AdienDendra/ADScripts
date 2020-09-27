@@ -664,6 +664,7 @@ class Build:
 
     def create_joint_lip(self, curve, scale, ctrl_color, suffix_controller):
         self.all_joint = []
+        self.controller=[]
         self.locator_group_offset = []
         self.locator_group_zro = []
         self.all_locator = []
@@ -687,6 +688,7 @@ class Build:
                                        )
             self.control_group_zro.append(control_group.parent_control[0])
             self.control_group_offset.append(control_group.parent_control[1])
+            self.controller.append(control_group.control)
 
             # create locator
             self.locator = mc.spaceLocator(n='%s%02d%s' % (self.prefix_name_curve, (index + 1), '_loc'))[0]

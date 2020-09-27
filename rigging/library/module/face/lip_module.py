@@ -80,6 +80,12 @@ class Lip:
         self.all_up_lip_joint = upLip.all_joint
         self.all_low_lip_joint = lowLip.all_joint
 
+        self.upLip_all_joint = upLip.all_joint
+        self.uplip_controller= upLip.controller
+
+        self.lowLip_all_joint = lowLip.all_joint
+        self.lowLip_controller= lowLip.controller
+
         # ================================================================================================================
         #                                               ASSIGN CURVE
         # =================================================================================================================

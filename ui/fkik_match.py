@@ -1,6 +1,6 @@
 """
 DESCRIPTION:
-    FkIk snap is tool for matching fkik.
+    FkIk match is tool for matching fkik.
     Works properly in any version of Autodesk Maya.
 
 USAGE:
@@ -32,26 +32,26 @@ layout = 265
 percentage = 0.01 * layout
 
 
-def ad_snap_fkik_ui():
-    adien_snap_fkIk = 'AD_SnapFkIk'
-    pm.window(adien_snap_fkIk, exists=True)
+def ad_match_fkik_ui():
+    adien_match_fkIk = 'AD_MatchFkIk'
+    pm.window(adien_match_fkIk, exists=True)
 
-    if pm.window(adien_snap_fkIk, exists=True):
-        pm.deleteUI(adien_snap_fkIk)
+    if pm.window(adien_match_fkIk, exists=True):
+        pm.deleteUI(adien_match_fkIk)
 
-    with pm.window(adien_snap_fkIk, title='AD Fk/Ik Snap', width=layout + 10, height=150):
+    with pm.window(adien_match_fkIk, title='AD Fk/Ik Match', width=layout + 10, height=150):
         with pm.columnLayout(rs=5, co=('both', 5), adj=True):
             pm.text(l='Select Leg/Arm Ctrl Setup:')
             # button to Fk
-            pm.button(label='To Fk', width=layout, height=40, backgroundColor=[0.46, 0.86, 0.46],
+            pm.button(label='Match To Fk', width=layout, height=40, backgroundColor=[0.46, 0.86, 0.46],
                       command=pm.Callback(ad_ik_to_fk))
             # button to Ik
-            pm.button(label='To Ik', width=layout, height=40, backgroundColor=[0.86, 0.46, 0.46],
+            pm.button(label='Match To Ik', width=layout, height=40, backgroundColor=[0.86, 0.46, 0.46],
                       command=pm.Callback(ad_fk_to_ik))
             with pm.rowLayout(nc=2, cw2=(32 * percentage, 32 * percentage),
                               cl2=('left', 'center'),
                               columnAttach=[(1, 'both', 1 * percentage), (2, 'both', 1 * percentage)], adj=True):
-                pm.text(l='Adien Dendra | 08/2020 | Ver. 1.0')
+                pm.text(l='Adien Dendra | 10/2020 | Ver. 1.0')
                 pm.text(l='<a href="http://projects.adiendendra.com/">detail to use>> </a>', hl=True)
             pm.separator(h=2, st="single")
 
@@ -142,7 +142,7 @@ def ad_ik_to_fk():
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_fk_attr)
 
     else:
-        pm.error('Select arm or leg setup controller for snapping to Fk!')
+        pm.error('Select arm or leg setup controller for matching to Fk!')
 
 
 def ad_fk_to_ik():
@@ -176,7 +176,7 @@ def ad_fk_to_ik():
             fk_ik_arm_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Arm_Setup_Controller', s=1)
             fk_ik_leg_ctrl = pm.listConnections(fkik_ctrl_select[0] + '.' + 'FkIk_Leg_Setup_Controller', s=1)
 
-            # run for snap arm
+            # run for match arm
             if fk_ik_arm_ctrl:
                 ad_fk_to_ik_setup(upper_limb_ik_jnt=upper_limb_ik_jnt, middle_limb_ik_jnt=middle_limb_ik_jnt,
                                   lower_limb_ik_jnt=lower_limb_ik_jnt, polevector_limb_ctrl=poleVector_ctrl,
@@ -188,7 +188,7 @@ def ad_fk_to_ik():
                                   middle_limb_jnt=middle_limb_jnt,
                                   lower_limb_jnt=lower_limb_jnt
                                   )
-            # run for snap leg
+            # run for match leg
             if fk_ik_leg_ctrl:
                 rotation_wiggle = []
                 ik_toe_wiggle_attr_name = []
@@ -225,7 +225,7 @@ def ad_fk_to_ik():
 
             pm.setAttr(fkik_ctrl_select[0] + '.' + fk_ik_attr_name, value_ik_attr)
     else:
-        pm.error('Select arm or leg setup controller for snapping to Ik!')
+        pm.error('Select arm or leg setup controller for matching to Ik!')
 
 
 def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, middle_limb_ctrl, lower_limb_ctrl,
@@ -382,7 +382,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
                                                           xform_low_limb_pos)
     pm.move(get_poleVector_position.x, get_poleVector_position.y, get_poleVector_position.z, polevector_limb_ctrl)
 
-    # calculate for stretching and snapping the pole vector controller
+    # calculate for stretching and matching the pole vector controller
     total_value_default = pm.getAttr('%s.Joint_Distance_Value_Static' % selection)
     total_current_value = pm.getAttr('%s.Joint_Distance_Value_Dynamic' % selection)
 
@@ -393,7 +393,7 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
 
     # middle_limb_pos = pm.xform(middle_limb_jnt, ws=1, q=1, t=1)
 
-    # condition snap elbow or knee
+    # condition match elbow or knee
     if pm.getAttr(selection + '.' + 'Ik_Snap_Checkbox'):
         ik_snap_ctrl_name = pm.listConnections(selection + '.' + 'Ik_Snap_Ctrl_Name', s=1)[0]
         ik_snap_attr_name = pm.getAttr(selection + '.' + 'Ik_Snap_Attr_Name')

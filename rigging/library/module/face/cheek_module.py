@@ -67,6 +67,7 @@ class Cheek:
         mc.parent(group_driver, setup_driver_grp, grp_cheek_all)
         mc.parent(ctrl_driver_grp, face_anim_ctrl_grp)
         mc.parent(grp_cheek_all, face_utils_grp)
+        self.cheek_joint_grp = group_driver
 
         cheek = ck.Build(
                          cheek_low_jnt=cheek_low_jnt,

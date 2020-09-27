@@ -8,6 +8,7 @@ from rigging.library.module.face import lidOut_module as lo, nose_module as nm, 
     bulge_module as bl, head_module as hm
 from rigging.library.utils import controller as ct
 from rigging.tools import AD_utils as au
+from rigging.library.utils import transform as tf
 
 reload(ct)
 reload(hm)
@@ -160,9 +161,12 @@ def build_rig(
     # JOINT DQ BASE
     mc.select(cl=1)
     jntDQBase = mc.joint(n='headDQBase_skn', radius=0.2 * scale)
-    mc.delete(mc.parentConstraint(sj.neck, jntDQBase))
+    mc.delete(mc.parentConstraint(sj.head, jntDQBase))
     mc.makeIdentity(jntDQBase, apply=1, translate=1, rotate=1)
-    mc.parent((jntDQBase, face_non_transform_grp))
+    parentDQ_grp = tf.create_parent_transform(parent_list=['', 'Offset'], object=jntDQBase, match_position=sj.head,
+                               prefix=jntDQBase, suffix='_skn')
+
+    # mc.parent((jntDQBase, face_non_transform_grp))
 
     print('5%  | skeleton duplicated is done!')
 
@@ -761,6 +765,57 @@ def build_rig(
     sets_LN = mc.sets(sj.neck, n='FACE_SKIN_LN')
     mc.setAttr(sj.neck + '.visibility', 1)
 
+    # BRING ALL JOINT UNDER THE FACE JOINT HIERARCHY
+    # JOINT lidUpMoveZroRGT AND lidLowMoveZroRGT AND lidUpMoveZroLFT AND lidLowMoveZroLFT
+    mc.setAttr(leftEyelid.up_lid_move_grp+'.inheritsTransform', 0)
+    mc.setAttr(leftEyelid.low_lid_move_grp+'.inheritsTransform', 0)
+    mc.setAttr(rightEyelid.up_lid_move_grp+'.inheritsTransform', 0)
+    mc.setAttr(rightEyelid.low_lid_move_grp+'.inheritsTransform', 0)
+
+    # parent to eye joint
+    mc.parent(leftEyelid.up_lid_move_grp, leftEyelid.low_lid_move_grp, sj.eye_LFT)
+    mc.parent(rightEyelid.up_lid_move_grp, rightEyelid.low_lid_move_grp, sj.eye_RGT)
+
+    # snap position
+    mc.delete(mc.parentConstraint(sj.eye_LFT, leftEyelid.up_lid_move_grp, mo=0))
+    mc.delete(mc.parentConstraint(sj.eye_LFT, leftEyelid.low_lid_move_grp, mo=0))
+    mc.delete(mc.parentConstraint(sj.eye_RGT, rightEyelid.up_lid_move_grp, mo=0))
+    mc.delete(mc.parentConstraint(sj.eye_RGT, rightEyelid.low_lid_move_grp, mo=0))
+
+    # PARENT eyeWorldObjRGT_loc AND eyeWorldObjLFT_loc to face util
+    mc.parent(leftEyelid.world_up_object, rightEyelid.world_up_object, 'faceUtils_grp')
+
+    # CHEEK PART
+    mc.setAttr(leftCheek.cheek_joint_grp+'.inheritsTransform', 0)
+    mc.setAttr(rightCheek.cheek_joint_grp+'.inheritsTransform', 0)
+
+    mc.parent(leftCheek.cheek_joint_grp, rightCheek.cheek_joint_grp, sj.head)
+
+    mc.setAttr(leftCheek.cheek_joint_grp+'.translate', 0, 0, 0, type="double3")
+    mc.setAttr(leftCheek.cheek_joint_grp+'.rotate', 0, 0, 0, type="double3")
+    mc.setAttr(rightCheek.cheek_joint_grp+'.translate', 0, 0, 0, type="double3")
+    mc.setAttr(rightCheek.cheek_joint_grp+'.rotate', 0, 0, 0, type="double3")
+
+    # JOINT lipUpJntCtr_grp AND lipLowJntCtr_grp
+    for joint, ctrl in zip (lip.upLip_all_joint, lip.uplip_controller):
+        au.parent_scale_constraint(ctrl, joint)
+        mc.parent(joint, sj.head_up)
+    for joint, ctrl in zip (lip.lowLip_all_joint, lip.lowLip_controller):
+        au.parent_scale_constraint(ctrl, joint)
+        mc.parent(joint, sj.jaw)
+
+    # PARENT DQ JOINT TO NECK JOINT
+    mc.setAttr(parentDQ_grp[0]+'.inheritsTransform', 0)
+    mc.parent(parentDQ_grp[0], sj.neck)
+    mc.delete(mc.parentConstraint(sj.head, parentDQ_grp[0], mo=0))
+
+    # CHIN JOINT
+    mc.setAttr(chin.group_driver+'.inheritsTransform', 0)
+    mc.parent(chin.group_driver, sj.jaw)
+    mc.setAttr(chin.group_driver+'.translate', 0, 0, 0, type="double3")
+    mc.setAttr(chin.group_driver+'.rotate', 0, 0, 0, type="double3")
+
+    # CREATE SETS
     for i in (sj.head, sj.head_up, sj.head_low, sj.jaw, sj.mentolabial, sj.chin, sj.brow_center,
               sj.cheek_in_up_LFT, sj.cheek_in_low_LFT, sj.cheek_up_LFT, sj.cheek_mid_LFT, sj.cheek_low_LFT,
               sj.cheek_out_up_LFT,

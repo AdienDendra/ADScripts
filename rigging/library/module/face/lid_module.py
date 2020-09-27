@@ -117,6 +117,7 @@ class Lid:
         self.up_lid_bind01_grp_offset = self.upLid.joint_bind01_grp_offset
         self.up_lid_bind05_grp_offset = self.upLid.joint_bind05_grp_offset
         self.up_lid_all_jnt = self.upLid.all_joint
+        self.up_lid_move_grp = self.upLid.move_grp
 
         self.lowLid = el.Build(curve_template=curve_low_lid_template,
                                world_up_object=world_up_object,
@@ -154,6 +155,8 @@ class Lid:
         self.low_lid_bind01_grp_offset = self.lowLid.joint_bind01_grp_offset
         self.low_lid_bind05_grp_offset = self.lowLid.joint_bind05_grp_offset
         self.low_lid_all_jnt = self.lowLid.all_joint
+        self.low_lid_move_grp = self.lowLid.move_grp
+
 
         # ASSIGN CURVE
         curve_up_lid = self.upLid.curve

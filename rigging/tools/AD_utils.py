@@ -687,7 +687,7 @@ def parent_constraint(obj_base, obj_target, mo=1):
     par_constraint = mc.parentConstraint(obj_base, obj_target, mo=mo)[0]
     split = par_constraint.split('_')
     x = '_'.join(split[:-1])
-    n = x.replace(x, x + '_PAC')
+    n = x.replace(x, x + '_pac')
     new_name = [mc.rename(par_constraint, n)]
     return new_name
 
@@ -714,7 +714,7 @@ def scale_constraint(obj_base, obj_target, mo=1):
     scale_constraint = mc.scaleConstraint(obj_base, obj_target, mo=mo)[0]
     split = scale_constraint.split('_')
     x = '_'.join(split[:-1])
-    n = x.replace(x, x + '_SC')
+    n = x.replace(x, x + '_sc')
     new_name = [mc.rename(scale_constraint, n)]
 
     return new_name
