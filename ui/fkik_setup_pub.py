@@ -1,2 +1,611 @@
-import bz2, base64
-exec(bz2.decompress(base64.b64decode('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')))
+"""
+DESCRIPTION:
+    FkIk Setup is tool before run FkIk match, this script purposes to setup for match Fk/Ik task.
+    Works properly in any version of Autodesk Maya.
+USAGE:
+    You may go to this link for have more detail >>
+    project.adiendendra.com/setup_fkik
+AUTHOR:
+    Adien Dendra
+CONTACT:
+    adien.dendra@gmail.com | hello@adiendendra.com
+VERSION:
+    1.0 - 20 September 2020 - Initial Release
+***************************************************************
+Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+This is commercial license can not be copied and/or
+distributed without the express permission of Adien Dendra
+***************************************************************
+"""
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR=True
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr=False
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR=object
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr=None
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRF=len
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX=str
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrR=zip
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFXr=range
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFXR=filter
+from functools import partial
+import pymel.core as pm
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF=600
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR=0.01*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb=0
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFR=0
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRb=0
+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRF=0
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbFR():
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbXF='AD_MatchSetupFkIk'
+ pm.window(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbXF,exists=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if pm.window(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbXF,exists=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  pm.deleteUI(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbXF)
+ with pm.window(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbXF,title='AD Fk/Ik Match Setup',width=600,height=800):
+  with pm.scrollLayout('scroll'):
+   with pm.columnLayout(rowSpacing=1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF,co=('both',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),adj=1):
+    with pm.frameLayout(collapsable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,l='Define Fk/Ik Controller',mh=5):
+     with pm.rowColumnLayout('fkIk_controller_layout',nc=2,rowSpacing=(2,1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),co=(1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,'both',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cw=[(1,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,93*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],ca=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbRF=pm.radioCollection()
+      pm.radioButton('arm_setup_controller',label='',cc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb,['FkIk_Arm_Setup_Controller','ik_ball_rotation_layout','ik_ball_layout']))
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='FkIk_Arm_Setup_Controller',label="Fk/Ik Arm Setup Controller:",add_feature=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBFbX=pm.radioButton(label='',cc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb,['FkIk_Leg_Setup_Controller','endlimb_fk_ctrl_layout','endlimb_joint_ctrl_layout','endlimb_ik_ctrl_layout','endlimb_ik_ctrl','End_Limb_Joint','End_Limb_Fk_Ctrl',]))
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='FkIk_Leg_Setup_Controller',label="Fk/Ik Leg Setup Controller:",add_feature=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+    pm.separator(h=5,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+    with pm.frameLayout(collapsable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,l='Define Objects',mh=5):
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Upper_Limb_Joint',label="Upper Limb Joint:")
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Middle_Limb_Joint',label="Middle Limb Joint:")
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Lower_Limb_Joint',label="Lower Limb Joint:")
+     with pm.rowColumnLayout('endlimb_joint_ctrl_layout',nc=1,rowSpacing=(1,1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),co=(1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,'both',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cw=[(2,98*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='End_Limb_Joint',label="End Limb Joint:",enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Upper_Limb_Fk_Ctrl',label="Upper Limb Fk Ctrl:")
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Middle_Limb_Fk_Ctrl',label="Middle Limb Fk Ctrl:")
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Lower_Limb_Fk_Ctrl',label="Lower Limb Fk Ctrl:")
+     with pm.rowColumnLayout('endlimb_fk_ctrl_layout',nc=1,rowSpacing=(1,1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),co=(1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,'both',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cw=[(2,98*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='End_Limb_Fk_Ctrl',label="End Limb Fk Ctrl:",enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+     with pm.rowColumnLayout(nc=2,rowSpacing=(2,1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),co=(1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,'both',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cw=[(1,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,93*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      pm.checkBox(label='',cc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb,['Upper_Limb_Ik_Ctrl']),value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Upper_Limb_Ik_Ctrl',label="Upper Limb Ik Ctrl:",add_feature=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Pole_Vector_Ik_Ctrl',label="Pole Vector Ik Ctrl:")
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='Lower_Limb_Ik_Ctrl',label="Lower Limb Ik Ctrl:")
+     with pm.rowColumnLayout('endlimb_ik_ctrl_layout',nc=2,rowSpacing=(2,1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),co=(1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,'both',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cw=[(1,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,93*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      pm.checkBox('endlimb_ik_ctrl',label='',cc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb,['End_Limb_Ik_Ctrl','ik_ball_layout','ik_ball_rotation_layout']))
+      pm.checkBox('endlimb_ik_ctrl',edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object='End_Limb_Ik_Ctrl',label="End Limb Ik Ctrl:",add_feature=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+     with pm.rowLayout(nc=1,cw1=(35*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cl1=('center'),columnAttach=[(1,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      pm.button(bgc=(1,1,0),l="Clear All Define Objects!",c=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrF,'Upper_Limb_Joint','Middle_Limb_Joint','Lower_Limb_Joint','End_Limb_Joint','Upper_Limb_Fk_Ctrl','Middle_Limb_Fk_Ctrl','Lower_Limb_Fk_Ctrl','End_Limb_Fk_Ctrl','Upper_Limb_Ik_Ctrl','Pole_Vector_Ik_Ctrl','Lower_Limb_Ik_Ctrl','End_Limb_Ik_Ctrl'))
+    pm.separator(h=5,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+    with pm.frameLayout(collapsable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,l='Additional Setup',mh=5):
+     with pm.rowLayout(nc=3,columnAttach=[(1,'right',0),(2,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw3=(30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)):
+      pm.text('Matching Position:')
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBFRb=pm.radioCollection()
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRXb=pm.radioButton(label='Left Side',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbR(1))
+      pm.radioButton(label='Right Side',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbR(2))
+      pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBFRb,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRXb)
+     with pm.rowLayout(nc=4,columnAttach=[(1,'right',0),(2,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(4,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw4=(30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,20*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)):
+      pm.text('Limb Aim Axis:')
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRXF=pm.radioCollection()
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRbX=pm.radioButton(label='Translate X',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbr(1))
+      pm.radioButton(label='Translate Y',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbr(2))
+      pm.radioButton(label='Translate Z',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbr(3))
+      pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRXF,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRbX)
+     with pm.rowLayout(nc=3,columnAttach=[(1,'right',0),(2,'left',3.5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'left',3.5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw3=(40*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,20*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,20*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)):
+      pm.textFieldGrp('Fk_Ik_Attr_Name',l="Fk/Ik Controller Attr:",cw2=(30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,10*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),tx='FkIk',cat=[(1,'right',2),(2,'both',4)])
+      pm.floatFieldGrp('Fk_Value_On',l="Fk Value On:",cal=(1,"left"),cw2=(11*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),precision=1)
+      pm.floatFieldGrp('Ik_Value_On',l="Ik Value On:",cal=(1,"left"),cw2=(11*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),precision=1,value1=1)
+     with pm.rowColumnLayout(nc=2,rowSpacing=(2,1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cw=[(1,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,93*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      pm.checkBox('Ik_Snap_Checkbox',label='',cc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb,['ik_snap_row']),value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+      with pm.rowColumnLayout('ik_snap_row',nc=4,columnAttach=[(1,'right',0),(2,'left',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'left',3.5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(4,'left',3*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw=[(1,47*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,15*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,13*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(4,13*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+       pm.textFieldButtonGrp('Ik_Snap_Ctrl_Name',l="Elbow/Knee Snap Ctrl:",cal=(1,"right"),cw3=(25*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,16*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,6*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cat=[(1,'right',1),(2,'both',5)],bl="<<",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,'Ik_Snap_Ctrl_Name'),tx='wristIk_ctrl')
+       pm.textFieldGrp('Ik_Snap_Attr_Name',l='Attr:',cw2=(4*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,8*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),tx='ikSnap')
+       pm.floatFieldGrp('Ik_Snap_Off',l="Off:",cal=(1,"right"),cw2=(4*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),precision=1)
+       pm.floatFieldGrp('Ik_Snap_On',l="On:",cal=(1,"right"),cw2=(4*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),precision=1,value1=1)
+     pm.separator(h=5,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+     pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBbRF,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBFbX)
+     with pm.rowLayout('ik_ball_layout',nc=3,columnAttach=[(1,'right',0),(2,'left',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw2=(52*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,20*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)):
+      pm.textFieldButtonGrp('Ik_Toe_Wiggle_Ctrl',l="Ik Ball Toe Wiggle Ctrl:",cal=(1,"right"),cw3=(30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,16*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,6*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cat=[(1,'right',1),(2,'both',5)],bl="<<",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,'Ik_Toe_Wiggle_Ctrl'),tx='ankleIk_ctrl')
+      pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name',l='Attr Toe Wiggle:',cw2=(14*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,12*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),tx='toeWiggle')
+     with pm.rowLayout('ik_ball_rotation_layout',nc=5,columnAttach=[(1,'right',0),(2,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(4,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(5,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw5=(30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,17*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,16*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)):
+      pm.text('Rotation_Toe_Wiggle',l="Rotation Toe Wiggle:")
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRbF=pm.radioCollection()
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRFX=pm.radioButton(label='Rotate X',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrR(1))
+      pm.radioButton(label='Rotate Y',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrR(2))
+      pm.radioButton(label='Rotate Z',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrR(3))
+      pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRbF,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRFX)
+      pm.checkBox('Reverse_Wiggle_Value',l='Reverse')
+     pm.separator(h=5,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+     with pm.rowLayout(nc=2,columnAttach=[(1,'left',0),(2,'right',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),],cw2=(5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,55*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)):
+      pm.checkBox('Translate_Fk',label='',cc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb,['row_column_stretch_fk_add_object','stretch_attribute_connected_with']))
+      pm.text('Using stretch attribute instead of Fk controller translate?')
+     with pm.rowColumnLayout('stretch_attribute_connected_with',nc=3,columnAttach=[(1,'right',0),(2,'left',1*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'left',1.5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],cw=[(1,30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr):
+      pm.text('Which attribute connected with?:')
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRFb=pm.radioCollection()
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBbF=pm.radioButton(label='Scale',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRr(1))
+      pm.radioButton(label='Translate',onCommand=lambda x:vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRr(2))
+      pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBRFb,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBbF)
+     with pm.rowColumnLayout("row_column_stretch_fk_add_object",nc=3,cw=[(1,42*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,28*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,19*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)],en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr):
+      pm.textFieldButtonGrp('Fk_Ctrl_Up_Stretch',l="Ctrl 1st Stretch:",cal=(1,"right"),cw3=(16*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,10*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cat=[(3,'left',2)],tx='upperFk_ctrl',bl="<<",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,'Fk_Ctrl_Up_Stretch'))
+      pm.textFieldGrp('Fk_Attr_Up_Stretch',l="Attr Name:",cal=(1,"right"),cw2=(12*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,10*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),tx='stretch',)
+      pm.floatFieldGrp('Fk_Value_Up_Stretch',l="Default Value:",cal=(1,"right"),cw2=(12*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),precision=1,value1=1)
+      pm.textFieldButtonGrp('Fk_Ctrl_Mid_Stretch',l="Ctrl 2nd Stretch:",cal=(1,"right"),cw3=(16*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,18*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,10*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cat=[(3,'left',2)],tx='middleFk_ctrl',bl="<<",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,'Fk_Ctrl_Mid_Stretch'))
+      pm.textFieldGrp('Fk_Attr_Mid_Stretch',l="Attr Name:",cal=(1,"right"),cw2=(12*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,10*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),tx='stretch',)
+      pm.floatFieldGrp('Fk_Value_Mid_Stretch',l="Default Value:",cal=(1,"right"),cw2=(12*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,5*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),precision=1,value1=1)
+    pm.separator(h=5,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+    with pm.frameLayout(collapsable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,l='Additional Attributes Set to Default',mh=5):
+     with pm.rowLayout(nc=2,cw2=(49*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,49*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cl2=('center','center'),columnAttach=[(1,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      pm.button(l="Add Object And Set Default Attribute Value",bgc=(0,0,0.5),c=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRbr)
+      pm.button(l="Delete Object And Set Default Attribute Value",bgc=(0.5,0,0),c=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRbF)
+      pm.setParent(u=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+      pm.rowColumnLayout("row_column_add_object",nc=5,cw=[(1,37*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,22*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,25*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(4,7*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(5,7*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)])
+      pm.setParent(u=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+    pm.separator(h=5,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+    with pm.frameLayout(collapsable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,l='Setup',mh=5):
+     pm.text(l='Select Leg/Arm Ctrl Setup :')
+     with pm.rowLayout(nc=2,cw2=(49*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,49*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cl2=('center','center'),columnAttach=[(1,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+      pm.button("run_setup",bgc=(0,0.5,0),l="Run Setup",c=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrRF))
+      pm.button("delete_setup",bgc=(0.5,0,0),l="Delete Setup",c=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrF))
+    pm.separator(h=10,st="in",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+    with pm.rowLayout(nc=3,cw3=(32*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,32*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,32*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cl3=('left','center','right'),columnAttach=[(1,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(2,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),(3,'both',2*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR)]):
+     pm.text(l='Adien Dendra | 10/2020',al='left')
+     pm.text(l='<a href="http://projects.adiendendra.com/">find out how to use it! >> </a>',hl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,al='center')
+     pm.text(l='Version 1.0',al='right')
+    pm.separator(h=1,st="none",w=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbF)
+   pm.setParent(u=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.showWindow()
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBbR=[]
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFR==1:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBbR='Left'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFR==2:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBbR='Right'
+ else:
+  pass
+ return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBbR
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRF(axis='',*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFb=[]
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRF==1:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFb='scale'+axis
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRF==2:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFb='translate'+axis
+ else:
+  pass
+ return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFb
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR='',*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRb,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFB=[],[],[],[],[],[]
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb==1:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRb='translateX'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb==2:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRb='translateY'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb==3:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRb='translateZ'
+ else:
+  pass
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRb==1:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBF='rotateX'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRb==2:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBF='rotateY'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRb==3:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBF='rotateZ'
+ else:
+  pass
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb==1:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFB='scaleX'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb==2:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFB='scaleY'
+ elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb==3:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFB='scaleZ'
+ else:
+  pass
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFR=pm.getAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRb))
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRF=pm.getAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBF))
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBR=pm.getAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFB))
+ return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRb,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbBR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFB,
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrR(on):
+ global vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRb
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRb=on
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbr(on):
+ global vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFb=on
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFbR(on):
+ global vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFR
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXFR=on
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRr(on):
+ global vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRF
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXRF=on
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFRb(define_object=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,label=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,add_feature=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr,*args,**kwargs):
+ if not add_feature:
+  pm.textFieldButtonGrp(define_object,label=label,cal=(1,"right"),cw3=(30*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,54*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,15*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cat=[(1,'right',2),(2,'both',2),(3,'left',2)],bl="Get Object",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,define_object))
+ else:
+  pm.textFieldButtonGrp(define_object,label=label,cal=(1,"right"),cw3=(25*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,54*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,15*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),cat=[(1,'right',2),(2,'both',2),(3,'left',2)],bl="Get Object",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,define_object),**kwargs)
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrb(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,*args):
+ for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFR:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRB=pm.objectTypeUI(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR)
+  if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRB=='rowGroupLayout':
+   pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=value,tx='')
+  elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRB=='rowColumnLayout':
+   pm.rowColumnLayout(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=value)
+  elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRB=='checkBox':
+   pm.checkBox(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=value)
+  elif vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRB=='rowLayout':
+   if value:
+    pm.rowLayout(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+   else:
+    pm.rowLayout(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  else:
+   pass
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRrF(*args):
+ for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF in args:
+  if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF:
+   pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx='')
+  else:
+   pass
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRbr(*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBb=pm.rowColumnLayout("row_column_add_object",q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,ca=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBb:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRF(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBb)/5+1
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbB="default_value"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbR="attribute"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRB="object"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRb='fk_ik_choose'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBb="fk_add_setup"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBF="ik_add_setup"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+ else:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbB="default_value1"
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbR="attribute1"
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRB="object1"
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRb='fk_ik_choose1'
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBb="fk_add_setup1"
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBF="ik_add_setup1"
+ pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRB,l="Object:",cal=(1,"right"),cw3=(8*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,22*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,7*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),p="row_column_add_object",cat=[(3,'left',2)],bl="<<",bc=partial(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRB))
+ pm.textFieldGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbR,l="Attr:",cal=(1,"right"),cw2=(6*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,14*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),p="row_column_add_object")
+ pm.floatFieldGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbB,l="Set Default Value:",cal=(1,"right"),cw2=(16*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR,6*vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrBXbR),p="row_column_add_object",precision=3)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRbB=pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRb,p='row_column_add_object')
+ pm.radioButton(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBb,label='Fk',p='row_column_add_object')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRbF=pm.radioButton(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBF,label='Ik',p='row_column_add_object')
+ pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRbB,edit=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRbF)
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRbF(*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBb=pm.rowColumnLayout("row_column_add_object",q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,ca=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBb:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRF(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBb)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFb="default_value"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB/5)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBXF="attribute"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB/5)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBXR="object"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB/5)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBFX="fk_add_setup"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB/5)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBFR="ik_add_setup"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB/5)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRX="fk_ik_choose"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFB/5)
+  pm.deleteUI(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRFb,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBXF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBXR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBFX,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRX)
+ else:
+  pass
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXBR,*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF=pm.ls(sl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tr=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRF(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF)==1:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXBF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF[0]
+  pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXBR,e=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXBF)
+ else:
+  pm.error("please select one object!")
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb(object_define,*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXFB=[]
+ if(pm.textFieldButtonGrp(object_define,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)):
+  if(pm.textFieldButtonGrp(object_define,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)):
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXFB=pm.textFieldButtonGrp(object_define,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+   if pm.ls(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXFB):
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXFB=pm.textFieldButtonGrp(object_define,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+   else:
+    pm.error('%s has wrong input object name.'%object_define,"There is no object with name '%s'!"%vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXFB)
+  else:
+   pm.error('%s can not be empty!'%object_define)
+ else:
+  pass
+ return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXFB,object_define
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrXF(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB,joint,controller,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF):
+ pm.select(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0])
+ pm.addAttr(longName='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF,attributeType='double3')
+ pm.addAttr(longName='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_x',attributeType='double',parent='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF)
+ pm.addAttr(longName='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_y',attributeType='double',parent='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF)
+ pm.addAttr(longName='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_z',attributeType='double',parent='Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF)
+ pm.addAttr(longName='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF,attributeType='double3')
+ pm.addAttr(longName='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_x',attributeType='double',parent='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF)
+ pm.addAttr(longName='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_y',attributeType='double',parent='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF)
+ pm.addAttr(longName='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_z',attributeType='double',parent='Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRB=pm.xform(joint,ws=1,q=1,t=1)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRF=pm.xform(joint,ws=1,q=1,ro=1)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBX=pm.xform(controller,ws=1,q=1,t=1)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBR=pm.xform(controller,ws=1,q=1,ro=1)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFXB=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBX[0]-vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRB[0]
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFXR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBX[1]-vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRB[1]
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFRB=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBX[2]-vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRB[2]
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFRX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBR[0]-vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRF[0]
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRBX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBR[1]-vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRF[1]
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRBF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFBR[2]-vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbXRF[2]
+ pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0],'Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_x'),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFXB,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0],'Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_y'),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFXR,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0],'Translate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_z'),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFRB,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0],'Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_x'),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbFRX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0],'Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_y'),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRBX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXB[0],'Rotate'+'_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_z'),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRBF,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrXR(Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,End_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,ik_snap_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,fk_ctrl_up_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,fk_ctrl_mid_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,fkIk_setup_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,ik_toe_wiggle_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr):
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Snapping_Position',dt='string')
+ pm.setAttr('%s.Snapping_Position'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Aim_Axis',dt='string')
+ pm.setAttr('%s.Aim_Axis'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(Lower_Limb_Joint_Define[0])[1],l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Middle_Translate_Aim_Joint',at='float')
+ pm.setAttr('%s.Middle_Translate_Aim_Joint'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(Middle_Limb_Joint_Define[0])[0],l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Lower_Translate_Aim_Joint',at='float')
+ pm.setAttr('%s.Lower_Translate_Aim_Joint'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(Lower_Limb_Joint_Define[0])[0],l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Upper_Scale_Aim_Joint',at='float')
+ pm.setAttr('%s.Upper_Scale_Aim_Joint'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(Upper_Limb_Joint_Define[0])[4],l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Middle_Scale_Aim_Joint',at='float')
+ pm.setAttr('%s.Middle_Scale_Aim_Joint'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(Middle_Limb_Joint_Define[0])[4],l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXR=pm.textFieldGrp('Fk_Ik_Attr_Name',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if pm.objExists(fkIk_setup_ctrl[0]+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXR):
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Fk_Ik_Attr_Name',dt='string')
+  pm.setAttr('%s.Fk_Ik_Attr_Name'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXR,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ else:
+  pm.error("There is no attribute name '%s' in the scene. " "Please check your Fk/Ik input attribute name!"%vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXR)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBbX=pm.floatFieldGrp('Fk_Value_On',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Fk_Value_On',at='float')
+ pm.setAttr('%s.Fk_Value_On'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBbX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBbR=pm.floatFieldGrp('Ik_Value_On',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Ik_Value_On',at='float')
+ pm.setAttr('%s.Ik_Value_On'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBbR,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBRX=pm.checkBox('Ik_Snap_Checkbox',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Ik_Snap_Checkbox',at='bool')
+ pm.setAttr('%s.Ik_Snap_Checkbox'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBRX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if pm.rowColumnLayout('ik_snap_row',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBRb=pm.textFieldGrp('Ik_Snap_Attr_Name',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  if pm.objExists(ik_snap_ctrl+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBRb):
+   pm.addAttr(fkIk_setup_ctrl[0],ln='Ik_Snap_Attr_Name',dt='string')
+   pm.setAttr('%s.Ik_Snap_Attr_Name'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBRb,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  else:
+   pm.error("There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"%(ik_snap_ctrl,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBRb))
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXBb=pm.floatFieldGrp('Ik_Snap_Off',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Ik_Snap_Off',at='float')
+  pm.setAttr('%s.Ik_Snap_Off'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXBb,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXBR=pm.floatFieldGrp('Ik_Snap_On',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Ik_Snap_On',at='float')
+  pm.setAttr('%s.Ik_Snap_On'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXBR,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if pm.rowLayout('ik_ball_layout',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbB=pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  if pm.objExists(ik_toe_wiggle_ctrl+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbB):
+   pm.addAttr(fkIk_setup_ctrl[0],ln='Ik_Toe_Wiggle_Attr_Name',dt='string')
+   pm.setAttr('%s.Ik_Toe_Wiggle_Attr_Name'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbB,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  else:
+   pm.error("There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"%(ik_toe_wiggle_ctrl,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbB))
+ if pm.rowLayout('ik_ball_rotation_layout',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Rotation_Wiggle',dt='string')
+  pm.setAttr('%s.Rotation_Wiggle'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXFrb(End_Limb_Joint_Define[0])[3],l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXRB=pm.checkBox('Reverse_Wiggle_Value',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Reverse_Wiggle_Value',at='bool')
+  pm.setAttr('%s.Reverse_Wiggle_Value'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXRB,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXRb=pm.checkBox('Translate_Fk',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(fkIk_setup_ctrl[0],ln='Translate_Fk_Ctrl_Exists',at='bool')
+ pm.setAttr('%s.Translate_Fk_Ctrl_Exists'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXRb,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if pm.rowColumnLayout('stretch_attribute_connected_with',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbBX=pm.getAttr('%s.Aim_Axis'%fkIk_setup_ctrl[0])
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbBR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbBX.replace('translate','')
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Stretch_Attr',dt='string')
+  pm.setAttr('%s.Stretch_Attr'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRF(axis=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbBR),l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if pm.rowColumnLayout('row_column_stretch_fk_add_object',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbXR=pm.textFieldGrp('Fk_Attr_Up_Stretch',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  if pm.objExists(fk_ctrl_up_stretch+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbXR):
+   pm.addAttr(fkIk_setup_ctrl[0],ln='Fk_Attr_Up_Stretch',dt='string')
+   pm.setAttr('%s.Fk_Attr_Up_Stretch'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbXR,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  else:
+   pm.error("There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"%(fk_ctrl_up_stretch,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbXR))
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbRB=pm.floatFieldGrp('Fk_Value_Up_Stretch',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Fk_Value_Up_Stretch',at='float')
+  pm.setAttr('%s.Fk_Value_Up_Stretch'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbRB,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbRX=pm.textFieldGrp('Fk_Attr_Mid_Stretch',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  if pm.objExists(fk_ctrl_mid_stretch+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbRX):
+   pm.addAttr(fkIk_setup_ctrl[0],ln='Fk_Attr_Mid_Stretch',dt='string')
+   pm.setAttr('%s.Fk_Attr_Mid_Stretch'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbRX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  else:
+   pm.error("There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"%(fk_ctrl_mid_stretch,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFbRX))
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBX=pm.floatFieldGrp('Fk_Value_Mid_Stretch',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  pm.addAttr(fkIk_setup_ctrl[0],ln='Fk_Value_Mid_Stretch',at='float')
+  pm.setAttr('%s.Fk_Value_Mid_Stretch'%fkIk_setup_ctrl[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,fk_or_ik_controller=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,object_joint=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr):
+ pm.select(cl=1)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb=pm.joint(n=name+'_'+side+'_GDE_jnt')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRXB=name+'_Guide_Joint'
+ pm.parent(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb,object_joint)
+ if fk_or_ik_controller:
+  pm.delete(pm.parentConstraint(fk_or_ik_controller,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb,mo=0))
+ else:
+  pm.delete(pm.parentConstraint(object_joint,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb,mo=0))
+ pm.makeIdentity(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb,apply=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,translate=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,rotate=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ if fk_or_ik_controller:
+  pm.connectAttr(fk_or_ik_controller+'.rotateOrder',vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb+'.rotateOrder')
+ else:
+  pm.connectAttr(object_joint+'.rotateOrder',vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb+'.rotateOrder')
+ pm.setAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb+'.radius',0.1)
+ pm.setAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb+'.drawStyle',2)
+ return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRBb,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRXB
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFR(prefix=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Upper_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Upper_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Middle_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Middle_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Lower_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Lower_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,leg=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr,End_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,End_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,End_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRbX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="upper%s_Fk"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],object_joint=Upper_Limb_Joint_Define[0])
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBXb='Upper_Limb_Fk_Guide_Joint'
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBXF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="upper%s_Ik"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],object_joint=Upper_Limb_Joint_Define[0])
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBbX='Upper_Limb_Ik_Guide_Joint'
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBbF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="middle%s_Fk"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=Middle_Limb_Fk_Ctrl_Define[0],object_joint=Middle_Limb_Joint_Define[0])
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBFX='Middle_Limb_Fk_Guide_Joint'
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBFb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="middle%s_Ik"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=Middle_Limb_Ik_Ctrl_Define[0],object_joint=Middle_Limb_Joint_Define[0])
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXBb='Middle_Limb_Ik_Guide_Joint'
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXBF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="lower%s_Fk"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=Lower_Limb_Fk_Ctrl_Define[0],object_joint=Lower_Limb_Joint_Define[0])
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXbB='Lower_Limb_Fk_Guide_Joint'
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXbF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="lower%s_Ik"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=Lower_Limb_Ik_Ctrl_Define[0],object_joint=Lower_Limb_Joint_Define[0])
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXFB='Lower_Limb_Ik_Guide_Joint'
+ if leg:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXFb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="end%s_Fk"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=End_Limb_Fk_Ctrl_Define[0],object_joint=End_Limb_Joint_Define[0])
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbBX='End_Limb_Fk_Guide_Joint'
+  if End_Limb_Ik_Ctrl_Define[0]:
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbBF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="end%s_Ik"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=End_Limb_Ik_Ctrl_Define[0],object_joint=End_Limb_Joint_Define[0])
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXB='End_Limb_Ik_Guide_Joint'
+  else:
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbBF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFX(name="end%s_Ik"%prefix,side=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr(),fk_or_ik_controller=End_Limb_Joint_Define[0],object_joint=End_Limb_Joint_Define[0])
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXB='End_Limb_Ik_Guide_Joint'
+  return{'upperLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRbX,'upperLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBXF,'middleLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBbF,'middleLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBFb,'lowerLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXBF,'lowerLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXbF,'endLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXFb,'endLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbBF,'upperLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBXb,'upperLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBbX,'middleLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBFX,'middleLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXBb,'lowerLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXbB,'lowerLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXFB,'endLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbBX,'endLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXB}
+ return{'upperLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFRbX,'upperLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBXF,'middleLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBbF,'middleLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBFb,'lowerLimb_fk_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXBF,'lowerLimb_ik_GDE_jnt':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXbF,'upperLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBXb,'upperLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBbX,'middleLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRBFX,'middleLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXBb,'lowerLimb_fk_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXbB,'lowerLimb_ik_GDE_name_box':vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRXFB,}
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrRX(prefix=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr,Setup_Controller=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRr):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF=pm.shadingNode('distanceBetween',asUtility=1,n='%s_AD_MEASURE_%s_dist'%(prefix,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbRr()))
+ pm.connectAttr(Upper_Limb_Joint_Define+'.worldMatrix[0]',vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF+'.inMatrix1')
+ pm.connectAttr(Lower_Limb_Joint_Define+'.worldMatrix[0]',vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF+'.inMatrix2')
+ pm.connectAttr(Upper_Limb_Joint_Define+'.rotatePivotTranslate',vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF+'.point1')
+ pm.connectAttr(Lower_Limb_Joint_Define+'.rotatePivotTranslate',vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF+'.point2')
+ pm.addAttr(Setup_Controller,ln='Joint_Distance_Value_Dynamic',at='float')
+ pm.connectAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF+'.distance','%s.Joint_Distance_Value_Dynamic'%Setup_Controller,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbFX=pm.getAttr('%s.Joint_Distance_Value_Dynamic'%Setup_Controller)
+ pm.addAttr(Setup_Controller,ln='Joint_Distance_Value_Static',at='float')
+ pm.setAttr('%s.Joint_Distance_Value_Static'%Setup_Controller,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbFX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+ pm.addAttr(Setup_Controller,ln='Distance_Node',at='message')
+ pm.connectAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF+'.message','%s.Distance_Node'%(Setup_Controller))
+ return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRbXF
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrRF(*args):
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('FkIk_Arm_Setup_Controller')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('FkIk_Leg_Setup_Controller')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Upper_Limb_Joint')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Middle_Limb_Joint')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Lower_Limb_Joint')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('End_Limb_Joint')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXB=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Upper_Limb_Fk_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Middle_Limb_Fk_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbB=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Lower_Limb_Fk_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('End_Limb_Fk_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Upper_Limb_Ik_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Pole_Vector_Ik_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Lower_Limb_Ik_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('End_Limb_Ik_Ctrl')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Ik_Snap_Ctrl_Name')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Fk_Ctrl_Up_Stretch')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXF=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Fk_Ctrl_Mid_Stretch')
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXR=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXB[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbB[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbF[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbR[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRF[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXF[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbX[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFR[1]]
+ vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFX=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXB[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbB[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbF[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbR[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRF[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXF[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFR[0]]
+ if pm.objExists('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb[1])):
+  pm.error('Please delete the previous setup first before run the setup!')
+ elif pm.objExists('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb[1])):
+  pm.error('Please delete the previous setup first before run the setup!')
+ else:
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFR=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXB[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbF[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbR[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbB[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFb[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbX[1],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFR[1]]
+  if(pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[1],q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)):
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFR(prefix='Arm',Upper_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXB,Upper_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbF,Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb,Middle_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXb,Middle_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Lower_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbB,Lower_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFb,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB,)
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRF=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_ik_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_ik_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_ik_GDE_jnt'][0]]
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXb=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_ik_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_ik_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_ik_GDE_name_box']]
+   for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR,object_item,in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrR(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXR[:14],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFX[:14]):
+    pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],ln=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR,at='message')
+    if pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+     pm.connectAttr(object_item+'.message','%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR))
+   for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFbX,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb,label_joint in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrR(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXb,):
+    pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],ln=label_joint,at='message')
+    if pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFbX,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+     pm.connectAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb+'.message','%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],label_joint))
+    if not pm.listConnections(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb+'.message'):
+     pm.delete(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb)
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrRX(prefix='Arm',Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb[0],Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB[0],Setup_Controller=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0])
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrXR(Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB,End_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR,ik_snap_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRb[0],fk_ctrl_up_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRF[0],fk_ctrl_mid_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXF[0],fkIk_setup_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX)
+  else:
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrFR(prefix='Leg',Upper_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXB,Upper_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXbF,Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb,Middle_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFXb,Middle_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Lower_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbB,Lower_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFb,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB,leg=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,End_Limb_Fk_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFbX,End_Limb_Ik_Ctrl_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXFR,End_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR)
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRF=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_ik_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_ik_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_ik_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['endLimb_fk_GDE_jnt'][0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['endLimb_ik_GDE_jnt'][0]]
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXb=[vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['upperLimb_ik_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['middleLimb_ik_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['lowerLimb_ik_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['endLimb_fk_GDE_name_box'],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRX['endLimb_ik_GDE_name_box']]
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFRX=[]
+   if pm.rowLayout('ik_ball_layout',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFRb=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Ik_Toe_Wiggle_Ctrl')[1]
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFRX=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXRFb('Ik_Toe_Wiggle_Ctrl')[0]
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXR.append(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFRb)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFX.append(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFRX)
+   for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR,object_item in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrR(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFX):
+    pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],ln=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR,at='message')
+    if pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+     pm.connectAttr(object_item+'.message','%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXR))
+   for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFbX,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb,label_joint in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrR(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbFR,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFXb,):
+    pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],ln=label_joint,at='message')
+    if pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFbX,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+     pm.connectAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb+'.message','%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],label_joint))
+    if not pm.listConnections(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb+'.message'):
+     pm.delete(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb)
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrRX(prefix='Leg',Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb[0],Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB[0],Setup_Controller=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0])
+   if pm.rowLayout('ik_ball_layout',q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,enable=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrXR(Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB,End_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR,ik_snap_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRb[0],fk_ctrl_up_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRF[0],fk_ctrl_mid_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXF[0],fkIk_setup_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb,ik_toe_wiggle_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrFRX)
+   else:
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbrXR(Upper_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFBXb,Middle_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFX,Lower_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRFB,End_Limb_Joint_Define=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrFXbR,ik_snap_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRb[0],fk_ctrl_up_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrXRF[0],fk_ctrl_mid_stretch=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrbXF[0],fkIk_setup_ctrl=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb)
+ if pm.rowColumnLayout("row_column_add_object",q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,ca=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXb=pm.rowColumnLayout("row_column_add_object",q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,ca=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXF=(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXRF(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXb)/5)
+  if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXF:
+   for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFXr(1,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXF+1):
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRB="object"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbR="attribute"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbB="default_value"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRb='fk_ik_choose'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBb="fk_add_setup"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBF="ik_add_setup"+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFBR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF=pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRB,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF=pm.textFieldGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbR,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,tx=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRbX=pm.floatFieldGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFbB,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,value1=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRbF=pm.radioCollection(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXFRb,q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,select=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb=[],[]
+    if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRbF==vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXRBb:
+     if pm.objExists(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF):
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX='_DOTAT_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_DOFK_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb='_DOTVA_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_DOFK_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF
+     else:
+      pm.error("There is no object '%s' with attribute name '%s' in the scene. " "Please check both of the input name!"%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF))
+    else:
+     if pm.objExists(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF):
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX='_DOTAT_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_DOTIK_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb='_DOTVA_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF+'_DOTIK_'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF
+     else:
+      pm.error("There is no object '%s' with attribute name '%s' in the scene. " "Please check both of the input name!"%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF))
+    if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF and vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbRXF:
+     if(pm.textFieldButtonGrp(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[1],q=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR,en=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)):
+      if not pm.objExists(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0]+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX):
+       pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],ln=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX,at='message')
+       pm.connectAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF+'.message','%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX))
+       pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],ln=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb,at='float')
+       pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBX[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRbX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+      else:
+       pm.warning("Text field # "+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXF)+" same object and attribute! Skipped this attribute.")
+     else:
+      if not pm.objExists(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0]+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX):
+       pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],ln=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX,at='message')
+       pm.connectAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbRF+'.message','%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFX))
+       pm.addAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],ln=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb,at='float')
+       pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrRFBb[0],vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRFb),vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRbX,l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+      else:
+       pm.warning("Text field # "+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXF)+" same object and attribute! Skipped this attribute.")
+    else:
+     pm.warning("Line # "+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFrX(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBrRXF)+" is empty! Skipped this attribute.")
+ pm.confirmDialog(title='Add Inform',icon="information",message='Adding setup Fk Ik has done!')
+ pm.select(cl=1)
+def vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrF(*args):
+ if pm.ls(sl=1):
+  vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF=pm.ls(sl=1)[0]
+  if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF:
+   vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrbF=['FkIk_Arm_Setup_Controller','FkIk_Leg_Setup_Controller','Upper_Limb_Joint','Middle_Limb_Joint','Lower_Limb_Joint','Upper_Limb_Fk_Guide_Joint','Upper_Limb_Ik_Guide_Joint','Middle_Limb_Fk_Guide_Joint','Middle_Limb_Ik_Guide_Joint','Lower_Limb_Fk_Guide_Joint','Lower_Limb_Ik_Guide_Joint','End_Limb_Fk_Guide_Joint','End_Limb_Ik_Guide_Joint','Stretch_Attr','Upper_Scale_Aim_Joint','Middle_Scale_Aim_Joint','Joint_Distance_Value_Dynamic','Joint_Distance_Value_Static','Distance_Node','Upper_Limb_Fk_Ctrl','Middle_Limb_Fk_Ctrl','Lower_Limb_Fk_Ctrl','Upper_Limb_Ik_Ctrl','Pole_Vector_Ik_Ctrl','Lower_Limb_Ik_Ctrl','End_Limb_Joint','End_Limb_Fk_Ctrl','End_Limb_Ik_Ctrl','Middle_Translate_Aim_Joint','Ik_Snap_Ctrl_Name','Ik_Snap_Attr_Name','Ik_Snap_Off','Ik_Snap_On','Lower_Translate_Aim_Joint','Aim_Axis','Translate_Fk_Ctrl_Exists','Fk_Ik_Attr_Name','Fk_Ctrl_Up_Stretch','Fk_Ctrl_Mid_Stretch','Fk_Value_Up_Stretch','Fk_Value_Mid_Stretch','Fk_Attr_Up_Stretch','Fk_Attr_Mid_Stretch','Fk_Value_On','Ik_Value_On','Ik_Toe_Wiggle_Ctrl','Ik_Toe_Wiggle_Attr_Name','Rotation_Wiggle','Reverse_Wiggle_Value','Snapping_Position','Ik_Snap_Checkbox','Translate_Upper_Limb_Ik_Ctrl','Translate_Pole_Vector_Ik_Ctrl','Translate_Lower_Limb_Ik_Ctrl','Translate_End_Limb_Ik_Ctrl','Rotate_Upper_Limb_Ik_Ctrl','Rotate_Pole_Vector_Ik_Ctrl','Rotate_Lower_Limb_Ik_Ctrl','Rotate_End_Limb_Ik_Ctrl','Translate_Upper_Limb_Fk_Ctrl','Translate_Middle_Limb_Fk_Ctrl','Translate_Lower_Limb_Fk_Ctrl','Translate_End_Limb_Fk_Ctrl','Rotate_Upper_Limb_Fk_Ctrl','Rotate_Middle_Limb_Fk_Ctrl','Rotate_Lower_Limb_Fk_Ctrl','Rotate_End_Limb_Fk_Ctrl']
+   if pm.objExists(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF+'.'+'FkIk_Arm_Setup_Controller'):
+    vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrbR=pm.confirmDialog(title='Delete Confirm',message='Are you sure to delete setup?',button=['Yes','No'],defaultButton='Yes',icon="warning",cancelButton='No',dismissString='No')
+    if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrbR=='Yes':
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrFb=pm.listAttr(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF)
+     vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrFR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFXR(lambda x:'_Guide_Joint' in x or 'AD_MEASURE' in x,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrFb)
+     for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrFR:
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRF=pm.listConnections(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF+'.'+vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRb,s=1)
+      if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRF:
+       pm.delete(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrRF)
+     for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrbF:
+      if pm.attributeQuery(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR,n=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,ex=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR):
+       vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbrF=pm.listAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR),l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+       if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbrF:
+        pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbrF[0]),l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+       pm.deleteAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR))
+     if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFXR(lambda x:'_DOTAT_' in x or '_DOTVA_' in x,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrFb):
+      vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbrR=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbFXR(lambda x:'_DOTAT_' in x or '_DOTVA_' in x,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXrFb)
+      for vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR in vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbrR:
+       vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbFr=pm.listAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR),l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXrR)
+       if vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbFr:
+        pm.setAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBXbFr[0]),l=vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYBbXFr)
+       pm.deleteAttr('%s.%s'%(vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF,vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrXbFR))
+    else:
+     return vEnNWHCpzIdsogUjhTLelKawPAuMmfqSGcQyxOVtJDkiYrbBRF
+   else:
+    pm.warning('There are no setup exists or the setup already deleted.')
+  else:
+   pm.warning('There are no setup exists! Either you have selected wrong controller object or the setup already deleted.')
+ else:
+  pm.error('Please select either arm or leg setup to clean up the setup!')
+# Created by pyminifier (https://github.com/liftoff/pyminifier)
