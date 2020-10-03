@@ -88,7 +88,7 @@ class Build:
                        self.neck_in_btw_ctrl.parent_control[0] + '.visibility')
         # HEAD
         self.head_ctrl = ct.Control(match_obj_first_position=head_jnt, prefix=head_prefix,
-                                    shape=ct.CUBE,
+                                    shape=ct.ARROW4CIRCULAR,
                                     groups_ctrl=['Zro', 'Global', 'Local'], ctrl_size=scale * 1.0,
                                     ctrl_color='blue', lock_channels=['v'], gimbal=True, suffix=suffix_controller,
                                     connection=['connectMatrixAll'])
