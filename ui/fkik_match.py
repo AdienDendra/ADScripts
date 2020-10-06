@@ -43,10 +43,10 @@ def ad_match_fkik_ui():
         with pm.columnLayout(rs=5, co=('both', 5), adj=True):
             pm.text(l='Select Leg/Arm Ctrl Setup:')
             # button to Fk
-            pm.button(label='Match To Fk', width=layout, height=40, backgroundColor=[0.46, 0.86, 0.46],
+            pm.button(label='Match To Fk', width=layout, height=40, backgroundColor=[0.09804, 0.31373, 0.30196],
                       command=pm.Callback(ad_ik_to_fk))
             # button to Ik
-            pm.button(label='Match To Ik', width=layout, height=40, backgroundColor=[0.86, 0.46, 0.46],
+            pm.button(label='Match To Ik', width=layout, height=40, backgroundColor=[1.00000,  0.43137,  0.00000],
                       command=pm.Callback(ad_fk_to_ik))
             with pm.rowLayout(nc=2, cw2=(32 * percentage, 32 * percentage),
                               cl2=('left', 'center'),
