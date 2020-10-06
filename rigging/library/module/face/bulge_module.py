@@ -286,6 +286,7 @@ class Bulge:
             if add_set:
                 for i in add_set:
                     setObj = mc.listConnections(soft_mod[0], type='objectSet')[0]
+                    mc.sets(i, add=setObj)
         except:
             pass
         # PARENT TO THE GRP
