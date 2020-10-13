@@ -1,4 +1,5 @@
 """
+
 DESCRIPTION:
 
     ad_fkik_setup
@@ -45,11 +46,8 @@ VERSION:
     
 LICENSE:
 
-    ***************************************************************
     Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
-
     This is commercial license can not be copied and/or
     distributed without the express permission of Adien Dendra
-    ***************************************************************
 
 """
