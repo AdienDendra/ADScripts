@@ -1,20 +1,20 @@
 """
 DESCRIPTION:
-    FkIk match is tool for matching fkik.
+    FkIk match is a tool for matching fkik.
     Works properly in any version of Autodesk Maya.
 
 USAGE:
-    You may go to this link for have more detail >>
-    project.adiendendra.com/snap_fkik
+    You may go to this link to have more detail >>
+    http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/
 
 AUTHOR:
     Adien Dendra
 
 CONTACT:
-    adien.dendra@gmail.com | hello@adiendendra.com
+    adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 20 September 2020 - Initial Release
+    1.0 - 18 October 2020 - Initial Release
 
 ***************************************************************
 Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
