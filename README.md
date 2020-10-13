@@ -1,5 +1,6 @@
 """
 DESCRIPTION:
+
     ad_fkik_setup
     Define the object with FkIk Setup is a tool before run FkIk match, this script purposes to match Fk/Ik task setup.
     Works properly in any version of Autodesk Maya.
@@ -8,8 +9,8 @@ DESCRIPTION:
     FkIk match is a tool for matching FkIk. Works properly in any version of Autodesk Maya.
 
 USAGE:
+
     Before you run the tool, you have to drop the ‘ad_icons’ directory inside your Maya icon folder. Normally it creates default in this path :
-    
     C:\Users\Your Name \Documents\maya\version\prefs\icons
 
     Drop the ‘ad_scripts’ directory into your Maya script directory :
@@ -31,19 +32,24 @@ USAGE:
     http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/
 
 AUTHOR:
+
     Adien Dendra
 
 CONTACT:
+
     adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
+
     1.0 - 18 October 2020 - Initial Release
+    
+LICENSE:
 
-***************************************************************
-Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+    ***************************************************************
+    Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
 
-This is commercial license can not be copied and/or
-distributed without the express permission of Adien Dendra
-***************************************************************
+    This is commercial license can not be copied and/or
+    distributed without the express permission of Adien Dendra
+    ***************************************************************
 
 """
