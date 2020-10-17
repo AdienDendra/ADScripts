@@ -24,10 +24,9 @@ USAGE:
     mc.shelfLayout(ad_fkIk, ex=1)
     if mc.shelfLayout(ad_fkIk, ex=1):
         mc.deleteUI(ad_fkIk)
-
     mc.shelfLayout(ad_fkIk, p="ShelfLayout")
-    mc.shelfButton(image="ad_icons/ad_fkik_setup.png", l='Setup Fk and Ik', command="from ad_scripts import ad_fkik_setup as st \nreload(st)  \nst.ad_setup_fkik_ui()", olb=(0, 0, 0, 0), olc=(.9, .9, .9))
-    mc.shelfButton(image="ad_icons/ad_fkik_match.png", l='Match Fk and Ik', command="from ad_scripts import ad_fkik_match as mt \nreload(mt)  \nmt.ad_match_fkik_ui()", olb=(0, 0, 0, 0), olc=(.9, .9, .9))
+    mc.shelfButton(image="ad_fkik_setup.png", l='Setup Fk and Ik', command="import ad_fkik_setup as st \nreload(st)  \nst.ad_setup_fkik_ui()", olb=(0, 0, 0, 0), olc=(.9, .9, .9))
+    mc.shelfButton(image="ad_fkik_match.png", l='Match Fk and Ik', command="import ad_fkik_match as mt \nreload(mt)  \nmt.ad_match_fkik_ui()", olb=(0, 0, 0, 0), olc=(.9, .9, .9))
 
     You may go to this link to have more detail >>
     http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/
