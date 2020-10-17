@@ -232,13 +232,13 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
-    if filter(lambda x: '_DOTAT_' and '_DOFK_' in x or '_DOTVA_' and '_DOFK_' in x, list_attribute_additional):
-        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_DOFK_' in x, list_attribute_additional)
-        filtering_value = filter(lambda x: '_DOTVA_' in x and '_DOFK_' in x, list_attribute_additional)
+    if filter(lambda x: '_DOTAT_' and '_DOTFK_' in x or '_DOTVA_' and '_DOTFK_' in x, list_attribute_additional):
+        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_DOTFK_' in x, list_attribute_additional)
+        filtering_value = filter(lambda x: '_DOTVA_' in x and '_DOTFK_' in x, list_attribute_additional)
         for item_attr, item_value in zip(filtering_attr, filtering_value):
             get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
             get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
-            item_list = item_attr.replace('_DOTAT_', ',').replace('_DOFK_', ',').split(',')
+            item_list = item_attr.replace('_DOTAT_', ',').replace('_DOTFK_', ',').split(',')
             item_attribute, item_controller = ' '.join(item_list).split()
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
@@ -323,13 +323,13 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
     # set to default
     selection = fkik_setup_controller[0]
     list_attribute_additional = pm.listAttr(selection)
-    if filter(lambda x: '_DOTAT_' and '_DOIK_' in x or '_DOTVA_' and '_DOIK_' in x, list_attribute_additional):
-        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_DOIK_' in x, list_attribute_additional)
-        filtering_value = filter(lambda x: '_DOTVA_' in x and '_DOIK_' in x, list_attribute_additional)
+    if filter(lambda x: '_DOTAT_' and '_DOTIK_' in x or '_DOTVA_' and '_DOTIK_' in x, list_attribute_additional):
+        filtering_attr = filter(lambda x: '_DOTAT_' in x and '_DOTIK_' in x, list_attribute_additional)
+        filtering_value = filter(lambda x: '_DOTVA_' in x and '_DOTIK_' in x, list_attribute_additional)
         for item_attr, item_value in zip(filtering_attr, filtering_value):
             get_item_attr = pm.getAttr('%s.%s' % (selection, item_attr))
             get_value_attr = pm.getAttr('%s.%s' % (selection, item_value))
-            item_list = item_attr.replace('_DOTAT_', ',').replace('_DOIK_', ',').split(',')
+            item_list = item_attr.replace('_DOTAT_', ',').replace('_DOTIK_', ',').split(',')
             item_attribute, item_controller = ' '.join(item_list).split()
             pm.setAttr('%s.%s' % (get_item_attr, item_attribute), get_value_attr)
 
