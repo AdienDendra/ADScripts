@@ -15,7 +15,7 @@ CONTACT:
 
 VERSION:
     1.0 - 18 October 2020 - Initial Release
-    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl;Renaming joint guide;Deleting AD_MEASURE node fixed
+    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl; Renaming joint guide; Deleting AD_MEASURE node fixed; Adding toe wiggle exists
 
 LICENSE:
     Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
@@ -107,8 +107,9 @@ def ad_setup_fkik_ui():
                                             co=(1 * percentage, 'both', 1 * percentage),
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)]):
                         pm.checkBox('endlimb_ik_ctrl', label='', cc=partial(ad_enabling_disabling_ui,
-                                                                            ['End_Limb_Ik_Ctrl', 'ik_ball_layout',
-                                                                             'ik_ball_rotation_layout']))
+                                                                            ['End_Limb_Ik_Ctrl',
+                                                                             'wiggle_layout',
+                                                                             'wiggle_rotation_layout']))
                         pm.checkBox('endlimb_ik_ctrl', edit=True, value=False)
 
                         ad_defining_object_text_field(define_object='End_Limb_Ik_Ctrl', label="End Limb Ik Ctrl:",
@@ -167,19 +168,19 @@ def ad_setup_fkik_ui():
                                          cw2=(11 * percentage, 5 * percentage), precision=1, value1=1)
 
                     # knee snap controller and attribute query name also off and on value
-                    with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
-                                            cw=[(1, 5 * percentage), (2, 93 * percentage)]):
+                    with pm.rowColumnLayout(nc=2, rowSpacing=(2, 2 * percentage),
+                                            cw=[(1, 3 * percentage), (2, 95 * percentage)]):
                         pm.checkBox('Ik_Snap_Checkbox', label='', cc=partial(ad_enabling_disabling_ui, ['ik_snap_row']),
                                     value=True)
                         with pm.rowColumnLayout('ik_snap_row', nc=4,
                                                 columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage),
                                                               (3, 'left', 3.5 * percentage),
                                                               (4, 'left', 3 * percentage)],
-                                                cw=[(1, 47 * percentage), (2, 15 * percentage), (3, 13 * percentage),
+                                                cw=[(1, 48 * percentage), (2, 15 * percentage), (3, 13 * percentage),
                                                     (4, 13 * percentage)]):
                             # controller
                             pm.textFieldButtonGrp('Ik_Snap_Ctrl_Name', l="Elbow/Knee Snap Ctrl:", cal=(1, "right"),
-                                                  cw3=(25 * percentage, 16 * percentage, 6 * percentage),
+                                                  cw3=(26.5* percentage, 16 * percentage, 9 * percentage),
                                                   cat=[(1, 'right', 1), (2, 'both', 5)],
                                                   bl="<<",
                                                   bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Snap_Ctrl_Name'),
@@ -201,39 +202,49 @@ def ad_setup_fkik_ui():
                     pm.radioCollection(direction_control, edit=True, select=direction1)
 
                     # condition if end limb ik controller off. query toe wiggle controller name and toe wiggle attribute name
-                    with pm.rowLayout('ik_ball_layout', nc=3,
-                                      columnAttach=[(1, 'right', 0), (2, 'left', 2 * percentage)],
-                                      cw2=(52 * percentage, 20 * percentage)):
-                        # controller
-                        pm.textFieldButtonGrp('Ik_Toe_Wiggle_Ctrl', l="Ik Ball Toe Wiggle Ctrl:",
-                                              cal=(1, "right"),
-                                              cw3=(30 * percentage, 16 * percentage, 6 * percentage),
-                                              cat=[(1, 'right', 1), (2, 'both', 5)],
-                                              bl="<<",
-                                              bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Toe_Wiggle_Ctrl'),
-                                              tx='ankleIk_ctrl')
-                        # attribute
-                        pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', l='Attr Toe Wiggle:',
-                                        cw2=(14 * percentage, 12 * percentage), tx='toeWiggle')
+                    with pm.rowLayout('wiggle_layout', nc=2,
+                                            cw=[(1, 3 * percentage), (2, 95 * percentage)]):
 
-                    # radio button query toe wiggle rotation include reverse the value
-                    with pm.rowLayout('ik_ball_rotation_layout', nc=5,
-                                      columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
-                                                    (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
-                                                    (5, 'left', 1 * percentage)],
-                                      cw5=(30 * percentage, 18 * percentage, 18 * percentage, 17 * percentage,
-                                           16 * percentage)):
-                        # ratio rotation
-                        pm.text('Rotation_Toe_Wiggle', l="Rotation Toe Wiggle:")
-                        radio_collection_rotate_ball_ik_ctrl = pm.radioCollection()
-                        ball_ik_ctrl_rotateX = pm.radioButton(label='Rotate X',
-                                                              onCommand=lambda x: ad_on_selection_rotate_button(1))
-                        pm.radioButton(label='Rotate Y', onCommand=lambda x: ad_on_selection_rotate_button(2))
-                        pm.radioButton(label='Rotate Z', onCommand=lambda x: ad_on_selection_rotate_button(3))
-                        pm.radioCollection(radio_collection_rotate_ball_ik_ctrl, edit=True, select=ball_ik_ctrl_rotateX)
+                        pm.checkBox('Toe_Wiggle_Exists', label='',
+                                    cc=partial(ad_enabling_disabling_ui, ['ik_ball_layout','ik_ball_rotation_layout']),
+                                    value=True)
+                        with pm.rowColumnLayout('ik_ball_layout', nc=3,
+                                          columnAttach=[(1, 'left', 2), (2, 'left', 1 * percentage)],
+                                          cw=[(1,49 * percentage), (2, 30 * percentage)]):
 
-                        # reverse checkbox
-                        pm.checkBox('Reverse_Wiggle_Value', l='Reverse')
+                            # controller
+                            pm.textFieldButtonGrp('Ik_Toe_Wiggle_Ctrl', l="Ik Ball Toe Wiggle Ctrl:",
+                                                  cal=(1, "right"),
+                                                  cw3=(26 * percentage, 16 * percentage, 5 * percentage),
+                                                  cat=[(1, 'right', 1), (2, 'both', 3)],
+                                                  bl="<<",
+                                                  bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Toe_Wiggle_Ctrl'),
+                                                  tx='ankleIk_ctrl')
+                            # attribute
+                            pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', l='Attr Toe Wiggle:',
+                                            cw2=(14 * percentage, 14 * percentage), tx='toeWiggle')
+
+                    with pm.rowLayout('wiggle_rotation_layout', nc=2,
+                                            cw=[(1, 3 * percentage), (2, 95 * percentage)]):
+                        pm.text(l='')
+                        # radio button query toe wiggle rotation include reverse the value
+                        with pm.rowColumnLayout('ik_ball_rotation_layout', nc=5,
+                                          columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                        (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
+                                                        (5, 'left', 1 * percentage)],
+                                          cw=[(1, 26 * percentage), (2, 18 * percentage), (3, 18 * percentage), (4, 17 * percentage),
+                                                (5, 16 * percentage)]):
+                            # ratio rotation
+                            pm.text('Rotation_Toe_Wiggle', l="Rotation Toe Wiggle:")
+                            radio_collection_rotate_ball_ik_ctrl = pm.radioCollection()
+                            ball_ik_ctrl_rotateX = pm.radioButton(label='Rotate X',
+                                                                  onCommand=lambda x: ad_on_selection_rotate_button(1))
+                            pm.radioButton(label='Rotate Y', onCommand=lambda x: ad_on_selection_rotate_button(2))
+                            pm.radioButton(label='Rotate Z', onCommand=lambda x: ad_on_selection_rotate_button(3))
+                            pm.radioCollection(radio_collection_rotate_ball_ik_ctrl, edit=True, select=ball_ik_ctrl_rotateX)
+
+                            # reverse checkbox
+                            pm.checkBox('Reverse_Wiggle_Value', l='Reverse')
 
                     pm.separator(h=5, st="in", w=layout)
                     # translate fk lock/unlock
@@ -625,9 +636,9 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
     pm.setAttr('%s.Ik_Value_On' % fkIk_setup_ctrl[0], value_ik_attr, l=True)
 
     # ik snap
-    ik_snap_exists = pm.checkBox('Ik_Snap_Checkbox', q=True, value=True)
+    Ik_Snap_Checkbox = pm.checkBox('Ik_Snap_Checkbox', q=True, value=True)
     pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Snap_Checkbox', at='bool')
-    pm.setAttr('%s.Ik_Snap_Checkbox' % fkIk_setup_ctrl[0], ik_snap_exists, l=True)
+    pm.setAttr('%s.Ik_Snap_Checkbox' % fkIk_setup_ctrl[0], Ik_Snap_Checkbox, l=True)
 
     if pm.rowColumnLayout('ik_snap_row', q=True, enable=True):
         ik_snap_ctrl_attr = pm.textFieldGrp('Ik_Snap_Attr_Name', q=True, tx=True)
@@ -648,7 +659,12 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
         pm.setAttr('%s.Ik_Snap_On' % fkIk_setup_ctrl[0], ik_snap_max_value, l=True)
 
     #### ik ball toe wiggle
-    if pm.rowLayout('ik_ball_layout', q=True, enable=True):
+    # ik toe wiggle on
+    ik_toe_wiggle_exists = pm.checkBox('Toe_Wiggle_Exists', q=True, value=True)
+    pm.addAttr(fkIk_setup_ctrl[0], ln='Toe_Wiggle_Exists', at='bool')
+    pm.setAttr('%s.Toe_Wiggle_Exists' % fkIk_setup_ctrl[0], ik_toe_wiggle_exists, l=True)
+
+    if pm.rowColumnLayout('ik_ball_layout', q=True, enable=True):
         toe_wiggle_attr_name = pm.textFieldGrp('Ik_Toe_Wiggle_Attr_Name', q=True, tx=True)
         if pm.objExists(ik_toe_wiggle_ctrl + '.' + toe_wiggle_attr_name):
             pm.addAttr(fkIk_setup_ctrl[0], ln='Ik_Toe_Wiggle_Attr_Name', dt='string')
@@ -658,7 +674,7 @@ def ad_additional_setup(Upper_Limb_Joint_Define, Middle_Limb_Joint_Define, Lower
                 "There is no controller '%s' with attribute name '%s' in the scene. Please check both the input name!"
                 % (ik_toe_wiggle_ctrl, toe_wiggle_attr_name))
 
-    if pm.rowLayout('ik_ball_rotation_layout', q=True, enable=True):
+    if pm.rowColumnLayout('ik_ball_rotation_layout', q=True, enable=True):
         pm.addAttr(fkIk_setup_ctrl[0], ln='Rotation_Wiggle', dt='string')
         pm.setAttr('%s.Rotation_Wiggle' % fkIk_setup_ctrl[0],
                    ad_action_rotate_translate_scale_radio_button(End_Limb_Joint_Define[0])[3], l=True)
@@ -748,86 +764,86 @@ def ad_listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl
                            Lower_Limb_Joint_Define, leg=False, End_Limb_Joint_Define=None,
                            End_Limb_Fk_Ctrl_Define=None, End_Limb_Ik_Ctrl_Define=None
                            ):
-    upperLimb_fk_GDE_jnt = ad_joint_guide(name="upper%s_Fk" % prefix, side=ad_action_position_radio_button(),
+    upperLimb_fk_AD_gde = ad_joint_guide(name="upper%s_Fk" % prefix, side=ad_action_position_radio_button(),
                                           fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],
                                           object_joint=Upper_Limb_Joint_Define[0])
-    upperLimb_fk_GDE_name_box = 'Upper_Limb_Fk_Guide_Joint'
+    upperLimb_fk_AD_name_box = 'Upper_Limb_Fk_Guide_Joint'
 
-    upperLimb_ik_GDE_jnt = ad_joint_guide(name="upper%s_Ik" % prefix, side=ad_action_position_radio_button(),
+    upperLimb_ik_AD_gde = ad_joint_guide(name="upper%s_Ik" % prefix, side=ad_action_position_radio_button(),
                                           fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
                                           object_joint=Upper_Limb_Joint_Define[0])
-    upperLimb_ik_GDE_name_box = 'Upper_Limb_Ik_Guide_Joint'
+    upperLimb_ik_AD_name_box = 'Upper_Limb_Ik_Guide_Joint'
 
-    middleLimb_fk_GDE_jnt = ad_joint_guide(name="middle%s_Fk" % prefix, side=ad_action_position_radio_button(),
+    middleLimb_fk_AD_gde = ad_joint_guide(name="middle%s_Fk" % prefix, side=ad_action_position_radio_button(),
                                            fk_or_ik_controller=Middle_Limb_Fk_Ctrl_Define[0],
                                            object_joint=Middle_Limb_Joint_Define[0])
-    middleLimb_fk_GDE_name_box = 'Middle_Limb_Fk_Guide_Joint'
+    middleLimb_fk_AD_name_box = 'Middle_Limb_Fk_Guide_Joint'
 
-    middleLimb_ik_GDE_jnt = ad_joint_guide(name="middle%s_Ik" % prefix, side=ad_action_position_radio_button(),
+    middleLimb_ik_AD_gde = ad_joint_guide(name="middle%s_Ik" % prefix, side=ad_action_position_radio_button(),
                                            fk_or_ik_controller=Middle_Limb_Ik_Ctrl_Define[0],
                                            object_joint=Middle_Limb_Joint_Define[0])
-    middleLimb_ik_GDE_name_box = 'Middle_Limb_Ik_Guide_Joint'
+    middleLimb_ik_AD_name_box = 'Middle_Limb_Ik_Guide_Joint'
 
-    lowerLimb_fk_GDE_jnt = ad_joint_guide(name="lower%s_Fk" % prefix, side=ad_action_position_radio_button(),
+    lowerLimb_fk_AD_gde = ad_joint_guide(name="lower%s_Fk" % prefix, side=ad_action_position_radio_button(),
                                           fk_or_ik_controller=Lower_Limb_Fk_Ctrl_Define[0],
                                           object_joint=Lower_Limb_Joint_Define[0])
-    lowerLimb_fk_GDE_name_box = 'Lower_Limb_Fk_Guide_Joint'
+    lowerLimb_fk_AD_name_box = 'Lower_Limb_Fk_Guide_Joint'
 
-    lowerLimb_ik_GDE_jnt = ad_joint_guide(name="lower%s_Ik" % prefix, side=ad_action_position_radio_button(),
+    lowerLimb_ik_AD_gde = ad_joint_guide(name="lower%s_Ik" % prefix, side=ad_action_position_radio_button(),
                                           fk_or_ik_controller=Lower_Limb_Ik_Ctrl_Define[0],
                                           object_joint=Lower_Limb_Joint_Define[0])
-    lowerLimb_ik_GDE_name_box = 'Lower_Limb_Ik_Guide_Joint'
+    lowerLimb_ik_AD_name_box = 'Lower_Limb_Ik_Guide_Joint'
 
     if leg:
-        endLimb_fk_GDE_jnt = ad_joint_guide(name="end%s_Fk" % prefix, side=ad_action_position_radio_button(),
+        endLimb_fk_AD_gde = ad_joint_guide(name="end%s_Fk" % prefix, side=ad_action_position_radio_button(),
                                             fk_or_ik_controller=End_Limb_Fk_Ctrl_Define[0],
                                             object_joint=End_Limb_Joint_Define[0])
-        endLimb_fk_GDE_name_box = 'End_Limb_Fk_Guide_Joint'
+        endLimb_fk_AD_name_box = 'End_Limb_Fk_Guide_Joint'
 
         if End_Limb_Ik_Ctrl_Define[0]:
-            endLimb_ik_GDE_jnt = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
+            endLimb_ik_AD_gde = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
                                                 fk_or_ik_controller=End_Limb_Ik_Ctrl_Define[0],
                                                 object_joint=End_Limb_Joint_Define[0])
-            endLimb_ik_GDE_name_box = 'End_Limb_Ik_Guide_Joint'
+            endLimb_ik_AD_name_box = 'End_Limb_Ik_Guide_Joint'
 
         else:
-            endLimb_ik_GDE_jnt = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
+            endLimb_ik_AD_gde = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
                                                 fk_or_ik_controller=End_Limb_Joint_Define[0],
                                                 object_joint=End_Limb_Joint_Define[0])
-            endLimb_ik_GDE_name_box = 'End_Limb_Ik_Guide_Joint'
+            endLimb_ik_AD_name_box = 'End_Limb_Ik_Guide_Joint'
 
-        return {'upperLimb_fk_GDE_jnt': upperLimb_fk_GDE_jnt,
-                'upperLimb_ik_GDE_jnt': upperLimb_ik_GDE_jnt,
-                'middleLimb_fk_GDE_jnt': middleLimb_fk_GDE_jnt,
-                'middleLimb_ik_GDE_jnt': middleLimb_ik_GDE_jnt,
-                'lowerLimb_fk_GDE_jnt': lowerLimb_fk_GDE_jnt,
-                'lowerLimb_ik_GDE_jnt': lowerLimb_ik_GDE_jnt,
-                'endLimb_fk_GDE_jnt': endLimb_fk_GDE_jnt,
-                'endLimb_ik_GDE_jnt': endLimb_ik_GDE_jnt,
+        return {'upperLimb_fk_AD_gde': upperLimb_fk_AD_gde,
+                'upperLimb_ik_AD_gde': upperLimb_ik_AD_gde,
+                'middleLimb_fk_AD_gde': middleLimb_fk_AD_gde,
+                'middleLimb_ik_AD_gde': middleLimb_ik_AD_gde,
+                'lowerLimb_fk_AD_gde': lowerLimb_fk_AD_gde,
+                'lowerLimb_ik_AD_gde': lowerLimb_ik_AD_gde,
+                'endLimb_fk_AD_gde': endLimb_fk_AD_gde,
+                'endLimb_ik_AD_gde': endLimb_ik_AD_gde,
 
-                'upperLimb_fk_GDE_name_box': upperLimb_fk_GDE_name_box,
-                'upperLimb_ik_GDE_name_box': upperLimb_ik_GDE_name_box,
-                'middleLimb_fk_GDE_name_box': middleLimb_fk_GDE_name_box,
-                'middleLimb_ik_GDE_name_box': middleLimb_ik_GDE_name_box,
-                'lowerLimb_fk_GDE_name_box': lowerLimb_fk_GDE_name_box,
-                'lowerLimb_ik_GDE_name_box': lowerLimb_ik_GDE_name_box,
-                'endLimb_fk_GDE_name_box': endLimb_fk_GDE_name_box,
-                'endLimb_ik_GDE_name_box': endLimb_ik_GDE_name_box
+                'upperLimb_fk_AD_name_box': upperLimb_fk_AD_name_box,
+                'upperLimb_ik_AD_name_box': upperLimb_ik_AD_name_box,
+                'middleLimb_fk_AD_name_box': middleLimb_fk_AD_name_box,
+                'middleLimb_ik_AD_name_box': middleLimb_ik_AD_name_box,
+                'lowerLimb_fk_AD_name_box': lowerLimb_fk_AD_name_box,
+                'lowerLimb_ik_AD_name_box': lowerLimb_ik_AD_name_box,
+                'endLimb_fk_AD_name_box': endLimb_fk_AD_name_box,
+                'endLimb_ik_AD_name_box': endLimb_ik_AD_name_box
                 }
 
-    return {'upperLimb_fk_GDE_jnt': upperLimb_fk_GDE_jnt,
-            'upperLimb_ik_GDE_jnt': upperLimb_ik_GDE_jnt,
-            'middleLimb_fk_GDE_jnt': middleLimb_fk_GDE_jnt,
-            'middleLimb_ik_GDE_jnt': middleLimb_ik_GDE_jnt,
-            'lowerLimb_fk_GDE_jnt': lowerLimb_fk_GDE_jnt,
-            'lowerLimb_ik_GDE_jnt': lowerLimb_ik_GDE_jnt,
+    return {'upperLimb_fk_AD_gde': upperLimb_fk_AD_gde,
+            'upperLimb_ik_AD_gde': upperLimb_ik_AD_gde,
+            'middleLimb_fk_AD_gde': middleLimb_fk_AD_gde,
+            'middleLimb_ik_AD_gde': middleLimb_ik_AD_gde,
+            'lowerLimb_fk_AD_gde': lowerLimb_fk_AD_gde,
+            'lowerLimb_ik_AD_gde': lowerLimb_ik_AD_gde,
 
-            'upperLimb_fk_GDE_name_box': upperLimb_fk_GDE_name_box,
-            'upperLimb_ik_GDE_name_box': upperLimb_ik_GDE_name_box,
-            'middleLimb_fk_GDE_name_box': middleLimb_fk_GDE_name_box,
-            'middleLimb_ik_GDE_name_box': middleLimb_ik_GDE_name_box,
-            'lowerLimb_fk_GDE_name_box': lowerLimb_fk_GDE_name_box,
-            'lowerLimb_ik_GDE_name_box': lowerLimb_ik_GDE_name_box,
+            'upperLimb_fk_AD_name_box': upperLimb_fk_AD_name_box,
+            'upperLimb_ik_AD_name_box': upperLimb_ik_AD_name_box,
+            'middleLimb_fk_AD_name_box': middleLimb_fk_AD_name_box,
+            'middleLimb_ik_AD_name_box': middleLimb_ik_AD_name_box,
+            'lowerLimb_fk_AD_name_box': lowerLimb_fk_AD_name_box,
+            'lowerLimb_ik_AD_name_box': lowerLimb_ik_AD_name_box,
             }
 
 
@@ -922,19 +938,19 @@ def ad_run_setup(*args):
                                              )
 
             # listing the joint guide
-            list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0],
-                                jnt_gde['upperLimb_ik_GDE_jnt'][0],
-                                jnt_gde['middleLimb_fk_GDE_jnt'][0],
-                                jnt_gde['middleLimb_ik_GDE_jnt'][0],
-                                jnt_gde['lowerLimb_fk_GDE_jnt'][0],
-                                jnt_gde['lowerLimb_ik_GDE_jnt'][0]]
+            list_guide_joint = [jnt_gde['upperLimb_fk_AD_gde'][0],
+                                jnt_gde['upperLimb_ik_AD_gde'][0],
+                                jnt_gde['middleLimb_fk_AD_gde'][0],
+                                jnt_gde['middleLimb_ik_AD_gde'][0],
+                                jnt_gde['lowerLimb_fk_AD_gde'][0],
+                                jnt_gde['lowerLimb_ik_AD_gde'][0]]
 
-            list_label_guide_joint = [jnt_gde['upperLimb_fk_GDE_name_box'],
-                                      jnt_gde['upperLimb_ik_GDE_name_box'],
-                                      jnt_gde['middleLimb_fk_GDE_name_box'],
-                                      jnt_gde['middleLimb_ik_GDE_name_box'],
-                                      jnt_gde['lowerLimb_fk_GDE_name_box'],
-                                      jnt_gde['lowerLimb_ik_GDE_name_box']]
+            list_label_guide_joint = [jnt_gde['upperLimb_fk_AD_name_box'],
+                                      jnt_gde['upperLimb_ik_AD_name_box'],
+                                      jnt_gde['middleLimb_fk_AD_name_box'],
+                                      jnt_gde['middleLimb_ik_AD_name_box'],
+                                      jnt_gde['lowerLimb_fk_AD_name_box'],
+                                      jnt_gde['lowerLimb_ik_AD_name_box']]
 
             # adding loop the list controller
             for label_item, object_item, in zip(label_list[:14], object_list[:14]):
@@ -988,27 +1004,28 @@ def ad_run_setup(*args):
                                              )
 
             # listing the joint guide
-            list_guide_joint = [jnt_gde['upperLimb_fk_GDE_jnt'][0],
-                                jnt_gde['upperLimb_ik_GDE_jnt'][0],
-                                jnt_gde['middleLimb_fk_GDE_jnt'][0],
-                                jnt_gde['middleLimb_ik_GDE_jnt'][0],
-                                jnt_gde['lowerLimb_fk_GDE_jnt'][0],
-                                jnt_gde['lowerLimb_ik_GDE_jnt'][0],
-                                jnt_gde['endLimb_fk_GDE_jnt'][0],
-                                jnt_gde['endLimb_ik_GDE_jnt'][0]]
+            list_guide_joint = [jnt_gde['upperLimb_fk_AD_gde'][0],
+                                jnt_gde['upperLimb_ik_AD_gde'][0],
+                                jnt_gde['middleLimb_fk_AD_gde'][0],
+                                jnt_gde['middleLimb_ik_AD_gde'][0],
+                                jnt_gde['lowerLimb_fk_AD_gde'][0],
+                                jnt_gde['lowerLimb_ik_AD_gde'][0],
+                                jnt_gde['endLimb_fk_AD_gde'][0],
+                                jnt_gde['endLimb_ik_AD_gde'][0]]
 
-            list_label_guide_joint = [jnt_gde['upperLimb_fk_GDE_name_box'],
-                                      jnt_gde['upperLimb_ik_GDE_name_box'],
-                                      jnt_gde['middleLimb_fk_GDE_name_box'],
-                                      jnt_gde['middleLimb_ik_GDE_name_box'],
-                                      jnt_gde['lowerLimb_fk_GDE_name_box'],
-                                      jnt_gde['lowerLimb_ik_GDE_name_box'],
-                                      jnt_gde['endLimb_fk_GDE_name_box'],
-                                      jnt_gde['endLimb_ik_GDE_name_box']]
+            list_label_guide_joint = [jnt_gde['upperLimb_fk_AD_name_box'],
+                                      jnt_gde['upperLimb_ik_AD_name_box'],
+                                      jnt_gde['middleLimb_fk_AD_name_box'],
+                                      jnt_gde['middleLimb_ik_AD_name_box'],
+                                      jnt_gde['lowerLimb_fk_AD_name_box'],
+                                      jnt_gde['lowerLimb_ik_AD_name_box'],
+                                      jnt_gde['endLimb_fk_AD_name_box'],
+                                      jnt_gde['endLimb_ik_AD_name_box']]
 
             # condition if ik toe wiggle controller exists
             Ik_Toe_Wiggle_Ctrl_Define_0 = []
-            if pm.rowLayout('ik_ball_layout', q=True, enable=True):
+            # if pm.checkBox('Toe_Wiggle_Exists', q=True, enable=True):
+            if pm.rowColumnLayout('ik_ball_layout', q=True, enable=True):
                 Ik_Toe_Wiggle_Ctrl_Define_1 = ad_query_define_textfield_object('Ik_Toe_Wiggle_Ctrl')[1]
                 Ik_Toe_Wiggle_Ctrl_Define_0 = ad_query_define_textfield_object('Ik_Toe_Wiggle_Ctrl')[0]
 
@@ -1043,7 +1060,8 @@ def ad_run_setup(*args):
                                           Setup_Controller=FkIk_Leg_Setup_Controller[0])
 
             # add additional setup
-            if pm.rowLayout('ik_ball_layout', q=True, enable=True):
+            # if pm.checkBox('Toe_Wiggle_Exists', q=True, enable=True):
+            if pm.rowColumnLayout('ik_ball_layout', q=True, enable=True):
                 ad_additional_setup(Upper_Limb_Joint_Define,
                                     Middle_Limb_Joint_Define, Lower_Limb_Joint_Define,
                                     End_Limb_Joint_Define,
@@ -1163,6 +1181,9 @@ def ad_delete_setup(*args):
 
                                       'Snapping_Position',
                                       'Ik_Snap_Checkbox',
+                                      'Ik_Snap_Checkbox',
+                                      'Toe_Wiggle_Exists',
+
                                       'Translate_Upper_Limb_Ik_Ctrl', 'Translate_Pole_Vector_Ik_Ctrl',
                                       'Translate_Lower_Limb_Ik_Ctrl', 'Translate_End_Limb_Ik_Ctrl',
                                       'Rotate_Upper_Limb_Ik_Ctrl', 'Rotate_Pole_Vector_Ik_Ctrl',

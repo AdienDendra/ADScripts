@@ -15,7 +15,7 @@ CONTACT:
 
 VERSION:
     1.0 - 18 October 2020 - Initial Release
-    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl;Renaming joint guide;Deleting AD_MEASURE node fixed
+    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl; Renaming joint guide; Deleting AD_MEASURE node fixed; Adding toe wiggle exists
 
 LICENSE:
     Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
@@ -343,9 +343,9 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
 
     if pm.listConnections(selection + '.' + 'Upper_Limb_Ik_Ctrl', s=1):
         pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
-        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0] - ad_localSpace_pivot_query(upper_limb_ctrl)[0],
-                                           xform_upper_limb_pos[1] - ad_localSpace_pivot_query(upper_limb_ctrl)[1],
-                                           xform_upper_limb_pos[2] - ad_localSpace_pivot_query(upper_limb_ctrl)[2]))
+        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0] - ad_localSpace_pivot_query(upper_limb_ctrl[0])[0],
+                                           xform_upper_limb_pos[1] - ad_localSpace_pivot_query(upper_limb_ctrl[0])[1],
+                                           xform_upper_limb_pos[2] - ad_localSpace_pivot_query(upper_limb_ctrl[0])[2]))
 
     # set lower position
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
@@ -356,19 +356,22 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
     # condition leg true
     if leg:
         if not pm.listConnections(selection + '.' + 'End_Limb_Ik_Ctrl', s=1):
-            xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
-            get_reverse_wiggle = pm.getAttr(fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value')
+            if pm.getAttr(selection + '.' + 'Toe_Wiggle_Exists'):
+                xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
+                get_reverse_wiggle = pm.getAttr(fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value')
 
-            if get_reverse_wiggle:
-                pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
+                if get_reverse_wiggle:
+                    pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
+                else:
+                    pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
             else:
-                pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
+                pass
         else:
             xform_end_limb_pos = pm.xform(end_limb_ik_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_ik_jnt, ws=1, q=1, ro=1)
 
-            pm.xform((end_limb_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
-            pm.xform((end_limb_ctrl), ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
+            pm.xform(end_limb_ctrl, ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
+            pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
                                                xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
                                                xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
 

@@ -15,7 +15,7 @@ CONTACT:
 
 VERSION:
     1.0 - 18 October 2020 - Initial Release
-    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl;Renaming joint guide;Deleting AD_MEASURE node fixed
+    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl; Renaming joint guide; Deleting AD_MEASURE node fixed; Adding toe wiggle exists
 
 LICENSE:
     Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
@@ -292,20 +292,15 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
                 pm.setAttr(fk_ctrl_mid_stretch[0] + '.' + middle_stretch_attr, length_factor_lower_jnt)
 
     else:
-        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
-        pm.xform(middle_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0], xform_middle_limb_pos[1], xform_middle_limb_pos[2]))
-        pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
-
-
-        # pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0] - ad_localSpace_pivot_query(upper_limb_ctrl)[0],
-        #                                    xform_upper_limb_pos[1] - ad_localSpace_pivot_query(upper_limb_ctrl)[1],
-        #                                    xform_upper_limb_pos[2] - ad_localSpace_pivot_query(upper_limb_ctrl)[2]))
-        # pm.xform(middle_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0] - ad_localSpace_pivot_query(middle_limb_ctrl)[0],
-        #                                     xform_middle_limb_pos[1] - ad_localSpace_pivot_query(middle_limb_ctrl)[1],
-        #                                     xform_middle_limb_pos[2] - ad_localSpace_pivot_query(middle_limb_ctrl)[2]))
-        # pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] - ad_localSpace_pivot_query(lower_limb_ctrl)[0],
-        #                                    xform_low_limb_pos[1] - ad_localSpace_pivot_query(lower_limb_ctrl)[1],
-        #                                    xform_low_limb_pos[2] - ad_localSpace_pivot_query(lower_limb_ctrl)[2]))
+        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0] - ad_localSpace_pivot_query(upper_limb_ctrl)[0],
+                                           xform_upper_limb_pos[1] - ad_localSpace_pivot_query(upper_limb_ctrl)[1],
+                                           xform_upper_limb_pos[2] - ad_localSpace_pivot_query(upper_limb_ctrl)[2]))
+        pm.xform(middle_limb_ctrl, ws=1, t=(xform_middle_limb_pos[0] - ad_localSpace_pivot_query(middle_limb_ctrl)[0],
+                                            xform_middle_limb_pos[1] - ad_localSpace_pivot_query(middle_limb_ctrl)[1],
+                                            xform_middle_limb_pos[2] - ad_localSpace_pivot_query(middle_limb_ctrl)[2]))
+        pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] - ad_localSpace_pivot_query(lower_limb_ctrl)[0],
+                                           xform_low_limb_pos[1] - ad_localSpace_pivot_query(lower_limb_ctrl)[1],
+                                           xform_low_limb_pos[2] - ad_localSpace_pivot_query(lower_limb_ctrl)[2]))
 
     # exeption for the leg
     if leg:
@@ -313,11 +308,9 @@ def ad_ik_to_fk_setup(upper_limb_fk_jnt, middle_limb_fk_jnt, lower_limb_fk_jnt, 
         xform_end_limb_rot = pm.xform(end_limb_fk_jnt, ws=1, q=1, ro=1)
         xform_end_limb_pos = pm.xform(end_limb_fk_jnt, ws=1, q=1, t=1)
         pm.xform(end_limb_ctrl, ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
-        pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
-
-        # pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
-        #                                  xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
-        #                                  xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
+        pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
+                                         xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
+                                         xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
 
 
 def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
@@ -350,50 +343,45 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
 
     if pm.listConnections(selection + '.' + 'Upper_Limb_Ik_Ctrl', s=1):
         pm.xform(upper_limb_ctrl, ws=1, ro=(xform_upper_limb_rot[0], xform_upper_limb_rot[1], xform_upper_limb_rot[2]))
-        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0], xform_upper_limb_pos[1], xform_upper_limb_pos[2]))
-
-        # pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0] - ad_localSpace_pivot_query(upper_limb_ctrl)[0],
-        #                                    xform_upper_limb_pos[1] - ad_localSpace_pivot_query(upper_limb_ctrl)[1],
-        #                                    xform_upper_limb_pos[2] - ad_localSpace_pivot_query(upper_limb_ctrl)[2]))
+        pm.xform(upper_limb_ctrl, ws=1, t=(xform_upper_limb_pos[0] - ad_localSpace_pivot_query(upper_limb_ctrl[0])[0],
+                                           xform_upper_limb_pos[1] - ad_localSpace_pivot_query(upper_limb_ctrl[0])[1],
+                                           xform_upper_limb_pos[2] - ad_localSpace_pivot_query(upper_limb_ctrl[0])[2]))
 
     # set lower position
     pm.xform(lower_limb_ctrl, ws=1, ro=(xform_low_limb_rot[0], xform_low_limb_rot[1], xform_low_limb_rot[2]))
-    pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0], xform_low_limb_pos[1], xform_low_limb_pos[2]))
-
-    # pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] - ad_localSpace_pivot_query(lower_limb_ctrl)[0],
-    #                                    xform_low_limb_pos[1] - ad_localSpace_pivot_query(lower_limb_ctrl)[1],
-    #                                    xform_low_limb_pos[2] - ad_localSpace_pivot_query(lower_limb_ctrl)[2]))
+    pm.xform(lower_limb_ctrl, ws=1, t=(xform_low_limb_pos[0] - ad_localSpace_pivot_query(lower_limb_ctrl)[0],
+                                       xform_low_limb_pos[1] - ad_localSpace_pivot_query(lower_limb_ctrl)[1],
+                                       xform_low_limb_pos[2] - ad_localSpace_pivot_query(lower_limb_ctrl)[2]))
 
     # condition leg true
     if leg:
         if not pm.listConnections(selection + '.' + 'End_Limb_Ik_Ctrl', s=1):
-            xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
-            get_reverse_wiggle = pm.getAttr(fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value')
+            if pm.getAttr(selection + '.' + 'Toe_Wiggle_Exists'):
+                xform_end_limb_rot = pm.getAttr(end_limb_jnt + '.' + rotation_wiggle)
+                get_reverse_wiggle = pm.getAttr(fkik_setup_controller[0] + '.' + 'Reverse_Wiggle_Value')
 
-            if get_reverse_wiggle:
-                pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
+                if get_reverse_wiggle:
+                    pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), (-1 * xform_end_limb_rot))
+                else:
+                    pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
             else:
-                pm.setAttr('%s.%s' % (ik_toe_wiggle_ctrl, ik_toe_wiggle_attr_name), xform_end_limb_rot)
+                pass
         else:
             xform_end_limb_pos = pm.xform(end_limb_ik_jnt, ws=1, q=1, t=1)
             xform_end_limb_rot = pm.xform(end_limb_ik_jnt, ws=1, q=1, ro=1)
 
-            pm.xform((end_limb_ctrl), ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
-            pm.xform((end_limb_ctrl), ws=1, t=(xform_end_limb_pos[0], xform_end_limb_pos[1], xform_end_limb_pos[2]))
-
-            # pm.xform((end_limb_ctrl), ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
-            #                                    xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
-            #                                    xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
+            pm.xform(end_limb_ctrl, ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
+            pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
+                                               xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
+                                               xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
 
     # for pole vector position
     get_poleVector_position = ad_get_pole_vector_position(xform_upper_limb_pos, xform_middle_limb_pos,
                                                           xform_low_limb_pos)
 
-    pm.move((get_poleVector_position.x, get_poleVector_position.y, get_poleVector_position.z, polevector_limb_ctrl))
-
-    # pm.move((get_poleVector_position.x - ad_localSpace_pivot_query(polevector_limb_ctrl)[0],
-    #          get_poleVector_position.y - ad_localSpace_pivot_query(polevector_limb_ctrl)[1],
-    #          get_poleVector_position.z - ad_localSpace_pivot_query(polevector_limb_ctrl)[2], polevector_limb_ctrl))
+    pm.move((get_poleVector_position.x - ad_localSpace_pivot_query(polevector_limb_ctrl)[0],
+             get_poleVector_position.y - ad_localSpace_pivot_query(polevector_limb_ctrl)[1],
+             get_poleVector_position.z - ad_localSpace_pivot_query(polevector_limb_ctrl)[2], polevector_limb_ctrl))
 
     # calculate for stretching and matching the pole vector controller
     total_value_default = pm.getAttr('%s.Joint_Distance_Value_Static' % selection)
