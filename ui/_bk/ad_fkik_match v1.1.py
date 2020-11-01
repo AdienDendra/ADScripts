@@ -51,7 +51,9 @@ def ad_match_fkik_ui():
                               cl2=('left', 'center'),
                               columnAttach=[(1, 'both', 1 * percentage), (2, 'both', 1 * percentage)], adj=True):
                 pm.text(l='Adien Dendra | 11/2020 | Ver. 1.1')
-                pm.text(l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">detail to use>> </a>', hl=True)
+                pm.text(
+                    l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">detail to use>> </a>',
+                    hl=True)
             pm.separator(h=2, st="single")
 
     pm.showWindow()
@@ -372,8 +374,8 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
 
             pm.xform(end_limb_ctrl, ws=1, ro=(xform_end_limb_rot[0], xform_end_limb_rot[1], xform_end_limb_rot[2]))
             pm.xform(end_limb_ctrl, ws=1, t=(xform_end_limb_pos[0] - ad_localSpace_pivot_query(end_limb_ctrl)[0],
-                                               xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
-                                               xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
+                                             xform_end_limb_pos[1] - ad_localSpace_pivot_query(end_limb_ctrl)[1],
+                                             xform_end_limb_pos[2] - ad_localSpace_pivot_query(end_limb_ctrl)[2]))
 
     # for pole vector position
     get_poleVector_position = ad_get_pole_vector_position(xform_upper_limb_pos, xform_middle_limb_pos,
@@ -393,7 +395,6 @@ def ad_fk_to_ik_setup(upper_limb_ik_jnt, middle_limb_ik_jnt, lower_limb_ik_jnt,
         ik_snap_attr_name = pm.getAttr(selection + '.' + 'Ik_Snap_Attr_Name')
         ik_snap_on = pm.getAttr(selection + '.' + 'Ik_Snap_On')
         ik_snap_off = pm.getAttr(selection + '.' + 'Ik_Snap_Off')
-        # if abs(total_current_value - total_value_default) > 0.01:
         if abs(total_current_value) > total_value_default:
             ad_ik_snap_set_on(polevector_limb_ctrl, xform_middle_limb_pos, ik_snap_ctrl_name,
                               ik_snap_attr_name, ik_snap_on)
@@ -422,7 +423,8 @@ def ad_get_pole_vector_position(root_pos, mid_pos, end_pos):
 
     return pole_vector_position
 
+
 def ad_localSpace_pivot_query(controller):
-    rotatePivot= pm.getAttr(controller+'.rotatePivot')
+    rotatePivot = pm.getAttr(controller + '.rotatePivot')
 
     return rotatePivot

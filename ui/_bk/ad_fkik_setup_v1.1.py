@@ -180,7 +180,7 @@ def ad_setup_fkik_ui():
                                                     (4, 13 * percentage)]):
                             # controller
                             pm.textFieldButtonGrp('Ik_Snap_Ctrl_Name', l="Elbow/Knee Snap Ctrl:", cal=(1, "right"),
-                                                  cw3=(26.5* percentage, 16 * percentage, 9 * percentage),
+                                                  cw3=(26.5 * percentage, 16 * percentage, 9 * percentage),
                                                   cat=[(1, 'right', 1), (2, 'both', 5)],
                                                   bl="<<",
                                                   bc=partial(ad_adding_object_sel_to_textfield, 'Ik_Snap_Ctrl_Name'),
@@ -203,15 +203,13 @@ def ad_setup_fkik_ui():
 
                     # condition if end limb ik controller off. query toe wiggle controller name and toe wiggle attribute name
                     with pm.rowLayout('wiggle_layout', nc=2,
-                                            cw=[(1, 3 * percentage), (2, 95 * percentage)]):
-
+                                      cw=[(1, 3 * percentage), (2, 95 * percentage)]):
                         pm.checkBox('Toe_Wiggle_Exists', label='',
-                                    cc=partial(ad_enabling_disabling_ui, ['ik_ball_layout','ik_ball_rotation_layout']),
+                                    cc=partial(ad_enabling_disabling_ui, ['ik_ball_layout', 'ik_ball_rotation_layout']),
                                     value=True)
                         with pm.rowColumnLayout('ik_ball_layout', nc=3,
-                                          columnAttach=[(1, 'left', 2), (2, 'left', 1 * percentage)],
-                                          cw=[(1,49 * percentage), (2, 30 * percentage)]):
-
+                                                columnAttach=[(1, 'left', 2), (2, 'left', 1 * percentage)],
+                                                cw=[(1, 49 * percentage), (2, 30 * percentage)]):
                             # controller
                             pm.textFieldButtonGrp('Ik_Toe_Wiggle_Ctrl', l="Ik Ball Toe Wiggle Ctrl:",
                                                   cal=(1, "right"),
@@ -225,15 +223,16 @@ def ad_setup_fkik_ui():
                                             cw2=(14 * percentage, 14 * percentage), tx='toeWiggle')
 
                     with pm.rowLayout('wiggle_rotation_layout', nc=2,
-                                            cw=[(1, 3 * percentage), (2, 95 * percentage)]):
+                                      cw=[(1, 3 * percentage), (2, 95 * percentage)]):
                         pm.text(l='')
                         # radio button query toe wiggle rotation include reverse the value
                         with pm.rowColumnLayout('ik_ball_rotation_layout', nc=5,
-                                          columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
-                                                        (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
-                                                        (5, 'left', 1 * percentage)],
-                                          cw=[(1, 26 * percentage), (2, 18 * percentage), (3, 18 * percentage), (4, 17 * percentage),
-                                                (5, 16 * percentage)]):
+                                                columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                              (3, 'left', 1 * percentage), (4, 'left', 1 * percentage),
+                                                              (5, 'left', 1 * percentage)],
+                                                cw=[(1, 26 * percentage), (2, 18 * percentage), (3, 18 * percentage),
+                                                    (4, 17 * percentage),
+                                                    (5, 16 * percentage)]):
                             # ratio rotation
                             pm.text('Rotation_Toe_Wiggle', l="Rotation Toe Wiggle:")
                             radio_collection_rotate_ball_ik_ctrl = pm.radioCollection()
@@ -241,7 +240,8 @@ def ad_setup_fkik_ui():
                                                                   onCommand=lambda x: ad_on_selection_rotate_button(1))
                             pm.radioButton(label='Rotate Y', onCommand=lambda x: ad_on_selection_rotate_button(2))
                             pm.radioButton(label='Rotate Z', onCommand=lambda x: ad_on_selection_rotate_button(3))
-                            pm.radioCollection(radio_collection_rotate_ball_ik_ctrl, edit=True, select=ball_ik_ctrl_rotateX)
+                            pm.radioCollection(radio_collection_rotate_ball_ik_ctrl, edit=True,
+                                               select=ball_ik_ctrl_rotateX)
 
                             # reverse checkbox
                             pm.checkBox('Reverse_Wiggle_Value', l='Reverse')
@@ -335,8 +335,10 @@ def ad_setup_fkik_ui():
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
                                                 (3, 'both', 2 * percentage)]):
                     pm.text(l='Adien Dendra | 11/2020', al='left')
-                    pm.text(l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>', hl=True,
-                            al='center')
+                    pm.text(
+                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        hl=True,
+                        al='center')
                     pm.text(l='Version 1.1', al='right')
 
                 pm.separator(h=1, st="none", w=layout)
@@ -765,51 +767,51 @@ def ad_listing_joint_guide(prefix, Upper_Limb_Fk_Ctrl_Define, Upper_Limb_Ik_Ctrl
                            End_Limb_Fk_Ctrl_Define=None, End_Limb_Ik_Ctrl_Define=None
                            ):
     upperLimb_fk_AD_gde = ad_joint_guide(name="upper%s_Fk" % prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],
-                                          object_joint=Upper_Limb_Joint_Define[0])
+                                         fk_or_ik_controller=Upper_Limb_Fk_Ctrl_Define[0],
+                                         object_joint=Upper_Limb_Joint_Define[0])
     upperLimb_fk_AD_name_box = 'Upper_Limb_Fk_Guide_Joint'
 
     upperLimb_ik_AD_gde = ad_joint_guide(name="upper%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
-                                          object_joint=Upper_Limb_Joint_Define[0])
+                                         fk_or_ik_controller=Upper_Limb_Ik_Ctrl_Define[0],
+                                         object_joint=Upper_Limb_Joint_Define[0])
     upperLimb_ik_AD_name_box = 'Upper_Limb_Ik_Guide_Joint'
 
     middleLimb_fk_AD_gde = ad_joint_guide(name="middle%s_Fk" % prefix, side=ad_action_position_radio_button(),
-                                           fk_or_ik_controller=Middle_Limb_Fk_Ctrl_Define[0],
-                                           object_joint=Middle_Limb_Joint_Define[0])
+                                          fk_or_ik_controller=Middle_Limb_Fk_Ctrl_Define[0],
+                                          object_joint=Middle_Limb_Joint_Define[0])
     middleLimb_fk_AD_name_box = 'Middle_Limb_Fk_Guide_Joint'
 
     middleLimb_ik_AD_gde = ad_joint_guide(name="middle%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                           fk_or_ik_controller=Middle_Limb_Ik_Ctrl_Define[0],
-                                           object_joint=Middle_Limb_Joint_Define[0])
+                                          fk_or_ik_controller=Middle_Limb_Ik_Ctrl_Define[0],
+                                          object_joint=Middle_Limb_Joint_Define[0])
     middleLimb_ik_AD_name_box = 'Middle_Limb_Ik_Guide_Joint'
 
     lowerLimb_fk_AD_gde = ad_joint_guide(name="lower%s_Fk" % prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Lower_Limb_Fk_Ctrl_Define[0],
-                                          object_joint=Lower_Limb_Joint_Define[0])
+                                         fk_or_ik_controller=Lower_Limb_Fk_Ctrl_Define[0],
+                                         object_joint=Lower_Limb_Joint_Define[0])
     lowerLimb_fk_AD_name_box = 'Lower_Limb_Fk_Guide_Joint'
 
     lowerLimb_ik_AD_gde = ad_joint_guide(name="lower%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                          fk_or_ik_controller=Lower_Limb_Ik_Ctrl_Define[0],
-                                          object_joint=Lower_Limb_Joint_Define[0])
+                                         fk_or_ik_controller=Lower_Limb_Ik_Ctrl_Define[0],
+                                         object_joint=Lower_Limb_Joint_Define[0])
     lowerLimb_ik_AD_name_box = 'Lower_Limb_Ik_Guide_Joint'
 
     if leg:
         endLimb_fk_AD_gde = ad_joint_guide(name="end%s_Fk" % prefix, side=ad_action_position_radio_button(),
-                                            fk_or_ik_controller=End_Limb_Fk_Ctrl_Define[0],
-                                            object_joint=End_Limb_Joint_Define[0])
+                                           fk_or_ik_controller=End_Limb_Fk_Ctrl_Define[0],
+                                           object_joint=End_Limb_Joint_Define[0])
         endLimb_fk_AD_name_box = 'End_Limb_Fk_Guide_Joint'
 
         if End_Limb_Ik_Ctrl_Define[0]:
             endLimb_ik_AD_gde = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                                fk_or_ik_controller=End_Limb_Ik_Ctrl_Define[0],
-                                                object_joint=End_Limb_Joint_Define[0])
+                                               fk_or_ik_controller=End_Limb_Ik_Ctrl_Define[0],
+                                               object_joint=End_Limb_Joint_Define[0])
             endLimb_ik_AD_name_box = 'End_Limb_Ik_Guide_Joint'
 
         else:
             endLimb_ik_AD_gde = ad_joint_guide(name="end%s_Ik" % prefix, side=ad_action_position_radio_button(),
-                                                fk_or_ik_controller=End_Limb_Joint_Define[0],
-                                                object_joint=End_Limb_Joint_Define[0])
+                                               fk_or_ik_controller=End_Limb_Joint_Define[0],
+                                               object_joint=End_Limb_Joint_Define[0])
             endLimb_ik_AD_name_box = 'End_Limb_Ik_Guide_Joint'
 
         return {'upperLimb_fk_AD_gde': upperLimb_fk_AD_gde,
