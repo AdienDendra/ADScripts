@@ -51,8 +51,9 @@ def ad_setup_fkik_ui():
                                             cw=[(1, 5 * percentage), (2, 93 * percentage)], ca=True):
                         # radio button fkik arm or leg controller
                         direction_control = pm.radioCollection()
-                        pm.radioButton('arm_setup_controller', label='', cc=partial(ad_enabling_disabling_ui,
+                        pm.radioButton('arm_setup_controller', label='', cc=partial(ad_enabling_disabling_toeWiggle_arm_setup_ctrl_ui,
                                                                                     ['FkIk_Arm_Setup_Controller',
+                                                                                     'Toe_Wiggle_Exists',
                                                                                      'ik_ball_rotation_layout',
                                                                                      'ik_ball_layout']))
                         # fkik arm controller text field
@@ -462,6 +463,24 @@ def ad_enabling_disabling_ui(object, value, *args):
         else:
             pass
 
+def ad_enabling_disabling_toeWiggle_arm_setup_ctrl_ui(object, value, *args):
+    # query for enabling and disabling layout
+    for item in object:
+        objectType = pm.objectTypeUI(item)
+        if objectType == 'rowGroupLayout':
+            pm.textFieldButtonGrp(item, edit=True, enable=value, tx='')
+        elif objectType == 'checkBox':
+            if value:
+                pm.checkBox(item, edit=True, enable=False)
+            else:
+                pm.checkBox(item, edit=True, enable=True)
+        elif objectType == 'rowColumnLayout':
+            if value:
+                pm.rowColumnLayout(item, edit=True, enable=False)
+            else:
+                pm.rowColumnLayout(item, edit=True, enable=True)
+        else:
+            pass
 
 def ad_clearing_all_text_field(*args):
     # clearing object text field
