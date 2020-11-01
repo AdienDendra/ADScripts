@@ -1147,7 +1147,8 @@ def ad_delete_setup(*args):
                                       'Upper_Scale_Aim_Joint', 'Middle_Scale_Aim_Joint',
 
                                       'Joint_Distance_Value_Dynamic',
-                                      'Joint_Distance_Value_Static', 'Distance_Node',
+                                      'Joint_Distance_Value_Static',
+                                      'Distance_Node',
 
                                       'Upper_Limb_Fk_Ctrl', 'Middle_Limb_Fk_Ctrl', 'Lower_Limb_Fk_Ctrl',
                                       'Upper_Limb_Ik_Ctrl', 'Pole_Vector_Ik_Ctrl', 'Lower_Limb_Ik_Ctrl',
