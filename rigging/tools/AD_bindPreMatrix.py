@@ -44,14 +44,10 @@ def create_bpm(Fk=None,
 
         # for obj in joints:
         list_relatives_jnt = mc.listRelatives(joints, f=1, ad=1)
-        for i in list_relatives_jnt:
+        for item in list_relatives_jnt:
             # remove empty list
-            remove_empty_list = list(filter(None, (i.split('|'))))
-            for o in remove_empty_list:
+            list_joints = list(filter(None, (item.split('|'))))
 
-                # appending all the items
-                if o not in list_joints:
-                    list_joints.append(o)
 
         ac.create_controller(object_list=list_joints,
                              groups_ctrl=['Zro', 'Offset'],
@@ -64,10 +60,10 @@ def create_bpm(Fk=None,
 
         create_grp = au.group_object_outside('FolFk', list_joints)
 
-        for obj in list_joints:
+        for object_fol, item_grp in zip (list_joints, create_grp):
 
             # sorting the full path of object then rid off []
-            list_relatives_obj = mc.listRelatives(obj, ap=1, f=1)[0]
+            list_relatives_obj = mc.listRelatives(object_fol, ap=1, f=1)[0]
 
             # spliting the object with | and take out Zro grp which is on the -4 position
             split_object = list_relatives_obj.split('|')[-3]
@@ -75,16 +71,29 @@ def create_bpm(Fk=None,
             # appending all of the object this is purpose for enumerate later
             ctrls.append(split_object)
 
-            follicles = au.follicle_set(obj, main_mesh, connect_follicle=connect_mesh)
+            follicles = au.follicle_set(object_fol, main_mesh, connect_follicle=connect_mesh)
 
             follicle.append(follicles['folTrans'])
+
+            # check the attribute root
+            # if exist then deleted
+            if mc.objExists('%s.root' % object_fol):
+                mc.deleteAttr('%s.root' % object_fol)
+            else:
+                # add the attr root and message
+                au.add_attr_message(object_fol, item_grp)
+
+            # connected the 'create group' to bind pre matrix
+            mc.connectAttr('%s.worldInverseMatrix[0]' % item_grp,
+                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
+
 
             if scale_object:
                 mc.scaleConstraint(scale_object, follicles['folTrans'])
 
             mc.setAttr(follicles['folShape'] + '.lodVisibility', 0)
 
-            mc.setAttr(obj + '.drawStyle', 2)
+            mc.setAttr(object_fol + '.drawStyle', 2)
 
             au.lock_hide_attr(['t', 'r', 's'], follicles['folTrans'])
 
@@ -96,26 +105,10 @@ def create_bpm(Fk=None,
 
             mc.parent(follicles['folTrans'], follicle_grp)
 
-        for i, obj in zip(create_grp, list_joints):
-            # check the attribute root
-            # if exist then deleted
-            if mc.objExists('%s.root' % obj):
-                mc.deleteAttr('%s.root' % obj)
-            else:
-                continue
+        for item, (object_fol, object_grp) in enumerate(zip(follicle, create_grp)):
+            mc.parentConstraint(object_fol, create_grp[item], mo=1)
+            au.connect_attr_object(object_grp, ctrls[item])
 
-            # add the attr root and message
-            au.add_attr_message(obj, i)
-
-            # connected the 'create group' to bind pre matrix
-            mc.connectAttr('%s.worldInverseMatrix[0]' % i,
-                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(obj)))
-
-        for i, item in enumerate(follicle):
-            mc.parentConstraint(item, create_grp[i], mo=1)
-
-        for i, item in enumerate(create_grp):
-            au.connect_attr_object(item, ctrls[i])
 
         list_relatives_jnt = mc.listRelatives(base_joint, p=True)
         if list_relatives_jnt == None:
@@ -136,17 +129,9 @@ def create_bpm(Fk=None,
 
         mc.select(cl=1)
 
-    if not Fk:
+    else:
 
         mc.setAttr(main_mesh + '.visibility', 0)
-
-        ac.create_controller(groups_ctrl=['Zro', 'BPM', 'Offset'],
-                             ctrl_color=ctrl_color,
-                             shape=shape,
-                             ctrl_size=ctrl_size,
-                             connection=['parent'],
-                             lock_channels=[]
-                             )
 
         all_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'AllBPM', 'grp'))
         follicle_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'ControllerBPM', 'grp'))
@@ -156,24 +141,34 @@ def create_bpm(Fk=None,
         if list_relatives_allGrp == None:
             mc.parent(follicle_grp, all_grp)
 
+        ac.create_controller(object_list=joints,
+                             groups_ctrl=['Zro', 'BPM', 'Offset'],
+                             ctrl_color=ctrl_color,
+                             shape=shape,
+                             ctrl_size=ctrl_size,
+                             connection=['parent'],
+                             lock_channels=[]
+                             )
+
+
         foll_append = []
 
-        for obj in joints:
-            # create ctrl
+        for object_fol in joints:
 
             # create follicle
-            follicles = au.follicle_set(obj, main_mesh, connect_follicle=connect_mesh)
+            follicles = au.follicle_set(object_fol, main_mesh, connect_follicle=connect_mesh)
 
             foll_append.append(follicles['folTrans'])
 
             # sort the list full path object then rid off []
-            list_relatives_obj = mc.listRelatives(obj, ap=1, f=1)[0]
+            list_relatives_obj = mc.listRelatives(object_fol, ap=1, f=1)[0]
 
             # spliting object |
-            split_object = list_relatives_obj.split('|')
+            split_object = filter(None, list_relatives_obj.split('|'))
+            print split_object
 
             # parent the object to follicle
-            mc.parent(split_object[1], follicles['folTrans'])
+            mc.parent(split_object[0], follicles['folTrans'])
 
             # for scl in scaleObj:
             if scale_object:
@@ -181,7 +176,7 @@ def create_bpm(Fk=None,
 
             mc.setAttr(follicles['folShape'] + '.lodVisibility', 0)
 
-            mc.setAttr(obj + '.drawStyle', 2)
+            mc.setAttr(object_fol + '.drawStyle', 2)
 
             au.lock_hide_attr_object(follicles['folTrans'], 'v')
 
@@ -193,9 +188,9 @@ def create_bpm(Fk=None,
 
             au.lock_attr(['t', 'r', 's'], split_object[2])
 
-            mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(obj),
+            mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(object_fol),
                            '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(obj)))
+                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
 
             mc.parent(follicles['folTrans'], follicle_grp)
 
@@ -224,39 +219,43 @@ def reskin_mesh_bpm(Fk=None,
     :param base_joint: str, joint module of bpm
     :return: None
     """
-
-    if not Fk:
-        for obj in joints:
-            # listing the connection of group BPM
-            list_connection = mc.listConnections('%s.worldInverseMatrix[0]' % array_bpm_folder(obj), p=1)
-
-            # disconnect if its still connected
-            if list_connection:
-                mc.disconnectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(obj), list_connection[0])
-            else:
-                continue
-
-            # connect the bpm transform to skin bind pre matrix
-            mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(obj),
-                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(obj)))
-
     if Fk:
         grp_driver = mc.listConnections(joints, s=True, type='transform')
+        print grp_driver
 
-        for i, obj in zip(grp_driver, joints):
+        for group, joint in zip(grp_driver, joints):
             # listing the connection of group BPM
-            list_connection = mc.listConnections('%s.worldInverseMatrix[0]' % i, p=1)
+            list_connection = mc.listConnections('%s.worldInverseMatrix[0]' % group, p=1)
+            print list_connection
+            # disconnect if its still connected
+            if list_connection:
+                mc.disconnectAttr('%s.worldInverseMatrix[0]' % group, list_connection[0])
+                # connect the bpm transform to skin bind pre matrix
+                mc.connectAttr('%s.worldInverseMatrix[0]' % group,
+                               '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
+
+            else:
+                # connect the bpm transform to skin bind pre matrix
+                mc.connectAttr('%s.worldInverseMatrix[0]' % group,
+                               '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
+
+    else:
+        for joint in joints:
+            # listing the connection of group BPM
+            list_connection = mc.listConnections('%s.worldInverseMatrix[0]' % array_bpm_folder(joint), p=1)
 
             # disconnect if its still connected
             if list_connection:
-                mc.disconnectAttr('%s.worldInverseMatrix[0]' % i, list_connection[0])
+                mc.disconnectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(joint), list_connection[0])
+                # connect the bpm transform to skin bind pre matrix
+                mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(joint),
+                               '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
 
             else:
-                continue
+                # connect the bpm transform to skin bind pre matrix
+                mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(joint),
+                               '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
 
-            # connect the bpm transform to skin bind pre matrix
-            mc.connectAttr('%s.worldInverseMatrix[0]' % i,
-                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(obj)))
 
     # re-conncet module joint
     list_connetion_base = mc.listConnections('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint))
