@@ -1,4 +1,5 @@
 import re
+from string import digits
 
 import maya.cmds as mc
 import pymel.core as pm
@@ -602,6 +603,7 @@ def group_object_outside(add_suffix, obj_base):
 
         if i > 0:
             parent_object(grps[i - 1], grps[i])
+
     return grps
 
 

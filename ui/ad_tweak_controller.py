@@ -1,8 +1,10 @@
 from __builtin__ import reload
 from functools import partial
+from string import digits
 
-import maya.cmds as mc
+# import maya.cmds as mc
 import pymel.core as pm
+import re
 
 from rigging.tools import AD_utils as au, AD_controller as ac
 
@@ -12,8 +14,7 @@ reload(au)
 layout = 400
 percentage = 0.01 * layout
 on_selector = 0
-on_selector_rotate = 0
-on_stretch = 0
+# on_connection_select = 0
 
 
 def ad_show_ui():
@@ -41,7 +42,7 @@ def ad_show_ui():
                                    onCommand=lambda x: ad_on_selection_button(2))
                     pm.radioCollection(method_radio_button, edit=True, select=method_joint_hierarchy)
 
-                ad_defining_object_text_field(define_object='List_Joint', label="List Joint:", multiple_selection=True)
+                ad_defining_object_text_field(define_object='List_Tweak_Joint', label="List Tweak Joint:", multiple_selection=True)
 
                 ad_defining_object_text_field(define_object='Tweak_Mesh', label="Tweak Mesh:")
 
@@ -52,26 +53,26 @@ def ad_show_ui():
                                         co=(1 * percentage, 'both', 1 * percentage),
                                         cw=[(1, 3 * percentage), (2, 93 * percentage)]):
                     pm.checkBox(label='',
-                                # cc=partial(ad_enabling_disabling_ui, ['Upper_Limb_Ik_Ctrl']),
-                                value=True)
+                                cc=partial(ad_enabling_disabling_ui, ['Scale_Connection']),
+                                value=False)
                     ad_defining_object_text_field(define_object='Scale_Connection', label="Scale Connection:",
-                                                  add_feature=True)
+                                                  add_feature=True, enable=False)
 
-                with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
-                                                      (3, 'left', 1 * percentage), (4, 'left', 1 * percentage)],
-                                  cw4=(30 * percentage, 18 * percentage, 18 * percentage, 20 * percentage)):
-                    pm.text('Constraint:')
-                    direction_control_translate = pm.radioCollection()
-                    direction_translateX = pm.radioButton(label='Point',
-                                                          # onCommand=lambda x: ad_on_selection_button(1)
-                                                          )
-                    pm.radioButton(label='Orient',
-                                   # onCommand=lambda x: ad_on_selection_button(2)
-                                   )
-                    pm.radioButton(label='Parent',
-                                   # onCommand=lambda x: ad_on_selection_button(3)
-                                   )
-                    pm.radioCollection(direction_control_translate, edit=True, select=direction_translateX)
+                # with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                #                                       (3, 'left', 1 * percentage), (4, 'left', 1 * percentage)],
+                #                   cw4=(30 * percentage, 18 * percentage, 18 * percentage, 20 * percentage)):
+                #     pm.text('Constraint:')
+                #     connection_tweak_controller = pm.radioCollection()
+                #     point_constraint = pm.radioButton(label='Point',
+                #                                           onCommand=lambda x: ad_on_connection_button(1)
+                #                                           )
+                #     pm.radioButton(label='Orient',
+                #                    onCommand=lambda x: ad_on_connection_button(2)
+                #                    )
+                #     pm.radioButton(label='Parent',
+                #                    onCommand=lambda x: ad_on_connection_button(3)
+                #                    )
+                #     pm.radioCollection(connection_tweak_controller, edit=True, select=point_constraint)
 
                 with pm.rowLayout(nc=2, cw2=(48 * percentage, 48 * percentage), cl2=('center', 'left'),
                                   columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
@@ -134,6 +135,14 @@ def ad_show_ui():
         pm.setParent(u=True)
     pm.showWindow()
 
+def ad_enabling_disabling_ui(object, value, *args):
+    # query for enabling and disabling layout
+    for item in object:
+        objectType = pm.objectTypeUI(item)
+        if objectType == 'rowGroupLayout':
+            pm.textFieldButtonGrp(item, edit=True, enable=value, tx='')
+        else:
+            pass
 
 def ad_adding_object_sel_to_textfield(text_input, *args):
     # elect and add object
@@ -150,19 +159,16 @@ def ad_adding_multiple_object_sel_to_texfield(text_input, *args):
     list_joint = (','.join([item.name() for item in select]))
     pm.textFieldButtonGrp(text_input, e=True, tx=str(list_joint))
 
-    # list = []
-    # for item in select:
-    #     list.append(str(item))
-    # object = str(list)
-    # replacing = object.replace('[', '').replace(']', '').replace("'", '').replace(" ", '')
-
 
 def ad_on_selection_button(on):
     # save the current shape selection into global variable
     global on_selector
     on_selector = on
-    print on_selector
 
+# def ad_on_connection_button(on):
+#     # save the current shape selection into global variable
+#     global on_connection_select
+#     on_connection_select = on
 
 def ad_hierarchy_joint(*args):
     hierarchy = []
@@ -177,7 +183,20 @@ def ad_hierarchy_joint(*args):
 
     return hierarchy
 
-
+# def ad_connection_joint(*args):
+#     connection = []
+#     # query object with value on shape selector status
+#
+#     if on_connection_select == 1:
+#         connection = ['transConn']
+#     elif on_connection_select == 2:
+#         connection = ['rotateConn']
+#     elif on_connection_select == 3:
+#         connection = ['transConn', 'rotateConn']
+#     else:
+#         pass
+#
+#     return connection
 def ad_defining_object_text_field(define_object, label, add_feature=False, multiple_selection=False, *args, **kwargs):
     if not add_feature:
         # if object doesn't has checkbox
@@ -214,8 +233,8 @@ def ad_defining_object_text_field(define_object, label, add_feature=False, multi
 
 def ad_query_textfield_object(object_define, *args):
     text = []
-    if (pm.textFieldButtonGrp(object_define, q=True, en=True)):
-        if (pm.textFieldButtonGrp(object_define, q=True, tx=True)):
+    if pm.textFieldButtonGrp(object_define, q=True, en=True):
+        if pm.textFieldButtonGrp(object_define, q=True, tx=True):
             text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
             if pm.ls(text):
                 text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
@@ -227,10 +246,31 @@ def ad_query_textfield_object(object_define, *args):
         pass
     return text, object_define
 
+def ad_query_list_textfield_object(object_define, *args):
+    listing_object = []
+    if pm.textFieldButtonGrp(object_define, q=True, en=True):
+        if pm.textFieldButtonGrp(object_define, q=True, tx=True):
+            text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
+            listing = text.split(',')
+            set_duplicate = set([x for x in listing if listing.count(x) > 1])
+            if set_duplicate:
+                for item in list(set_duplicate):
+                    pm.error('%s is duplicate object!' % item)
+            else:
+                for item in listing:
+                    if pm.ls(item):
+                        listing_object.append(item)
+                    else:
+                        pm.error('%s has wrong input object name.' % object_define, "There is no object with name '%s'!" % item)
+        else:
+            pm.error('%s can not be empty!' % object_define)
+    else:
+        pass
+
+    return listing_object, object_define
 
 def ad_create_tweaker(Fk=None,
-                      joints='',
-                      main_mesh='',
+                      # joints='',
                       mesh_bpm='',
                       base_joint='',
                       scale_object=None,
@@ -253,68 +293,69 @@ def ad_create_tweaker(Fk=None,
     if ad_hierarchy_joint():
         follicle = []
         ctrls = []
-        list_joints = []
+        # list_joints = []
+        joints = ad_query_list_textfield_object('List_Tweak_Joint')[0]
+        tweak_mesh = ad_query_list_textfield_object('Tweak_Mesh')[0]
+        main_mesh = ad_query_textfield_object('Main_Mesh')[0]
+        scale_connection = ad_query_textfield_object('Scale_Connection')[0]
 
         all_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'AllBpmFk', 'grp'))
         follicle_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'FollicleBpmFk', 'grp'))
         drive_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'DriveBpmFk', 'grp'))
         ctrl_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'ControllerBpmFk', 'grp'))
 
-        list_relatives_allGrp = mc.listRelatives(all_grp, c=1)
+        list_relatives_allGrp = pm.listRelatives(all_grp, c=1)
 
-        # for obj in joints:
-        list_relatives_jnt = mc.listRelatives(joints, f=1, ad=1)
-        for item in list_relatives_jnt:
-            # remove empty list
-            list_joints = list(filter(None, (item.split('|'))))
+        # # for obj in joints:
+        # list_relatives_jnt = pm.listRelatives(joints[0], f=1, ad=1)
+        # print list_relatives_jnt
+        #
+        # for item in list_relatives_jnt:
+        #     print item
+        #     # remove empty list
+        #     list_joints = list(filter(None, (item.split('|'))))
 
-        ac.create_controller(object_list=list_joints,
+        group = create_controller(object_list=joints,
                              groups_ctrl=['Zro', 'Offset'],
-                             ctrl_color=ctrl_color,
-                             shape=shape,
-                             ctrl_size=ctrl_size,
+                             ctrl_color='turquoiseBlue',
+                             shape=ac.JOINT,
+                             ctrl_size=1.0,
                              connection=['parent'],
                              lock_channels=[]
                              )
+        
 
-        create_grp = au.group_object_outside('FolFk', list_joints)
+        driver_group = group_object_outside('DriverFk', joints)
 
-        for object_fol, item_grp in zip(list_joints, create_grp):
-
-            # sorting the full path of object then rid off []
-            list_relatives_obj = mc.listRelatives(object_fol, ap=1, f=1)[0]
-
-            # spliting the object with | and take out Zro grp which is on the -4 position
-            split_object = list_relatives_obj.split('|')[-3]
-
-            # appending all of the object this is purpose for enumerate later
-            ctrls.append(split_object)
-
-            follicles = au.follicle_set(object_fol, main_mesh, connect_follicle=connect_mesh)
-
+        for joint, driver in zip(joints, driver_group):
+            # create follicle
+            follicles = follicle_set(joint, main_mesh)
             follicle.append(follicles['folTrans'])
 
             # check the attribute root
             # if exist then deleted
-            if mc.objExists('%s.root' % object_fol):
-                mc.deleteAttr('%s.root' % object_fol)
+            if pm.objExists('%s.root' % joint):
+                pm.deleteAttr('%s.root' % joint)
             else:
                 # add the attr root and message
-                au.add_attr_message(object_fol, item_grp)
+                add_attr_message(joint, driver)
 
             # connected the 'create group' to bind pre matrix
-            mc.connectAttr('%s.worldInverseMatrix[0]' % item_grp,
+            pm.connectAttr('%s.worldInverseMatrix[0]' % driver,
                            '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
+                               query_skin_name(tweak_mesh), skin_matrix_list_from_joint(joint)))
 
-            if scale_object:
-                mc.scaleConstraint(scale_object, follicles['folTrans'])
+            if pm.textFieldButtonGrp('Scale_Connection', q=True, en=True):
+                scale_constraint(scale_connection, follicles['folTrans'])
 
-            mc.setAttr(follicles['folShape'] + '.lodVisibility', 0)
+            pm.setAttr(follicles['folShape'] + '.lodVisibility', 0)
 
-            mc.setAttr(object_fol + '.drawStyle', 2)
+            pm.setAttr(joint + '.drawStyle', 2)
 
-            au.lock_hide_attr(['t', 'r', 's'], follicles['folTrans'])
+            # lock_attr(['t', 'r', 's'], follicles['folTrans'])
+            pm.setAttr(follicles['folTrans']+'.translate', l=1)
+            pm.setAttr(follicles['folTrans']+'.rotate', l=1)
+            pm.setAttr(follicles['folTrans']+'.scale', l=1)
 
             au.lock_hide_attr_object(follicles['folTrans'], 'v')
 
@@ -322,106 +363,110 @@ def ad_create_tweaker(Fk=None,
 
             au.lock_hide_attr_object(follicles['folShape'], 'pv')
 
-            mc.parent(follicles['folTrans'], follicle_grp)
+            pm.parent(follicles['folTrans'], follicle_grp)
 
-        for item, (object_fol, object_grp) in enumerate(zip(follicle, create_grp)):
-            mc.parentConstraint(object_fol, create_grp[item], mo=1)
-            au.connect_attr_object(object_grp, ctrls[item])
+        for item, (joint, object_grp) in enumerate(zip(follicle, driver_group)):
+            parent_scale_constraint(joint, driver_group[item])
+            pm.connectAttr(object_grp+'.translate', ctrls[item]+'.translate')
+            pm.connectAttr(object_grp+'.rotate', ctrls[item]+'.rotate')
+            pm.connectAttr(object_grp+'.scale', ctrls[item]+'.scale')
 
-        list_relatives_jnt = mc.listRelatives(base_joint, p=True)
+            # au.connect_attr_object(object_grp, ctrls[item])
+
+        list_relatives_jnt = pm.listRelatives(base_joint, p=True)
         if list_relatives_jnt == None:
             grp_obj = au.group_object(['Zro', 'BPM', 'Null', 'Adjust'], base_joint, base_joint)
 
-            mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint),
+            pm.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint),
                            '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(base_joint)))
+                               query_skin_name(mesh_bpm), skin_matrix_list_from_joint(base_joint)))
 
-            mc.parent(grp_obj[0], ctrl_grp)
+            pm.parent(grp_obj[0], ctrl_grp)
 
-        mc.parent(create_grp[0], drive_grp)
+        pm.parent(create_grp[0], drive_grp)
 
-        mc.parent(ctrls[0], ctrl_grp)
+        pm.parent(ctrls[0], ctrl_grp)
 
         if list_relatives_allGrp == None:
-            mc.parent(follicle_grp, drive_grp, ctrl_grp, all_grp)
+            pm.parent(follicle_grp, drive_grp, ctrl_grp, all_grp)
 
-        mc.select(cl=1)
+        pm.select(cl=1)
 
     else:
-
-        mc.setAttr(main_mesh + '.visibility', 0)
-
-        all_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'AllBPM', 'grp'))
-        follicle_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'ControllerBPM', 'grp'))
-
-        list_relatives_allGrp = mc.listRelatives(all_grp, c=1)
-
-        if list_relatives_allGrp == None:
-            mc.parent(follicle_grp, all_grp)
-
-        ac.create_controller(object_list=joints,
-                             groups_ctrl=['Zro', 'BPM', 'Offset'],
-                             ctrl_color=ctrl_color,
-                             shape=shape,
-                             ctrl_size=ctrl_size,
-                             connection=['parent'],
-                             lock_channels=[]
-                             )
-
-        foll_append = []
-
-        for object_fol in joints:
-
-            # create follicle
-            follicles = au.follicle_set(object_fol, main_mesh, connect_follicle=connect_mesh)
-
-            foll_append.append(follicles['folTrans'])
-
-            # sort the list full path object then rid off []
-            list_relatives_obj = mc.listRelatives(object_fol, ap=1, f=1)[0]
-
-            # spliting object |
-            split_object = filter(None, list_relatives_obj.split('|'))
-            print split_object
-
-            # parent the object to follicle
-            mc.parent(split_object[0], follicles['folTrans'])
-
-            # for scl in scaleObj:
-            if scale_object:
-                mc.scaleConstraint(scale_object, follicles['folTrans'])
-
-            mc.setAttr(follicles['folShape'] + '.lodVisibility', 0)
-
-            mc.setAttr(object_fol + '.drawStyle', 2)
-
-            au.lock_hide_attr_object(follicles['folTrans'], 'v')
-
-            au.lock_hide_attr_object(follicles['folShape'], 'pu')
-
-            au.lock_hide_attr_object(follicles['folShape'], 'pv')
-
-            au.lock_attr(['t', 'r', 's'], split_object[1])
-
-            au.lock_attr(['t', 'r', 's'], split_object[2])
-
-            mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(object_fol),
-                           '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
-
-            mc.parent(follicles['folTrans'], follicle_grp)
-
-        list_relatives_jnt = mc.listRelatives(base_joint, p=True)
-        if list_relatives_jnt == None:
-            grp_obj = au.group_object(['Zro', 'BPM', 'Offset', 'Null'], base_joint, base_joint)
-
-            mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint),
-                           '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(base_joint)))
-
-            mc.parent(grp_obj[0], all_grp)
-
-        mc.select(cl=1)
+        print 'Dendra'
+        # mc.setAttr(main_mesh + '.visibility', 0)
+        #
+        # all_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'AllBPM', 'grp'))
+        # follicle_grp = create_group('transform', "%s%s_%s" % (au.prefix_name(main_mesh), 'ControllerBPM', 'grp'))
+        #
+        # list_relatives_allGrp = mc.listRelatives(all_grp, c=1)
+        #
+        # if list_relatives_allGrp == None:
+        #     mc.parent(follicle_grp, all_grp)
+        #
+        # ac.create_controller(object_list=joints,
+        #                      groups_ctrl=['Zro', 'BPM', 'Offset'],
+        #                      ctrl_color=ctrl_color,
+        #                      shape=shape,
+        #                      ctrl_size=ctrl_size,
+        #                      connection=['parent'],
+        #                      lock_channels=[]
+        #                      )
+        #
+        # foll_append = []
+        #
+        # for object_fol in joints:
+        #
+        #     # create follicle
+        #     follicles = au.follicle_set(object_fol, main_mesh, connect_follicle=connect_mesh)
+        #
+        #     foll_append.append(follicles['folTrans'])
+        #
+        #     # sort the list full path object then rid off []
+        #     list_relatives_obj = mc.listRelatives(object_fol, ap=1, f=1)[0]
+        #
+        #     # spliting object |
+        #     split_object = filter(None, list_relatives_obj.split('|'))
+        #     print split_object
+        #
+        #     # parent the object to follicle
+        #     mc.parent(split_object[0], follicles['folTrans'])
+        #
+        #     # for scl in scaleObj:
+        #     if scale_object:
+        #         mc.scaleConstraint(scale_object, follicles['folTrans'])
+        #
+        #     mc.setAttr(follicles['folShape'] + '.lodVisibility', 0)
+        #
+        #     mc.setAttr(object_fol + '.drawStyle', 2)
+        #
+        #     au.lock_hide_attr_object(follicles['folTrans'], 'v')
+        #
+        #     au.lock_hide_attr_object(follicles['folShape'], 'pu')
+        #
+        #     au.lock_hide_attr_object(follicles['folShape'], 'pv')
+        #
+        #     au.lock_attr(['t', 'r', 's'], split_object[1])
+        #
+        #     au.lock_attr(['t', 'r', 's'], split_object[2])
+        #
+        #     mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(object_fol),
+        #                    '%s.bindPreMatrix[%d]' % (
+        #                        au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
+        #
+        #     mc.parent(follicles['folTrans'], follicle_grp)
+        #
+        # list_relatives_jnt = mc.listRelatives(base_joint, p=True)
+        # if list_relatives_jnt == None:
+        #     grp_obj = au.group_object(['Zro', 'BPM', 'Offset', 'Null'], base_joint, base_joint)
+        #
+        #     mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint),
+        #                    '%s.bindPreMatrix[%d]' % (
+        #                        au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(base_joint)))
+        #
+        #     mc.parent(grp_obj[0], all_grp)
+        #
+        # mc.select(cl=1)
 
 
 ################################################# re-skin the mesh ###################################################
@@ -486,8 +531,117 @@ def ad_edit_tweaker(Fk=None,
 
     mc.select(cl=1)
 
-
 ############################################## tools tweaker ###############################################
+def group_object_outside(add_suffix, obj_base):
+    # create group hierarchy
+    grps = []
+    for i in obj_base:
+        grps.append(mc.createNode('transform', n="%s%s_%s" % (prefix_name(i), add_suffix, 'grp')))
+
+    for i, item in enumerate(obj_base):
+        match_position(item, grps[i])
+
+        if i > 0:
+            parent_object(grps[i - 1], grps[i])
+
+    return grps
+
+def parent_scale_constraint(obj_base, obj_target, mo=0):
+    par_cons = parent_constraint(obj_base, obj_target, mo=mo)
+    scl_cons = scale_constraint(obj_base, obj_target)
+    return par_cons, scl_cons
+
+
+def query_skin_name(obj):
+    # get the skincluster name
+    relatives = mc.listRelatives(obj, type="shape")
+    skin_cluster = mc.listConnections(relatives, type="skinCluster")
+    if not skin_cluster:
+        return mc.error("Please add your skin cluster before run the script!")
+    else:
+        for obj in skin_cluster:
+            return obj
+
+# CREATE FOLLICLE BASED ON OBJECT (JOINT OR TRANSFORM) SELECTED
+def create_follicle_selection(obj_select, obj_mesh, prefix=None, suffix=None):
+    obj_mesh = mc.listRelatives(obj_mesh, s=1)[0]
+
+    closest_node = None
+    # If the inputSurface is of type 'nurbsSurface', connect the surface to the closest node
+    if mc.objectType(obj_mesh) == 'nurbsSurface':
+        closest_node = mc.createNode('closestPointOnSurface')
+        mc.connectAttr((obj_mesh + '.local'), (closest_node + '.inputSurface'))
+
+    # If the inputSurface is of type 'mesh', connect the surface to the closest node
+    elif mc.objectType(obj_mesh) == 'mesh':
+        closest_node = mc.createNode('closestPointOnMesh')
+        mc.connectAttr((obj_mesh + '.outMesh'), (closest_node + '.inMesh'))
+    else:
+        mc.error('please check your type object. Object must be either nurbs or mesh')
+
+    # query object selection
+    xform = mc.xform(obj_select, ws=True, t=True, q=True)
+
+    # set the position of node according to the loc
+    mc.setAttr(closest_node + '.inPositionX', xform[0])
+    mc.setAttr(closest_node + '.inPositionY', xform[1])
+    mc.setAttr(closest_node + '.inPositionZ', xform[2])
+
+    # create follicle
+    follicle_node = mc.createNode('follicle')
+
+    # query the transform follicle
+    follicle_transform = mc.listRelatives(follicle_node, type='transform', p=True)
+
+    # # connecting the shape follicle to transform follicle
+    # dic_connect_follicle(connect_follicle, follicle_node, follicle_transform[0])
+
+    # CONNECTING THE FOLLICLE
+    mc.connectAttr(follicle_node + '.outRotate', follicle_transform[0] + '.rotate')
+    mc.connectAttr(follicle_node + '.outTranslate', follicle_transform[0]+ '.translate')
+
+    # connect the world matrix mesh to the follicle shape
+    mc.connectAttr(obj_mesh + '.worldMatrix[0]', follicle_node + '.inputWorldMatrix')
+
+    # connect the output mesh of mesh to input mesh follicle
+    if mc.objectType(obj_mesh) == 'nurbsSurface':
+        mc.connectAttr((obj_mesh + '.local'), (follicle_node + '.inputSurface'))
+
+    # If the inputSurface is of type 'mesh', connect the surface to the follicle
+    if mc.objectType(obj_mesh) == 'mesh':
+        mc.connectAttr(obj_mesh + '.outMesh', follicle_node + '.inputMesh')
+
+    # turn off the simulation follicle
+    mc.setAttr(follicle_node + '.simulationMethod', 0)
+
+    # get u and v output closest point on mesh node
+    par_u = mc.getAttr(closest_node + '.result.parameterU')
+    par_v = mc.getAttr(closest_node + '.result.parameterV')
+
+    # connect output closest point on mesh node to follicle
+    mc.setAttr(follicle_node + '.parameterU', par_u)
+    mc.setAttr(follicle_node + '.parameterV', par_v)
+
+    # deleting node
+    mc.delete(closest_node)
+
+    # rename follicle
+    if prefix or suffix:
+        follicle_transform = mc.rename(follicle_transform, '%s_%s' % (prefix_name(prefix), suffix))
+    else:
+        follicle_transform = mc.rename(follicle_transform, '%s_%s' % (prefix_name(obj_select), 'fol'))
+
+
+    # listing the shape of follicle
+    follicle_shape = mc.listRelatives(follicle_transform, s=1)[0]
+
+    return follicle_transform, follicle_shape
+
+def follicle_set(obj_select, obj_mesh, prefix=None, suffix=None,):
+    grps = []
+    grps.extend(create_follicle_selection(obj_select, obj_mesh, prefix=prefix, suffix=suffix))
+    return {'folTrans': grps[0],
+            'folShape': grps[1]}
 
 # listing the joint connection destination to skin cluster matrix
 def joint_destination_matrix(obj):
@@ -517,78 +671,140 @@ def create_group(node, name):
     else:
         return name
 
+def create_ctrl(ctrl_size, shape):
+    scale_ctrl = scale_curve(ctrl_size, shape)
+    ctrl = controller(scale_ctrl)
+    return ctrl
 
-####################################### sorting the skin matrix index (not used) ##############################################################
+def controller(shape):
+    createCrv = mc.curve(d=1, p=shape)
+    return createCrv
 
-# remove the long name form matrix long name listing of skin cluster
-def skin_matrix_list(obj):
-    objs = []
-    for o in skin_matrix_list_long(obj):
-        objs.append(int(o))
-    return objs
+def scale_curve(size_obj, shape):
+    scaleShp = [[size_obj * i for i in j] for j in shape]
+    return scaleShp
 
+def parent_object(objBase, objTgt):
+    parent_object = mc.parent(objTgt, objBase)
+    return parent_object
 
-# getting attribute matrix long name from listing of skin cluster
-def skin_matrix_list_long(obj):
-    for i in obj:
-        get_attr = mc.getAttr(i + '.matrix', mi=True)
-        return get_attr
-
-
-# getting complete name skin cluster matrix include the number
-def skin_cluster_matrix_list_num(obj):
-    list_matrix = []
-    for cluster in obj:
-        for indexNum in skin_matrix_list(obj):
-            at = cluster + '.matrix[%d]' % (int(indexNum))
-            list_matrix.append(at)
-    return list_matrix
-
-
-# getting the source connection from the skin cluster matrix
-def source_joint_skin_matrix(obj):
-    list = mc.listConnections(skin_cluster_matrix_list_num(obj), d=True)
-    return list
-
-
-############################################# misc (not used) ##################################################
-
-
-def group_fk(obj):
-    for i in obj:
-        split_name = i.split('|')[0]
-        grp_parent = au.group_parent(['ParentPos', 'PosSDK'], au.prefix_name(i), '')
-        au.match_position(split_name, grp_parent[0])
-        return grp_parent
-
-
-def list_matrix_connection(obj):
-    list = mc.listConnections(obj[0] + '.matrix', s=True)
-    return list
-
-
-def list_folder_bpm_connection(obj):
-    objs = []
-    for i in obj:
-        objs.append(mc.listConnections(i, d=True))
-    return objs
-
-
-def list_relatives(obj):
+def grouping_parent(groups, prefix, suffix, number='', side=''):
+    # create group hierarchy
     grps = []
-    for o in obj:
-        lR = grps.append(mc.listRelatives(o, ap=True))
+    for i in range(len(groups)):
+        grps.append(mc.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, 'grp')))
+
+        if i > 0:
+            parent_object(grps[i - 1], grps[i])
+
     return grps
 
 
-def adding_grp_not_none_list_relatives(obj):
-    grps = group_fk(obj)
-    return grps
+def group_ctrl(prefix, suffix, groups_ctrl, ctrl, side=''):
+    rename_controller = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(prefix), suffix))
+    group_parent = grouping_parent(groups_ctrl, '%s' % ut.prefix_name(prefix), suffix.title(), side=side)
+
+    return {'grpPrnt': group_parent,
+            'renCtrl': rename_controller}
+
+def set_color(ctrl, color):
+    color_dic = {
+        'turquoiseBlue': 18,
+        'lightPink': 20,
+    }
+    if color in color_dic.keys():
+        list_relatives = mc.listRelatives(ctrl, s=1)[0]
+        mc.setAttr(list_relatives + '.ove', 1)
+        mc.setAttr(list_relatives + '.ovc', color_dic[color])
+        return list_relatives
+    else:
+        return mc.warning("Could not find %s name color. Please check color name!" % color)
+
+def add_attr_message(obj_target, obj):
+    mc.addAttr(obj_target, ln='root', at='message')
+    attr = mc.connectAttr('%s.message' % obj, '%s.root' % obj_target)
+    return attr
+
+def ctrl_attributes(rename_controller, ctrl_color, grp_parent, lock_channels):
+    # color control
+    set_color(rename_controller, ctrl_color)
+    add_attr_message(rename_controller, grp_parent[0])
 
 
-def array_part_object(joints, listObj):
-    grps = []
-    for obj in joints:
-        if obj in listObj:
-            grps.append(obj)
-    return grps
+def parent_constraint(obj_base, obj_target, mo=1):
+    par_constraint = mc.parentConstraint(obj_base, obj_target, mo=mo)[0]
+    split = par_constraint.split('_')
+    x = '_'.join(split[:-1])
+    n = x.replace(x, x + '_pac')
+    new_name = [mc.rename(par_constraint, n)]
+    return new_name
+
+def scale_constraint(obj_base, obj_target, mo=1):
+    scale_constraint = mc.scaleConstraint(obj_base, obj_target, mo=mo)[0]
+    split = scale_constraint.split('_')
+    x = '_'.join(split[:-1])
+    n = x.replace(x, x + '_sc')
+    new_name = [mc.rename(scale_constraint, n)]
+
+    return new_name
+def match_position(obj_base, obj_target):
+    mc.delete(parent_constraint(obj_base, obj_target, mo=0))
+
+
+def match_scale(obj_base, obj_target):
+    mc.delete(scale_constraint(obj_base, obj_target, mo=0))
+
+
+def create_controller(object_list=None,
+             groups_ctrl=['Zro', 'Offset'],
+             ctrl_color='turquoiseBlue',
+             shape=ac.JOINT,
+             ctrl_size=1.0,
+             connection=['parent'],
+             lock_channels=[]):
+    controller = []
+    parent_group=[]
+    for number, obj in enumerate(object_list):
+        # create control
+        ctrl = create_ctrl(ctrl_size, shape)
+
+        ctrl_grp = group_ctrl(obj, 'ctrl', groups_ctrl, ctrl)
+
+        parCtrl = parent_object(ctrl_grp['grpPrnt'][-1], ctrl_grp['renCtrl'])
+        cnntCtrl = ctrl_grp['renCtrl']
+
+        controller.append(ctrl_grp['renCtrl'])
+        parent_group.append(ctrl_grp['grpPrnt'][0])
+
+
+        # add control attributes
+        ctrl_attributes(ctrl_grp['renCtrl'], ctrl_color, ctrl_grp['grpPrnt'], lock_channels)
+
+        # match position the group ctrl as the obj
+        match_position(obj, ctrl_grp['grpPrnt'][0])
+
+        # match scale the group ctrl as the obj
+        match_scale(obj, ctrl_grp['grpPrnt'][0])
+
+        # connection None
+        if connection == None:
+            continue
+
+        # connection parent
+        # query list relatives
+        list_relatives_parent = mc.listRelatives(obj, p=1)
+
+        if list_relatives_parent == None:
+            parent_object(cnntCtrl, obj)
+
+        else:
+            # parent object to controller
+            parent_object(cnntCtrl, obj)
+            # parent ctrl group to list relatives
+            parent_object(list_relatives_parent, ctrl_grp['grpPrnt'][0])
+        # clear selection
+        mc.select(cl=1)
+
+
+    return {'ctrl': controller,
+            'group': parent_group}
