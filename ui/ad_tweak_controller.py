@@ -12,38 +12,38 @@ reload(au)
 layout = 400
 percentage = 0.01 * layout
 on_selector = 0
-on_side = 0
 on_selector_rotate = 0
 on_stretch = 0
 
 
 def ad_show_ui():
-    adien_tweaker_ctrl = 'AD_TweakerController'
+    adien_tweaker_ctrl = 'AD_TweakController'
     pm.window(adien_tweaker_ctrl, exists=True)
     if pm.window(adien_tweaker_ctrl, exists=True):
         pm.deleteUI(adien_tweaker_ctrl)
     with pm.window(adien_tweaker_ctrl, title='AD Tweaker Controller', width=400, height=400):
         with pm.tabLayout('tab', width=410, height=210):
-            with pm.columnLayout('Create Controller Tweaker', rowSpacing=1 * percentage, w=layout,
+            with pm.columnLayout('Create Tweak Controller', rowSpacing=1 * percentage, w=layout,
                                  co=('both', 1 * percentage), adj=1):
                 pm.separator(h=10, st="in", w=layout)
                 # frame layout message fkik arm and leg
                 # with pm.frameLayout(collapsable=True, l='Create Controller Tweaker', mh=5):
                 with pm.rowLayout(nc=3, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
                                                       (3, 'left', 1 * percentage)],
-                                  cw3=(29.5 * percentage, 30 * percentage, 30 * percentage),
+                                  cw3=(29.5 * percentage, 30 * percentage, 30 * percentage,
+                                       )
                                   ):
-                    pm.text('Tweaker Method:')
+                    pm.text('Tweak Method:')
                     method_radio_button = pm.radioCollection()
-                    method_joint_hierarchy = pm.radioButton(label='Joint Hierarchy', )
-                    # onCommand=lambda x: ad_on_position_button(1))
-                    pm.radioButton(label='Single Joint', )
-                    # onCommand=lambda x: ad_on_position_button(2))
+                    method_joint_hierarchy = pm.radioButton(label='Hierarchy Joint',
+                                                            onCommand=lambda x: ad_on_selection_button(1))
+                    pm.radioButton(label='Non-Hierarchy Joint',
+                                   onCommand=lambda x: ad_on_selection_button(2))
                     pm.radioCollection(method_radio_button, edit=True, select=method_joint_hierarchy)
 
-                ad_defining_object_text_field(define_object='Joint_List', label="Joint List:", multiple_selection=True)
+                ad_defining_object_text_field(define_object='List_Joint', label="List Joint:", multiple_selection=True)
 
-                ad_defining_object_text_field(define_object='Tweaker_Mesh', label="Tweaker Mesh:")
+                ad_defining_object_text_field(define_object='Tweak_Mesh', label="Tweak Mesh:")
 
                 ad_defining_object_text_field(define_object='Main_Mesh', label="Main Mesh:")
 
@@ -73,15 +73,15 @@ def ad_show_ui():
                                    )
                     pm.radioCollection(direction_control_translate, edit=True, select=direction_translateX)
 
-                with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
-                                  columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
+                with pm.rowLayout(nc=2, cw2=(48 * percentage, 48 * percentage), cl2=('center', 'left'),
+                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                     pm.button(l="Clear All Define Objects!", bgc=(1, 1, 0),
                               # c=ad_additional_attr_adding
                               )
 
                     # create button to delete last pair of text fields
-                    pm.button(l="Create Controller Tweaker!", bgc=(0, 0.5, 0),
-                              # c=ad_additional_attr_deleting
+                    pm.button("create_tweak_controller", l="Create Tweak Controller!", bgc=(0, 0.5, 0),
+                              c=partial(ad_create_tweaker)
                               )
                 pm.separator(h=10, st="in", w=layout)
                 with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
@@ -91,7 +91,7 @@ def ad_show_ui():
                         l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
                         hl=True,
                         al='right')
-            with pm.columnLayout('Edit Controller Tweaker', rowSpacing=1 * percentage, w=layout,
+            with pm.columnLayout('Edit Tweak Controller', rowSpacing=1 * percentage, w=layout,
                                  co=('both', 1 * percentage), adj=1):
                 # frame layout message fkik arm and leg
                 # with pm.frameLayout(collapsable=True, l='Edit Controller Tweaker', mh=5):
@@ -100,27 +100,27 @@ def ad_show_ui():
                                                       (3, 'left', 1 * percentage)],
                                   cw3=(29.5 * percentage, 30 * percentage, 30 * percentage),
                                   ):
-                    pm.text('Tweaker Method:')
+                    pm.text('Tweak Method:')
                     method_edit_radio_button = pm.radioCollection()
-                    method_edit_joint_hierarchy = pm.radioButton(label='Joint Hierarchy', )
+                    method_edit_joint_hierarchy = pm.radioButton(label='Hierarchy Joint', )
                     # onCommand=lambda x: ad_on_position_button(1))
-                    pm.radioButton(label='Single Joint', )
+                    pm.radioButton(label='Non-Hierarchy Joint', )
                     # onCommand=lambda x: ad_on_position_button(2))
                     pm.radioCollection(method_edit_radio_button, edit=True, select=method_edit_joint_hierarchy)
 
-                ad_defining_object_text_field(define_object='Joint_Edit_List', label="Joint List:",
+                ad_defining_object_text_field(define_object='List_Edit_Joint', label="List Joint:",
                                               multiple_selection=True)
-                ad_defining_object_text_field(define_object='Tweaker_Edit_Mesh', label="Tweaker Mesh:")
+                ad_defining_object_text_field(define_object='Tweak_Edit_Mesh', label="Tweak Mesh:")
                 ad_defining_object_text_field(define_object='Static_Edit_Joint', label="Static Joint:")
 
-                with pm.rowLayout(nc=2, cw2=(49 * percentage, 49 * percentage), cl2=('center', 'center'),
-                                  columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
+                with pm.rowLayout(nc=2, cw2=(48 * percentage, 48 * percentage), cl2=('center', 'center'),
+                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                     pm.button(l="Clear All Define Objects!", bgc=(1, 1, 0),
                               # c=ad_additional_attr_adding
                               )
 
                     # create button to delete last pair of text fields
-                    pm.button(l="Edit Controller Tweaker!", bgc=(0, 0, 0.5),
+                    pm.button(l="Edit Tweak Controller!", bgc=(0, 0, 0.5),
                               # c=ad_additional_attr_deleting
                               )
                 pm.separator(h=10, st="in", w=layout)
@@ -147,13 +147,35 @@ def ad_adding_object_sel_to_textfield(text_input, *args):
 
 def ad_adding_multiple_object_sel_to_texfield(text_input, *args):
     select = pm.ls(sl=True, l=True, tr=True)
-    # select = filter(lambda x: 'nt.Transform' in x or '()' in x or '[]' in x, str(select))
-    list = []
-    for item in select:
-        list.append(str(item))
-    object = str(list)
-    replacing = object.replace('[', '').replace(']', '').replace("'", '').replace(" ", '')
-    pm.textFieldButtonGrp(text_input, e=True, tx=str(replacing))
+    list_joint = (','.join([item.name() for item in select]))
+    pm.textFieldButtonGrp(text_input, e=True, tx=str(list_joint))
+
+    # list = []
+    # for item in select:
+    #     list.append(str(item))
+    # object = str(list)
+    # replacing = object.replace('[', '').replace(']', '').replace("'", '').replace(" ", '')
+
+
+def ad_on_selection_button(on):
+    # save the current shape selection into global variable
+    global on_selector
+    on_selector = on
+    print on_selector
+
+
+def ad_hierarchy_joint(*args):
+    hierarchy = []
+    # query object with value on shape selector status
+
+    if on_selector == 1:
+        hierarchy = True
+    elif on_selector == 2:
+        hierarchy = False
+    else:
+        pass
+
+    return hierarchy
 
 
 def ad_defining_object_text_field(define_object, label, add_feature=False, multiple_selection=False, *args, **kwargs):
@@ -164,27 +186,46 @@ def ad_defining_object_text_field(define_object, label, add_feature=False, multi
                                   cw3=(30 * percentage, 58 * percentage, 15 * percentage),
                                   cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                                   bl="<<",
-                                  bc=partial(ad_adding_multiple_object_sel_to_texfield, define_object))
+                                  bc=partial(ad_adding_multiple_object_sel_to_texfield, define_object,
+                                             ))
         else:
             pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
                                   cw3=(30 * percentage, 58 * percentage, 15 * percentage),
                                   cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                                   bl="<<",
-                                  bc=partial(ad_adding_object_sel_to_textfield, define_object))
+                                  bc=partial(ad_adding_object_sel_to_textfield, define_object,
+                                             ))
     else:
         if multiple_selection:
             pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
                                   cw3=(27 * percentage, 58 * percentage, 15 * percentage),
                                   cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                                   bl="<<",
-                                  bc=partial(ad_adding_multiple_object_sel_to_texfield, define_object), **kwargs)
+                                  bc=partial(ad_adding_multiple_object_sel_to_texfield, define_object),
+                                  **kwargs)
         # if object has checkbox
         else:
             pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
                                   cw3=(27 * percentage, 58 * percentage, 15 * percentage),
                                   cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                                   bl="<<",
-                                  bc=partial(ad_adding_object_sel_to_textfield, define_object), **kwargs)
+                                  bc=partial(ad_adding_object_sel_to_textfield, define_object),
+                                  **kwargs)
+
+def ad_query_textfield_object(object_define, *args):
+    text = []
+    if (pm.textFieldButtonGrp(object_define, q=True, en=True)):
+        if (pm.textFieldButtonGrp(object_define, q=True, tx=True)):
+            text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
+            if pm.ls(text):
+                text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
+            else:
+                pm.error('%s has wrong input object name.' % object_define, "There is no object with name '%s'!" % text)
+        else:
+            pm.error('%s can not be empty!' % object_define)
+    else:
+        pass
+    return text, object_define
 
 
 def ad_create_tweaker(Fk=None,
@@ -209,7 +250,7 @@ def ad_create_tweaker(Fk=None,
     :return: None
     """
 
-    if Fk:
+    if ad_hierarchy_joint():
         follicle = []
         ctrls = []
         list_joints = []
@@ -264,7 +305,7 @@ def ad_create_tweaker(Fk=None,
             # connected the 'create group' to bind pre matrix
             mc.connectAttr('%s.worldInverseMatrix[0]' % item_grp,
                            '%s.bindPreMatrix[%d]' % (
-                           au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
+                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(object_fol)))
 
             if scale_object:
                 mc.scaleConstraint(scale_object, follicles['folTrans'])
@@ -408,13 +449,13 @@ def ad_edit_tweaker(Fk=None,
                 # connect the bpm transform to skin bind pre matrix
                 mc.connectAttr('%s.worldInverseMatrix[0]' % group,
                                '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
+                                   au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
 
             else:
                 # connect the bpm transform to skin bind pre matrix
                 mc.connectAttr('%s.worldInverseMatrix[0]' % group,
                                '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
+                                   au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
 
     else:
         for joint in joints:
@@ -427,13 +468,13 @@ def ad_edit_tweaker(Fk=None,
                 # connect the bpm transform to skin bind pre matrix
                 mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(joint),
                                '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
+                                   au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
 
             else:
                 # connect the bpm transform to skin bind pre matrix
                 mc.connectAttr('%s.worldInverseMatrix[0]' % array_bpm_folder(joint),
                                '%s.bindPreMatrix[%d]' % (
-                               au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
+                                   au.query_skin_name(mesh_bpm), skin_matrix_list_from_joint(joint)))
 
     # re-conncet module joint
     list_connetion_base = mc.listConnections('%s.worldInverseMatrix[0]' % array_bpm_folder(base_joint))
