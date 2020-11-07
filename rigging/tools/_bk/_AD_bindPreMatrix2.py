@@ -85,7 +85,7 @@ def createBPM(joints=[],
 
             ctrlN = createCtrl(obj)
 
-            follicles = au.follicle_set(obj, mainMesh, connectMesh)
+            follicles = au.ad_follicle_set(obj, mainMesh, connectMesh)
 
             mc.parent(ctrlN[0], follicles)
 
@@ -115,11 +115,11 @@ def createBPM(joints=[],
             au.lock_attr(['t', 'r', 's'], ctrlN[1])
 
             mc.connectAttr('%s.worldInverseMatrix[0]' % arrayBPMFolder(obj),
-            '%s.bindPreMatrix[%d]' % (au.query_skin_name(meshBPM), skinMatrixListFromJoint(obj)))
+            '%s.bindPreMatrix[%d]' % (au.ad_query_skin_name(meshBPM), skinMatrixListFromJoint(obj)))
 
         if lP != None:
 
-            nullGrp = au.group_parent(['Zro'], '%s' % au.prefix_name(obj), 'Jnt')
+            nullGrp = au.group_parent(['Zro'], '%s' % au.ad_prefix_name(obj), 'Jnt')
     
             #ctrlN = createCtrl(obj)
 
@@ -147,12 +147,12 @@ def createBPM(joints=[],
     for objB in baseJoint:
         lR = mc.listRelatives(objB, p=True)
         if lR == None:
-            au.group_object(['Zro', 'BPM', 'Null'], objB)
+            au.ad_group_object(['Zro', 'BPM', 'Null'], objB)
             #mc.parent(grp[0], bpmGrp)
             au.lock_attr(['t', 'r', 's'], objB)
             # partObj = arrayPartObject(joints, lisConn)
             mc.connectAttr('%s.worldInverseMatrix[0]' % arrayBPMFolder(objB),
-                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(meshBPM), skinMatrixListFromJoint(objB)))
+                           '%s.bindPreMatrix[%d]' % (au.ad_query_skin_name(meshBPM), skinMatrixListFromJoint(objB)))
         else:
             return
 
@@ -194,7 +194,7 @@ def sourceJointSkinMatrix(obj):
 def groupFK(obj):
     for i in obj:
         splitName = i.split('|')[0]
-        grpParent = au.group_parent(['ParentPos', 'PosSDK'], au.prefix_name(i), '')
+        grpParent = au.group_parent(['ParentPos', 'PosSDK'], au.ad_prefix_name(i), '')
         au.match_position(splitName, grpParent[0])
         return grpParent
 

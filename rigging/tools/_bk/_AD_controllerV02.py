@@ -112,11 +112,11 @@ def createControl(objectList = None,
 
             # prefix True or False
             if isinstance(prefix, str):
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(prefix), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(prefix), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(prefix), suffix.title())
             else:
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(jntPos[0]), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(jntPos[0]), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(jntPos[0]), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(jntPos[0]), suffix.title())
 
             parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
             cnntCtrl = renCtrl
@@ -129,15 +129,15 @@ def createControl(objectList = None,
                 # create gimbal control
                 ctrlGmb = ut.controller(sCrv)
                 if prefix == '':
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(jntPos[0]), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(jntPos[0]), ut.GIMBAL, suffix))
                 else:
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(prefix), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
 
                 # gimbal control alias
                 cnntCtrl = renGmbl
 
                 # gimbal color
-                ut.set_color(renGmbl, 'white')
+                ut.ad_set_color(renGmbl, 'white')
 
                 # add attribute for switching on/off gimbal ctrl
                 addAttr = ut.add_attr_transform_shape(renCtrl, 'gimbalCtrl', 'long', edit=True, keyable=True, min=0, max=1, dv=0)
@@ -157,10 +157,10 @@ def createControl(objectList = None,
                 # ut.lockHideAttrObj(obj, 'visibility')
 
             # color control
-            ut.set_color(renCtrl, ctrlColor)
+            ut.ad_set_color(renCtrl, ctrlColor)
 
             # add attribute message to make easy track down in node editor
-            ut.add_attr_message(renCtrl, grpPrnt[0])
+            ut.ad_add_attr_message(renCtrl, grpPrnt[0])
 
             # lock and hide attribute
             ut.lock_hide_attr(lockChannels, renCtrl)
@@ -198,13 +198,13 @@ def createControl(objectList = None,
 
             # connection attribute
             elif connect == ['connectAttr']:
-                groupConn = ut.group_object(groupConnectAttr, upGroup, upGroup)
+                groupConn = ut.ad_group_object(groupConnectAttr, upGroup, upGroup)
                 ut.connection(connect, renCtrl, upGroup)
 
             # connection parent
             elif connect == ['parent']:
                 if lrP == None:
-                    grpObj = ut.group_object(groupConnectAttr, upGroup, upGroup)
+                    grpObj = ut.ad_group_object(groupConnectAttr, upGroup, upGroup)
                     ut.connection(connect, cnntCtrl, grpObj)
 
                 else:
@@ -240,15 +240,15 @@ def createControl(objectList = None,
                 # prefix True or False
                 if isinstance(prefix, str):
                     if len(objectList) > 1:
-                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.prefix_name(prefix), number + 1, suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.ad_prefix_name(prefix), number + 1, suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
                     else:
-                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(prefix), suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
 
                 else:
-                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(obj), suffix))
-                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(obj), suffix.title())
+                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(obj), suffix))
+                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(obj), suffix.title())
 
                 parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
                 cnntCtrl = renCtrl
@@ -261,18 +261,18 @@ def createControl(objectList = None,
                     # create gimbal control
                     ctrlGmb = ut.controller(sCrv)
                     if prefix == '':
-                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(obj), ut.GIMBAL, suffix))
+                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(obj), ut.GIMBAL, suffix))
                     else:
                         if len(objectList) > 1:
-                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.prefix_name(prefix), number + 1, ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.ad_prefix_name(prefix), number + 1, ut.GIMBAL, suffix))
                         else:
-                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(prefix), ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
 
                     # gimbal control alias
                     cnntCtrl = renGmbl
 
                     # gimbal color
-                    ut.set_color(renGmbl, 'white')
+                    ut.ad_set_color(renGmbl, 'white')
 
                     # add attribute for switching on/off gimbal ctrl
                     addAttr = ut.add_attr_transform_shape(renCtrl, 'gimbalCtrl', 'long', min=0, max=1, dv=0, edit=True, keyable=True)
@@ -296,10 +296,10 @@ def createControl(objectList = None,
                     # ut.lockHideAttrObj(obj, 'visibility')
 
                 # color control
-                ut.set_color(renCtrl, ctrlColor)
+                ut.ad_set_color(renCtrl, ctrlColor)
 
                 # add attribute message to make easy track down in node editor
-                ut.add_attr_message(renCtrl, grpPrnt[0])
+                ut.ad_add_attr_message(renCtrl, grpPrnt[0])
 
                 # lock and hide attribute
                 ut.lock_hide_attr(lockChannels, renCtrl)
@@ -319,7 +319,7 @@ def createControl(objectList = None,
 
                 # connection to attribute
                 elif connect == ['connectAttr']:
-                    groupConn = ut.group_object(groupConnectAttr, obj, cnntCtrl)
+                    groupConn = ut.ad_group_object(groupConnectAttr, obj, cnntCtrl)
                     ut.connection(connect, renCtrl, obj)
 
                 # connection parent
@@ -381,11 +381,11 @@ def createControl(objectList = None,
 
             # prefix True or False
             if isinstance(prefix, str):
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(prefix), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(prefix), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(prefix), suffix.title())
             else:
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(jntPos[0]), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(jntPos[0]), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(jntPos[0]), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(jntPos[0]), suffix.title())
 
             parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
             cnntCtrl = renCtrl
@@ -398,15 +398,15 @@ def createControl(objectList = None,
                 # create gimbal control
                 ctrlGmb = ut.controller(sCrv)
                 if prefix == '':
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(jntPos[0]), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(jntPos[0]), ut.GIMBAL, suffix))
                 else:
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(prefix), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
 
                 # gimbal control alias
                 cnntCtrl = renGmbl
 
                 # gimbal color
-                ut.set_color(renGmbl, 'white')
+                ut.ad_set_color(renGmbl, 'white')
 
                 # add attribute for switching on/off gimbal ctrl
                 addAttr = ut.add_attr_transform_shape(renCtrl, 'gimbalCtrl', 'long', edit=True, keyable=True, min=0, max=1, dv=0)
@@ -426,10 +426,10 @@ def createControl(objectList = None,
                 # ut.lockHideAttrObj(obj, 'visibility')
 
             # color control
-            ut.set_color(renCtrl, ctrlColor)
+            ut.ad_set_color(renCtrl, ctrlColor)
 
             # add attribute message to make easy track down in node editor
-            ut.add_attr_message(renCtrl, grpPrnt[0])
+            ut.ad_add_attr_message(renCtrl, grpPrnt[0])
 
             # lock and hide attribute
             ut.lock_hide_attr(lockChannels, renCtrl)
@@ -467,13 +467,13 @@ def createControl(objectList = None,
 
             # connection attribute
             elif connect == ['connectAttr']:
-                groupConn = ut.group_object(groupConnectAttr, upGroup, upGroup)
+                groupConn = ut.ad_group_object(groupConnectAttr, upGroup, upGroup)
                 ut.connection(connect, renCtrl, upGroup)
 
             # connection parent
             elif connect == ['parent']:
                 if lrP == None:
-                    grpObj = ut.group_object(groupConnectAttr, upGroup, upGroup)
+                    grpObj = ut.ad_group_object(groupConnectAttr, upGroup, upGroup)
                     ut.connection(connect, cnntCtrl, grpObj)
 
                 else:
@@ -509,15 +509,15 @@ def createControl(objectList = None,
                 # prefix True or False
                 if isinstance(prefix, str):
                     if len(sel) > 1:
-                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.prefix_name(prefix), number + 1, suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.ad_prefix_name(prefix), number + 1, suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
                     else:
-                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(prefix), suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
 
                 else:
-                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(obj), suffix))
-                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(obj), suffix.title())
+                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(obj), suffix))
+                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(obj), suffix.title())
 
                 parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
                 cnntCtrl = renCtrl
@@ -530,18 +530,18 @@ def createControl(objectList = None,
                     # create gimbal control
                     ctrlGmb = ut.controller(sCrv)
                     if prefix == '':
-                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(obj), ut.GIMBAL, suffix))
+                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(obj), ut.GIMBAL, suffix))
                     else:
                         if len(sel) > 1:
-                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.prefix_name(prefix), number + 1, ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.ad_prefix_name(prefix), number + 1, ut.GIMBAL, suffix))
                         else:
-                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(prefix), ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
 
                     # gimbal control alias
                     cnntCtrl = renGmbl
 
                     # gimbal color
-                    ut.set_color(renGmbl, 'white')
+                    ut.ad_set_color(renGmbl, 'white')
 
                     # add attribute for switching on/off gimbal ctrl
                     addAttr = ut.add_attr_transform_shape(renCtrl, 'gimbalCtrl', 'long', min=0, max=1, dv=0, edit=True, keyable=True)
@@ -565,10 +565,10 @@ def createControl(objectList = None,
                     # ut.lockHideAttrObj(obj, 'visibility')
 
                 # color control
-                ut.set_color(renCtrl, ctrlColor)
+                ut.ad_set_color(renCtrl, ctrlColor)
 
                 # add attribute message to make easy track down in node editor
-                ut.add_attr_message(renCtrl, grpPrnt[0])
+                ut.ad_add_attr_message(renCtrl, grpPrnt[0])
 
                 # lock and hide attribute
                 ut.lock_hide_attr(lockChannels, renCtrl)
@@ -588,7 +588,7 @@ def createControl(objectList = None,
 
                 # connection to attribute
                 elif connect == ['connectAttr']:
-                    groupConn = ut.group_object(groupConnectAttr, obj, cnntCtrl)
+                    groupConn = ut.ad_group_object(groupConnectAttr, obj, cnntCtrl)
                     ut.connection(connect, renCtrl, obj)
 
                 # connection parent
@@ -622,8 +622,8 @@ def createControl(objectList = None,
 
         # prefix True or False
         if isinstance(prefix, str):
-            renCtrl = mc.rename(ctrl, '%s_%s' % (ut.prefix_name(prefix), suffix))
-            grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.prefix_name(prefix), suffix.title())
+            renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
+            grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(prefix), suffix.title())
 
         else:
             return mc.warning('Please insert name in prefix parameter!')
@@ -639,13 +639,13 @@ def createControl(objectList = None,
             # create gimbal control
             ctrlGmb = ut.controller(sCrv)
 
-            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.prefix_name(prefix), ut.GIMBAL, suffix))
+            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
 
             # gimbal control alias
             cnntCtrl = renGmbl
 
             # gimbal color
-            ut.set_color(renGmbl, 'white')
+            ut.ad_set_color(renGmbl, 'white')
 
             # add attribute for switching on/off gimbal ctrl
             addAttr = ut.add_attr_transform_shape(renCtrl, 'gimbalCtrl', 'long', min=0, max=1, dv=0, edit=True, keyable=True)
@@ -662,10 +662,10 @@ def createControl(objectList = None,
             ut.parent_object(renCtrl, renGmbl)
 
         # color control
-        ut.set_color(renCtrl, ctrlColor)
+        ut.ad_set_color(renCtrl, ctrlColor)
 
         # add attribute message to make easy track down in node editor
-        ut.add_attr_message(renCtrl, grpPrnt[0])
+        ut.ad_add_attr_message(renCtrl, grpPrnt[0])
 
         # lock and hide attribute
         ut.lock_hide_attr(lockChannels, renCtrl)

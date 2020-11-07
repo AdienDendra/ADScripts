@@ -78,7 +78,7 @@ def createFollicle(objSel, objMesh, conectFoll=['']):
     #mc.parent(follicleTransform[0], objLoc, mo=1)
 
     #rename follicle
-    rename = mc.rename(follicleTransform, '%s_%s' % (ut.prefix_name(objSel), 'fol'))
+    rename = mc.rename(follicleTransform, '%s_%s' % (ut.ad_prefix_name(objSel), 'fol'))
 
     mc.delete(closestNode)
 
@@ -105,7 +105,7 @@ def snapJoint(obj):
 def locator(obj):
     mc.select(cl=1)
     loc = mc.spaceLocator()
-    rnm = mc.rename(loc, '%s_%s' % (ut.prefix_name(obj), 'loc'))
+    rnm = mc.rename(loc, '%s_%s' % (ut.ad_prefix_name(obj), 'loc'))
     cls = mc.cluster(obj)
     mc.parentConstraint(cls, rnm, mo=0)
     mc.delete(cls)
@@ -114,7 +114,7 @@ def locator(obj):
 def joint(obj):
     mc.select(cl=1)
     jnt = mc.joint()
-    rnm = mc.rename(jnt, '%s_%s' % (ut.prefix_name(obj), 'jnt'))
+    rnm = mc.rename(jnt, '%s_%s' % (ut.ad_prefix_name(obj), 'jnt'))
     cls = mc.cluster(obj)
     mc.parentConstraint(cls, rnm, mo=0)
     mc.delete(cls)
@@ -149,7 +149,7 @@ def groupNull(name):
 def groupFK(obj):
     for i in obj:
         splitName = i.split('|')[0]
-        grpParent = ut.group_parent(['ParentPos', 'PosSDK'], ut.prefix_name(i), '')
+        grpParent = ut.group_parent(['ParentPos', 'PosSDK'], ut.ad_prefix_name(i), '')
         ut.match_position(splitName, grpParent[0])
         return grpParent
 
@@ -262,7 +262,7 @@ def createBPM(joints =[],
 
 
     for objB in baseJoint:
-        grp = ut.group_object(['Zro', 'BPM', 'Null'], objB)
+        grp = ut.ad_group_object(['Zro', 'BPM', 'Null'], objB)
         mc.parent(grp[0], bpmGrp)
         #ut.lockAttr(['t','r','s'], objB)
 

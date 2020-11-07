@@ -10,15 +10,15 @@ reload(au)
 ############################################## tools BPM ###############################################
 
 def createCtrl(obj):
-    ctrl = ac.create_controller(select=obj,
-                                groups_ctrl=['Zro', 'BPM', 'Adjust'],
-                                ctrl_color='lightPink',
-                                shape=ac.JOINT,
-                                ctrl_size=0.4,
-                                connection=['parent'],
-                                group_connect_attr=['Offset'],
-                                lock_channels=[]
-                                )
+    ctrl = ac.ad_create_controller(select=obj,
+                                   groups_ctrl=['Zro', 'BPM', 'Adjust'],
+                                   ctrl_color='lightPink',
+                                   shape=ac.JOINT,
+                                   ctrl_size=0.4,
+                                   connection=['parent'],
+                                   group_connect_attr=['Offset'],
+                                   lock_channels=[]
+                                   )
     return ctrl
 
 
@@ -81,7 +81,7 @@ def createBPM(joints=[],
 
         ctrlN = createCtrl(obj)
 
-        follicles = au.follicle_set(obj, mainMesh, connectMesh)
+        follicles = au.ad_follicle_set(obj, mainMesh, connectMesh)
 
         mc.parent(ctrlN[0], follicles)
 
@@ -114,17 +114,17 @@ def createBPM(joints=[],
         au.lock_attr(['t', 'r', 's'], ctrlN[1])
 
         mc.connectAttr('%s.worldInverseMatrix[0]' % arrayBPMFolder(obj),
-        '%s.bindPreMatrix[%d]' % (au.query_skin_name(meshBPM), skinMatrixListFromJoint(obj)))
+        '%s.bindPreMatrix[%d]' % (au.ad_query_skin_name(meshBPM), skinMatrixListFromJoint(obj)))
 
     for objB in baseJoint:
         lR = mc.listRelatives(objB, p=True)
         if lR == None:
-            au.group_object(['Zro', 'BPM', 'Null', 'Adjust'], objB)
+            au.ad_group_object(['Zro', 'BPM', 'Null', 'Adjust'], objB)
             #mc.parent(grp[0], bpmGrp)
             au.lock_attr(['t', 'r', 's'], objB)
             # partObj = arrayPartObject(joints, lisConn)
             mc.connectAttr('%s.worldInverseMatrix[0]' % arrayBPMFolder(objB),
-                           '%s.bindPreMatrix[%d]' % (au.query_skin_name(meshBPM), skinMatrixListFromJoint(objB)))
+                           '%s.bindPreMatrix[%d]' % (au.ad_query_skin_name(meshBPM), skinMatrixListFromJoint(objB)))
         else:
             return
 
@@ -139,7 +139,7 @@ def createBPMFK(joints=[],
           connectMesh=[]
           ):
 
-    createGrp = au.group_object_outside('FolFK', joints)
+    createGrp = au.ad_group_object_outside('FolFK', joints)
 
     fol = []
     ctrls = []
@@ -152,7 +152,7 @@ def createBPMFK(joints=[],
 
         print ctrls
 
-        follicles = au.follicle_set(obj, mainMesh, connectMesh)
+        follicles = au.ad_follicle_set(obj, mainMesh, connectMesh)
 
         fol.append(follicles)
 
@@ -216,13 +216,13 @@ def reskinMeshBPM (joints=[],
     for obj in joints:
 
         mc.connectAttr('%s.worldInverseMatrix[0]' % arrayBPMFolder(obj),
-                    '%s.bindPreMatrix[%d]' % (au.query_skin_name(meshBPM), skinMatrixListFromJoint(obj)))
+                    '%s.bindPreMatrix[%d]' % (au.ad_query_skin_name(meshBPM), skinMatrixListFromJoint(obj)))
 
     for objB in baseJoint:
         lR = mc.listRelatives(objB, f=1, ap=1)[0]
 
         mc.connectAttr('%s.worldInverseMatrix[0]' % arrayBPMFolder(objB),
-                       '%s.bindPreMatrix[%d]' % (au.query_skin_name(meshBPM), skinMatrixListFromJoint(objB)))
+                       '%s.bindPreMatrix[%d]' % (au.ad_query_skin_name(meshBPM), skinMatrixListFromJoint(objB)))
 
 
 
@@ -266,7 +266,7 @@ def sourceJointSkinMatrix(obj):
 def groupFK(obj):
     for i in obj:
         splitName = i.split('|')[0]
-        grpParent = au.group_parent(['ParentPos', 'PosSDK'], au.prefix_name(i), '')
+        grpParent = au.group_parent(['ParentPos', 'PosSDK'], au.ad_prefix_name(i), '')
         au.match_position(splitName, grpParent[0])
         return grpParent
 

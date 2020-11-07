@@ -506,13 +506,20 @@ def prefix_name_no_split(obj):
     return get_prefix_name
 
 
+# def prefix_name(obj):
+#     if '_' in obj:
+#         get_prefix_name = obj.split('_')[0]
+#         return get_prefix_name
+#     else:
+#         return obj
+
 def prefix_name(obj):
     if '_' in obj:
-        get_prefix_name = obj.split('_')[0]
-        return get_prefix_name
+        get_prefix_name = obj.split('_')[:-1]
+        joining = '_'.join(get_prefix_name)
+        return joining
     else:
-        return obj
-
+        print obj
 
 def suffix_name(obj):
     objs = obj.split('|')[-1:]
