@@ -35,11 +35,11 @@ on_selector = 0
 method_radio_button =1
 
 def ad_show_ui():
-    adien_tweak_ctrl = 'AD_TweakController'
+    adien_tweak_ctrl = 'AD_TweakControllerTool'
     pm.window(adien_tweak_ctrl, exists=True)
     if pm.window(adien_tweak_ctrl, exists=True):
         pm.deleteUI(adien_tweak_ctrl)
-    with pm.window(adien_tweak_ctrl, title='AD Tweak Controller', width=400, height=400):
+    with pm.window(adien_tweak_ctrl, title='AD Tweak Controller Tool', width=400, height=400):
         with pm.tabLayout('tab', width=410, height=160):
             # CREATE TAB
             with pm.columnLayout('Create Tweak Controller', rowSpacing=1 * percentage, w=layout,
