@@ -2,32 +2,9 @@ from functools import partial
 
 import pymel.core as pm
 
-JOINT = [[0.0, 1.0, 0.0], [0.0, 0.9238800000000001, 0.38268300000000005], [0.0, 0.7071070000000002, 0.7071070000000002],
-         [0.0, 0.38268300000000005, 0.9238800000000001], [0.0, 0.0, 1.0],
-         [0.0, -0.38268300000000005, 0.9238800000000001], [0.0, -0.7071070000000002, 0.7071070000000002],
-         [0.0, -0.9238800000000001, 0.38268300000000005], [0.0, -1.0, 0.0],
-         [0.0, -0.9238800000000001, -0.38268300000000005], [0.0, -0.7071070000000002, -0.7071070000000002],
-         [0.0, -0.38268300000000005, -0.9238800000000001], [0.0, 0.0, -1.0],
-         [0.0, 0.38268300000000005, -0.9238800000000001], [0.0, 0.7071070000000002, -0.7071070000000002],
-         [0.0, 0.9238800000000001, -0.38268300000000005], [0.0, 1.0, 0.0],
-         [0.38268300000000005, 0.9238800000000001, 0.0], [0.7071070000000002, 0.7071070000000002, 0.0],
-         [0.9238800000000001, 0.38268300000000005, 0.0], [1.0, 0.0, 0.0],
-         [0.9238800000000001, -0.38268300000000005, 0.0], [0.7071070000000002, -0.7071070000000002, 0.0],
-         [0.38268300000000005, -0.9238800000000001, 0.0], [0.0, -1.0, 0.0],
-         [-0.38268300000000005, -0.9238800000000001, 0.0], [-0.7071070000000002, -0.7071070000000002, 0.0],
-         [-0.9238800000000001, -0.38268300000000005, 0.0], [-1.0, 0.0, 0.0],
-         [-0.9238800000000001, 0.38268300000000005, 0.0], [-0.7071070000000002, 0.7071070000000002, 0.0],
-         [-0.38268300000000005, 0.9238800000000001, 0.0], [0.0, 1.0, 0.0],
-         [0.0, 0.9238800000000001, -0.38268300000000005], [0.0, 0.7071070000000002, -0.7071070000000002],
-         [0.0, 0.38268300000000005, -0.9238800000000001], [0.0, 0.0, -1.0],
-         [-0.38268300000000005, 0.0, -0.9238800000000001], [-0.7071070000000002, 0.0, -0.7071070000000002],
-         [-0.9238800000000001, 0.0, -0.38268300000000005], [-1.0, 0.0, 0.0],
-         [-0.9238800000000001, 0.0, 0.38268300000000005], [-0.7071070000000002, 0.0, 0.7071070000000002],
-         [-0.38268300000000005, 0.0, 0.9238800000000001], [0.0, 0.0, 1.0],
-         [0.38268300000000005, 0.0, 0.9238800000000001], [0.7071070000000002, 0.0, 0.7071070000000002],
-         [0.9238800000000001, 0.0, 0.38268300000000005], [1.0, 0.0, 0.0],
-         [0.9238800000000001, 0.0, -0.38268300000000005], [0.7071070000000002, 0.0, -0.7071070000000002],
-         [0.38268300000000005, 0.0, -0.9238800000000001], [0.0, 0.0, -1.0]]
+SHAPE_CTRL = [[-1.0, 1.0, 1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, 1.0, 1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
+        [-1.0, -1.0, -1.0], [-1.0, 1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, 1.0],
+        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [1.0, -1.0, 1.0], [1.0, -1.0, -1.0], [-1.0, -1.0, -1.0]]
 
 layout = 400
 percentage = 0.01 * layout
@@ -329,9 +306,7 @@ def ad_tweak_hierarchy_condition(list_joint, main_mesh, scale_connection, tweak_
 
         # create controller
         controller = ad_create_controller(object_list=list_joint,
-                                          groups_ctrl=['Zro', 'Offset'],
                                           ctrl_color=20,
-                                          shape=JOINT,
                                           )
         # parenting to group
         pm.parent(controller['group'][0], ctrl_grp)
@@ -394,9 +369,7 @@ def ad_create_tweak_non_hierarchy_controller(joint, main_mesh, scale_connection,
 
         all_grp = ad_create_group('transform', "%s_%s" % ('AllTweakCtrl_NonHJ', 'grp'))
         controller = ad_create_controller(object_list=[joint],
-                                          groups_ctrl=['Zro', 'Offset'],
                                           ctrl_color=18,
-                                          shape=JOINT,
                                           )
 
         # for list_joint, group_ctrl in zip(list_joint, controller['group']):
@@ -619,32 +592,32 @@ def ad_create_follicle_selection(obj_select, obj_mesh, prefix=None, suffix=None)
 
     # listing the shape of follicle
     follicle_shape = pm.listRelatives(follicle_transform, s=1)[0]
-    pm.setAttr(follicle_shape + '.rsp', l=True, k=False)
-    pm.setAttr(follicle_shape + '.ptl', l=True, k=False)
-    pm.setAttr(follicle_shape + '.sim', l=True, k=False)
-    pm.setAttr(follicle_shape + '.sdr', l=True, k=False)
-    pm.setAttr(follicle_shape + '.fld', l=True, k=False)
-    pm.setAttr(follicle_shape + '.ovd', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cld', l=True, k=False)
-    pm.setAttr(follicle_shape + '.dmp', l=True, k=False)
-    pm.setAttr(follicle_shape + '.stf', l=True, k=False)
-    pm.setAttr(follicle_shape + '.lfl', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cwm', l=True, k=False)
-    pm.setAttr(follicle_shape + '.sct', l=True, k=False)
-    pm.setAttr(follicle_shape + '.ad', l=True, k=False)
-    pm.setAttr(follicle_shape + '.dml', l=True, k=False)
-    pm.setAttr(follicle_shape + '.ctf', l=True, k=False)
-    pm.setAttr(follicle_shape + '.brd', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cbl', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cr', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cg', l=True, k=False)
-    pm.setAttr(follicle_shape + '.fsl', l=True, k=False)
-    pm.setAttr(follicle_shape + '.sgl', l=True, k=False)
-    pm.setAttr(follicle_shape + '.sdn', l=True, k=False)
-    pm.setAttr(follicle_shape + '.dgr', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cw', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cml', l=True, k=False)
-    pm.setAttr(follicle_shape + '.cb', l=True, k=False)
+    pm.setAttr(follicle_shape + '.rsp', k=False)
+    pm.setAttr(follicle_shape + '.ptl', k=False)
+    pm.setAttr(follicle_shape + '.sim', k=False)
+    pm.setAttr(follicle_shape + '.sdr', k=False)
+    pm.setAttr(follicle_shape + '.fld', k=False)
+    pm.setAttr(follicle_shape + '.ovd', k=False)
+    pm.setAttr(follicle_shape + '.cld', k=False)
+    pm.setAttr(follicle_shape + '.dmp', k=False)
+    pm.setAttr(follicle_shape + '.stf', k=False)
+    pm.setAttr(follicle_shape + '.lfl', k=False)
+    pm.setAttr(follicle_shape + '.cwm', k=False)
+    pm.setAttr(follicle_shape + '.sct', k=False)
+    pm.setAttr(follicle_shape + '.ad', k=False)
+    pm.setAttr(follicle_shape + '.dml', k=False)
+    pm.setAttr(follicle_shape + '.ctf', k=False)
+    pm.setAttr(follicle_shape + '.brd', k=False)
+    pm.setAttr(follicle_shape + '.cbl', k=False)
+    pm.setAttr(follicle_shape + '.cr', k=False)
+    pm.setAttr(follicle_shape + '.cg', k=False)
+    pm.setAttr(follicle_shape + '.fsl', k=False)
+    pm.setAttr(follicle_shape + '.sgl', k=False)
+    pm.setAttr(follicle_shape + '.sdn', k=False)
+    pm.setAttr(follicle_shape + '.dgr', k=False)
+    pm.setAttr(follicle_shape + '.cw', k=False)
+    pm.setAttr(follicle_shape + '.cml', k=False)
+    pm.setAttr(follicle_shape + '.cb', k=False)
 
     return follicle_transform, follicle_shape
 
@@ -746,7 +719,7 @@ def ad_scale_constraint(obj_base, obj_target, mo=1):
 def ad_create_controller(object_list=None,
                          groups_ctrl=['Zro', 'Offset'],
                          ctrl_color=20,
-                         shape=JOINT,
+                         shape=SHAPE_CTRL,
                          ):
     controllers = []
     parent_groups = []
