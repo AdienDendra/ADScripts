@@ -1,3 +1,27 @@
+"""
+DESCRIPTION:
+    The tool is for creating secondary controller on top of main rig. This controller will be attached with main
+    mesh of your rig.
+
+USAGE:
+    You may go to this link to have more detail >>
+    http://youtube.com
+
+AUTHOR:
+    Adien Dendra
+
+CONTACT:
+    adprojects.animation@gmail.com | hello@adiendendra.com
+
+VERSION:
+    1.0 - 12 November 2020 - Initial Release
+
+LICENSE:
+    Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+    This is commercial license can not be copied and/or
+    distributed without the express permission of Adien Dendra
+
+"""
 from functools import partial
 
 import pymel.core as pm
