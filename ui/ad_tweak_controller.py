@@ -5,7 +5,7 @@ DESCRIPTION:
 
 USAGE:
     You may go to this link to have more detail >>
-    http://youtube.com
+    https://youtu.be/IqMGcvEzJCk
 
 AUTHOR:
     Adien Dendra
@@ -14,13 +14,16 @@ CONTACT:
     adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 12 November 2020 - Initial Release
+    1.0 - 10 November 2020 - Initial Release
 
 LICENSE:
     Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
     This is commercial license can not be copied and/or
     distributed without the express permission of Adien Dendra
 
+ADDITIONAL NOTES:
+	This is a small industry. Please do not purchased or pirates the scripts from the outside of the parameters describes.
+	Be a fair and support me in order for me to continue developing the upcoming rigging stuff.
 """
 from functools import partial
 
