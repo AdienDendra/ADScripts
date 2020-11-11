@@ -97,7 +97,7 @@ def ad_show_ui():
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
                     pm.text(l='Adien Dendra | 11/2020', al='left')
                     pm.text(
-                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        l='<a href="https://youtu.be/IqMGcvEzJCk">find out how to use it! >> </a>',
                         hl=True,
                         al='right')
 
@@ -129,7 +129,7 @@ def ad_show_ui():
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage)]):
                     pm.text(l='Adien Dendra | 11/2020', al='left')
                     pm.text(
-                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        l='<a href="https://youtu.be/IqMGcvEzJCk">find out how to use it! >> </a>',
                         hl=True,
                         al='right')
         pm.setParent(u=True)
