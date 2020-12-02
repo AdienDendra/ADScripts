@@ -136,6 +136,7 @@ def biped(clavicle_left=True,
           middle_right=True,
           ring_right=True,
           pinky_right=True,
+          game_bind_joint=False,
           size=1.0):
     ## CHECK IF THE RIG EXIST IN THE SCENE
     if mc.objExists('anim_ctrl'):
@@ -175,7 +176,9 @@ def biped(clavicle_left=True,
                   ss_prefix_value=ss_prefix_value,
                   sFk_prefix_value=sFk_prefix_value, sIk_prefix_value=sIk_prefix_value,
                   sAdd_prefix_value=sAdd_prefix_value,
-                  fk=fk, ik=ik, detail=dtl, suffix_joint=suffix_joint)
+                  fk=fk, ik=ik, detail=dtl, suffix_joint=suffix_joint,
+                  game_bind_joint=game_bind_joint
+                  )
     print('------------------------------')
     print('Biped base is done!')
 

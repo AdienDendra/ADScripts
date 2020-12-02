@@ -13,6 +13,7 @@ reload(au)
 
 class CreateDetail:
     def __init__(self,
+                 limb_bind_joint_parent,
                  detail_limb_deformer=False,
                  tip = None,
                  base = None,
@@ -28,7 +29,9 @@ class CreateDetail:
                  scale=None,
                  volume_pos_min=None,
                  volume_pos_max=None,
-                 number_joints=None):
+                 number_joints=None,
+                 game_bind_joint=None,
+                 ):
 
         """
         :param detail_limb_deformer     : bool, create deformer setup on detail
@@ -263,6 +266,13 @@ class CreateDetail:
             follicle_joint = mc.joint(name='%s_%s' % (au.prefix_name(fol_s), 'skn'), radius=0.1*scale)
             self.follicle_joint_limb.append(follicle_joint)
             # mc.hide(follicle_joint)
+
+            # if game joint hierarchy
+            if game_bind_joint:
+                game_joint = mc.joint(name='%s_%s' % (au.prefix_name(fol_s), 'bind'), radius=0.1 * scale)
+                constraining = au.parent_scale_constraint(follicle_joint, game_joint)
+                mc.parent(game_joint, limb_bind_joint_parent)
+                mc.parent(constraining[0], constraining[1], 'additional_grp')
 
             # Create control for joint in follicle
             follicle_ctrl = ct.Control(prefix=prefix + ('%02d' % (i + 1)), groups_ctrl=['Zro', 'Twist', 'Offset']

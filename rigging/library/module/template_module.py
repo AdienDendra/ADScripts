@@ -224,3 +224,8 @@ class listSkeletonDuplicate:
         # BULGE
         self.cheek_bulge_LFT = sj['%s%s%s%s_%s' % ('cheekBulge', origin_prefix, key_prefix, side_LFT, suffix)]
         self.cheek_bulge_RGT = sj['%s%s%s%s_%s' % ('cheekBulge', origin_prefix, key_prefix, side_RGT, suffix)]
+
+        self.list_joint = sj
+
+        for item in self.list_joint.values():
+            mc.setAttr(item+'.visibility', 0)

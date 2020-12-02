@@ -72,7 +72,10 @@ class Limb:
                  detail_limb_deformer=None,
                  number_detail_ctrl=None,
                  left_side=True,
-                 end_limb=True):
+                 end_limb=True,
+                 game_bind_joint=None,
+                 limb_bind_joint_parent_upper=None,
+                 limb_bind_joint_parent_lower=None):
 
         """
         ###############################################################################################
@@ -114,7 +117,8 @@ class Limb:
                                                number_detail_ctrl=number_detail_ctrl, clav_jnt=self.sj.clav_LFT,
                                                parallel_axis='x', tip_pos='+',
                                                size=size, side='LFT',
-                                               )
+                                               side_LFT=side_LFT,
+                                               side_RGT=side_RGT)
                         if end_limb:
                             hm.Hand(parent=True, arm_object=self.part_control_grp, thumb_finger_base=self.sj.thumb1_LFT,
                                     thumb_finger_up=self.sj.thumb2_LFT, thumb_finger_mid=self.sj.thumb3_LFT,
@@ -166,7 +170,9 @@ class Limb:
                                                parallel_axis='x',
                                                tip_pos='-',
                                                size=size, side='RGT',
-                                               )
+                                               side_LFT=side_LFT,
+                                               side_RGT=side_RGT)
+
                         if end_limb:
                             hm.Hand(parent=True, arm_object=self.part_control_grp, thumb_finger_base=self.sj.thumb1_RGT,
                                     thumb_finger_up=self.sj.thumb2_RGT, thumb_finger_mid=self.sj.thumb3_RGT,
@@ -328,7 +334,7 @@ class Limb:
                             clav_jnt, pelvis_gimbal_ctrl, detail_limb_deformer, number_detail_ctrl, parallel_axis,
                             tip_pos,
                             prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl, side_LFT,
-                            side_RGT
+                            side_RGT, game_bind_joint, limb_bind_joint_parent_upper, limb_bind_joint_parent_lower
                             )
 
                 self.run_soft_ik = rs.run_soft_ik_joint(prefix=prefix, side=side,
@@ -350,7 +356,8 @@ class Limb:
                middle_limb_ik_jnt, lower_limb_ik_jnt, end_limb_ik_jnt, world, upper_limb_twist_help_driver_jnt,
                middle_limb_twist_help_driver_jnt,
                clav_jnt, pelvis_gimbal_ctrl, detail_limb_deformer, number_detail_ctrl, parallel_axis, tip_pos,
-               prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl, side_LFT, side_RGT
+               prefix_upper_limb_detail, prefix_middle_limb_detail, size, root_gimbal_ctrl, side_LFT, side_RGT,
+               game_bind_joint=None, limb_bind_joint_parent_upper=None, limb_bind_joint_parent_lower=None
                ):
 
         getValueTxLimbJnt = mc.xform(upper_limb_ik_jnt, ws=1, q=1, t=1)[0]
@@ -653,6 +660,7 @@ class Limb:
         #                                               UPPER LIMB DETAIL
         # ==============================================================================================================
         detail_upper_limb = dl.CreateDetail(
+            limb_bind_joint_parent=limb_bind_joint_parent_upper,
             detail_limb_deformer=detail_limb_deformer,
             base=upper_limb_jnt,
             tip=middle_limb_jnt,
@@ -668,7 +676,8 @@ class Limb:
             scale=size,
             volume_pos_min=2,
             volume_pos_max=0,
-            number_joints=number_detail_ctrl)
+            number_joints=number_detail_ctrl,
+            game_bind_joint=game_bind_joint)
 
         # set grp and ctrl follicle upper limb
         self.set_grp_follicle_upper_limb = detail_upper_limb.follicle_set_grp
@@ -822,6 +831,7 @@ class Limb:
         #                                               MIDDLE LIMB DETAIL
         # ==============================================================================================================
         detail_lower_limb = dl.CreateDetail(
+            limb_bind_joint_parent=limb_bind_joint_parent_lower,
             detail_limb_deformer=detail_limb_deformer,
             base=middle_limb_jnt,
             tip=lower_limb_jnt,
@@ -837,7 +847,8 @@ class Limb:
             scale=size,
             volume_pos_min=0,
             volume_pos_max=2,
-            number_joints=number_detail_ctrl)
+            number_joints=number_detail_ctrl,
+            game_bind_joint=game_bind_joint)
 
         # set grp and ctrl follicle middle limb
         self.set_grp_follicle_middle_limb = detail_lower_limb.follicle_set_grp
