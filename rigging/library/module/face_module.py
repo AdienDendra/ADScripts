@@ -117,10 +117,12 @@ def build_rig(
         up_lid_LR_low_lid_LR,
         up_lid_following_up,
 
+        bulge,
         bulge_mesh,
         add_set_bulge,
-        follicle_mesh
-):
+        follicle_mesh,
+        game_bind_joint):
+
     # FINGER POSITION
     BaseF = 'Base'
     UpF = 'Up'
@@ -148,6 +150,34 @@ def build_rig(
                                   side_LFT=side_LFT,
                                   side_RGT=side_RGT
                                   )
+    sGame=[]
+    if game_bind_joint:
+        sGame = tm.listSkeletonDuplicate(value_prefix='',
+                                         key_prefix='Game',
+                                         suffix='bind',
+                                         side_LFT=side_LFT,
+                                         side_RGT=side_RGT
+                                         )
+        # unhide the joint skn
+        for item in sGame.list_joint.values():
+            mc.setAttr(item + '.visibility', 1)
+            mc.setAttr(item + '.segmentScaleCompensate', 0)
+
+        bind_game = sorted(sGame.list_joint.values())
+        bind_sj = sorted(sj.list_joint.values())
+
+        # constraining the skn to game joint
+        for skin_joint, game in zip(bind_sj, bind_game):
+            constraint = au.parent_scale_constraint(skin_joint, game, mo=1)
+            mc.parent(constraint[0], constraint[1], 'additional_grp')
+
+        mc.parent(sGame.neck, world=True)
+        mc.delete(sGame.root)
+
+        if mc.objExists('spine04_bind'):
+            mc.parent(sGame.neck, 'spine04_bind')
+        else:
+            mc.parent(sGame.neck, world=True)
 
     mc.parent(sj.neck, world=True)
     mc.delete(sj.root)
@@ -230,48 +260,89 @@ def build_rig(
                  prefix_degree_follow=head.attr_degree_follow,
                  headLow_normal_rotationGrp=head.headLow_normal_rotationGrp,
                  base_module_nonTransform=face_non_transform_grp,
+                 game_bind_joint=game_bind_joint
                  )
 
     print('15% | lip is done!')
     # ==================================================================================================================
     #                                                     NOSE PARAMETERS
     # ==================================================================================================================
-    nose = nm.Nose(face_utils_grp=face_non_transform_grp,
-                   columella_jnt=sj.columella,
-                   nose_jnt=sj.nose,
-                   nose_up_jnt=sj.nose_up,
-                   columella_prefix=columella_prefix,
-                   curve_template_nose=curve_template_nose,
-                   offset_jnt02_bind_position=offset_jnt02_bind_lip_nose_position,
-                   offset_jnt04_bind_position=offset_jnt04_bind_lip_nose_position,
-                   ctrl01_direction=0,
-                   ctrl02_direction=0,
-                   ctrl03_direction=0,
-                   ctrl04_direction=0,
-                   ctrl05_direction=0,
-                   ctrl_color='lightPink',
-                   shape=ct.JOINT,
-                   scale=scale,
-                   head_ctrl_gimbal=head.head_ctrl_gimbal,
-                   head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
-                   head_jnt=sj.head,
-                   position_mouth_ctrl=position_mouth_ctrl,
-                   side_LFT=side_LFT,
-                   side_RGT=side_RGT,
-                   lip_corner_ctrl_LFT=lip.corner_lip_ctrl_LFT,
-                   lip_corner_ctrl_RGT=lip.corner_lip_ctrl_RGT,
-                   nostril_attr_ctrl_LFT=lip.nostril_attr_ctrl_LFT,
-                   nostril_attr_ctrl_RGT=lip.nostril_attr_ctrl_RGT,
-                   up_lip_controller_all=lip.up_lip_controller_all,
-                   mouth_ctrl=lip.mouth_ctrl,
-                   nose_follow_mouth_value=nose_follow_mouth_value,
-                   jaw_ctrl=head.jaw_ctrl,
-                   suffix_controller=suffix_controller,
-                   base_module_nonTransform=face_non_transform_grp,
-                   mouth_ctrl_nose_follow=lip.mouth_ctrl_nose_follow
-                   )
+    if game_bind_joint:
+        nose = nm.Nose(face_utils_grp=face_non_transform_grp,
+                       columella_jnt=sj.columella,
+                       nose_jnt=sj.nose,
+                       nose_up_jnt=sj.nose_up,
+                       columella_prefix=columella_prefix,
+                       curve_template_nose=curve_template_nose,
+                       offset_jnt02_bind_position=offset_jnt02_bind_lip_nose_position,
+                       offset_jnt04_bind_position=offset_jnt04_bind_lip_nose_position,
+                       ctrl01_direction=0,
+                       ctrl02_direction=0,
+                       ctrl03_direction=0,
+                       ctrl04_direction=0,
+                       ctrl05_direction=0,
+                       ctrl_color='lightPink',
+                       shape=ct.JOINT,
+                       scale=scale,
+                       head_ctrl_gimbal=head.head_ctrl_gimbal,
+                       head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+                       head_jnt=sj.head,
+                       position_mouth_ctrl=position_mouth_ctrl,
+                       side_LFT=side_LFT,
+                       side_RGT=side_RGT,
+                       lip_corner_ctrl_LFT=lip.corner_lip_ctrl_LFT,
+                       lip_corner_ctrl_RGT=lip.corner_lip_ctrl_RGT,
+                       nostril_attr_ctrl_LFT=lip.nostril_attr_ctrl_LFT,
+                       nostril_attr_ctrl_RGT=lip.nostril_attr_ctrl_RGT,
+                       up_lip_controller_all=lip.up_lip_controller_all,
+                       mouth_ctrl=lip.mouth_ctrl,
+                       nose_follow_mouth_value=nose_follow_mouth_value,
+                       jaw_ctrl=head.jaw_ctrl,
+                       suffix_controller=suffix_controller,
+                       base_module_nonTransform=face_non_transform_grp,
+                       mouth_ctrl_nose_follow=lip.mouth_ctrl_nose_follow,
+                       game_bind_joint=game_bind_joint,
+                       parent_sgame_joint=sGame.head
+                       )
 
-    print('25% | nose is done!')
+        print('25% | nose is done!')
+    else:
+        nose = nm.Nose(face_utils_grp=face_non_transform_grp,
+                       columella_jnt=sj.columella,
+                       nose_jnt=sj.nose,
+                       nose_up_jnt=sj.nose_up,
+                       columella_prefix=columella_prefix,
+                       curve_template_nose=curve_template_nose,
+                       offset_jnt02_bind_position=offset_jnt02_bind_lip_nose_position,
+                       offset_jnt04_bind_position=offset_jnt04_bind_lip_nose_position,
+                       ctrl01_direction=0,
+                       ctrl02_direction=0,
+                       ctrl03_direction=0,
+                       ctrl04_direction=0,
+                       ctrl05_direction=0,
+                       ctrl_color='lightPink',
+                       shape=ct.JOINT,
+                       scale=scale,
+                       head_ctrl_gimbal=head.head_ctrl_gimbal,
+                       head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+                       head_jnt=sj.head,
+                       position_mouth_ctrl=position_mouth_ctrl,
+                       side_LFT=side_LFT,
+                       side_RGT=side_RGT,
+                       lip_corner_ctrl_LFT=lip.corner_lip_ctrl_LFT,
+                       lip_corner_ctrl_RGT=lip.corner_lip_ctrl_RGT,
+                       nostril_attr_ctrl_LFT=lip.nostril_attr_ctrl_LFT,
+                       nostril_attr_ctrl_RGT=lip.nostril_attr_ctrl_RGT,
+                       up_lip_controller_all=lip.up_lip_controller_all,
+                       mouth_ctrl=lip.mouth_ctrl,
+                       nose_follow_mouth_value=nose_follow_mouth_value,
+                       jaw_ctrl=head.jaw_ctrl,
+                       suffix_controller=suffix_controller,
+                       base_module_nonTransform=face_non_transform_grp,
+                       mouth_ctrl_nose_follow=lip.mouth_ctrl_nose_follow,
+                       )
+
+        print('25% | nose is done!')
     # ==================================================================================================================
     #                                                     CHEEK PARAMETERS
     # ==================================================================================================================
@@ -399,187 +470,373 @@ def build_rig(
     # ==================================================================================================================
     #                                                     EYELID PARAMETERS
     # ==================================================================================================================
+    if game_bind_joint:
+        leftEyelid = ld.Lid(
+            face_utils_grp=face_non_transform_grp,
+            curve_up_lid_template=curve_up_lid_template_LFT,
+            curve_low_lid_template=curve_low_lid_template_LFT,
+            offset_lid02_position=lid02_position_offset,
+            offset_lid04_position=lid04_position_offset,
+            eyeball_jnt=sj.eyeball_LFT,
+            eye_jnt=sj.eye_LFT,
+            suffix_controller=suffix_controller,
+            prefix_eye=eye_prefix,
+            prefix_eye_aim=eye_aim_prefix,
+            scale=scale,
+            side=side_LFT,
+            side_LFT=side_LFT,
+            side_RGT=side_RGT,
+            lid01_direction=lid01_direction,
+            lid02_direction=lid02_direction,
+            lid03_direction=lid03_direction,
+            lid04_direction=lid04_direction,
+            lid05_direction=lid05_direction,
+            position_eye_aim_ctrl=position_eye_aim_ctrl,
+            eye_aim_main_ctrl=head.eyeAimMainCtrl,
+            head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+            corner_lip=lip.corner_lip_ctrl_LFT,
+            corner_lip_lid_attr=lip.lid_attr_ctrl_LFT,
+            low_lid_following_down=low_lid_following_down,
+            upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
+            upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
+            upLid_following_up=up_lid_following_up,
+            upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
+            pupil_jnt=sj.pupil_LFT,
+            iris_jnt=sj.iris_LFT,
+            pupil_prefix=pupil_prefix,
+            iris_prefix=iris_prefix,
+            eye_ctrl_direction=eye_ctrl_direction,
+            base_module_nonTransform=face_non_transform_grp,
+            game_bind_joint=game_bind_joint,
+            parent_sgame_joint=sGame.eye_LFT
+        )
 
-    leftEyelid = ld.Lid(
-        face_utils_grp=face_non_transform_grp,
-        curve_up_lid_template=curve_up_lid_template_LFT,
-        curve_low_lid_template=curve_low_lid_template_LFT,
-        offset_lid02_position=lid02_position_offset,
-        offset_lid04_position=lid04_position_offset,
-        eyeball_jnt=sj.eyeball_LFT,
-        eye_jnt=sj.eye_LFT,
-        suffix_controller=suffix_controller,
-        prefix_eye=eye_prefix,
-        prefix_eye_aim=eye_aim_prefix,
-        scale=scale,
-        side=side_LFT,
-        side_LFT=side_LFT,
-        side_RGT=side_RGT,
-        lid01_direction=lid01_direction,
-        lid02_direction=lid02_direction,
-        lid03_direction=lid03_direction,
-        lid04_direction=lid04_direction,
-        lid05_direction=lid05_direction,
-        position_eye_aim_ctrl=position_eye_aim_ctrl,
-        eye_aim_main_ctrl=head.eyeAimMainCtrl,
-        head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
-        corner_lip=lip.corner_lip_ctrl_LFT,
-        corner_lip_lid_attr=lip.lid_attr_ctrl_LFT,
-        low_lid_following_down=low_lid_following_down,
-        upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
-        upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
-        upLid_following_up=up_lid_following_up,
-        upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
-        pupil_jnt=sj.pupil_LFT,
-        iris_jnt=sj.iris_LFT,
-        pupil_prefix=pupil_prefix,
-        iris_prefix=iris_prefix,
-        eye_ctrl_direction=eye_ctrl_direction,
-        base_module_nonTransform=face_non_transform_grp,
-    )
+        print('60% | left eyelid is done!')
 
-    print('60% | left eyelid is done!')
+        rightEyelid = ld.Lid(
+            face_utils_grp=face_non_transform_grp,
+            curve_up_lid_template=curve_up_lid_template_RGT,
+            curve_low_lid_template=curve_low_lid_template_RGT,
+            offset_lid02_position=lid02_position_offset,
+            offset_lid04_position=lid04_position_offset,
+            eyeball_jnt=sj.eyeball_RGT,
+            eye_jnt=sj.eye_RGT,
+            suffix_controller=suffix_controller,
+            prefix_eye=eye_prefix,
+            prefix_eye_aim=eye_aim_prefix,
+            scale=scale,
+            side=side_RGT,
+            side_LFT=side_LFT,
+            side_RGT=side_RGT,
+            lid01_direction=lid01_direction,
+            lid02_direction=lid02_direction,
+            lid03_direction=lid03_direction,
+            lid04_direction=lid04_direction,
+            lid05_direction=lid05_direction,
+            position_eye_aim_ctrl=position_eye_aim_ctrl,
+            eye_aim_main_ctrl=head.eyeAimMainCtrl,
+            head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+            corner_lip=lip.corner_lip_ctrl_RGT,
+            corner_lip_lid_attr=lip.lid_attr_ctrl_RGT,
+            low_lid_following_down=low_lid_following_down,
+            upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
+            upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
+            upLid_following_up=up_lid_following_up,
+            upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
+            pupil_jnt=sj.pupil_RGT,
+            iris_jnt=sj.iris_RGT,
+            pupil_prefix=pupil_prefix,
+            iris_prefix=iris_prefix,
+            eye_ctrl_direction=eye_ctrl_direction,
+            base_module_nonTransform=face_non_transform_grp,
+            game_bind_joint=game_bind_joint,
+            parent_sgame_joint=sGame.eye_RGT
+        )
 
-    rightEyelid = ld.Lid(
-        face_utils_grp=face_non_transform_grp,
-        curve_up_lid_template=curve_up_lid_template_RGT,
-        curve_low_lid_template=curve_low_lid_template_RGT,
-        offset_lid02_position=lid02_position_offset,
-        offset_lid04_position=lid04_position_offset,
-        eyeball_jnt=sj.eyeball_RGT,
-        eye_jnt=sj.eye_RGT,
-        suffix_controller=suffix_controller,
-        prefix_eye=eye_prefix,
-        prefix_eye_aim=eye_aim_prefix,
-        scale=scale,
-        side=side_RGT,
-        side_LFT=side_LFT,
-        side_RGT=side_RGT,
-        lid01_direction=lid01_direction,
-        lid02_direction=lid02_direction,
-        lid03_direction=lid03_direction,
-        lid04_direction=lid04_direction,
-        lid05_direction=lid05_direction,
-        position_eye_aim_ctrl=position_eye_aim_ctrl,
-        eye_aim_main_ctrl=head.eyeAimMainCtrl,
-        head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
-        corner_lip=lip.corner_lip_ctrl_RGT,
-        corner_lip_lid_attr=lip.lid_attr_ctrl_RGT,
-        low_lid_following_down=low_lid_following_down,
-        upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
-        upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
-        upLid_following_up=up_lid_following_up,
-        upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
-        pupil_jnt=sj.pupil_RGT,
-        iris_jnt=sj.iris_RGT,
-        pupil_prefix=pupil_prefix,
-        iris_prefix=iris_prefix,
-        eye_ctrl_direction=eye_ctrl_direction,
-        base_module_nonTransform=face_non_transform_grp,
-    )
+        print('70% | right eyelid is done!')
 
-    print('70% | right eyelid is done!')
+    else:
+        leftEyelid = ld.Lid(
+            face_utils_grp=face_non_transform_grp,
+            curve_up_lid_template=curve_up_lid_template_LFT,
+            curve_low_lid_template=curve_low_lid_template_LFT,
+            offset_lid02_position=lid02_position_offset,
+            offset_lid04_position=lid04_position_offset,
+            eyeball_jnt=sj.eyeball_LFT,
+            eye_jnt=sj.eye_LFT,
+            suffix_controller=suffix_controller,
+            prefix_eye=eye_prefix,
+            prefix_eye_aim=eye_aim_prefix,
+            scale=scale,
+            side=side_LFT,
+            side_LFT=side_LFT,
+            side_RGT=side_RGT,
+            lid01_direction=lid01_direction,
+            lid02_direction=lid02_direction,
+            lid03_direction=lid03_direction,
+            lid04_direction=lid04_direction,
+            lid05_direction=lid05_direction,
+            position_eye_aim_ctrl=position_eye_aim_ctrl,
+            eye_aim_main_ctrl=head.eyeAimMainCtrl,
+            head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+            corner_lip=lip.corner_lip_ctrl_LFT,
+            corner_lip_lid_attr=lip.lid_attr_ctrl_LFT,
+            low_lid_following_down=low_lid_following_down,
+            upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
+            upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
+            upLid_following_up=up_lid_following_up,
+            upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
+            pupil_jnt=sj.pupil_LFT,
+            iris_jnt=sj.iris_LFT,
+            pupil_prefix=pupil_prefix,
+            iris_prefix=iris_prefix,
+            eye_ctrl_direction=eye_ctrl_direction,
+            base_module_nonTransform=face_non_transform_grp
+        )
+
+        print('60% | left eyelid is done!')
+
+        rightEyelid = ld.Lid(
+            face_utils_grp=face_non_transform_grp,
+            curve_up_lid_template=curve_up_lid_template_RGT,
+            curve_low_lid_template=curve_low_lid_template_RGT,
+            offset_lid02_position=lid02_position_offset,
+            offset_lid04_position=lid04_position_offset,
+            eyeball_jnt=sj.eyeball_RGT,
+            eye_jnt=sj.eye_RGT,
+            suffix_controller=suffix_controller,
+            prefix_eye=eye_prefix,
+            prefix_eye_aim=eye_aim_prefix,
+            scale=scale,
+            side=side_RGT,
+            side_LFT=side_LFT,
+            side_RGT=side_RGT,
+            lid01_direction=lid01_direction,
+            lid02_direction=lid02_direction,
+            lid03_direction=lid03_direction,
+            lid04_direction=lid04_direction,
+            lid05_direction=lid05_direction,
+            position_eye_aim_ctrl=position_eye_aim_ctrl,
+            eye_aim_main_ctrl=head.eyeAimMainCtrl,
+            head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+            corner_lip=lip.corner_lip_ctrl_RGT,
+            corner_lip_lid_attr=lip.lid_attr_ctrl_RGT,
+            low_lid_following_down=low_lid_following_down,
+            upLid_following_down_lowLid_following_up=up_lid_following_down_low_lid_following_up,
+            upLid_LR_lowLid_LR=up_lid_LR_low_lid_LR,
+            upLid_following_up=up_lid_following_up,
+            upper_head_gimbal_ctrl=head.head_up_ctrl_gimbal,
+            pupil_jnt=sj.pupil_RGT,
+            iris_jnt=sj.iris_RGT,
+            pupil_prefix=pupil_prefix,
+            iris_prefix=iris_prefix,
+            eye_ctrl_direction=eye_ctrl_direction,
+            base_module_nonTransform=face_non_transform_grp,
+        )
+
+        print('70% | right eyelid is done!')
 
     # ==================================================================================================================
     #                                                     EYELID OUT PARAMETERS
     # ==================================================================================================================
+    if game_bind_joint:
+        leftLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
+                               curve_up_template=curve_up_lid_out_LFT,
+                               curve_low_template=curve_low_lid_out_LFT,
+                               offset_jnt02_bind_position=jnt02_bind_lip_lid_out_position_offset,
+                               offset_jnt04_bind_position=jnt04_bind_lip_lid_out_position_offset,
+                               ctrl01_direction=lid01_out_ctrl_direction,
+                               ctrl02_direction=lid02_out_ctrl_direction,
+                               ctrl03_direction=lid03_out_ctrl_direction,
+                               ctrl04_direction=lid04_out_ctrl_direction,
+                               ctrl05_direction=lid05_out_ctrl_direction,
+                               ctrl_color='blue',
+                               shape=ct.JOINT,
+                               scale=scale,
+                               side_RGT=side_RGT,
+                               side_LFT=side_LFT,
+                               side=side_LFT,
+                               eyeball_jnt=sj.eyeball_LFT,
+                               head_up_jnt=sj.head_up,
+                               eye_ctrl=leftEyelid.eyeball_controller,
+                               corner_lip=lip.corner_lip_ctrl_LFT,
+                               corner_lip_attr=lip.lid_out_attr_ctrl_LFT,
+                               ctrl_bind01_up=leftEyelid.up_lid_bind01_ctrl,
+                               ctrl_bind02_up=leftEyelid.up_lid_bind02_ctrl,
+                               ctrl_bind03_up=leftEyelid.up_lid_bind03_ctrl,
+                               ctrl_bind04_up=leftEyelid.up_lid_bind04_ctrl,
+                               ctrl_bind05_up=leftEyelid.up_lid_bind05_ctrl,
+                               ctrl_bind01_low=leftEyelid.low_lid_bind01_ctrl,
+                               ctrl_bind02_low=leftEyelid.low_lid_bind02_ctrl,
+                               ctrl_bind03_low=leftEyelid.low_lid_bind03_ctrl,
+                               ctrl_bind04_low=leftEyelid.low_lid_bind04_ctrl,
+                               ctrl_bind05_low=leftEyelid.low_lid_bind05_ctrl,
+                               lid_out_follow=leftEyelid.lid_out_up03_follow_attr,
+                               close_lid_attr=leftEyelid.upLid_closer,
+                               eyeball_ctrl=leftEyelid.eyeball_controller,
+                               lid_corner_in_ctrl=leftEyelid.lid_corner_in_ctrl,
+                               lid_corner_out_ctrl=leftEyelid.lid_corner_out_ctrl,
+                               wire_up_bind01_grp_offset=leftEyelid.up_lid_bind01_grp_offset,
+                               wire_low_bind01_grp_offset=leftEyelid.low_lid_bind01_grp_offset,
+                               wire_up_bind05_grp_offset=leftEyelid.up_lid_bind05_grp_offset,
+                               wire_low_bind05_grp_offset=leftEyelid.low_lid_bind05_grp_offset,
+                               lid_out_on_off_follow_trans_mdn=leftEyelid.lid_out_eye_ctrl_trans,
+                               lid_out_on_off_follow_rot_mdn=leftEyelid.lid_out_eye_ctrl_rotate,
+                               eye_ctrl_direction=eye_ctrl_direction,
+                               suffix_controller=suffix_controller,
+                               base_module_nonTransform=face_non_transform_grp,
+                               game_bind_joint=game_bind_joint,
+                               parent_sgame_joint=sGame.head_up
+                               )
 
-    leftLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
-                           curve_up_template=curve_up_lid_out_LFT,
-                           curve_low_template=curve_low_lid_out_LFT,
-                           offset_jnt02_bind_position=jnt02_bind_lip_lid_out_position_offset,
-                           offset_jnt04_bind_position=jnt04_bind_lip_lid_out_position_offset,
-                           ctrl01_direction=lid01_out_ctrl_direction,
-                           ctrl02_direction=lid02_out_ctrl_direction,
-                           ctrl03_direction=lid03_out_ctrl_direction,
-                           ctrl04_direction=lid04_out_ctrl_direction,
-                           ctrl05_direction=lid05_out_ctrl_direction,
-                           ctrl_color='blue',
-                           shape=ct.JOINT,
-                           scale=scale,
-                           side_RGT=side_RGT,
-                           side_LFT=side_LFT,
-                           side=side_LFT,
-                           eyeball_jnt=sj.eyeball_LFT,
-                           head_up_jnt=sj.head_up,
-                           eye_ctrl=leftEyelid.eyeball_controller,
-                           corner_lip=lip.corner_lip_ctrl_LFT,
-                           corner_lip_attr=lip.lid_out_attr_ctrl_LFT,
-                           ctrl_bind01_up=leftEyelid.up_lid_bind01_ctrl,
-                           ctrl_bind02_up=leftEyelid.up_lid_bind02_ctrl,
-                           ctrl_bind03_up=leftEyelid.up_lid_bind03_ctrl,
-                           ctrl_bind04_up=leftEyelid.up_lid_bind04_ctrl,
-                           ctrl_bind05_up=leftEyelid.up_lid_bind05_ctrl,
-                           ctrl_bind01_low=leftEyelid.low_lid_bind01_ctrl,
-                           ctrl_bind02_low=leftEyelid.low_lid_bind02_ctrl,
-                           ctrl_bind03_low=leftEyelid.low_lid_bind03_ctrl,
-                           ctrl_bind04_low=leftEyelid.low_lid_bind04_ctrl,
-                           ctrl_bind05_low=leftEyelid.low_lid_bind05_ctrl,
-                           lid_out_follow=leftEyelid.lid_out_up03_follow_attr,
-                           close_lid_attr=leftEyelid.upLid_closer,
-                           eyeball_ctrl=leftEyelid.eyeball_controller,
-                           lid_corner_in_ctrl=leftEyelid.lid_corner_in_ctrl,
-                           lid_corner_out_ctrl=leftEyelid.lid_corner_out_ctrl,
-                           wire_up_bind01_grp_offset=leftEyelid.up_lid_bind01_grp_offset,
-                           wire_low_bind01_grp_offset=leftEyelid.low_lid_bind01_grp_offset,
-                           wire_up_bind05_grp_offset=leftEyelid.up_lid_bind05_grp_offset,
-                           wire_low_bind05_grp_offset=leftEyelid.low_lid_bind05_grp_offset,
-                           lid_out_on_off_follow_trans_mdn=leftEyelid.lid_out_eye_ctrl_trans,
-                           lid_out_on_off_follow_rot_mdn=leftEyelid.lid_out_eye_ctrl_rotate,
-                           eye_ctrl_direction=eye_ctrl_direction,
-                           suffix_controller=suffix_controller,
-                           base_module_nonTransform=face_non_transform_grp,
-                           )
+        print('80% | left lid out is done!')
 
-    print('80% | left lid out is done!')
+        rightLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
+                                curve_up_template=curve_up_lid_out_RGT,
+                                curve_low_template=curve_low_lid_out_RGT,
+                                offset_jnt02_bind_position=jnt02_bind_lip_lid_out_position_offset,
+                                offset_jnt04_bind_position=jnt04_bind_lip_lid_out_position_offset,
+                                ctrl01_direction=lid01_out_ctrl_direction,
+                                ctrl02_direction=lid02_out_ctrl_direction,
+                                ctrl03_direction=lid03_out_ctrl_direction,
+                                ctrl04_direction=lid04_out_ctrl_direction,
+                                ctrl05_direction=lid05_out_ctrl_direction,
+                                ctrl_color='blue',
+                                shape=ct.JOINT,
+                                scale=scale,
+                                side_RGT=side_RGT,
+                                side_LFT=side_LFT,
+                                side=side_RGT,
+                                eyeball_jnt=sj.eyeball_RGT,
+                                head_up_jnt=sj.head_up,
+                                eye_ctrl=rightEyelid.eyeball_controller,
+                                corner_lip=lip.corner_lip_ctrl_RGT,
+                                corner_lip_attr=lip.lid_out_attr_ctrl_RGT,
+                                eyeball_ctrl=rightEyelid.eyeball_controller,
+                                ctrl_bind01_up=rightEyelid.up_lid_bind01_ctrl,
+                                ctrl_bind02_up=rightEyelid.up_lid_bind02_ctrl,
+                                ctrl_bind03_up=rightEyelid.up_lid_bind03_ctrl,
+                                ctrl_bind04_up=rightEyelid.up_lid_bind04_ctrl,
+                                ctrl_bind05_up=rightEyelid.up_lid_bind05_ctrl,
+                                ctrl_bind01_low=rightEyelid.low_lid_bind01_ctrl,
+                                ctrl_bind02_low=rightEyelid.low_lid_bind02_ctrl,
+                                ctrl_bind03_low=rightEyelid.low_lid_bind03_ctrl,
+                                ctrl_bind04_low=rightEyelid.low_lid_bind04_ctrl,
+                                ctrl_bind05_low=rightEyelid.low_lid_bind05_ctrl,
+                                lid_out_follow=rightEyelid.lid_out_up03_follow_attr,
+                                close_lid_attr=rightEyelid.upLid_closer,
+                                lid_corner_in_ctrl=rightEyelid.lid_corner_in_ctrl,
+                                lid_corner_out_ctrl=rightEyelid.lid_corner_out_ctrl,
+                                wire_up_bind01_grp_offset=rightEyelid.up_lid_bind01_grp_offset,
+                                wire_low_bind01_grp_offset=rightEyelid.low_lid_bind01_grp_offset,
+                                wire_up_bind05_grp_offset=rightEyelid.up_lid_bind05_grp_offset,
+                                wire_low_bind05_grp_offset=rightEyelid.low_lid_bind05_grp_offset,
+                                lid_out_on_off_follow_trans_mdn=rightEyelid.lid_out_eye_ctrl_trans,
+                                lid_out_on_off_follow_rot_mdn=rightEyelid.lid_out_eye_ctrl_rotate,
+                                eye_ctrl_direction=eye_ctrl_direction,
+                                suffix_controller=suffix_controller,
+                                base_module_nonTransform=face_non_transform_grp,
+                                game_bind_joint=game_bind_joint,
+                                parent_sgame_joint=sGame.head_up
+                                )
+        print('90% | right lid out is done!')
+    else:
+        leftLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
+                               curve_up_template=curve_up_lid_out_LFT,
+                               curve_low_template=curve_low_lid_out_LFT,
+                               offset_jnt02_bind_position=jnt02_bind_lip_lid_out_position_offset,
+                               offset_jnt04_bind_position=jnt04_bind_lip_lid_out_position_offset,
+                               ctrl01_direction=lid01_out_ctrl_direction,
+                               ctrl02_direction=lid02_out_ctrl_direction,
+                               ctrl03_direction=lid03_out_ctrl_direction,
+                               ctrl04_direction=lid04_out_ctrl_direction,
+                               ctrl05_direction=lid05_out_ctrl_direction,
+                               ctrl_color='blue',
+                               shape=ct.JOINT,
+                               scale=scale,
+                               side_RGT=side_RGT,
+                               side_LFT=side_LFT,
+                               side=side_LFT,
+                               eyeball_jnt=sj.eyeball_LFT,
+                               head_up_jnt=sj.head_up,
+                               eye_ctrl=leftEyelid.eyeball_controller,
+                               corner_lip=lip.corner_lip_ctrl_LFT,
+                               corner_lip_attr=lip.lid_out_attr_ctrl_LFT,
+                               ctrl_bind01_up=leftEyelid.up_lid_bind01_ctrl,
+                               ctrl_bind02_up=leftEyelid.up_lid_bind02_ctrl,
+                               ctrl_bind03_up=leftEyelid.up_lid_bind03_ctrl,
+                               ctrl_bind04_up=leftEyelid.up_lid_bind04_ctrl,
+                               ctrl_bind05_up=leftEyelid.up_lid_bind05_ctrl,
+                               ctrl_bind01_low=leftEyelid.low_lid_bind01_ctrl,
+                               ctrl_bind02_low=leftEyelid.low_lid_bind02_ctrl,
+                               ctrl_bind03_low=leftEyelid.low_lid_bind03_ctrl,
+                               ctrl_bind04_low=leftEyelid.low_lid_bind04_ctrl,
+                               ctrl_bind05_low=leftEyelid.low_lid_bind05_ctrl,
+                               lid_out_follow=leftEyelid.lid_out_up03_follow_attr,
+                               close_lid_attr=leftEyelid.upLid_closer,
+                               eyeball_ctrl=leftEyelid.eyeball_controller,
+                               lid_corner_in_ctrl=leftEyelid.lid_corner_in_ctrl,
+                               lid_corner_out_ctrl=leftEyelid.lid_corner_out_ctrl,
+                               wire_up_bind01_grp_offset=leftEyelid.up_lid_bind01_grp_offset,
+                               wire_low_bind01_grp_offset=leftEyelid.low_lid_bind01_grp_offset,
+                               wire_up_bind05_grp_offset=leftEyelid.up_lid_bind05_grp_offset,
+                               wire_low_bind05_grp_offset=leftEyelid.low_lid_bind05_grp_offset,
+                               lid_out_on_off_follow_trans_mdn=leftEyelid.lid_out_eye_ctrl_trans,
+                               lid_out_on_off_follow_rot_mdn=leftEyelid.lid_out_eye_ctrl_rotate,
+                               eye_ctrl_direction=eye_ctrl_direction,
+                               suffix_controller=suffix_controller,
+                               base_module_nonTransform=face_non_transform_grp
+                               )
 
-    rightLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
-                            curve_up_template=curve_up_lid_out_RGT,
-                            curve_low_template=curve_low_lid_out_RGT,
-                            offset_jnt02_bind_position=jnt02_bind_lip_lid_out_position_offset,
-                            offset_jnt04_bind_position=jnt04_bind_lip_lid_out_position_offset,
-                            ctrl01_direction=lid01_out_ctrl_direction,
-                            ctrl02_direction=lid02_out_ctrl_direction,
-                            ctrl03_direction=lid03_out_ctrl_direction,
-                            ctrl04_direction=lid04_out_ctrl_direction,
-                            ctrl05_direction=lid05_out_ctrl_direction,
-                            ctrl_color='blue',
-                            shape=ct.JOINT,
-                            scale=scale,
-                            side_RGT=side_RGT,
-                            side_LFT=side_LFT,
-                            side=side_RGT,
-                            eyeball_jnt=sj.eyeball_RGT,
-                            head_up_jnt=sj.head_up,
-                            eye_ctrl=rightEyelid.eyeball_controller,
-                            corner_lip=lip.corner_lip_ctrl_RGT,
-                            corner_lip_attr=lip.lid_out_attr_ctrl_RGT,
-                            eyeball_ctrl=rightEyelid.eyeball_controller,
-                            ctrl_bind01_up=rightEyelid.up_lid_bind01_ctrl,
-                            ctrl_bind02_up=rightEyelid.up_lid_bind02_ctrl,
-                            ctrl_bind03_up=rightEyelid.up_lid_bind03_ctrl,
-                            ctrl_bind04_up=rightEyelid.up_lid_bind04_ctrl,
-                            ctrl_bind05_up=rightEyelid.up_lid_bind05_ctrl,
-                            ctrl_bind01_low=rightEyelid.low_lid_bind01_ctrl,
-                            ctrl_bind02_low=rightEyelid.low_lid_bind02_ctrl,
-                            ctrl_bind03_low=rightEyelid.low_lid_bind03_ctrl,
-                            ctrl_bind04_low=rightEyelid.low_lid_bind04_ctrl,
-                            ctrl_bind05_low=rightEyelid.low_lid_bind05_ctrl,
-                            lid_out_follow=rightEyelid.lid_out_up03_follow_attr,
-                            close_lid_attr=rightEyelid.upLid_closer,
-                            lid_corner_in_ctrl=rightEyelid.lid_corner_in_ctrl,
-                            lid_corner_out_ctrl=rightEyelid.lid_corner_out_ctrl,
-                            wire_up_bind01_grp_offset=rightEyelid.up_lid_bind01_grp_offset,
-                            wire_low_bind01_grp_offset=rightEyelid.low_lid_bind01_grp_offset,
-                            wire_up_bind05_grp_offset=rightEyelid.up_lid_bind05_grp_offset,
-                            wire_low_bind05_grp_offset=rightEyelid.low_lid_bind05_grp_offset,
-                            lid_out_on_off_follow_trans_mdn=rightEyelid.lid_out_eye_ctrl_trans,
-                            lid_out_on_off_follow_rot_mdn=rightEyelid.lid_out_eye_ctrl_rotate,
-                            eye_ctrl_direction=eye_ctrl_direction,
-                            suffix_controller=suffix_controller,
-                            base_module_nonTransform=face_non_transform_grp,
-                            )
-    print('90% | right lid out is done!')
+        print('80% | left lid out is done!')
+
+        rightLidOut = lo.LidOut(face_utils_grp=face_non_transform_grp,
+                                curve_up_template=curve_up_lid_out_RGT,
+                                curve_low_template=curve_low_lid_out_RGT,
+                                offset_jnt02_bind_position=jnt02_bind_lip_lid_out_position_offset,
+                                offset_jnt04_bind_position=jnt04_bind_lip_lid_out_position_offset,
+                                ctrl01_direction=lid01_out_ctrl_direction,
+                                ctrl02_direction=lid02_out_ctrl_direction,
+                                ctrl03_direction=lid03_out_ctrl_direction,
+                                ctrl04_direction=lid04_out_ctrl_direction,
+                                ctrl05_direction=lid05_out_ctrl_direction,
+                                ctrl_color='blue',
+                                shape=ct.JOINT,
+                                scale=scale,
+                                side_RGT=side_RGT,
+                                side_LFT=side_LFT,
+                                side=side_RGT,
+                                eyeball_jnt=sj.eyeball_RGT,
+                                head_up_jnt=sj.head_up,
+                                eye_ctrl=rightEyelid.eyeball_controller,
+                                corner_lip=lip.corner_lip_ctrl_RGT,
+                                corner_lip_attr=lip.lid_out_attr_ctrl_RGT,
+                                eyeball_ctrl=rightEyelid.eyeball_controller,
+                                ctrl_bind01_up=rightEyelid.up_lid_bind01_ctrl,
+                                ctrl_bind02_up=rightEyelid.up_lid_bind02_ctrl,
+                                ctrl_bind03_up=rightEyelid.up_lid_bind03_ctrl,
+                                ctrl_bind04_up=rightEyelid.up_lid_bind04_ctrl,
+                                ctrl_bind05_up=rightEyelid.up_lid_bind05_ctrl,
+                                ctrl_bind01_low=rightEyelid.low_lid_bind01_ctrl,
+                                ctrl_bind02_low=rightEyelid.low_lid_bind02_ctrl,
+                                ctrl_bind03_low=rightEyelid.low_lid_bind03_ctrl,
+                                ctrl_bind04_low=rightEyelid.low_lid_bind04_ctrl,
+                                ctrl_bind05_low=rightEyelid.low_lid_bind05_ctrl,
+                                lid_out_follow=rightEyelid.lid_out_up03_follow_attr,
+                                close_lid_attr=rightEyelid.upLid_closer,
+                                lid_corner_in_ctrl=rightEyelid.lid_corner_in_ctrl,
+                                lid_corner_out_ctrl=rightEyelid.lid_corner_out_ctrl,
+                                wire_up_bind01_grp_offset=rightEyelid.up_lid_bind01_grp_offset,
+                                wire_low_bind01_grp_offset=rightEyelid.low_lid_bind01_grp_offset,
+                                wire_up_bind05_grp_offset=rightEyelid.up_lid_bind05_grp_offset,
+                                wire_low_bind05_grp_offset=rightEyelid.low_lid_bind05_grp_offset,
+                                lid_out_on_off_follow_trans_mdn=rightEyelid.lid_out_eye_ctrl_trans,
+                                lid_out_on_off_follow_rot_mdn=rightEyelid.lid_out_eye_ctrl_rotate,
+                                eye_ctrl_direction=eye_ctrl_direction,
+                                suffix_controller=suffix_controller,
+                                base_module_nonTransform=face_non_transform_grp,
+                                )
+        print('90% | right lid out is done!')
 
     # ==================================================================================================================
     #                                                     BROWS PARAMETERS
@@ -615,38 +872,39 @@ def build_rig(
     # ==================================================================================================================
     #                                                     BULGE PARAMETERS
     # ==================================================================================================================
-    bulge = bl.Bulge(face_utils_grp=face_non_transform_grp,
-                     face_anim_ctrl_grp=face_controller_grp,
-                     cheek_bulge_jnt_LFT=sj.cheek_bulge_LFT,
-                     cheek_bulge_prefix=cheek_mid_prefix,
-                     cheek_bulge_jnt_RGT=sj.cheek_bulge_RGT,
-                     brow_in_bulge_prefix=brow_in_prefix,
-                     brow_out_bulge_prefix=brow_out_prefix,
-                     corner_mouth_bulge_prefix='cornerMouth',
-                     nose_bulge_prefix='nose',
-                     chin_bulge_prefix=chin_prefix,
-                     brow_in_bulge_jnt_LFT=sj.brow_in_LFT,
-                     brow_in_bulge_jnt_RGT=sj.brow_in_RGT,
-                     brow_out_bulge_jnt_LFT=sj.brow_out_LFT,
-                     brow_out_bulge_jnt_RGT=sj.brow_out_RGT,
-                     corner_mouth_bulge_jnt_LFT=lip.corner_lip_ctrl_LFT,
-                     corner_mouth_bulge_jnt_RGT=lip.corner_lip_ctrl_RGT,
-                     nose_bulge_jnt=nose.controller_nose03,
-                     chin_bulge_jnt=sj.chin,
-                     bulge_mesh=bulge_mesh,
-                     side_LFT=side_LFT,
-                     side_RGT=side_RGT,
-                     head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
-                     head_low_ctrl_gimbal=head.head_low_ctrl_gimbal,
-                     nose_drv03_ctrl=nose.controller_nose03,
-                     chin_ctrl=chin.chin_ctrl,
-                     corner_mouth_ctrl_LFT=lip.corner_lip_ctrl_LFT,
-                     corner_mouth_ctrl_RGT=lip.corner_lip_ctrl_RGT,
-                     scale=scale,
-                     add_set=add_set_bulge,
-                     follicle_mesh=follicle_mesh)
+    if bulge:
+        bulge = bl.Bulge(face_utils_grp=face_non_transform_grp,
+                         face_anim_ctrl_grp=face_controller_grp,
+                         cheek_bulge_jnt_LFT=sj.cheek_bulge_LFT,
+                         cheek_bulge_prefix=cheek_mid_prefix,
+                         cheek_bulge_jnt_RGT=sj.cheek_bulge_RGT,
+                         brow_in_bulge_prefix=brow_in_prefix,
+                         brow_out_bulge_prefix=brow_out_prefix,
+                         corner_mouth_bulge_prefix='cornerMouth',
+                         nose_bulge_prefix='nose',
+                         chin_bulge_prefix=chin_prefix,
+                         brow_in_bulge_jnt_LFT=sj.brow_in_LFT,
+                         brow_in_bulge_jnt_RGT=sj.brow_in_RGT,
+                         brow_out_bulge_jnt_LFT=sj.brow_out_LFT,
+                         brow_out_bulge_jnt_RGT=sj.brow_out_RGT,
+                         corner_mouth_bulge_jnt_LFT=lip.corner_lip_ctrl_LFT,
+                         corner_mouth_bulge_jnt_RGT=lip.corner_lip_ctrl_RGT,
+                         nose_bulge_jnt=nose.controller_nose03,
+                         chin_bulge_jnt=sj.chin,
+                         bulge_mesh=bulge_mesh,
+                         side_LFT=side_LFT,
+                         side_RGT=side_RGT,
+                         head_up_ctrl_gimbal=head.head_up_ctrl_gimbal,
+                         head_low_ctrl_gimbal=head.head_low_ctrl_gimbal,
+                         nose_drv03_ctrl=nose.controller_nose03,
+                         chin_ctrl=chin.chin_ctrl,
+                         corner_mouth_ctrl_LFT=lip.corner_lip_ctrl_LFT,
+                         corner_mouth_ctrl_RGT=lip.corner_lip_ctrl_RGT,
+                         scale=scale,
+                         add_set=add_set_bulge,
+                         follicle_mesh=follicle_mesh)
 
-    print('100% | brows is done!')
+        print('100% | brows is done!')
 
     # ==================================================================================================================
     #                                         SETUP VISIBILITY CONTROLLER
@@ -715,25 +973,25 @@ def build_rig(
     browCtrlVis = au.connect_part_object(obj_base_connection='browCtrlVis', target_connection='visibility',
                                          obj_name=setupCtrl.control,
                                          target_name=[brows.brow_all_ctrl], channel_box=True, select_obj=False)
-
-    # BULGE VIS
-    bulgeCtrlVis = au.connect_part_object(obj_base_connection='bulgeCtrlVis', target_connection='visibility',
-                                          obj_name=setupCtrl.control,
-                                          target_name=[bulge.cheek_bulge_ctrl_LFT_grp,
-                                                       bulge.cheek_bulge_ctrl_RGT_grp,
-                                                       bulge.brow_in_bulge_ctrl_LFT_grp,
-                                                       bulge.brow_in_bulge_ctrl_RGT_grp,
-                                                       bulge.brow_out_bulge_ctrl_LFT_grp,
-                                                       bulge.brow_out_bulge_ctrl_RGT_grp,
-                                                       bulge.corner_mouth_bulge_ctrl_LFT_grp,
-                                                       bulge.corner_mouth_bulge_ctrl_RGT_grp,
-                                                       bulge.nose_bulge_ctrl_grp,
-                                                       bulge.chin_bulge_ctrl_grp], channel_box=True, select_obj=False)
+    if bulge:
+        # BULGE VIS
+        bulgeCtrlVis = au.connect_part_object(obj_base_connection='bulgeCtrlVis', target_connection='visibility',
+                                              obj_name=setupCtrl.control,
+                                              target_name=[bulge.cheek_bulge_ctrl_LFT_grp,
+                                                           bulge.cheek_bulge_ctrl_RGT_grp,
+                                                           bulge.brow_in_bulge_ctrl_LFT_grp,
+                                                           bulge.brow_in_bulge_ctrl_RGT_grp,
+                                                           bulge.brow_out_bulge_ctrl_LFT_grp,
+                                                           bulge.brow_out_bulge_ctrl_RGT_grp,
+                                                           bulge.corner_mouth_bulge_ctrl_LFT_grp,
+                                                           bulge.corner_mouth_bulge_ctrl_RGT_grp,
+                                                           bulge.nose_bulge_ctrl_grp,
+                                                           bulge.chin_bulge_ctrl_grp], channel_box=True, select_obj=False)
+        mc.setAttr(bulgeCtrlVis, 0)
 
     mc.setAttr(mainCheekCtrlVis, 0)
     mc.setAttr(secondaryCheekCtrlVis, 0)
     mc.setAttr(chinCtrlVis, 0)
-    mc.setAttr(bulgeCtrlVis, 0)
 
     # ==================================================================================================================
     #                                               CLEAN UP SET
@@ -751,19 +1009,6 @@ def build_rig(
     else:
         mc.parent(head.neck_jnt_grp, face_joint_grp)
 
-    # UNHIDE SKIN JOINT
-    unhide = mc.ls('*skn')
-    for i in unhide:
-        try:
-            if i + '.visibility' == 1:
-                pass
-            else:
-                mc.setAttr(i + '.visibility', 1)
-        except:
-            pass
-    # CREATE SET LINEAR JOINT SKIN
-    sets_LN = mc.sets(sj.neck, n='FACE_SKIN_LN')
-    mc.setAttr(sj.neck + '.visibility', 1)
 
     # BRING ALL JOINT UNDER THE FACE JOINT HIERARCHY
     # JOINT lidUpMoveZroRGT AND lidLowMoveZroRGT AND lidUpMoveZroLFT AND lidLowMoveZroLFT
@@ -797,12 +1042,21 @@ def build_rig(
     mc.setAttr(rightCheek.cheek_joint_grp+'.rotate', 0, 0, 0, type="double3")
 
     # JOINT lipUpJntCtr_grp AND lipLowJntCtr_grp
-    for joint, ctrl in zip (lip.upLip_all_joint, lip.uplip_controller):
-        au.parent_scale_constraint(ctrl, joint)
-        mc.parent(joint, sj.head_up)
-    for joint, ctrl in zip (lip.lowLip_all_joint, lip.lowLip_controller):
-        au.parent_scale_constraint(ctrl, joint)
-        mc.parent(joint, sj.jaw)
+    for joint, ctrl, joint_low, ctrl_low in zip(lip.upLip_all_joint, lip.uplip_controller, lip.lowLip_all_joint,
+                                                lip.lowLip_controller):
+        constraining_up = au.parent_scale_constraint(ctrl, joint)
+        constraining_low = au.parent_scale_constraint(ctrl_low, joint_low)
+        if game_bind_joint:
+                mc.parent(joint, sGame.head_up)
+                mc.parent(joint_low, sGame.jaw)
+                mc.parent(constraining_up[0], constraining_up[1], constraining_low[0], constraining_low[1], 'additional_grp')
+                mc.setAttr(joint + '.segmentScaleCompensate', 0)
+                mc.setAttr(joint_low + '.segmentScaleCompensate', 0)
+
+        else:
+                mc.parent(joint, sj.head_up)
+                mc.parent(joint_low, sj.jaw)
+
 
     # PARENT DQ JOINT TO NECK JOINT
     mc.setAttr(parentDQ_grp[0]+'.inheritsTransform', 0)
@@ -815,29 +1069,44 @@ def build_rig(
     mc.setAttr(chin.group_driver+'.translate', 0, 0, 0, type="double3")
     mc.setAttr(chin.group_driver+'.rotate', 0, 0, 0, type="double3")
 
-    # CREATE SETS
-    for i in (sj.head, sj.head_up, sj.head_low, sj.jaw, sj.mentolabial, sj.chin, sj.brow_center,
-              sj.cheek_in_up_LFT, sj.cheek_in_low_LFT, sj.cheek_up_LFT, sj.cheek_mid_LFT, sj.cheek_low_LFT,
-              sj.cheek_out_up_LFT,
-              sj.cheek_out_low_LFT, sj.cheek_in_up_RGT, sj.cheek_in_low_RGT, sj.cheek_up_RGT, sj.cheek_mid_RGT,
-              sj.cheek_low_RGT,
-              sj.cheek_out_up_RGT, sj.cheek_out_low_RGT, sj.brow_in_LFT, sj.brow_mid_LFT, sj.brow_out_LFT,
-              sj.brow_tip_LFT,
-              sj.brow_in_RGT, sj.brow_mid_RGT, sj.brow_out_RGT, sj.brow_tip_RGT, sj.nose_up, sj.columella, sj.eye_LFT,
-              sj.eye_RGT,
-              sj.ear_LFT, sj.ear_RGT, sj.neckIn_Btw):
-        mc.sets(i, add=sets_LN)
-        mc.setAttr(i + '.visibility', 1)
+    if not game_bind_joint:
+        # UNHIDE SKIN JOINT
+        unhide = mc.ls('*skn')
+        for i in unhide:
+            try:
+                if i + '.visibility' == 1:
+                    pass
+                else:
+                    mc.setAttr(i + '.visibility', 1)
+            except:
+                pass
+        # CREATE SET LINEAR JOINT SKIN
+        sets_LN = mc.sets(sj.neck, n='FACE_SKIN_LN')
+        mc.setAttr(sj.neck + '.visibility', 1)
 
-    for i in list(set(nose.all_joint + lip.all_up_lip_joint + lip.all_low_lip_joint + leftLidOut.lid_out_up_jnt +
-                      leftLidOut.lid_out_low_jnt + rightLidOut.lid_out_up_jnt + rightLidOut.lid_out_low_jnt)):
-        mc.sets(i, add=sets_LN)
-        mc.setAttr(i + '.visibility', 1)
+        # CREATE SETS
+        for i in (sj.head, sj.head_up, sj.head_low, sj.jaw, sj.mentolabial, sj.chin, sj.brow_center,
+                  sj.cheek_in_up_LFT, sj.cheek_in_low_LFT, sj.cheek_up_LFT, sj.cheek_mid_LFT, sj.cheek_low_LFT,
+                  sj.cheek_out_up_LFT,
+                  sj.cheek_out_low_LFT, sj.cheek_in_up_RGT, sj.cheek_in_low_RGT, sj.cheek_up_RGT, sj.cheek_mid_RGT,
+                  sj.cheek_low_RGT,
+                  sj.cheek_out_up_RGT, sj.cheek_out_low_RGT, sj.brow_in_LFT, sj.brow_mid_LFT, sj.brow_out_LFT,
+                  sj.brow_tip_LFT,
+                  sj.brow_in_RGT, sj.brow_mid_RGT, sj.brow_out_RGT, sj.brow_tip_RGT, sj.nose_up, sj.columella, sj.eye_LFT,
+                  sj.eye_RGT,
+                  sj.ear_LFT, sj.ear_RGT, sj.neckIn_Btw):
+            mc.sets(i, add=sets_LN)
+            mc.setAttr(i + '.visibility', 1)
 
-    # SETS DQ JOINT SKIN
-    sets_DQ = mc.sets(jntDQBase, n='FACE_SKIN_DQ')
-    mc.setAttr(jntDQBase + '.visibility', 1)
+        for i in list(set(nose.all_joint + lip.all_up_lip_joint + lip.all_low_lip_joint + leftLidOut.lid_out_up_jnt +
+                          leftLidOut.lid_out_low_jnt + rightLidOut.lid_out_up_jnt + rightLidOut.lid_out_low_jnt)):
+            mc.sets(i, add=sets_LN)
+            mc.setAttr(i + '.visibility', 1)
 
-    for i in list(set(leftEyelid.up_lid_all_jnt + leftEyelid.low_lid_all_jnt +
-                      rightEyelid.up_lid_all_jnt + rightEyelid.low_lid_all_jnt)):
-        mc.sets(i, add=sets_DQ)
+        # SETS DQ JOINT SKIN
+        sets_DQ = mc.sets(jntDQBase, n='FACE_SKIN_DQ')
+        mc.setAttr(jntDQBase + '.visibility', 1)
+
+        for i in list(set(leftEyelid.up_lid_all_jnt + leftEyelid.low_lid_all_jnt +
+                          rightEyelid.up_lid_all_jnt + rightEyelid.low_lid_all_jnt)):
+            mc.sets(i, add=sets_DQ)

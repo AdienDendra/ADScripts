@@ -48,7 +48,9 @@ class Nose:
                  jaw_ctrl,
                  suffix_controller,
                  base_module_nonTransform,
-                 mouth_ctrl_nose_follow
+                 mouth_ctrl_nose_follow,
+                 game_bind_joint=False,
+                 parent_sgame_joint=None
                  ):
         # ==================================================================================================================
         #                                               NOSE CONTROLLER
@@ -65,6 +67,7 @@ class Nose:
                         ctrl_color=ctrl_color, wire_low_controller=False, shape=shape, face_utils_grp=face_utils_grp,
                         connect_with_corner_ctrl=False,
                         suffix_controller=suffix_controller, base_module_nonTransform=base_module_nonTransform,
+                        game_bind_joint=game_bind_joint, parent_sgame_joint= parent_sgame_joint
                         )
 
         self.controller_nose01_LFT = wire.controller_bind05

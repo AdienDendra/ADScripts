@@ -59,6 +59,8 @@ class LidOut:
                  eye_ctrl_direction,
                  suffix_controller,
                  base_module_nonTransform,
+                 parent_sgame_joint=None,
+                 game_bind_joint=False
                  ):
 
         # ==================================================================================================================
@@ -75,6 +77,7 @@ class LidOut:
                            ctrl05_direction=ctrl05_direction, suffix_controller=suffix_controller,
                            ctrl_color=ctrl_color, wire_low_controller=False, shape=shape, face_utils_grp=face_utils_grp,
                            connect_with_corner_ctrl=True, base_module_nonTransform=base_module_nonTransform,
+                           game_bind_joint=game_bind_joint, parent_sgame_joint=parent_sgame_joint
                            )
 
         wire_low = wr.Build(curve_template=curve_low_template, position_joint_direction=eyeball_jnt, scale=scale,
@@ -86,6 +89,7 @@ class LidOut:
                             ctrl05_direction=ctrl05_direction, suffix_controller=suffix_controller,
                             ctrl_color=ctrl_color, wire_low_controller=True, shape=shape, face_utils_grp=face_utils_grp,
                             connect_with_corner_ctrl=True, base_module_nonTransform=base_module_nonTransform,
+                            game_bind_joint=game_bind_joint, parent_sgame_joint=parent_sgame_joint
                             )
 
         self.lid_out_up_jnt = wire_up.all_joint

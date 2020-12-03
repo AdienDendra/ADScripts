@@ -246,6 +246,7 @@ def face_biped(  # LIP
         brow_tip_rotate_grp_offset=65,
 
         # BULGE DEFORMER
+        bulge=True,
         bulge_mesh='headBulge_geo',
         add_set_bulge=['bodyPartGeoBulge_grp'],
         follicle_mesh='bodyBulgeFol_geo',
@@ -253,7 +254,8 @@ def face_biped(  # LIP
         # UTILS
         side_LFT='LFT',
         side_RGT='RGT',
-        scale=1.0):
+        scale=1.0,
+        game_bind_joint=False):
 
     print('----------------------------------------')
     print('head and face base script is running...')
@@ -349,9 +351,11 @@ def face_biped(  # LIP
                             brow_out_rotation_grp_offset=brow_out_rotate_grp_offset,
                             brow_tip_rotation_grp_offset=brow_tip_rotate_grp_offset,
 
+                            bulge=bulge,
                             bulge_mesh=bulge_mesh,
                             add_set_bulge=add_set_bulge,
-                            follicle_mesh=follicle_mesh
+                            follicle_mesh=follicle_mesh,
+                            game_bind_joint=game_bind_joint
                             )
 
     print('------------------------------')

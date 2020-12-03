@@ -18,7 +18,8 @@ class Build:
     def __init__(self, curve_template, eyeball_jnt, world_up_object,
                  scale, side_LFT, side_RGT, side, offset_jnt02_position, offset_jnt04_position,
                  lid01_direction, lid02_direction, lid03_direction, lid04_direction, lid05_direction,
-                 ctrl_color, lid_low_controller, upper_head_gimbal_ctrl, suffix_controller, base_module_nonTransform
+                 ctrl_color, lid_low_controller, upper_head_gimbal_ctrl, suffix_controller, base_module_nonTransform,
+                 game_bind_joint, parent_sgame_joint
                  ):
 
         self.position_eyeball_jnt = mc.xform(eyeball_jnt, q=1, ws=1, t=1)[0]
@@ -34,7 +35,7 @@ class Build:
         self.create_joint_lid(curve=curve, world_up_object=world_up_object, scale=scale, eye_jnt=eyeball_jnt,
                               side_LFT=side_LFT, side_RGT=side_RGT, side=side, ctrl_color=ctrl_color,
                               upper_head_gimbal_ctrl=upper_head_gimbal_ctrl, suffix_controller=suffix_controller,
-                              )
+                              game_bind_joint=game_bind_joint, parent_sgame_joint=parent_sgame_joint)
 
         self.wire_bind_curve(side_LFT=side_LFT, side_RGT=side_RGT, curve=curve, scale=scale, side=side,
                              lid01_direction=lid01_direction, eye_jnt=eyeball_jnt, lid03_direction=lid03_direction,
@@ -317,11 +318,11 @@ class Build:
         self.xform_jnt05 = mc.xform(joint05, ws=1, q=1, t=1)
 
         mc.select(cl=1)
-        jnt01 = mc.joint(n=au.prefix_name(crv_new_name) + '01' + side + '_bind', p=self.xform_jnt01, rad=0.5 * scale)
-        jnt02 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '02' + side + '_bind')[0]
-        jnt03 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '03' + side + '_bind')[0]
-        jnt04 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '04' + side + '_bind')[0]
-        jnt05 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '05' + side + '_bind')[0]
+        jnt01 = mc.joint(n=au.prefix_name(crv_new_name) + '01' + side + '_driver', p=self.xform_jnt01, rad=0.5 * scale)
+        jnt02 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '02' + side + '_driver')[0]
+        jnt03 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '03' + side + '_driver')[0]
+        jnt04 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '04' + side + '_driver')[0]
+        jnt05 = mc.duplicate(jnt01, n=au.prefix_name(crv_new_name) + '05' + side + '_driver')[0]
 
         # set the position RGT joint
         mc.xform(jnt02, ws=1, t=self.xform_jnt02)
@@ -332,34 +333,34 @@ class Build:
         # create bind curve
         deform_curve = mc.duplicate(curve)[0]
 
-        deform_curve = mc.rename(deform_curve, (au.prefix_name(crv_new_name) + 'Bind' + side + '_crv'))
+        deform_curve = mc.rename(deform_curve, (au.prefix_name(crv_new_name) + 'Driver' + side + '_crv'))
 
         # parent the bind joint
         self.joint_bind03_grp = tf.create_parent_transform(parent_list=['Zro', 'CornerLip', 'Offset', 'All'],
                                                            object=jnt03,
                                                            match_position=jnt03,
                                                            prefix=au.prefix_name(crv_new_name) + '03',
-                                                           suffix='_bind', side=side)
+                                                           suffix='_driver', side=side)
 
         self.joint_bind01_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt01,
                                                            match_position=jnt01,
                                                            prefix=au.prefix_name(crv_new_name) + '01',
-                                                           suffix='_bind', side=side)
+                                                           suffix='_driver', side=side)
 
         self.joint_bind02_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt02,
                                                            match_position=jnt02,
                                                            prefix=au.prefix_name(crv_new_name) + '02',
-                                                           suffix='_bind', side=side)
+                                                           suffix='_driver', side=side)
 
         self.joint_bind05_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt05,
                                                            match_position=jnt05,
                                                            prefix=au.prefix_name(crv_new_name) + '05',
-                                                           suffix='_bind', side=side)
+                                                           suffix='_driver', side=side)
 
         self.joint_bind04_grp = tf.create_parent_transform(parent_list=['Zro', 'Offset'], object=jnt04,
                                                            match_position=jnt04,
                                                            prefix=au.prefix_name(crv_new_name) + '04',
-                                                           suffix='_bind', side=side)
+                                                           suffix='_driver', side=side)
 
         # assign bind grp jnt
         self.joint_bind03_grp_all = self.joint_bind03_grp[3]
@@ -452,7 +453,7 @@ class Build:
                                                        number='05', side=side, eye_jnt=eye_jnt)
 
         # create grp bind
-        self.bind_jnt_grp = mc.createNode('transform', n=au.prefix_name(crv_new_name) + 'JntBind' + side + '_grp')
+        self.bind_jnt_grp = mc.createNode('transform', n=au.prefix_name(crv_new_name) + 'JntDriver' + side + '_grp')
         mc.parent(self.eye_bind03_grp_offset[0], self.eye_bind01_grp_offset[0], self.joint_bind02_grp[0],
                   self.eye_bind05_grp_offset[0], self.joint_bind04_grp[0], self.bind_jnt_grp)
         mc.hide(self.bind_jnt_grp)
@@ -472,7 +473,8 @@ class Build:
     def create_joint_lid(self, curve, world_up_object, eye_jnt, scale, side_RGT, side_LFT, side, ctrl_color,
                          upper_head_gimbal_ctrl,
                          suffix_controller,
-                         # parent_skin
+                         game_bind_joint,
+                         parent_sgame_joint
                          ):
         self.all_joint_center = []
         self.all_joint = []
@@ -485,8 +487,18 @@ class Build:
         for index, object in enumerate(self.vertex_curve):
             # create joint
             mc.select(cl=1)
-            self.joint = mc.joint(n='%s%s%02d%s%s' % (au.prefix_name(curve_new_name), 'Dtl', (index + 1), side, '_skn'),
-                                  rad=0.1 * scale)
+            self.joint = mc.joint(
+                n='%s%s%02d%s%s' % (au.prefix_name(curve_new_name), 'Dtl', (index + 1), side, '_skn'),
+                rad=0.1 * scale)
+
+            if game_bind_joint:
+                joint_bind = mc.joint(n='%s%s%02d%s%s' % (au.prefix_name(curve_new_name), 'Dtl', (index + 1), side, '_bind'),
+                rad=0.1 * scale)
+                constraining = au.parent_scale_constraint(self.joint, joint_bind)
+                mc.parent(joint_bind, parent_sgame_joint)
+                mc.parent(constraining[0], constraining[1], 'additional_grp')
+                mc.setAttr(joint_bind + '.segmentScaleCompensate', 0)
+
             mc.setAttr(self.joint + '.visibility', 0)
 
             position = mc.xform(object, q=1, ws=1, t=1)

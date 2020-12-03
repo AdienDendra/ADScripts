@@ -51,6 +51,8 @@ class Lid:
                  eye_ctrl_direction,
                  suffix_controller,
                  base_module_nonTransform,
+                 game_bind_joint=False,
+                 parent_sgame_joint=None
                  ):
 
         self.position = mc.xform(eyeball_jnt, ws=1, q=1, t=1)[0]
@@ -100,6 +102,8 @@ class Lid:
                               upper_head_gimbal_ctrl=upper_head_gimbal_ctrl,
                               suffix_controller=suffix_controller,
                               base_module_nonTransform=base_module_nonTransform,
+                              game_bind_joint=game_bind_joint,
+                              parent_sgame_joint=parent_sgame_joint
                               )
         self.lid_out_up01_follow_attr = self.upLid.lid_out01_follow_attr
         self.lid_out_up02_follow_attr = self.upLid.lid_out02_follow_attr
@@ -138,6 +142,8 @@ class Lid:
                                upper_head_gimbal_ctrl=upper_head_gimbal_ctrl,
                                suffix_controller=suffix_controller,
                                base_module_nonTransform=base_module_nonTransform,
+                               game_bind_joint=game_bind_joint,
+                               parent_sgame_joint=parent_sgame_joint
                                )
         self.lid_out_low01_follow_attr = self.lowLid.lid_out01_follow_attr
         self.lid_out_low02_follow_attr = self.lowLid.lid_out02_follow_attr

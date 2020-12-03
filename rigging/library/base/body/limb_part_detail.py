@@ -273,6 +273,7 @@ class CreateDetail:
                 constraining = au.parent_scale_constraint(follicle_joint, game_joint)
                 mc.parent(game_joint, limb_bind_joint_parent)
                 mc.parent(constraining[0], constraining[1], 'additional_grp')
+                mc.setAttr(game_joint+'.segmentScaleCompensate', 0)
 
             # Create control for joint in follicle
             follicle_ctrl = ct.Control(prefix=prefix + ('%02d' % (i + 1)), groups_ctrl=['Zro', 'Twist', 'Offset']

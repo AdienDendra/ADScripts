@@ -824,6 +824,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
         # unhide the joint skn
         for item in sGame.list_joint.values():
             mc.setAttr(item+'.visibility', 1)
+            mc.setAttr(item + '.segmentScaleCompensate', 0)
 
         # remove clave skn and bind
         sj.list_joint.pop('clavOriLFT_skn')

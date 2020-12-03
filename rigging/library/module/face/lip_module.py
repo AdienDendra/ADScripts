@@ -38,6 +38,7 @@ class Lip:
                  prefix_degree_follow,
                  headLow_normal_rotationGrp,
                  base_module_nonTransform,
+                 game_bind_joint,
                  ):
 
         # ==============================================================================================================
@@ -58,6 +59,7 @@ class Lip:
                          low_lip_controller=False,
                          suffix_controller=suffix_controller,
                          base_module_nonTransform=base_module_nonTransform,
+                         game_bind_joint=game_bind_joint
                          )
 
         # LOW LIP
@@ -74,6 +76,7 @@ class Lip:
                           low_lip_controller=True,
                           suffix_controller=suffix_controller,
                           base_module_nonTransform=base_module_nonTransform,
+                          game_bind_joint=game_bind_joint
                           )
 
         self.low_bind_jnt = lowLip.jnt_mid
