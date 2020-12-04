@@ -269,8 +269,9 @@ class Lid:
 
         mc.parent(self.upLid.bind_jnt_grp, self.lowLid.bind_jnt_grp, lid_grp)
 
-        mc.parent(self.eyeball_ctrl.parent_control[0], self.upLid.ctrl_0204_grp, self.lowLid.ctrl_0204_grp,
+        mc.parent(self.eyeball_ctrl.parent_control[0],
                   head_up_ctrl_gimbal)
+        mc.parent(self.upLid.ctrl_0204_grp, self.lowLid.ctrl_0204_grp, self.eyeball_controller)
         mc.parent(lid_grp, self.upLid.move_grp, self.lowLid.move_grp, face_utils_grp)
 
     # ==================================================================================================================

@@ -833,6 +833,20 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
         sGame.list_joint.pop('clavGameLFT_bind')
         sGame.list_joint.pop('clavGameRGT_bind')
 
+        # remove ANKLE skn and bind
+        sj.list_joint.pop('ankleOriLFT_skn')
+        sj.list_joint.pop('ankleOriRGT_skn')
+
+        sGame.list_joint.pop('ankleGameLFT_bind')
+        sGame.list_joint.pop('ankleGameRGT_bind')
+
+        # remove Ball skn and bind
+        sj.list_joint.pop('ballOriLFT_skn')
+        sj.list_joint.pop('ballOriRGT_skn')
+
+        sGame.list_joint.pop('ballGameLFT_bind')
+        sGame.list_joint.pop('ballGameRGT_bind')
+
         bind_game = sorted(sGame.list_joint.values())
         bind_sj = sorted(sj.list_joint.values())
 
@@ -844,7 +858,20 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
         # clavicle constraint
         clav_constraint_LFT = au.parent_scale_constraint(ss.clav_LFT, sGame.clav_LFT)
         clav_constraint_RGT = au.parent_scale_constraint(ss.clav_RGT, sGame.clav_RGT)
-        mc.parent(clav_constraint_LFT[0], clav_constraint_LFT[1], clav_constraint_RGT[0], clav_constraint_RGT[1], 'additional_grp')
+
+        # ankle constraint
+        ankle_constraint_LFT = au.parent_scale_constraint(ss.ankle_LFT, sGame.ankle_LFT)
+        ankle_constraint_RGT = au.parent_scale_constraint(ss.ankle_RGT, sGame.ankle_RGT)
+
+        # ankle constraint
+        ball_constraint_LFT = au.parent_scale_constraint(ss.ball_LFT, sGame.ball_LFT)
+        ball_constraint_RGT = au.parent_scale_constraint(ss.ball_RGT, sGame.ball_RGT)
+
+        mc.parent(clav_constraint_LFT[0], clav_constraint_LFT[1], clav_constraint_RGT[0], clav_constraint_RGT[1],
+                  ankle_constraint_LFT[0], ankle_constraint_LFT[1], ankle_constraint_RGT[0], ankle_constraint_RGT[1],
+                  ball_constraint_LFT[0], ball_constraint_LFT[1], ball_constraint_RGT[0], ball_constraint_RGT[1],
+                  'additional_grp')
+
 
         # delete unused joint
         mc.delete(sGame.neck, sj.neck, sGame.heel_LFT, sGame.footIn_LFT,

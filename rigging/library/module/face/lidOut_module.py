@@ -46,7 +46,8 @@ class LidOut:
                  ctrl_bind04_low,
                  ctrl_bind05_low,
                  lid_out_follow,
-                 close_lid_attr,
+                 close_lid_up_attr,
+                 close_lid_low_attr,
                  eyeball_ctrl,
                  lid_corner_in_ctrl,
                  lid_corner_out_ctrl,
@@ -239,7 +240,7 @@ class LidOut:
                                          drv_bind03_grp_offset=wire_up.joint_bind03_grp_offset,
                                          drv_bind04_grp_offset=wire_up.joint_bind04_grp_offset,
                                          drv_bind05_grp_offset=wire_up.joint_bind05_grp_offset,
-                                         close_lid_attr=close_lid_attr, upLid=True)
+                                         close_lid_attr=close_lid_up_attr, upLid=True)
         # LOW LID
         self.all_ctrl_connecting_lid_out(wire=au.prefix_name(wire_low.prefix_name_crv), side=side,
                                          ctrl_bind01=ctrl_bind01_low,
@@ -253,7 +254,7 @@ class LidOut:
                                          drv_bind03_grp_offset=wire_low.joint_bind03_grp_offset,
                                          drv_bind04_grp_offset=wire_low.joint_bind04_grp_offset,
                                          drv_bind05_grp_offset=wire_low.joint_bind05_grp_offset,
-                                         close_lid_attr=close_lid_attr, upLid=False)
+                                         close_lid_attr=close_lid_low_attr, upLid=False)
 
         # PARENT TO GROUP
         mc.parent(wire_up.joint_grp, wire_low.joint_grp, head_up_jnt)
