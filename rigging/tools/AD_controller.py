@@ -1383,7 +1383,6 @@ def gimbal_attributes(rename_gimbal, rename_controller, lock_gimbal_channels):
     # parent gimbal ctrl to main ctrl
     ut.parent_object(rename_controller, rename_gimbal)
 
-
 def create_controller(object_list=mc.ls(sl=1),
                       prefix=None,
                       suffix='ctrl',
