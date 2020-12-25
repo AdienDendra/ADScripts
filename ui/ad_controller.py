@@ -1,7 +1,7 @@
 from functools import partial
 import pymel.core as pm
 
-layout = 430
+layout = 435
 percentage = 0.01 * layout
 
 def ad_controller_ui():
@@ -91,28 +91,37 @@ def ad_controller_ui():
                     ad_channelbox_constraint_connection()
                     ad_channelbox_direct_connection()
                 pm.separator(h=10, st="in", w=90*percentage)
-                with pm.rowColumnLayout(nc=13):
+                # with pm.rowColumnLayout('Controller_Shape', nc=2, rowSpacing=(2, 1 * percentage),
+                #                         co=(1 * percentage, 'both', 1 * percentage),
+                #                         cw=[(1, 31 * percentage), (2, 70 * percentage)]):
+                with pm.rowLayout(nc=2, cw2=(31 * percentage, 70 * percentage), cl2=('right', 'left'),
+                              columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
+                              rowAttach=[(1, 'top', 0)]):
+                    pm.text('Controller Shape:')
+                    with pm.rowColumnLayout(nc=9):
 
-                    icon_radio_control = pm.iconTextRadioCollection()
-                    circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circle.png')
-                    circleplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplus.png')
-                    circlehalf = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circlehalf.png')
-                    circleplushalf = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplushalf.png')
-                    square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/square.png')
-                    squareplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png')
-                    capsule = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsule.png')
-                    stickcircle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stickcircle.png')
-                    stick2circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stick2circle.png')
-                    sticksquare = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/sticksquare.png')
-                    stick2square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stick2square.png')
-                    rectangle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/rectangle.png')
-                    arrow = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png')
+                            icon_radio_control = pm.iconTextRadioCollection()
+                            circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circle.png')
+                            circleplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplus.png')
+                            circlehalf = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circlehalf.png')
+                            circleplushalf = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplushalf.png')
+                            square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/square.png')
+                            squareplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png')
+                            capsule = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsule.png')
+                            stickcircle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stickcircle.png')
+                            stick2circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stick2circle.png')
+                            sticksquare = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/sticksquare.png')
+                            stick2square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stick2square.png')
+                            rectangle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/rectangle.png')
+                            arrow = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png')
+                            arrowcircular = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrowcircular.png')
+                            arrow2halfcircular = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2halfcircular.png')
 
 
-                    cube = pm.iconTextRadioButton(st='iconOnly', i1='cube.png')
-                    cone = pm.iconTextRadioButton(st='iconOnly', i1='cone.png')
+                            cube = pm.iconTextRadioButton(st='iconOnly', i1='cube.png')
+                            cone = pm.iconTextRadioButton(st='iconOnly', i1='cone.png')
 
-                    pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
+                            pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
 
     pm.showWindow()
 
