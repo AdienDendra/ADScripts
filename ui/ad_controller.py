@@ -29,14 +29,40 @@ def ad_controller_ui():
                                                   add_feature=True, tx='Main',  enable=True)
                 ad_defining_object_text_field_no_button(define_object='Suffix_Main', tx='ctrl', label="Suffix Main:")
 
-                with pm.rowLayout(nc=2, cw2=(31 * percentage, 40 * percentage), cl2=('right', 'left'),
+                with pm.rowLayout(nc=2, cw2=(31 * percentage, 50 * percentage), cl2=('right', 'left'),
                                   columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                     pm.text('')
                     with pm.columnLayout():
-                        pm.checkBox('Target_Visibility', label='Add Attr Target Visibility', value=False)
+                        pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility', value=False)
                         pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
+                        pm.checkBox('Adding_Ctrl_Child', label='Add Child Controller',
+                                    cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
+                                    value=False)
+
+                pm.textFieldGrp('Suffix_Child_Ctrl', label='Adding Ctrl Child:', cal=(1, "right"),
+                                cw2=(31 * percentage, 69 * percentage),
+                                cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='Child')
 
                 pm.separator(h=10, st="in", w=95*percentage)
+
+                # CONNECTION
+                with pm.rowLayout('Connection', nc=3, cw3=(31 * percentage, 28 * percentage, 35 * percentage
+                                                             ), cl3=('right', 'left', 'left'),
+                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
+                                                (3, 'both', 0.5 * percentage),
+                                                ], rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
+                    pm.text(label='Connection:')
+                    ad_channelbox_constraint_connection()
+                    ad_channelbox_direct_connection()
+                with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
+                                             ), cl3=('right', 'right', 'right'),
+                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
+                                                (3, 'both', 0.5 * percentage)]):
+                    pm.text(label='')
+                    pm.button("List_Connection", l="List Connection", c='')
+                    pm.button('Create_Connection', l="Create Connection", c='')
+
+                pm.separator(h=10, st="in", w=90*percentage)
 
                 with pm.rowLayout('Palette_Port', nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
                                   columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
@@ -54,52 +80,26 @@ def ad_controller_ui():
                     pm.button('Select_All_AD_Controller',l="Select All AD Controller", c='')
                 pm.separator(h=10, st="in", w=90*percentage)
 
-                with pm.rowLayout(nc=3, cw3=(5*percentage, 46.5 * percentage, 50 * percentage),
-                                  cl3=('right', 'right','right'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage), (3, 'both', 0.5 * percentage),
-                                               ]):
-                    pm.checkBox(label='',
-                                cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
-                                value=False)
-
-                    pm.textFieldGrp('Suffix_Child_Ctrl', label='Adding Ctrl Child:', cal=(1, "right"),
-                                    cw2=(25 * percentage, 15 * percentage),
-                                    cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='child')
-
-
-                pm.separator(h=10, st="in", w=90*percentage)
-
                 with pm.rowLayout(nc=4, cw4=(31 * percentage, 28 * percentage, 25 * percentage, 22 * percentage
                                                              ), cl4=('right', 'left', 'left', 'left'),
                                   columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
                                                 (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage),
-                                                ], rowAttach=[(1, 'top', 0)]):
+                                                ], rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
                     pm.text('Controller Channel:')
                     ad_channelbox_translation()
                     ad_channelbox_rotation()
                     ad_channelbox_scale()
-
                 with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
                                                                  ), cl3=('right', 'right', 'right'),
                                       columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
                                                     (3, 'both', 0.5 * percentage)]):
                         pm.text(label='')
                         pm.button("Hide_Lock_Channel", l="Hide and Lock", c='')
-                        pm.button('Show_Channel',l="Show", c='')
+                        pm.button('Unide_Unlock_Channel',l="Unhide and Unlock", c='')
                 pm.separator(h=10, st="in", w=90*percentage)
 
-                with pm.rowLayout('Connection', nc=3, cw3=(31 * percentage, 28 * percentage, 35 * percentage
-                                                             ), cl3=('right', 'left', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage),
-                                                ], rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
-                    pm.text(label='Connection:')
-                    ad_channelbox_constraint_connection()
-                    ad_channelbox_direct_connection()
-                pm.separator(h=10, st="in", w=90*percentage)
-                # with pm.rowColumnLayout('Controller_Shape', nc=2, rowSpacing=(2, 1 * percentage),
-                #                         co=(1 * percentage, 'both', 1 * percentage),
-                #                         cw=[(1, 31 * percentage), (2, 70 * percentage)]):
+
+
                 with pm.rowLayout(nc=2, cw2=(31 * percentage, 70 * percentage), cl2=('right', 'left'),
                               columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
                               rowAttach=[(1, 'top', 0)]):
@@ -108,35 +108,28 @@ def ad_controller_ui():
 
                             icon_radio_control = pm.iconTextRadioCollection()
                             circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circle.png')
-                            circleplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplus.png')
-                            circlehalf = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circlehalf.png')
-                            circleplushalf = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplushalf.png')
+                            locator = pm.iconTextRadioButton(st='iconOnly',
+                                                             image='E:/Google Drive/Script Sell/AD Controller Icon/locator.png')
+                            cube = pm.iconTextRadioButton(st='iconOnly',
+                                                          image='E:/Google Drive/Script Sell/AD Controller Icon/cube.png')
+                            circlehalf = pm.iconTextRadioButton(st='iconOnly',
+                                                                image='E:/Google Drive/Script Sell/AD Controller Icon/circlehalf.png')
                             square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/square.png')
-                            squareplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png')
-                            capsule = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsule.png')
-                            capsulecurve = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsulecurve.png')
-                            stickcircle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stickcircle.png')
-                            stick2circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stick2circle.png')
-                            sticksquare = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/sticksquare.png')
-                            stick2square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stick2square.png')
-                            stickstar = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/stickstar.png')
-                            circleplusarrow = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circleplusarrow.png')
-                            rectangle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/rectangle.png')
-                            cube = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/cube.png')
-                            arrow = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png')
-                            arrowcircular = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrowcircular.png')
-                            arrow2halfcircular = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2halfcircular.png')
-                            arrow2straight = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2straight.png')
-                            arrow2flat = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flat.png')
-                            arrowhead = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/arrowhead.png')
-                            joint = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/joint.png')
-                            jointplus = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/jointplus.png')
-                            hand = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/hand.png')
-                            locator = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/locator.png')
 
-                            continues = pm.iconTextButton(st='iconOnly', hi='E:/Google Drive/Script Sell/AD Controller Icon/continue_hi.png', image='E:/Google Drive/Script Sell/AD Controller Icon/continue.png')
+                            joint = pm.iconTextRadioButton(st='iconOnly',
+                                                           image='E:/Google Drive/Script Sell/AD Controller Icon/joint.png')
+
+                            capsule = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsule.png')
+                            stickcircle = pm.iconTextRadioButton(st='iconOnly',
+                                                                 image='E:/Google Drive/Script Sell/AD Controller Icon/stickcircle.png')
+
+                            continues = pm.iconTextButton(st='iconOnly',
+                                                          hi='E:/Google Drive/Script Sell/AD Controller Icon/continue_hi.png',
+                                                          image='E:/Google Drive/Script Sell/AD Controller Icon/continue.png',
+                                                          c=partial(ad_shape_controller_ui, circle))
 
                             pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
+
                 pm.separator(h=5, st="in", w=90*percentage)
 
                 with pm.rowLayout():
@@ -157,7 +150,7 @@ def ad_controller_ui():
                                                     (3, 'both', 0.5 * percentage)]):
                         pm.text(label='')
                         pm.button("Replace_Controller", l="Replace Controller", c='')
-                        pm.button('Create_Controller',l="Create Controller", c='')
+                        pm.button('Create_Controller',l="Create Controller", c='', bgc=(0, 0.5, 0))
             with pm.columnLayout('Controller Utilities', rowSpacing=1 * percentage, w=layout * 1.04, co=('both', 1 * percentage),
                                      adj=1, p='tab'):
                 pm.separator(st="in", w=90 * percentage)
@@ -226,6 +219,78 @@ def ad_controller_ui():
 
     pm.showWindow()
 
+def ad_shape_controller_ui(default, *args):
+    shape_controller = 'Shape_Controller'
+    pm.window(shape_controller, exists=True)
+    if pm.window(shape_controller, exists=True):
+        pm.deleteUI(shape_controller)
+    with pm.window(shape_controller, title='AD Controller Shape'):
+        with pm.columnLayout(co=('both', 1 * percentage), adj=1):
+            pm.separator(h=7, st="in")
+            with pm.rowColumnLayout(nc=10, rowOffset=[(1,'top', 1),(2,'top', 3),(3,'top', 3)]):
+                pm.iconTextRadioButton(default, edit=True, select=True)
+                circleplushalf = pm.iconTextRadioButton(st='iconOnly',
+                                                        image='E:/Google Drive/Script Sell/AD Controller Icon/circleplushalf.png')
+
+                circleplus = pm.iconTextRadioButton(st='iconOnly',
+                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/circleplus.png')
+
+
+                stick2circle = pm.iconTextRadioButton(st='iconOnly',
+                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/stick2circle.png')
+                sticksquare = pm.iconTextRadioButton(st='iconOnly',
+                                                     image='E:/Google Drive/Script Sell/AD Controller Icon/sticksquare.png')
+                stick2square = pm.iconTextRadioButton(st='iconOnly',
+                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/stick2square.png')
+                stickstar = pm.iconTextRadioButton(st='iconOnly',
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/stickstar.png')
+                circleplusarrow = pm.iconTextRadioButton(st='iconOnly',
+                                                         image='E:/Google Drive/Script Sell/AD Controller Icon/circleplusarrow.png')
+                rectangle = pm.iconTextRadioButton(st='iconOnly',
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/rectangle.png')
+
+                arrow = pm.iconTextRadioButton(st='iconOnly',
+                                               image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png')
+                arrow2halfcircular = pm.iconTextRadioButton(st='iconOnly',
+                                                            image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2halfcircular.png')
+                arrow2straight = pm.iconTextRadioButton(st='iconOnly',
+                                                        image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2straight.png')
+                arrow2flat = pm.iconTextRadioButton(st='iconOnly',
+                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flat.png')
+                arrowhead = pm.iconTextRadioButton(st='iconOnly',
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/arrowhead.png')
+                squareplus = pm.iconTextRadioButton(st='iconOnly',
+                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png')
+                jointplus = pm.iconTextRadioButton(st='iconOnly',
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/jointplus.png')
+                hand = pm.iconTextRadioButton(st='iconOnly',
+                                              image='E:/Google Drive/Script Sell/AD Controller Icon/hand.png')
+
+                arrowcircular = pm.iconTextRadioButton(st='iconOnly',
+                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/arrowcircular.png')
+                plus = pm.iconTextRadioButton(st='iconOnly',
+                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/plus.png')
+                pivot = pm.iconTextRadioButton(st='iconOnly',
+                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/pivot.png')
+                keys = pm.iconTextRadioButton(st='iconOnly',
+                                       image='E:/Google Drive/Script Sell/AD Controller Icon/keys.png')
+                pyramidcircle = pm.iconTextRadioButton(st='iconOnly',
+                                       image='E:/Google Drive/Script Sell/AD Controller Icon/pyramidcircle.png')
+                arrow4circular = pm.iconTextRadioButton(st='iconOnly',
+                                       image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4circular.png')
+                eyes = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/eyes.png')
+                footstep = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/footstep.png')
+                half3dcircle = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/half3dcircle.png')
+                capsulecurve = pm.iconTextRadioButton(st='iconOnly',
+                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/capsulecurve.png')
+
+                arrow4straight = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4straight.png')
+
+    pm.showWindow()
 def ad_defining_object_text_field(define_object, label):
     # if object doesn't has checkbox
     pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
