@@ -251,6 +251,8 @@ def ad_shape_controller_ui(default, *args):
 
                 arrow = pm.iconTextRadioButton(st='iconOnly',
                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png')
+                arrow3dflat = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3dflat.png')
                 arrow2halfcircular = pm.iconTextRadioButton(st='iconOnly',
                                                             image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2halfcircular.png')
                 arrow2straight = pm.iconTextRadioButton(st='iconOnly',
@@ -259,6 +261,8 @@ def ad_shape_controller_ui(default, *args):
                                                     image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flat.png')
                 arrowhead = pm.iconTextRadioButton(st='iconOnly',
                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/arrowhead.png')
+                arrow90deg = pm.iconTextRadioButton(st='iconOnly',
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/arrow90deg.png')
                 squareplus = pm.iconTextRadioButton(st='iconOnly',
                                                     image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png')
                 jointplus = pm.iconTextRadioButton(st='iconOnly',
@@ -289,7 +293,28 @@ def ad_shape_controller_ui(default, *args):
 
                 arrow4straight = pm.iconTextRadioButton(st='iconOnly',
                                                 image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4straight.png')
-
+                arrow3d = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3d.png')
+                pyramid = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/pyramid.png')
+                arrow3dcircular = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3dcircular.png')
+                cylinder = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/cylinder.png')
+                arrow2flathalf = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flathalf.png')
+                flag = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/flag.png')
+                world = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/world.png')
+                setup = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/setup.png')
+                star = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/star.png')
+                diamond = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/diamond.png')
+                starsqueeze = pm.iconTextRadioButton(st='iconOnly',
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/starsqueeze.png')
     pm.showWindow()
 def ad_defining_object_text_field(define_object, label):
     # if object doesn't has checkbox
