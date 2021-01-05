@@ -1,14 +1,20 @@
 from functools import partial
 import pymel.core as pm
+import ad_controller_lib as al
+reload(al)
 
 layout = 435
 percentage = 0.01 * layout
+on_selector = 0
 
-def ad_controller_ui():
+def ad_show_ui():
+    global adien_controller
     adien_controller = 'AD_Controller'
     pm.window(adien_controller, exists=True)
     if pm.window(adien_controller, exists=True):
         pm.deleteUI(adien_controller)
+        if pm.window('Shape_Controller', exists=True):
+            pm.deleteUI('Shape_Controller')
     with pm.window(adien_controller, title='AD Controller', width=layout, height=400):
         with pm.tabLayout('tab',width=layout*1.05, height=400):
             with pm.columnLayout('Create Controller',rowSpacing=1 * percentage, w=layout*1.04, co=('both', 1 * percentage),
@@ -107,21 +113,29 @@ def ad_controller_ui():
                     with pm.rowColumnLayout(nc=9):
 
                             icon_radio_control = pm.iconTextRadioCollection()
-                            circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circle.png')
+                            circle = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/circle.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(1))
                             locator = pm.iconTextRadioButton(st='iconOnly',
-                                                             image='E:/Google Drive/Script Sell/AD Controller Icon/locator.png')
+                                                             image='E:/Google Drive/Script Sell/AD Controller Icon/locator.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(2))
                             cube = pm.iconTextRadioButton(st='iconOnly',
-                                                          image='E:/Google Drive/Script Sell/AD Controller Icon/cube.png')
+                                                          image='E:/Google Drive/Script Sell/AD Controller Icon/cube.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(3))
                             circlehalf = pm.iconTextRadioButton(st='iconOnly',
-                                                                image='E:/Google Drive/Script Sell/AD Controller Icon/circlehalf.png')
-                            square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/square.png')
+                                                                image='E:/Google Drive/Script Sell/AD Controller Icon/circlehalf.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(4))
+                            square = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/square.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(5))
 
                             joint = pm.iconTextRadioButton(st='iconOnly',
-                                                           image='E:/Google Drive/Script Sell/AD Controller Icon/joint.png')
+                                                           image='E:/Google Drive/Script Sell/AD Controller Icon/joint.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(6))
 
-                            capsule = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsule.png')
+                            capsule = pm.iconTextRadioButton(st='iconOnly', image='E:/Google Drive/Script Sell/AD Controller Icon/capsule.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(7))
                             stickcircle = pm.iconTextRadioButton(st='iconOnly',
-                                                                 image='E:/Google Drive/Script Sell/AD Controller Icon/stickcircle.png')
+                                                                 image='E:/Google Drive/Script Sell/AD Controller Icon/stickcircle.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(8))
 
                             continues = pm.iconTextButton(st='iconOnly',
                                                           hi='E:/Google Drive/Script Sell/AD Controller Icon/continue_hi.png',
@@ -150,7 +164,7 @@ def ad_controller_ui():
                                                     (3, 'both', 0.5 * percentage)]):
                         pm.text(label='')
                         pm.button("Replace_Controller", l="Replace Controller", c='')
-                        pm.button('Create_Controller',l="Create Controller", c='', bgc=(0, 0.5, 0))
+                        pm.button('Create_Controller',l="Create Controller", bgc=(0, 0.5, 0), c=partial(ad_create_controller_button))
             with pm.columnLayout('Controller Utilities', rowSpacing=1 * percentage, w=layout * 1.04, co=('both', 1 * percentage),
                                      adj=1, p='tab'):
                 pm.separator(st="in", w=90 * percentage)
@@ -218,6 +232,116 @@ def ad_controller_ui():
                 pm.separator(st="in", w=90 * percentage)
 
     pm.showWindow()
+def ad_create_controller_button(*args):
+    ad_action_ctrl_shape()
+
+
+def ad_action_ctrl_shape(*args):
+    control_shape = []
+    if on_selector == 1:
+        control_shape = al.ad_shape_ctrl(al.CIRCLE)
+    elif on_selector == 2:
+        control_shape = al.ad_shape_ctrl(al.LOCATOR)
+    elif on_selector == 3:
+        control_shape = al.ad_shape_ctrl(al.CUBE)
+    elif on_selector == 4:
+        control_shape = al.ad_shape_ctrl(al.CIRCLEHALF)
+    elif on_selector == 5:
+        control_shape = al.ad_shape_ctrl(al.SQUARE)
+    elif on_selector == 6:
+        control_shape = al.ad_shape_ctrl(al.JOINT)
+    elif on_selector == 7:
+        control_shape = al.ad_shape_ctrl(al.CAPSULE)
+    elif on_selector == 8:
+        control_shape = al.ad_shape_ctrl(al.STICKCIRCLE)
+    elif on_selector == 9:
+        control_shape = al.ad_shape_ctrl(al.CIRCLEPLUSHALF)
+    elif on_selector == 10:
+        control_shape = al.ad_shape_ctrl(al.CIRCLEPLUS)
+    elif on_selector == 11:
+        control_shape = al.ad_shape_ctrl(al.STICK2CIRCLE)
+    elif on_selector == 12:
+        control_shape = al.ad_shape_ctrl(al.STICKSQUARE)
+    elif on_selector == 13:
+        control_shape = al.ad_shape_ctrl(al.STICK2SQUARE)
+    elif on_selector == 14:
+        control_shape = al.ad_shape_ctrl(al.STICKSTAR)
+    elif on_selector == 15:
+        control_shape = al.ad_shape_ctrl(al.CIRCLEPLUSARROW)
+    elif on_selector == 16:
+        control_shape = al.ad_shape_ctrl(al.RECTANGLE)
+    elif on_selector == 17:
+        control_shape = al.ad_shape_ctrl(al.ARROW)
+    elif on_selector == 18:
+        control_shape = al.ad_shape_ctrl(al.ARROW3DFLAT)
+    elif on_selector == 19:
+        control_shape = al.ad_shape_ctrl(al.ARROW2HALFCIRCULAR)
+    elif on_selector == 20:
+        control_shape = al.ad_shape_ctrl(al.ARROW2STRAIGHT)
+    elif on_selector == 21:
+        control_shape = al.ad_shape_ctrl(al.ARROW2FLAT)
+    elif on_selector == 22:
+        control_shape = al.ad_shape_ctrl(al.ARROWHEAD)
+    elif on_selector == 23:
+        control_shape = al.ad_shape_ctrl(al.ARROW90DEG)
+    elif on_selector == 24:
+        control_shape = al.ad_shape_ctrl(al.SQUAREPLUS)
+    elif on_selector == 25:
+        control_shape = al.ad_shape_ctrl(al.JOINTPLUS)
+    elif on_selector == 26:
+        control_shape = al.ad_shape_ctrl(al.HAND)
+    elif on_selector == 27:
+        control_shape = al.ad_shape_ctrl(al.ARROWCIRCULAR)
+    elif on_selector == 28:
+        control_shape = al.ad_shape_ctrl(al.PLUS)
+    elif on_selector == 29:
+        control_shape = al.ad_shape_ctrl(al.PIVOT)
+    elif on_selector == 30:
+        control_shape = al.ad_shape_ctrl(al.KEYS)
+    elif on_selector == 31:
+        control_shape = al.ad_shape_ctrl(al.PYRAMIDCIRCLE)
+    elif on_selector == 32:
+        control_shape = al.ad_shape_ctrl(al.ARROW4CIRCULAR)
+    elif on_selector == 33:
+        control_shape = al.ad_shape_ctrl(al.EYES)
+    elif on_selector == 34:
+        control_shape = al.ad_shape_ctrl(al.FOOTSTEP)
+    elif on_selector == 35:
+        control_shape = al.ad_shape_ctrl(al.HALF3DCIRCLE)
+    elif on_selector == 36:
+        control_shape = al.ad_shape_ctrl(al.CAPSULECURVE)
+    elif on_selector == 37:
+        control_shape = al.ad_shape_ctrl(al.ARROW4STRAIGHT)
+    elif on_selector == 38:
+        control_shape = al.ad_shape_ctrl(al.ARROW3D)
+    elif on_selector == 39:
+        control_shape = al.ad_shape_ctrl(al.PYRAMID)
+    elif on_selector == 40:
+        control_shape = al.ad_shape_ctrl(al.ARROW3DCIRCULAR)
+    elif on_selector == 41:
+        control_shape = al.ad_shape_ctrl(al.CYLINDER)
+    elif on_selector == 42:
+        control_shape = al.ad_shape_ctrl(al.ARROW2FLATHALF)
+    elif on_selector == 43:
+        control_shape = al.ad_shape_ctrl(al.FLAG)
+    elif on_selector == 44:
+        control_shape = al.ad_shape_ctrl(al.WORLD)
+    elif on_selector == 45:
+        control_shape = al.ad_shape_ctrl(al.SETUP)
+    elif on_selector == 46:
+        control_shape = al.ad_shape_ctrl(al.STAR)
+    elif on_selector == 47:
+        control_shape = al.ad_shape_ctrl(al.DIAMOND)
+    elif on_selector == 48:
+        control_shape = al.ad_shape_ctrl(al.STARSQUEEZE)
+    else:
+        pass
+    return control_shape
+
+def ad_on_selection_ctrl_shape(on):
+    # save the current shape selection into global variable
+    global on_selector
+    on_selector = on
 
 def ad_shape_controller_ui(default, *args):
     shape_controller = 'Shape_Controller'
@@ -230,91 +354,129 @@ def ad_shape_controller_ui(default, *args):
             with pm.rowColumnLayout(nc=10, rowOffset=[(1,'top', 1),(2,'top', 3),(3,'top', 3)]):
                 pm.iconTextRadioButton(default, edit=True, select=True)
                 circleplushalf = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='E:/Google Drive/Script Sell/AD Controller Icon/circleplushalf.png')
-
+                                                        image='E:/Google Drive/Script Sell/AD Controller Icon/circleplushalf.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(9))
                 circleplus = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/circleplus.png')
-
-
+                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/circleplus.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(10))
                 stick2circle = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/stick2circle.png')
+                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/stick2circle.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(11))
                 sticksquare = pm.iconTextRadioButton(st='iconOnly',
-                                                     image='E:/Google Drive/Script Sell/AD Controller Icon/sticksquare.png')
+                                                     image='E:/Google Drive/Script Sell/AD Controller Icon/sticksquare.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(12))
                 stick2square = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/stick2square.png')
+                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/stick2square.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(13))
                 stickstar = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/stickstar.png')
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/stickstar.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(14))
                 circleplusarrow = pm.iconTextRadioButton(st='iconOnly',
-                                                         image='E:/Google Drive/Script Sell/AD Controller Icon/circleplusarrow.png')
+                                                         image='E:/Google Drive/Script Sell/AD Controller Icon/circleplusarrow.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(15))
                 rectangle = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/rectangle.png')
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/rectangle.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(16))
 
                 arrow = pm.iconTextRadioButton(st='iconOnly',
-                                               image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png')
+                                               image='E:/Google Drive/Script Sell/AD Controller Icon/arrow.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(17))
                 arrow3dflat = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3dflat.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3dflat.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(18))
                 arrow2halfcircular = pm.iconTextRadioButton(st='iconOnly',
-                                                            image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2halfcircular.png')
+                                                            image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2halfcircular.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(19))
                 arrow2straight = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2straight.png')
+                                                        image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2straight.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(20))
                 arrow2flat = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flat.png')
+                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flat.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(21))
                 arrowhead = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/arrowhead.png')
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/arrowhead.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(22))
                 arrow90deg = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/arrow90deg.png')
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/arrow90deg.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(23))
                 squareplus = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png')
+                                                    image='E:/Google Drive/Script Sell/AD Controller Icon/squareplus.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(24))
                 jointplus = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/jointplus.png')
+                                                   image='E:/Google Drive/Script Sell/AD Controller Icon/jointplus.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(25))
                 hand = pm.iconTextRadioButton(st='iconOnly',
-                                              image='E:/Google Drive/Script Sell/AD Controller Icon/hand.png')
+                                              image='E:/Google Drive/Script Sell/AD Controller Icon/hand.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(26))
 
                 arrowcircular = pm.iconTextRadioButton(st='iconOnly',
-                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/arrowcircular.png')
+                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/arrowcircular.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(27))
                 plus = pm.iconTextRadioButton(st='iconOnly',
-                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/plus.png')
+                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/plus.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(28))
                 pivot = pm.iconTextRadioButton(st='iconOnly',
-                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/pivot.png')
+                                                       image='E:/Google Drive/Script Sell/AD Controller Icon/pivot.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(29))
                 keys = pm.iconTextRadioButton(st='iconOnly',
-                                       image='E:/Google Drive/Script Sell/AD Controller Icon/keys.png')
+                                       image='E:/Google Drive/Script Sell/AD Controller Icon/keys.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(30))
                 pyramidcircle = pm.iconTextRadioButton(st='iconOnly',
-                                       image='E:/Google Drive/Script Sell/AD Controller Icon/pyramidcircle.png')
+                                       image='E:/Google Drive/Script Sell/AD Controller Icon/pyramidcircle.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(31))
                 arrow4circular = pm.iconTextRadioButton(st='iconOnly',
-                                       image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4circular.png')
+                                       image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4circular.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(32))
                 eyes = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/eyes.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/eyes.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(33))
                 footstep = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/footstep.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/footstep.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(34))
                 half3dcircle = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/half3dcircle.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/half3dcircle.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(35))
                 capsulecurve = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/capsulecurve.png')
+                                                      image='E:/Google Drive/Script Sell/AD Controller Icon/capsulecurve.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(36))
 
                 arrow4straight = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4straight.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow4straight.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(37))
                 arrow3d = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3d.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3d.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(38))
                 pyramid = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/pyramid.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/pyramid.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(39))
                 arrow3dcircular = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3dcircular.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow3dcircular.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(40))
                 cylinder = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/cylinder.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/cylinder.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(41))
                 arrow2flathalf = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flathalf.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/arrow2flathalf.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(42))
                 flag = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/flag.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/flag.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(43))
                 world = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/world.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/world.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(44))
                 setup = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/setup.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/setup.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(45))
                 star = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/star.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/star.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(46))
                 diamond = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/diamond.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/diamond.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(47))
                 starsqueeze = pm.iconTextRadioButton(st='iconOnly',
-                                                image='E:/Google Drive/Script Sell/AD Controller Icon/starsqueeze.png')
+                                                image='E:/Google Drive/Script Sell/AD Controller Icon/starsqueeze.png',
+                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(48))
+
     pm.showWindow()
 def ad_defining_object_text_field(define_object, label):
     # if object doesn't has checkbox
