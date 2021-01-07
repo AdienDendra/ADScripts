@@ -1,6 +1,6 @@
 from functools import partial
 import pymel.core as pm
-import maya.cmds as mc
+import maya.OpenMaya as om
 
 CIRCLEPLUS = [[1.1300200000000005, -4.996003610813204e-16, 0.0], [1.00412, 1.1102230246251565e-16, 0.0],
               [0.99176, -8.326672684688674e-17, -0.15708], [0.9549800000000004, -2.498001805406602e-16, -0.31029],
@@ -1299,7 +1299,65 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
                [0.16, 0.0, -0.61], [0.1, 0.0, -0.77], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9],
                [0.06, 0.0, -0.9]]
 
-def ad_shape_ctrl(shape):
+def ad_scaling_controller(size_obj, ctrl_shape):
+    if pm.nodeType(ctrl_shape) == 'transform':
+        for item in ctrl_shape:
+            shape_node = pm.listRelatives(item, s=True)[0]
+            points = pm.ls('%s.cv[0:*]' % shape_node, fl=True)
+            for point in points:
+                position = pm.pointPosition(point, l=True) * size_obj
+                # a = position * 5
+                # print a
+                pm.setAttr('%s.xValue' % point, position[0])
+                pm.setAttr('%s.yValue' % point, position[1])
+                pm.setAttr('%s.zValue' % point, position[2])
+    else:
+        om.MGlobal.displayError("The object type is not transform")
+
+def ad_lock_hide_attr(lock_channel, ctrl, hide_object):
+    attr_lock_list = []
+    for lc in lock_channel:
+        if lc in ['t', 'r', 's']:
+            for axis in ['x', 'y', 'z']:
+                at = lc + axis
+                attr_lock_list.append(at)
+        else:
+            attr_lock_list.append(lc)
+    for at in attr_lock_list:
+        if hide_object:
+            pm.setAttr(ctrl + '.' + at, l=1, k=0)
+        else:
+            pm.setAttr(ctrl + '.' + at, l=0, k=1)
+
+    return attr_lock_list
+
+
+def ad_ctrl_color_list(color):
+    selection = pm.ls(selection=True)
+    if not selection:
+        om.MGlobal.displayError("No objects selected")
+        return False
+
+    for obj in selection:
+        shapeNodes = pm.listRelatives(obj, shapes=True)
+
+        for shape in shapeNodes:
+            try:
+                pm.setAttr("{0}.overrideEnabled".format(shape), True)
+                pm.setAttr("{0}.overrideColor".format(shape), color)
+            except:
+                om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
+
+    return True
+
+def ad_ctrl_color(ctrl, color):
+    list_relatives = pm.listRelatives(ctrl, s=1)[0]
+    pm.setAttr(list_relatives + '.ove', 1)
+    pm.setAttr(list_relatives + '.ovc', color)
+
+    return list_relatives
+
+def ad_ctrl_shape(shape):
     create_curve = pm.curve(d=1, p=shape)
     pm.addAttr(create_curve, ln='AD_Controller', at='bool')
     pm.setAttr(create_curve+'.AD_Controller', 1)
@@ -1307,37 +1365,40 @@ def ad_shape_ctrl(shape):
     return create_curve
 
 
-def create_ctrl(ctrl_size, shape):
-    scale_ctrl = ut.scale_curve(ctrl_size, shape)
-    ctrl = ut.controller(scale_ctrl)
-    return ctrl
 
-def prefix_name(obj):
-    if '_' in obj:
-        get_prefix_name = obj.split('_')[:-1]
-        joining = '_'.join(get_prefix_name)
-        return joining
-    else:
-        return obj
-
-def parent_object(objBase, objTgt):
-    parent_object = mc.parent(objTgt, objBase)
-    return parent_object
-
-def group_parent(groups, prefix, suffix, number='', side=''):
-    # create group hierarchy
-    grps = []
-    for i in range(len(groups)):
-        grps.append(mc.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, GROUP)))
-
-        if i > 0:
-            parent_object(grps[i - 1], grps[i])
-
-    return grps
-
-def ad_main_group():
-    rename_controller = pm.rename(ctrl, '%s_%s' % (prefix_name(prefix), suffix))
-    group_parents = group_parent(groups_ctrl, '%s' % prefix_name(prefix), suffix.title(), side=side)
-
-    return {'grpPrnt': group_parents,
-            'renCtrl': rename_controller}
+#
+#
+# def create_ctrl(ctrl_size, shape):
+#     scale_ctrl = ut.scale_curve(ctrl_size, shape)
+#     ctrl = ut.controller(scale_ctrl)
+#     return ctrl
+#
+# def prefix_name(obj):
+#     if '_' in obj:
+#         get_prefix_name = obj.split('_')[:-1]
+#         joining = '_'.join(get_prefix_name)
+#         return joining
+#     else:
+#         return obj
+#
+# def parent_object(objBase, objTgt):
+#     parent_object = mc.parent(objTgt, objBase)
+#     return parent_object
+#
+# def group_parent(groups, prefix, suffix, number='', side=''):
+#     # create group hierarchy
+#     grps = []
+#     for i in range(len(groups)):
+#         grps.append(mc.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, GROUP)))
+#
+#         if i > 0:
+#             parent_object(grps[i - 1], grps[i])
+#
+#     return grps
+#
+# def ad_main_group():
+#     rename_controller = pm.rename(ctrl, '%s_%s' % (prefix_name(prefix), suffix))
+#     group_parents = group_parent(groups_ctrl, '%s' % prefix_name(prefix), suffix.title(), side=side)
+#
+#     return {'grpPrnt': group_parents,
+#             'renCtrl': rename_controller}
