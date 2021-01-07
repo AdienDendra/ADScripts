@@ -1301,16 +1301,14 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 
 def ad_scaling_controller(size_obj, ctrl_shape):
     if pm.nodeType(ctrl_shape) == 'transform':
-        for item in ctrl_shape:
-            shape_node = pm.listRelatives(item, s=True)[0]
-            points = pm.ls('%s.cv[0:*]' % shape_node, fl=True)
-            for point in points:
-                position = pm.pointPosition(point, l=True) * size_obj
-                # a = position * 5
-                # print a
-                pm.setAttr('%s.xValue' % point, position[0])
-                pm.setAttr('%s.yValue' % point, position[1])
-                pm.setAttr('%s.zValue' % point, position[2])
+        shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
+        points = pm.ls('%s.cv[0:*]' % shape_node, fl=True)
+        for point in points:
+            position = pm.pointPosition(point, l=True) * size_obj
+
+            pm.setAttr('%s.xValue' % point, position[0])
+            pm.setAttr('%s.yValue' % point, position[1])
+            pm.setAttr('%s.zValue' % point, position[2])
     else:
         om.MGlobal.displayError("The object type is not transform")
 

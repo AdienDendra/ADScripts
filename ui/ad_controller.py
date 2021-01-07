@@ -109,7 +109,7 @@ def ad_show_ui():
                     pm.button('Unide_Unlock_Channel', l="Unhide and Unlock", c=partial(ad_unhide_and_unlock_button))
                 pm.separator(h=10, st="in", w=90 * percentage)
 
-                with pm.rowLayout(nc=2, cw2=(31 * percentage, 70 * percentage), cl2=('right', 'left'),
+                with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
                                   columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
                                   rowAttach=[(1, 'top', 0)]):
                     pm.text(label='Controller Shape:')
@@ -148,15 +148,30 @@ def ad_show_ui():
 
                 pm.separator(h=5, st="in", w=90 * percentage)
 
-                with pm.rowLayout():
-                    pm.floatSliderGrp('Controller_Resize', cw3=(31 * percentage, 10 * percentage, 59 * percentage
-                                                                ), cl3=('right', 'right', 'right'),
-                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                    (3, 'both', 0.5 * percentage)], l="Controller Resize:", field=True,
-                                      min=-10.0, value=0.0, max=10, changeCommand=pm.Callback(ad_controller_resize_slider),
-                                     dc=partial(ad_scale_ctrl_slider))
+                with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
+                                  rowAttach=[(1, 'top', 0)]):
+                    pm.text(label='Controller Resize:')
 
-                pm.separator(h=5, st="in", w=90 * percentage)
+                    pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5,
+                                   dragCommand=pm.Callback(ad_controller_resize_slider),
+                                      changeCommand=partial(ad_controller_resize_reset)
+
+                                     )
+
+                with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
+                                  ):
+                    pm.text('Rotate Controller:')
+                    with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
+                                      cl3=('center', 'center', 'center'),
+                                      columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
+                                                    (3, 'both', 0 * percentage)]
+                                      ):
+                        pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
+                        pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
+                        pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
+                pm.separator(st="in", w=90 * percentage)
 
                 with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
                                              ), cl3=('right', 'right', 'right'),
@@ -233,32 +248,9 @@ def ad_show_ui():
                                           bc=partial(ad_adding_object_sel_to_textfield, 'To'))
 
                 pm.separator(st="in", w=90 * percentage)
-                with pm.rowLayout(nc=1, cw=(1, 100 * percentage), cal=(1, 'center'),
-                                  columnAttach=(1, 'both', 0.5 * percentage)):
-                    pm.text('Rotate Controller')
-                with pm.rowLayout(nc=3, cw3=(33.3 * percentage, 33.3 * percentage, 33.3 * percentage
-                                             ), cl3=('center', 'center', 'center'),
-                                  columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
-                                                (3, 'both', 0 * percentage)]
-                                  ):
-                    pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
-                    pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
-                    pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
-                pm.separator(st="in", w=90 * percentage)
+
 
     pm.showWindow()
-
-def ad_scale_ctrl_slider(*args):
-    selection = pm.ls(selection=True)
-    if not selection:
-        om.MGlobal.displayError("No objects selected")
-        return False
-    else:
-        if pm.nodeType(selection) == 'transform':
-            al.ad_scaling_controller(size_obj=ad_controller_resize_slider(), ctrl_shape=selection)
-        else:
-            om.MGlobal.displayError("Object type must be curve")
-
 
 def ad_unhide_and_unlock_button(*args):
     selection = pm.ls(selection=True)
@@ -342,7 +334,6 @@ def ad_select_all_ad_controller_button(*args):
                 pass
 
     pm.select(list_object)
-
 
 def ad_replace_color_button(*args):
     al.ad_ctrl_color_list(ad_query_controller_color())
@@ -646,14 +637,19 @@ def ad_adding_object_sel_to_textfield(text_input, button, *args):
         pm.error("please select one object!")
 
 def ad_controller_resize_slider():
-    currentValue = pm.floatSliderGrp('Controller_Resize', q=True, v=True)
-    print('Controller Size: {0}'.format(currentValue))
-
-    # reset slider to center
-    pm.floatSliderGrp('Controller_Resize', edit=True, v=0)
-
-
-    return currentValue
+    currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
+    selection = pm.ls(selection=True)
+    if not selection:
+        om.MGlobal.displayWarning("No objects selected")
+        # pm.floatSliderGrp('Controller_Resize', edit=True, v=0)
+    else:
+        for item in selection:
+            if pm.nodeType(item) == 'transform':
+                al.ad_scaling_controller(size_obj=currentValue, ctrl_shape=item)
+            else:
+                om.MGlobal.displayError("Object type must be curve")
+def ad_controller_resize_reset(*args):
+    pm.floatSlider('Controller_Resize', edit=True, v=1.0)
 
 def ad_enabling_disabling_ui(object, tx, value, *args):
     # query for enabling and disabling layout
