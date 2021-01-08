@@ -11,7 +11,6 @@ on_selector = 0
 
 
 def ad_show_ui():
-    global adien_controller
     adien_controller = 'AD_Controller'
     pm.window(adien_controller, exists=True)
     if pm.window(adien_controller, exists=True):
@@ -19,238 +18,259 @@ def ad_show_ui():
         if pm.window('Shape_Controller', exists=True):
             pm.deleteUI('Shape_Controller')
     with pm.window(adien_controller, title='AD Controller', width=layout, height=400):
+        # with pm.tabLayout('tab', width=layout * 1.05, height=400):
         with pm.tabLayout('tab', width=layout * 1.05, height=400):
-            with pm.columnLayout('Create Controller', rowSpacing=1 * percentage, w=layout * 1.04,
-                                 co=('both', 1 * percentage),
-                                 adj=1, p='tab'):
-                pm.separator(st="in", w=90 * percentage)
-                with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
-                                        co=(1 * percentage, 'both', 1 * percentage),
-                                        cw=[(1, 5 * percentage), (2, 96 * percentage)]):
-                    pm.checkBox(label='',
-                                cc=partial(ad_enabling_disabling_ui, ['Prefix_Main'], ''),
-                                value=False)
-                    ad_defining_object_text_field_no_button(define_object='Prefix_Main', label="Prefix Main:",
-                                                            add_feature=True, enable=False)
-                    pm.checkBox(label='',
-                                cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main'),
-                                value=True)
-                    ad_defining_object_text_field_no_button(define_object='Parent_Group_Name',
-                                                            label="Parent Group Name:",
-                                                            add_feature=True, tx='Main', enable=True)
-                ad_defining_object_text_field_no_button(define_object='Suffix_Main', tx='ctrl', label="Suffix Main:")
+            with pm.scrollLayout('Create Controller', p='tab'):
+                with pm.columnLayout('Create_Controller_Column', w=layout * 1.04,
+                                     co=('both', 1 * percentage),
+                                     adj=1):
+                    # pm.separator(h=5, st="in", w=90 * percentage)
+                    with pm.frameLayout(collapsable=True, l='Define Controller', mh=1):
+                        with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
+                                                co=(1 * percentage, 'both', 1 * percentage),
+                                                cw=[(1, 5 * percentage), (2, 96 * percentage)]):
+                            pm.checkBox(label='',
+                                        cc=partial(ad_enabling_disabling_ui, ['Prefix_Main'], ''),
+                                        value=False)
+                            ad_defining_object_text_field_no_button(define_object='Prefix_Main', label="Prefix Main:",
+                                                                    add_feature=True, enable=False)
+                            pm.checkBox(label='',
+                                        cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main'),
+                                        value=True)
+                            ad_defining_object_text_field_no_button(define_object='Parent_Group_Name',
+                                                                    label="Parent Group Name:",
+                                                                    add_feature=True, tx='Main', enable=True)
+                        ad_defining_object_text_field_no_button(define_object='Suffix_Main', tx='ctrl',
+                                                                label="Suffix Main:")
 
-                with pm.rowLayout(nc=2, cw2=(31 * percentage, 50 * percentage), cl2=('right', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
-                    pm.text('')
-                    with pm.columnLayout():
-                        pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility', value=False)
-                        pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
-                        pm.checkBox('Adding_Ctrl_Child', label='Add Child Controller',
-                                    cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
-                                    value=False)
+                        with pm.rowLayout(nc=2, cw2=(31 * percentage, 50 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                            pm.text('')
+                            with pm.columnLayout():
+                                pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility',
+                                            value=False)
+                                pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
+                                pm.checkBox('Adding_Ctrl_Child', label='Add Child Controller',
+                                            cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
+                                            value=False)
 
-                pm.textFieldGrp('Suffix_Child_Ctrl', label='Adding Ctrl Child:', cal=(1, "right"),
-                                cw2=(31 * percentage, 69 * percentage),
-                                cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='Child')
+                        pm.textFieldGrp('Suffix_Child_Ctrl', label='Adding Ctrl Child:', cal=(1, "right"),
+                                        cw2=(31 * percentage, 69 * percentage),
+                                        cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='Child')
 
-                pm.separator(h=10, st="in", w=95 * percentage)
+                    # pm.separator(h=5, st="in", w=95 * percentage)
+                    with pm.frameLayout(collapsable=True, l='Connection', mh=1):
+                        # CONNECTION
+                        with pm.rowLayout('Connection', nc=3, cw3=(31 * percentage, 28 * percentage, 35 * percentage
+                                                                   ), cl3=('right', 'left', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
+                                                        (3, 'both', 0.5 * percentage),
+                                                        ], rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
+                            pm.text('')
+                            ad_channelbox_constraint_connection()
+                            ad_channelbox_direct_connection()
+                        with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 34 * percentage
+                                                     ), cl3=('right', 'right', 'right'),
+                                          columnAttach=[(2, 'both', 0.25 * percentage),
+                                                        (3, 'both', 0.25 * percentage)]):
+                            pm.text(label='')
+                            pm.button("List_Connection", l="List Connection", c='')
+                            pm.button('Create_Connection', l="Create Connection", c='')
 
-                # CONNECTION
-                with pm.rowLayout('Connection', nc=3, cw3=(31 * percentage, 28 * percentage, 35 * percentage
-                                                           ), cl3=('right', 'left', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage),
-                                                ], rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
-                    pm.text(label='Connection:')
-                    ad_channelbox_constraint_connection()
-                    ad_channelbox_direct_connection()
-                with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
-                                             ), cl3=('right', 'right', 'right'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]):
-                    pm.text(label='')
-                    pm.button("List_Connection", l="List Connection", c='')
-                    pm.button('Create_Connection', l="Create Connection", c='')
+                    # pm.separator(h=5, st="in", w=90 * percentage)
+                    with pm.frameLayout(collapsable=True, l='Controller Color', mh=1):
+                        with pm.rowLayout('Palette_Port', nc=2, cw2=(31 * percentage, 69 * percentage),
+                                          cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
+                                          rowAttach=[(1, 'top', 0)]):
+                            pm.text('')
+                            ad_color_index()
 
-                pm.separator(h=10, st="in", w=90 * percentage)
+                        with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 34 * percentage
+                                                     ), cl3=('right', 'right', 'right'),
+                                          columnAttach=[(2, 'both', 0.25 * percentage),
+                                                        (3, 'both', 0.25 * percentage)]):
+                            pm.text(label='')
+                            pm.button('Reset_Color', l="Reset Color", c='')
+                            pm.button("Replace_Color", l="Replace Color", c=partial(ad_replace_color_button))
+                    # pm.separator(h=5, st="in", w=90 * percentage)
 
-                with pm.rowLayout('Palette_Port', nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
-                                  rowAttach=[(1, 'top', 0)]):
-                    pm.text(label='Controller Color:')
-                    ad_color_index()
+                    with pm.frameLayout(collapsable=True, l='Controller Channel', mh=1):
+                        with pm.rowLayout(nc=4, cw4=(31 * percentage, 28 * percentage, 25 * percentage, 22 * percentage
+                                                     ), cl4=('right', 'left', 'left', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
+                                                        (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage),
+                                                        ],
+                                          rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
+                            pm.text('')
+                            ad_channelbox_translation()
+                            ad_channelbox_rotation()
+                            ad_channelbox_scale()
+                        with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 34 * percentage
+                                                     ), cl3=('right', 'right', 'right'),
+                                          columnAttach=[(2, 'both', 0.25 * percentage),
+                                                        (3, 'both', 0.25 * percentage)]):
+                            pm.text(label='')
+                            pm.button("Hide_Lock_Channel", l="Hide and Lock", c=partial(ad_hide_and_lock_button))
+                            pm.button('Unide_Unlock_Channel', l="Unhide and Unlock",
+                                      c=partial(ad_unhide_and_unlock_button))
 
-                with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
-                                             ), cl3=('right', 'right', 'right'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]):
-                    pm.text(label='')
-                    pm.button("Replace_Color", l="Replace Color", c=partial(ad_replace_color_button))
-                    pm.button('Select_All_AD_Controller', l="Select All AD Controller", c=partial(ad_select_all_ad_controller_button))
-                pm.separator(h=10, st="in", w=90 * percentage)
+                    # pm.separator(h=5, st="in", w=90 * percentage)
 
-                with pm.rowLayout(nc=4, cw4=(31 * percentage, 28 * percentage, 25 * percentage, 22 * percentage
-                                             ), cl4=('right', 'left', 'left', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage),
-                                                ],
-                                  rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
-                    pm.text('Controller Channel:')
-                    ad_channelbox_translation()
-                    ad_channelbox_rotation()
-                    ad_channelbox_scale()
-                with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
-                                             ), cl3=('right', 'right', 'right'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]):
-                    pm.text(label='')
-                    pm.button("Hide_Lock_Channel", l="Hide and Lock", c=partial(ad_hide_and_lock_button))
-                    pm.button('Unide_Unlock_Channel', l="Unhide and Unlock", c=partial(ad_unhide_and_unlock_button))
-                pm.separator(h=10, st="in", w=90 * percentage)
+                    with pm.frameLayout(collapsable=True, l='Controller Shape', mh=1):
+                        with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                            pm.text('')
+                            with pm.rowColumnLayout(nc=9):
+                                icon_radio_control = pm.iconTextRadioCollection()
+                                circle = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circle.png',
+                                                                onCommand=lambda x: ad_on_selection_ctrl_shape(1))
+                                locator = pm.iconTextRadioButton(st='iconOnly',
+                                                                 image='ad_icons/locator.png',
+                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(2))
+                                cube = pm.iconTextRadioButton(st='iconOnly',
+                                                              image='ad_icons/cube.png',
+                                                              onCommand=lambda x: ad_on_selection_ctrl_shape(3))
+                                circlehalf = pm.iconTextRadioButton(st='iconOnly',
+                                                                    image='ad_icons/circlehalf.png',
+                                                                    onCommand=lambda x: ad_on_selection_ctrl_shape(4))
+                                square = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/square.png',
+                                                                onCommand=lambda x: ad_on_selection_ctrl_shape(5))
 
-                with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
-                                  rowAttach=[(1, 'top', 0)]):
-                    pm.text(label='Controller Shape:')
-                    with pm.rowColumnLayout(nc=9):
-                        icon_radio_control = pm.iconTextRadioCollection()
-                        circle = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circle.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(1))
-                        locator = pm.iconTextRadioButton(st='iconOnly',
-                                                         image='ad_icons/locator.png',
-                                                         onCommand=lambda x: ad_on_selection_ctrl_shape(2))
-                        cube = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='ad_icons/cube.png',
-                                                      onCommand=lambda x: ad_on_selection_ctrl_shape(3))
-                        circlehalf = pm.iconTextRadioButton(st='iconOnly',
-                                                            image='ad_icons/circlehalf.png',
-                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(4))
-                        square = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/square.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(5))
+                                joint = pm.iconTextRadioButton(st='iconOnly',
+                                                               image='ad_icons/joint.png',
+                                                               onCommand=lambda x: ad_on_selection_ctrl_shape(6))
 
-                        joint = pm.iconTextRadioButton(st='iconOnly',
-                                                       image='ad_icons/joint.png',
-                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(6))
+                                capsule = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/capsule.png',
+                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(7))
+                                stickcircle = pm.iconTextRadioButton(st='iconOnly',
+                                                                     image='ad_icons/stickcircle.png',
+                                                                     onCommand=lambda x: ad_on_selection_ctrl_shape(8))
 
-                        capsule = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/capsule.png',
-                                                         onCommand=lambda x: ad_on_selection_ctrl_shape(7))
-                        stickcircle = pm.iconTextRadioButton(st='iconOnly',
-                                                             image='ad_icons/stickcircle.png',
-                                                             onCommand=lambda x: ad_on_selection_ctrl_shape(8))
+                                continues = pm.iconTextButton(st='iconOnly',
+                                                              hi='ad_icons/continue_hi.png',
+                                                              image='ad_icons/continue.png',
+                                                              c=partial(ad_shape_controller_ui, circle))
 
-                        continues = pm.iconTextButton(st='iconOnly',
-                                                      hi='ad_icons/continue_hi.png',
-                                                      image='ad_icons/continue.png',
-                                                      c=partial(ad_shape_controller_ui, circle))
+                                pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
 
-                        pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
+                        with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
+                                          ):
+                            pm.text('')
+                            with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
+                                              cl3=('center', 'center', 'center'),
+                                              columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
+                                                            (3, 'both', 0 * percentage)]):
+                                pm.button("Replace_Controller", l="Replace Ctrl", c='')
 
-                pm.separator(h=5, st="in", w=90 * percentage)
+                                pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl", c='')
+                                pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
+                                          c=partial(ad_select_all_ad_controller_button))
 
-                with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
-                                  rowAttach=[(1, 'top', 0)]):
-                    pm.text(label='Controller Resize:')
+                    # pm.separator(h=5, st="in", w=90 * percentage)
 
-                    pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5,
-                                   dragCommand=pm.Callback(ad_controller_resize_slider),
-                                      changeCommand=partial(ad_controller_resize_reset)
+                    with pm.frameLayout(collapsable=True, l='Controller Utilities', mh=1):
+                        with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
+                                          ):
+                            pm.text(label='Controller Resize:')
 
-                                     )
+                            pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5,
+                                           dragCommand=pm.Callback(ad_controller_resize_slider),
+                                           changeCommand=partial(ad_controller_resize_reset)
 
-                with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
-                                  ):
-                    pm.text('Rotate Controller:')
-                    with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
-                                      cl3=('center', 'center', 'center'),
-                                      columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
-                                                    (3, 'both', 0 * percentage)]
-                                      ):
-                        pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
-                        pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
-                        pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
-                pm.separator(st="in", w=90 * percentage)
+                                           )
 
-                with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 33.5 * percentage
-                                             ), cl3=('right', 'right', 'right'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]):
-                    pm.text(label='')
-                    pm.button("Replace_Controller", l="Replace Controller", c='')
-                    pm.button('Create_Controller', l="Create Controller", bgc=(0, 0.5, 0),
-                              c=partial(ad_create_controller_button))
+                        with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
+                                          ):
+                            pm.text('Rotate Controller:')
+                            with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
+                                              cl3=('center', 'center', 'center'),
+                                              columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
+                                                            (3, 'both', 0 * percentage)]
+                                              ):
+                                pm.button("Rotate_X", l="X", c='', bgc=(0.5, 0, 0))
+                                pm.button("Rotate_Y", l="Y", c='', bgc=(0, 0.5, 0))
+                                pm.button('Rotate_Z', l="Z", c='', bgc=(0, 0, 0.5))
+                        # pm.separator(h=5, st="in", w=90 * percentage)
 
-            with pm.columnLayout('Controller Utilities', rowSpacing=1 * percentage, w=layout * 1.04,
-                                 co=('both', 1 * percentage),
-                                 adj=1, p='tab'):
-                pm.separator(st="in", w=90 * percentage)
-                with pm.rowLayout(nc=1, cw=(1, 100 * percentage), cal=(1, 'center'),
-                                  columnAttach=(1, 'both', 0.5 * percentage)):
-                    pm.text(label='Mirror Controller')
-                with pm.rowLayout(nc=3, cw=[(1, 40 * percentage), (2, 20 * percentage), (3, 40 * percentage)],
-                                  cal=[(1, 'center'), (2, 'center'), (3, 'center')],
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]):
-                    pm.text(label='From:')
-                    pm.text(label='')
-                    pm.text(label='To:')
+                    # pm.separator(h=5, st="in", w=90 * percentage)
+                    pm.separator(h=15, st="in", w=90 * percentage)
 
-                with pm.rowLayout(nc=3, cw3=(40 * percentage, 20 * percentage, 40 * percentage),
-                                  cl3=('center', 'center', 'center'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]
-                                  ):
-                    pm.textFieldButtonGrp('From', label='', cal=(1, "right"),
-                                          cw3=(0 * percentage, 32 * percentage, 10 * percentage),
-                                          bl="<<",
-                                          bc=partial(ad_adding_object_sel_to_textfield, 'From'))
-                    pm.text(label='>>>>>')
-                    pm.textFieldButtonGrp('To', label='', cal=(1, "right"),
-                                          cw3=(0 * percentage, 32 * percentage, 10 * percentage),
-                                          bl="<<",
-                                          bc=partial(ad_adding_object_sel_to_textfield, 'To'))
-                with pm.rowLayout(nc=3, cw3=(33.3 * percentage, 33.3 * percentage, 33.3 * percentage
-                                             ), cl3=('center', 'center', 'center'),
-                                  columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
-                                                (3, 'both', 0 * percentage)]
-                                  ):
-                    pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
-                    pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
-                    pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
+                    with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage
+                                                 ), cl2=('right', 'right'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)
+                                                    ]):
+                        pm.text(label='')
+                        pm.button('Create_Controller', l="Create Controller", bgc=(0, 0.5, 0),
+                                  c=partial(ad_create_controller_button))
+            with pm.scrollLayout('Controller Utilities', p='tab'):
+                with pm.columnLayout('Controller_Utilities_Column', w=layout * 1.04,
+                                     co=('both', 1 * percentage),
+                                     adj=1):
+                    # pm.separator(h=5, st="in", w=90 * percentage)
+                    with pm.frameLayout(collapsable=True, l='Save/Load Controller', mh=1):
+                        with pm.columnLayout():
+                            with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                              columnAttach=[(1, 'both', 0.5 * percentage),
+                                                            (2, 'both', 0.5 * percentage)],
+                                              ):
+                                pm.text('')
+                                pm.button('Select_All_AD_Controller', l="Select All AD Controller",
+                                          c=partial(ad_select_all_ad_controller_button))
 
-                pm.separator(st="in", w=90 * percentage)
-                with pm.rowLayout(nc=1, cw=(1, 100 * percentage), cal=(1, 'center'),
-                                  columnAttach=(1, 'both', 0.5 * percentage)):
-                    pm.text(label='Save/Load Controller')
-                with pm.rowLayout(nc=3, cw=[(1, 40 * percentage), (2, 20 * percentage), (3, 40 * percentage)],
-                                  cal=[(1, 'center'), (2, 'center'), (3, 'center')],
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]):
-                    pm.text(label='Save:')
-                    pm.text(label='')
-                    pm.text(label='Load:')
+                            with pm.rowLayout(nc=3, cw3=(31 * percentage, 34.5 * percentage, 34 * percentage
+                                                         ), cl3=('right', 'right', 'right'),
+                                              columnAttach=[(2, 'both', 0.25 * percentage),
+                                                            (3, 'both', 0.25 * percentage)]):
+                                pm.text(label='')
+                                pm.button("Save", l="Save", c='')
+                                pm.button('Load', l="Load", c='')
+                    with pm.frameLayout(collapsable=True, l='Mirror Controller', mh=1):
+                        with pm.rowLayout(nc=2, cw2=(31 * percentage, 69 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)],
+                                          ):
+                            pm.text(label='Mirror Controller:')
+                            with pm.columnLayout():
+                                with pm.rowColumnLayout(nc=3, cw=[(1, 27.5 * percentage), (2, 12.5 * percentage),
+                                                                  (3, 27.5 * percentage)],
+                                                        cal=[(1, 'center'), (2, 'center'), (3, 'center')],
+                                                        columnAttach=[(1, 'both', 0 * percentage),
+                                                                      (2, 'both', 0 * percentage),
+                                                                      (3, 'both', 0 * percentage)]):
+                                    pm.text(label='From:')
+                                    pm.text(label='')
+                                    pm.text(label='To:')
 
-                with pm.rowLayout(nc=3, cw3=(40 * percentage, 20 * percentage, 40 * percentage),
-                                  cl3=('center', 'center', 'center'),
-                                  columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                (3, 'both', 0.5 * percentage)]
-                                  ):
-                    pm.textFieldButtonGrp('Save', label='', cal=(1, "right"),
-                                          cw3=(0 * percentage, 32 * percentage, 10 * percentage),
-                                          bl="<<",
-                                          bc=partial(ad_adding_object_sel_to_textfield, 'From'))
-                    pm.text('')
-                    pm.textFieldButtonGrp('Load', label='', cal=(1, "right"),
-                                          cw3=(0 * percentage, 32 * percentage, 10 * percentage),
-                                          bl="<<",
-                                          bc=partial(ad_adding_object_sel_to_textfield, 'To'))
+                                    pm.textFieldButtonGrp('From', label='', cal=(1, "right"),
+                                                          cw3=(0 * percentage, 20.5 * percentage, 6 * percentage),
+                                                          bl="<<", columnAttach=[(1, 'both', 0 * percentage),
+                                                                                 (2, 'both', 0 * percentage),
+                                                                                 (3, 'both', 0 * percentage)],
+                                                          bc=partial(ad_adding_object_sel_to_textfield, 'From'))
+                                    pm.text(label='>>>')
+                                    pm.textFieldButtonGrp('To', label='', cal=(1, "right"),
+                                                          cw3=(0 * percentage, 20.5 * percentage, 6 * percentage),
+                                                          columnAttach=[(1, 'both', 0 * percentage),
+                                                                        (2, 'both', 0 * percentage),
+                                                                        (3, 'both', 0 * percentage)],
+                                                          bl="<<",
+                                                          bc=partial(ad_adding_object_sel_to_textfield, 'To'))
 
-                pm.separator(st="in", w=90 * percentage)
-
+                                with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage
+                                                             ), cl3=('center', 'center', 'center'),
+                                                  columnAttach=[(1, 'both', 0 * percentage),
+                                                                (2, 'both', 0 * percentage),
+                                                                (3, 'both', 0 * percentage)]
+                                                  ):
+                                    pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
+                                    pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
+                                    pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
 
     pm.showWindow()
+
 
 def ad_unhide_and_unlock_button(*args):
     selection = pm.ls(selection=True)
@@ -261,6 +281,7 @@ def ad_unhide_and_unlock_button(*args):
         for item in selection:
             ad_hide_and_unhide(ctrl=item, value=False)
 
+
 def ad_hide_and_lock_button(*args):
     selection = pm.ls(selection=True)
     if not selection:
@@ -270,9 +291,10 @@ def ad_hide_and_lock_button(*args):
         for item in selection:
             ad_hide_and_unhide(ctrl=item, value=True)
 
+
 def ad_hide_and_unhide(ctrl, value):
     if ad_query_lock_unlock_channel("All_Trans"):
-        al.ad_lock_hide_attr(lock_channel=['tx','ty','tz'], ctrl=ctrl,
+        al.ad_lock_hide_attr(lock_channel=['tx', 'ty', 'tz'], ctrl=ctrl,
                              hide_object=value)
     if ad_query_lock_unlock_channel("Trans_X"):
         al.ad_lock_hide_attr(lock_channel=['tx'], ctrl=ctrl,
@@ -285,7 +307,7 @@ def ad_hide_and_unhide(ctrl, value):
                              hide_object=value)
 
     if ad_query_lock_unlock_channel('All_Rot'):
-        al.ad_lock_hide_attr(lock_channel=['rx','ry','rz'], ctrl=ctrl,
+        al.ad_lock_hide_attr(lock_channel=['rx', 'ry', 'rz'], ctrl=ctrl,
                              hide_object=value)
     if ad_query_lock_unlock_channel('Rot_X'):
         al.ad_lock_hide_attr(lock_channel=['rx'], ctrl=ctrl,
@@ -298,7 +320,7 @@ def ad_hide_and_unhide(ctrl, value):
                              hide_object=value)
 
     if ad_query_lock_unlock_channel('All_Scale'):
-        al.ad_lock_hide_attr(lock_channel=['sx','sy','sz'], ctrl=ctrl,
+        al.ad_lock_hide_attr(lock_channel=['sx', 'sy', 'sz'], ctrl=ctrl,
                              hide_object=value)
     if ad_query_lock_unlock_channel('Scl_X'):
         al.ad_lock_hide_attr(lock_channel=['sx'], ctrl=ctrl,
@@ -314,13 +336,15 @@ def ad_hide_and_unhide(ctrl, value):
         al.ad_lock_hide_attr(lock_channel=['v'], ctrl=ctrl,
                              hide_object=value)
 
+
 def ad_query_lock_unlock_channel(channel_name):
     value = pm.checkBox(channel_name, q=True, value=True)
     return value
 
+
 def ad_select_all_ad_controller_button(*args):
     list_scene = pm.ls()
-    list_object=[]
+    list_object = []
     for item in list_scene:
         if pm.nodeType(item) == 'transform':
             try:
@@ -334,6 +358,7 @@ def ad_select_all_ad_controller_button(*args):
                 pass
 
     pm.select(list_object)
+
 
 def ad_replace_color_button(*args):
     al.ad_ctrl_color_list(ad_query_controller_color())
@@ -636,6 +661,7 @@ def ad_adding_object_sel_to_textfield(text_input, button, *args):
     else:
         pm.error("please select one object!")
 
+
 def ad_controller_resize_slider():
     currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
     selection = pm.ls(selection=True)
@@ -648,8 +674,11 @@ def ad_controller_resize_slider():
                 al.ad_scaling_controller(size_obj=currentValue, ctrl_shape=item)
             else:
                 om.MGlobal.displayError("Object type must be curve")
+
+
 def ad_controller_resize_reset(*args):
     pm.floatSlider('Controller_Resize', edit=True, v=1.0)
+
 
 def ad_enabling_disabling_ui(object, tx, value, *args):
     # query for enabling and disabling layout
@@ -659,6 +688,7 @@ def ad_enabling_disabling_ui(object, tx, value, *args):
             pm.textFieldGrp(item, edit=True, enable=value, tx=tx)
         else:
             pass
+
 
 def ad_color_index():
     MAX_OVERRIDE_COLORS = 32
