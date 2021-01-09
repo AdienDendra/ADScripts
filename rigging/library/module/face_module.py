@@ -176,8 +176,8 @@ def build_rig(
 
         if mc.objExists('spine04_bind'):
             mc.parent(sGame.neck, 'spine04_bind')
-        else:
-            mc.parent(sGame.neck, world=True)
+        # else:
+        #     mc.parent(sGame.neck, world=True)
 
     mc.parent(sj.neck, world=True)
     mc.delete(sj.root)
