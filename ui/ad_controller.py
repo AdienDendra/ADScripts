@@ -8,7 +8,7 @@ reload(al)
 layout = 435
 percentage = 0.01 * layout
 on_selector = 0
-
+#previous_value = 0
 
 def ad_show_ui():
     adien_controller = 'AD_Controller'
@@ -91,7 +91,7 @@ def ad_show_ui():
                                           columnAttach=[(2, 'both', 0.25 * percentage),
                                                         (3, 'both', 0.25 * percentage)]):
                             pm.text(label='')
-                            pm.button('Reset_Color', l="Reset Color", c='')
+                            pm.button('Reset_Color', l="Reset Color", c=partial(ad_reset_color_button))
                             pm.button("Replace_Color", l="Replace Color", c=partial(ad_replace_color_button))
                     # pm.separator(h=5, st="in", w=90 * percentage)
 
@@ -164,9 +164,9 @@ def ad_show_ui():
                                                             (3, 'both', 0 * percentage)]):
                                 pm.button("Replace_Controller", l="Replace Ctrl", c='')
 
-                                pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl", c='')
+                                pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl", c=partial(ad_tagging_untagging_button, True))
                                 pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
-                                          c=partial(ad_select_all_ad_controller_button))
+                                          c=partial(ad_tagging_untagging_button, False))
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
 
@@ -176,8 +176,8 @@ def ad_show_ui():
                                           ):
                             pm.text(label='Controller Resize:')
 
-                            pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5,
-                                           dragCommand=pm.Callback(ad_controller_resize_slider),
+                            pm.floatSlider('Controller_Resize', min=-10.0, value=0.0, max=10.0, step=0.1,
+                                           dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset)
 
                                            )
@@ -343,22 +343,25 @@ def ad_query_lock_unlock_channel(channel_name):
 
 
 def ad_select_all_ad_controller_button(*args):
-    list_scene = pm.ls()
+    list_scene = pm.ls(type='transform')
     list_object = []
     for item in list_scene:
-        if pm.nodeType(item) == 'transform':
-            try:
+        try:
+            shape_node = pm.listRelatives(item, s=True)[0]
+            if pm.objectType(shape_node) == 'nurbsCurve':
                 pm.listAttr(item + '.AD_Controller')
                 attr_true = pm.getAttr(item + '.AD_Controller')
                 if attr_true:
                     list_object.append(item)
                 else:
                     pass
-            except:
-                pass
+        except:
+            pass
 
     pm.select(list_object)
 
+def ad_reset_color_button(*args):
+    al.ad_ctrl_color_list(0)
 
 def ad_replace_color_button(*args):
     al.ad_ctrl_color_list(ad_query_controller_color())
@@ -625,6 +628,21 @@ def ad_shape_controller_ui(default, *args):
 
     pm.showWindow()
 
+def ad_tagging_untagging_button(tagging, *args):
+    selection = pm.ls(selection=True)
+    if not selection:
+        om.MGlobal.displayWarning("No objects selected")
+    else:
+        for item in selection:
+            print item
+            shape_node = pm.listRelatives(item, s=True)[0]
+            if pm.objectType(shape_node) == 'nurbsCurve':
+                if tagging:
+                    al.ad_tagging(item)
+                else:
+                    al.ad_untagging(item)
+            else:
+                om.MGlobal.displayError("Object type must be curve")
 
 def ad_defining_object_text_field(define_object, label):
     # if object doesn't has checkbox
@@ -662,23 +680,27 @@ def ad_adding_object_sel_to_textfield(text_input, button, *args):
         pm.error("please select one object!")
 
 
-def ad_controller_resize_slider():
-    currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
+def ad_controller_resize_slider(*args):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
-        # pm.floatSliderGrp('Controller_Resize', edit=True, v=0)
     else:
         for item in selection:
-            if pm.nodeType(item) == 'transform':
-                al.ad_scaling_controller(size_obj=currentValue, ctrl_shape=item)
+            shape_node = pm.listRelatives(item, s=True)[0]
+            if pm.objectType(shape_node) == 'nurbsCurve':
+                global previous_value
+                currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
+                deltaValue = (currentValue - previous_value)
+                al.ad_scale_controller(deltaValue)
+                # self.prevValue = value
+                previous_value = currentValue
             else:
                 om.MGlobal.displayError("Object type must be curve")
+                return False
 
 
 def ad_controller_resize_reset(*args):
-    pm.floatSlider('Controller_Resize', edit=True, v=1.0)
-
+    pm.floatSlider('Controller_Resize', edit=True, v=0.0)
 
 def ad_enabling_disabling_ui(object, tx, value, *args):
     # query for enabling and disabling layout

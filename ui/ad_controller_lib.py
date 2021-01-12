@@ -1299,18 +1299,22 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
                [0.16, 0.0, -0.61], [0.1, 0.0, -0.77], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9],
                [0.06, 0.0, -0.9]]
 
-def ad_scaling_controller(size_obj, ctrl_shape):
-    if pm.nodeType(ctrl_shape) == 'transform':
-        shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
-        points = pm.ls('%s.cv[0:*]' % shape_node, fl=True)
-        for point in points:
-            position = pm.pointPosition(point, l=True) * size_obj
+# def ad_scaling_controller(size_obj, ctrl_shape):
+#     shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
+#     points = pm.ls('%s.cv[0:*]' % shape_node, fl=True)
+#     for point in points:
+#         position = pm.pointPosition(point, l=True) *size_obj
+#
+#         pm.setAttr('%s.xValue' % point, position[0] )
+#         pm.setAttr('%s.yValue' % point, position[1] )
+#         pm.setAttr('%s.zValue' % point, position[2] )
 
-            pm.setAttr('%s.xValue' % point, position[0])
-            pm.setAttr('%s.yValue' % point, position[1])
-            pm.setAttr('%s.zValue' % point, position[2])
-    else:
-        om.MGlobal.displayError("The object type is not transform")
+def ad_scale_controller(delta_value):
+    objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
+    for obj in objList:
+        currentScale = obj.scaleX.get()
+        obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
+        pm.makeIdentity(apply=True, s=1, n=0)
 
 def ad_lock_hide_attr(lock_channel, ctrl, hide_object):
     attr_lock_list = []
@@ -1363,6 +1367,21 @@ def ad_ctrl_shape(shape):
     return create_curve
 
 
+def ad_tagging(ctrl):
+    attributes = pm.attributeQuery('AD_Controller', n=ctrl, ex=True)
+    if attributes:
+        pm.setAttr(ctrl + '.AD_Controller', 1)
+    else:
+        pm.addAttr(ctrl, ln='AD_Controller', at='bool')
+        pm.setAttr(ctrl + '.AD_Controller', 1)
+
+def ad_untagging(ctrl):
+    attributes = pm.attributeQuery('AD_Controller', n=ctrl, ex=True)
+    if attributes:
+        pm.setAttr(ctrl + '.AD_Controller', 0)
+    else:
+        pm.addAttr(ctrl, ln='AD_Controller', at='bool')
+        pm.setAttr(ctrl + '.AD_Controller', 0)
 
 #
 #
