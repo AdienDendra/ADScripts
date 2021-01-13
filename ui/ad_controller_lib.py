@@ -1337,7 +1337,7 @@ def ad_lock_hide_attr(lock_channel, ctrl, hide_object):
 def ad_ctrl_color_list(color):
     selection = pm.ls(selection=True)
     if not selection:
-        om.MGlobal.displayError("No objects selected")
+        om.MGlobal.displayError("No curves selected")
         return False
 
     for obj in selection:
