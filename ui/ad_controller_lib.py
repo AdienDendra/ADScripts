@@ -1,6 +1,7 @@
 from functools import partial
 import pymel.core as pm
 import maya.OpenMaya as om
+import maya.cmds as mc
 
 CIRCLEPLUS = [[1.1300200000000005, -4.996003610813204e-16, 0.0], [1.00412, 1.1102230246251565e-16, 0.0],
               [0.99176, -8.326672684688674e-17, -0.15708], [0.9549800000000004, -2.498001805406602e-16, -0.31029],
@@ -1299,21 +1300,37 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
                [0.16, 0.0, -0.61], [0.1, 0.0, -0.77], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9],
                [0.06, 0.0, -0.9]]
 
+def ad_scaling_controller(size_obj, ctrl_shape):
+    # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
+    points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+    for point in points:
+        position = pm.pointPosition(point, l=True)
+
+        pm.setAttr('%s.xValue' % point, position[0]+size_obj )
+        pm.setAttr('%s.yValue' % point, position[1]+size_obj )
+        pm.setAttr('%s.zValue' % point, position[2]+size_obj )
+
 # def ad_scaling_controller(size_obj, ctrl_shape):
-#     shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
-#     points = pm.ls('%s.cv[0:*]' % shape_node, fl=True)
-#     for point in points:
-#         position = pm.pointPosition(point, l=True) *size_obj
+#     # shape_node = mc.listRelatives(ctrl_shape, s=True)[0]
+#     print ctrl_shape
+#     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+#     position = pm.pointPosition(points, l=True) *size_obj
+#     currentScale = obj.scaleX.get()
+#     mc.scale((position[0]+size_obj), (position[1]+size_obj), (position[2]+size_obj), points, ocp=True, r=True)
 #
-#         pm.setAttr('%s.xValue' % point, position[0] )
-#         pm.setAttr('%s.yValue' % point, position[1] )
-#         pm.setAttr('%s.zValue' % point, position[2] )
+#     # for point in points:
+#     #     position = pm.pointPosition(point, l=True) *size_obj
+#     #
+#     #     pm.setAttr('%s.xValue' % point, position[0] )
+#     #     pm.setAttr('%s.yValue' % point, position[1] )
+#     #     pm.setAttr('%s.zValue' % point, position[2] )
 
 def ad_scale_controller(delta_value):
     objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
     for obj in objList:
         currentScale = obj.scaleX.get()
         obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
+
         pm.makeIdentity(apply=True, s=1, n=0)
 
 def ad_lock_hide_attr(lock_channel, ctrl, hide_object):

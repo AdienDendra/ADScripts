@@ -702,6 +702,24 @@ def ad_adding_object_sel_to_textfield(text_input, button, *args):
         pm.error("please select one object!")
 
 
+# def ad_controller_resize_slider(*args):
+#     selection = pm.ls(selection=True)
+#     if not selection:
+#         om.MGlobal.displayWarning("No objects selected")
+#     else:
+#         for item in selection:
+#             shape_node = pm.listRelatives(item, s=True)[0]
+#             if pm.objectType(shape_node) == 'nurbsCurve':
+#                 global previous_value
+#                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
+#                 deltaValue = (currentValue - previous_value)
+#                 al.ad_scaling_controller(deltaValue, shape_node)
+#                 # self.prevValue = value
+#                 previous_value = currentValue
+#             else:
+#                 om.MGlobal.displayError("Object type must be curve")
+#                 return False
+
 def ad_controller_resize_slider(*args):
     selection = pm.ls(selection=True)
     if not selection:
@@ -713,7 +731,7 @@ def ad_controller_resize_slider(*args):
                 global previous_value
                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
                 deltaValue = (currentValue - previous_value)
-                al.ad_scale_controller(deltaValue)
+                al.ad_scaling_controller(deltaValue, shape_node)
                 # self.prevValue = value
                 previous_value = currentValue
             else:
