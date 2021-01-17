@@ -124,7 +124,7 @@ def ad_show_ui():
                                           ):
                             pm.text('')
 
-                            pm.floatSlider('Controller_Resize', min=-10.0, value=0.0, max=10.0, step=0.1,
+                            pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5, step=0.1,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset)
                                            )
@@ -179,7 +179,7 @@ def ad_show_ui():
                                                   cl3=('center', 'center', 'center'),
                                                   columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)]):
-                                    pm.button("Replace_Controller", l="Replace Ctrl", c='')
+                                    pm.button("Replace_Controller", l="Replace Ctrl", c=partial(ad_replacing_controller_color))
 
                                     pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl", c=partial(ad_tagging_untagging_button, True))
                                     pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
@@ -246,48 +246,52 @@ def ad_show_ui():
                                 pm.button('Rotate_Z', l="Z", c='', bgc=(0, 0, 0.5))
                         # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Mirror', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)],
-                                          ):
-                            pm.text(label='Mirror Controller:')
-                            with pm.columnLayout():
-                                with pm.rowColumnLayout(nc=3, cw=[(1, 27.5 * percentage), (2, 12.5 * percentage),
-                                                                  (3, 27.5 * percentage)],
-                                                        cal=[(1, 'center'), (2, 'center'), (3, 'center')],
-                                                        columnAttach=[(1, 'both', 0 * percentage),
-                                                                      (2, 'both', 0 * percentage),
-                                                                      (3, 'both', 0 * percentage)]):
-                                    pm.text(label='From:')
-                                    pm.text(label='')
-                                    pm.text(label='To:')
+                        # with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
+                        #                   columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)],
+                        #                   ):
+                        #     pm.text(label='Mirror Controller:')
+                        # with pm.columnLayout():
+                        with pm.rowColumnLayout(nc=3, cw=[(1, 42 * percentage), (2, 11 * percentage),
+                                                          (3, 42 * percentage)],
+                                                cal=[(1, 'center'), (2, 'center'), (3, 'center')],
+                                                columnAttach=[(1, 'both', 0 * percentage),
+                                                              (2, 'both', 0 * percentage),
+                                                              (3, 'both', 0 * percentage)]):
+                            pm.text(label='From:')
+                            pm.text(label='')
+                            pm.text(label='To:')
 
-                                    pm.textFieldButtonGrp('From', label='', cal=(1, "right"),
-                                                          cw3=(0 * percentage, 20.5 * percentage, 6 * percentage),
-                                                          bl="<<", columnAttach=[(1, 'both', 0 * percentage),
-                                                                                 (2, 'both', 0 * percentage),
-                                                                                 (3, 'both', 0 * percentage)],
-                                                          bc=partial(ad_adding_object_sel_to_textfield, 'From'))
-                                    pm.text(label='>>>')
-                                    pm.textFieldButtonGrp('To', label='', cal=(1, "right"),
-                                                          cw3=(0 * percentage, 20.5 * percentage, 6 * percentage),
-                                                          columnAttach=[(1, 'both', 0 * percentage),
-                                                                        (2, 'both', 0 * percentage),
-                                                                        (3, 'both', 0 * percentage)],
-                                                          bl="<<",
-                                                          bc=partial(ad_adding_object_sel_to_textfield, 'To'))
-
-                                with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage
-                                                             ), cl3=('center', 'center', 'center'),
+                            pm.textFieldButtonGrp('From', label='', cal=(1, "right"),
+                                                  cw3=(0 * percentage, 33 * percentage, 7 * percentage),
+                                                  bl="<<", columnAttach=[(1, 'both', 0 * percentage),
+                                                                         (2, 'both', 0 * percentage),
+                                                                         (3, 'both', 0 * percentage)],
+                                                  bc=partial(ad_adding_object_sel_to_textfield, 'From'))
+                            pm.text(label='>>>')
+                            pm.textFieldButtonGrp('To', label='', cal=(1, "right"),
+                                                  cw3=(0 * percentage, 33 * percentage, 7 * percentage),
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
-                                                                (3, 'both', 0 * percentage)]
-                                                  ):
-                                    pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
-                                    pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
-                                    pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
+                                                                (3, 'both', 0 * percentage)],
+                                                  bl="<<",
+                                                  bc=partial(ad_adding_object_sel_to_textfield, 'To'))
+
+                        with pm.rowLayout(nc=3, cw3=(31.6 * percentage, 31.6 * percentage, 31.6 * percentage
+                                                     ), cl3=('center', 'center', 'center'),
+                                          columnAttach=[(1, 'both', 0 * percentage),
+                                                        (2, 'both', 0 * percentage),
+                                                        (3, 'both', 0 * percentage)]
+                                          ):
+                            pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
+                            pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
+                            pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
 
     pm.showWindow()
 
+def ad_replacing_controller_color(*args):
+    controller_replacing = al.ad_replacing_controller()
+    print controller_replacing[0], controller_replacing[1]
+    al.ad_replacing_color(controller_replacing[0], controller_replacing[1])
 
 def ad_unhide_and_unlock_button(*args):
     selection = pm.ls(selection=True)
@@ -381,7 +385,7 @@ def ad_reset_color_button(*args):
     al.ad_ctrl_color_list(0)
 
 def ad_replace_color_button(*args):
-    al.ad_ctrl_color_list(ad_query_controller_color())
+    al.ad_ctrl_color_list(ad_set_color())
 
 
 def ad_create_controller_button(*args):
@@ -389,13 +393,13 @@ def ad_create_controller_button(*args):
     controller_shape = ad_action_ctrl_shape()
 
     # controller color
-    al.ad_ctrl_color(ctrl=controller_shape, color=ad_query_controller_color())
+    al.ad_ctrl_color(ctrl=controller_shape, color=ad_set_color())
 
     # controller hide and unlock
     ad_hide_and_unhide(controller_shape, value=True)
 
 
-def ad_query_controller_color(*args):
+def ad_set_color(*args):
     controller_color = pm.palettePort('Pallete', query=True, setCurCell=True)
     return controller_color
 
@@ -728,19 +732,22 @@ def ad_controller_resize_slider(*args):
         for item in selection:
             shape_node = pm.listRelatives(item, s=True)[0]
             if pm.objectType(shape_node) == 'nurbsCurve':
-                global previous_value
+                # global previous_value
                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
-                deltaValue = (currentValue - previous_value)
-                al.ad_scaling_controller(deltaValue, shape_node)
+
+                # deltaValue = (currentValue - previous_value)
+                # new_value = currentValue/100
+                # new_value = deltaValue
+                al.ad_scaling_controller(currentValue, shape_node)
                 # self.prevValue = value
-                previous_value = currentValue
+                # previous_value = currentValue
             else:
                 om.MGlobal.displayError("Object type must be curve")
                 return False
 
 
 def ad_controller_resize_reset(*args):
-    pm.floatSlider('Controller_Resize', edit=True, v=0.0)
+    pm.floatSlider('Controller_Resize', edit=True, v=1.0)
 
 def ad_enabling_disabling_ui(object, tx, value, *args):
     # query for enabling and disabling layout

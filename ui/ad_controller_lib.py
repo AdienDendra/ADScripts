@@ -1300,30 +1300,70 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
                [0.16, 0.0, -0.61], [0.1, 0.0, -0.77], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9],
                [0.06, 0.0, -0.9]]
 
-def ad_scaling_controller(size_obj, ctrl_shape):
-    # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
-    points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-    for point in points:
-        position = pm.pointPosition(point, l=True)
-
-        pm.setAttr('%s.xValue' % point, position[0]+size_obj )
-        pm.setAttr('%s.yValue' % point, position[1]+size_obj )
-        pm.setAttr('%s.zValue' % point, position[2]+size_obj )
-
 # def ad_scaling_controller(size_obj, ctrl_shape):
-#     # shape_node = mc.listRelatives(ctrl_shape, s=True)[0]
-#     print ctrl_shape
-#     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-#     position = pm.pointPosition(points, l=True) *size_obj
-#     currentScale = obj.scaleX.get()
-#     mc.scale((position[0]+size_obj), (position[1]+size_obj), (position[2]+size_obj), points, ocp=True, r=True)
+#     # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
+#     points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+#     for point in points:
+#         position = pm.pointPosition(point, l=True)
 #
-#     # for point in points:
-#     #     position = pm.pointPosition(point, l=True) *size_obj
-#     #
-#     #     pm.setAttr('%s.xValue' % point, position[0] )
-#     #     pm.setAttr('%s.yValue' % point, position[1] )
-#     #     pm.setAttr('%s.zValue' % point, position[2] )
+#         pm.setAttr('%s.xValue' % point, position[0]*size_obj )
+#         pm.setAttr('%s.yValue' % point, position[1]*size_obj )
+#         pm.setAttr('%s.zValue' % point, position[2]*size_obj )
+
+
+def ad_replacing_controller():
+    list_target = pm.ls(sl=1)
+    if not list_target:
+        om.MGlobal.displayError("No curves selected")
+        return False
+
+    instance_controller = list_target.pop(0)
+    for target in list_target:
+        list_relatives = pm.listRelatives(target, s=1)
+        duplicate_shape = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
+        pm.parent(duplicate_shape, target, r=True, s=True)
+        try:
+            list_attribute = pm.listAttr(list_relatives, ud=1)
+            for list_attr_shape in list_attribute:
+                get_type_attr = pm.getAttr(target + '.' + list_attr_shape, type=True)
+                pm.addAttr(duplicate_shape, ln=list_attr_shape, at=get_type_attr)
+                pm.setAttr(duplicate_shape + '.' + list_attr_shape, e=True, k=True)
+
+                # list connection
+                list_connections = pm.listConnections(list_relatives, c=True, plugs=True)[0]
+                pm.disconnectAttr(list_connections[0], list_connections[1])
+                pm.connectAttr(duplicate_shape + '.' + list_attr_shape, list_connections[1])
+        except:
+            pass
+        # rename the shape
+        replacing = duplicate_shape.name().replace(str(duplicate_shape), str(list_relatives[0]))
+        pm.delete(list_relatives)
+        duplicate_shape.rename(replacing)
+        pm.select(cl=1)
+
+    return instance_controller, list_target
+
+def ad_replacing_color(source, target):
+    if not source:
+        om.MGlobal.displayError("No curves selected")
+        return False
+
+    for obj in target:
+        shapeNodes = pm.listRelatives(obj, shapes=True)
+        sourceNode = pm.listRelatives(source, shapes=True)[0]
+        for shape in shapeNodes:
+            try:
+                pm.setAttr("{0}.overrideEnabled".format(shape), True)
+                pm.setAttr("{0}.overrideEnabled".format(sourceNode), True)
+                color_source = pm.getAttr("{0}.overrideColor".format(sourceNode))
+                pm.setAttr("{0}.overrideColor".format(shape), color_source)
+            except:
+                om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
+    return True
+
+def ad_scaling_controller(size_obj, ctrl_shape):
+    points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+    mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
 
 def ad_scale_controller(delta_value):
     objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
