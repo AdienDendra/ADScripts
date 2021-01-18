@@ -12,11 +12,12 @@ previous_value = 0
 
 def ad_show_ui():
     adien_controller = 'AD_Controller'
+    shape_controller = 'Shape_Controller'
     pm.window(adien_controller, exists=True)
     if pm.window(adien_controller, exists=True):
         pm.deleteUI(adien_controller)
-        if pm.window('Shape_Controller', exists=True):
-            pm.deleteUI('Shape_Controller')
+        if pm.window(shape_controller, exists=True):
+            pm.deleteUI(shape_controller)
     with pm.window(adien_controller, title='AD Controller', width=layout, height=400):
         # with pm.tabLayout('tab', width=layout * 1.05, height=400):
         with pm.tabLayout('tab', width=layout, height=400):

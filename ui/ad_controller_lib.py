@@ -1325,9 +1325,11 @@ def ad_replacing_controller():
         try:
             list_attribute = pm.listAttr(list_relatives, ud=1)
             for list_attr_shape in list_attribute:
-                get_type_attr = pm.getAttr(target + '.' + list_attr_shape, type=True)
-                pm.addAttr(duplicate_shape, ln=list_attr_shape, at=get_type_attr)
-                pm.setAttr(duplicate_shape + '.' + list_attr_shape, e=True, k=True)
+                # get_type_attr = pm.getAttr(target + '.' + list_attr_shape, type=True)
+                pm.copyAttr(instance_controller, list_relatives, values=True, attribute=[list_attr_shape])
+
+                # pm.addAttr(duplicate_shape, ln=list_attr_shape, at=get_type_attr)
+                # pm.setAttr(duplicate_shape + '.' + list_attr_shape, e=True, k=True)
 
                 # list connection
                 list_connections = pm.listConnections(list_relatives, c=True, plugs=True)[0]

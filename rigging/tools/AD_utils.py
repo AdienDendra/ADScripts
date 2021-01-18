@@ -1040,12 +1040,12 @@ def add_attr_transform_shape(obj, attr_name, attr_type, keyable=False, edit=Fals
 
 # add attribute on transform
 def add_attr_transform(obj, attr_name, attr_type, edit=False, keyable=False, channel_box=False, **kwargs):
-    if mc.nodeType(obj) == "transform":
+    # if mc.nodeType(obj) == "transform":
         mc.addAttr(obj, ln=attr_name, at=attr_type, **kwargs)
         mc.setAttr('%s.%s' % (obj, attr_name), e=edit, k=keyable, cb=channel_box)
         return attr_name
-    else:
-        mc.error('object is not transform')
+    # else:
+    #     mc.error('object is not transform')
 
 
 # GENERAL FUNCTION: ADD ATTRIBUTE(S) ON MULTIPLE OBJECTS
