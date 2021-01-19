@@ -290,8 +290,12 @@ def ad_show_ui():
     pm.showWindow()
 
 def ad_replacing_controller_color(*args):
+    list_target = pm.ls(sl=1)
+    if not list_target:
+        om.MGlobal.displayError("No curves selected")
+        return False
+
     controller_replacing = al.ad_replacing_controller()
-    print controller_replacing[0], controller_replacing[1]
     al.ad_replacing_color(controller_replacing[0], controller_replacing[1])
 
 def ad_unhide_and_unlock_button(*args):
