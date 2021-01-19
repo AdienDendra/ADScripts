@@ -1319,28 +1319,70 @@ def ad_replacing_controller():
 
     instance_controller = list_target.pop(0)
     for target in list_target:
-        list_relatives = pm.listRelatives(target, s=1)
-        duplicate_shape = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
-        pm.parent(duplicate_shape, target, r=True, s=True)
+        target_shapes = pm.listRelatives(target, s=1)
+        instance_shapes = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
+        pm.parent(instance_shapes, target, r=True, s=True)
+
+
+        list_attribute_target_shapes = pm.listAttr(target_shapes, ud=1)
+        list_attribute_instance_shapes = pm.listAttr(instance_shapes, ud=1)
+
+        for list_attr_ins_shape in list_attribute_instance_shapes:
+            pm.setAttr('%s.%s' % (instance_shapes, list_attr_ins_shape), e=True, l=False)
+            pm.deleteAttr('%s.%s' % (instance_shapes, list_attr_ins_shape))
+
+
+        for attr_tgt_shape in list_attribute_target_shapes:
+            # get_type_attr = pm.getAttr(target + '.' + list_attr_shape, type=True)
+            get_type_attr = pm.attributeQuery(attr_tgt_shape, n=target_shapes[0], attributeType=True)
+            keyable = pm.getAttr('%s.%s' % (target_shapes[0], attr_tgt_shape), k=True)
+            channel_box = pm.getAttr('%s.%s' % (target_shapes[0], attr_tgt_shape), cb=True)
+            lock = pm.getAttr('%s.%s' % (target_shapes[0], attr_tgt_shape), l=True)
+
+            value_attr = pm.getAttr('%s.%s' % (target_shapes[0], attr_tgt_shape))
+            if get_type_attr == 'long' or get_type_attr == 'double':
+                try:
+                    range = pm.attributeQuery(attr_tgt_shape, n=target_shapes[0], range=True)
+                    pm.addAttr(instance_shapes, ln=attr_tgt_shape, at=get_type_attr, min=range[0], max=range[1])
+                except:
+                    pm.addAttr(instance_shapes, ln=attr_tgt_shape, at=get_type_attr)
+
+                pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), value_attr)
+                pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), e=True, k=keyable, cb=channel_box, l=lock)
+
+            elif get_type_attr == 'typed':
+                pm.addAttr(instance_shapes, ln=attr_tgt_shape, dt="string")
+                if value_attr:
+                    pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), value_attr, type='string')
+                pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), e=True, k=keyable, cb=channel_box,
+                           l=lock)
+
+            else:
+                pm.addAttr(instance_shapes, ln=attr_tgt_shape, at=get_type_attr)
+                pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), value_attr)
+                pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), e=True, k=keyable, cb=channel_box,
+                           l=lock)
+
         try:
-            list_attribute = pm.listAttr(list_relatives, ud=1)
-            for list_attr_shape in list_attribute:
-                # get_type_attr = pm.getAttr(target + '.' + list_attr_shape, type=True)
-                pm.copyAttr(instance_controller, list_relatives, values=True, attribute=[list_attr_shape])
+            list_connections =  pm.listConnections(target_shapes, c=True, plugs=True)
+            for connection, attr_tgt_shape in zip (list_connections, list_attribute_target_shapes):
 
-                # pm.addAttr(duplicate_shape, ln=list_attr_shape, at=get_type_attr)
-                # pm.setAttr(duplicate_shape + '.' + list_attr_shape, e=True, k=True)
+                spliting = connection[0].split('.')
 
-                # list connection
-                list_connections = pm.listConnections(list_relatives, c=True, plugs=True)[0]
-                pm.disconnectAttr(list_connections[0], list_connections[1])
-                pm.connectAttr(duplicate_shape + '.' + list_attr_shape, list_connections[1])
+                new_instance_shape = connection[0].replace(str(spliting[0]), str(instance_shapes))
+                print new_instance_shape
+
+                pm.disconnectAttr(connection[0], connection[1])
+
+                pm.connectAttr(new_instance_shape, connection[1])
+
         except:
             pass
+
         # rename the shape
-        replacing = duplicate_shape.name().replace(str(duplicate_shape), str(list_relatives[0]))
-        pm.delete(list_relatives)
-        duplicate_shape.rename(replacing)
+        replacing = instance_shapes.name().replace(str(instance_shapes), str(target_shapes[0]))
+        pm.delete(target_shapes)
+        instance_shapes.rename(replacing)
         pm.select(cl=1)
 
     return instance_controller, list_target
@@ -1364,7 +1406,17 @@ def ad_replacing_color(source, target):
     return True
 
 def ad_scaling_controller(size_obj, ctrl_shape):
+
     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+    # # get cv list
+    # points = mc.ls('%s.cv[0:*]' % shape_node, fl=True)
+    #
+    # # get point position
+    # point_position = []
+    #
+    # for point in points:
+    #     point_position.append(mc.pointPosition(point, l=True))
+    # point_position = pm.pointPosition()
     mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
 
 def ad_scale_controller(delta_value):

@@ -125,7 +125,7 @@ def ad_show_ui():
                                           ):
                             pm.text('')
 
-                            pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5, step=0.1,
+                            pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5, step=0.001,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset)
                                            )
@@ -736,8 +736,7 @@ def ad_controller_resize_slider(*args):
                 # global previous_value
                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
 
-                # deltaValue = (currentValue - previous_value)
-                # new_value = currentValue/100
+                # deltaValue = (previous_value/currentValue)
                 # new_value = deltaValue
                 al.ad_scaling_controller(currentValue, shape_node)
                 # self.prevValue = value

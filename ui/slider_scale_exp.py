@@ -136,3 +136,4 @@ def rsIncTxtFld():
 def rsDecTxtFld():
     rsGetTxtFld = cmds.intField(rsTxtFld, q=1, v=90)
     cmds.intField(rsTxtFld, e=1, v=(rsGetTxtFld - 5))
+
