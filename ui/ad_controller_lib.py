@@ -1311,24 +1311,23 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #         pm.setAttr('%s.zValue' % point, position[2]*size_obj )
 
 
-def ad_replacing_controller():
-    list_target = pm.ls(sl=1)
-    if not list_target:
-        om.MGlobal.displayError("No curves selected")
-        return False
-    else:
-        for item in list_target:
-            try:
-                shape_node = pm.listRelatives(item, s=True)[0]
-                if pm.objectType(shape_node) == 'nurbsCurve':
-                    continue
-                else:
-                    pass
-            except:
-                pass
-        instance_controller = list_target.pop(0)
-        for target in list_target:
-            target_shapes = pm.listRelatives(target, s=1)
+def ad_replacing_controller(list_controller):
+    # list_controller = pm.ls(sl=1)
+    # if not list_controller:
+    #     om.MGlobal.displayError("No curves selected, you have to select origin and target curve!")
+    #     return False
+    # else:
+    instance_controller = list_controller.pop(0)
+    for target in list_controller:
+        target_shapes = pm.listRelatives(target, s=1)
+        instance_query_shapes = pm.listRelatives(instance_controller, s=1)
+        if not pm.objectType(target_shapes) == 'nurbsCurve' :
+            om.MGlobal.displayError("%s is not curve type object!" % target)
+
+        elif not pm.objectType(instance_query_shapes) == 'nurbsCurve':
+            om.MGlobal.displayError("%s is not curve type object!" % instance_query_shapes)
+
+        else:
             instance_shapes = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
             pm.parent(instance_shapes, target, r=True, s=True)
 
@@ -1388,7 +1387,7 @@ def ad_replacing_controller():
             instance_shapes.rename(replacing)
             pm.select(cl=1)
 
-    return instance_controller, list_target
+    return instance_controller, list_controller
 
 def ad_replacing_color(source, target):
     if not source:
@@ -1409,17 +1408,7 @@ def ad_replacing_color(source, target):
     return True
 
 def ad_scaling_controller(size_obj, ctrl_shape):
-
     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-    # # get cv list
-    # points = mc.ls('%s.cv[0:*]' % shape_node, fl=True)
-    #
-    # # get point position
-    # point_position = []
-    #
-    # for point in points:
-    #     point_position.append(mc.pointPosition(point, l=True))
-    # point_position = pm.pointPosition()
     mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
 
 def ad_scale_controller(delta_value):
@@ -1427,18 +1416,42 @@ def ad_scale_controller(delta_value):
     for obj in objList:
         currentScale = obj.scaleX.get()
         obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
-
         pm.makeIdentity(apply=True, s=1, n=0)
 
-def ad_lock_hide_attr(lock_channel, ctrl, hide_object):
+def ad_attr_value(channel):
     attr_lock_list = []
-    for lc in lock_channel:
+    for lc in channel:
         if lc in ['t', 'r', 's']:
             for axis in ['x', 'y', 'z']:
                 at = lc + axis
                 attr_lock_list.append(at)
         else:
             attr_lock_list.append(lc)
+    return attr_lock_list
+
+
+def ad_hide_unhide_attr(channel, ctrl):
+    attr_lock_list = ad_attr_value(channel)
+    for at in attr_lock_list:
+        query_object_hide = pm.getAttr(ctrl+'.'+ at, k=True)
+        if query_object_hide:
+            pm.setAttr(ctrl + '.' + at, k=False)
+        else:
+            pm.setAttr(ctrl + '.' + at, k=True)
+    return attr_lock_list
+
+def ad_lock_unlock_attr(channel, ctrl):
+    attr_lock_list = ad_attr_value(channel)
+    for at in attr_lock_list:
+        query_object_lock = pm.getAttr(ctrl+'.'+ at, l=True)
+        if query_object_lock:
+            pm.setAttr(ctrl + '.' + at, l=False)
+        else:
+            pm.setAttr(ctrl + '.' + at, l=True)
+    return attr_lock_list
+
+def ad_lock_hide_attr(lock_hide_channel, ctrl, hide_object):
+    attr_lock_list = ad_attr_value(lock_hide_channel)
     for at in attr_lock_list:
         if hide_object:
             pm.setAttr(ctrl + '.' + at, l=1, k=0)
@@ -1446,7 +1459,6 @@ def ad_lock_hide_attr(lock_channel, ctrl, hide_object):
             pm.setAttr(ctrl + '.' + at, l=0, k=1)
 
     return attr_lock_list
-
 
 def ad_ctrl_color_list(color):
     selection = pm.ls(selection=True)

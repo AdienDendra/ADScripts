@@ -1,7 +1,9 @@
 from functools import partial
-import pymel.core as pm
-import ad_controller_lib as al
+
 import maya.OpenMaya as om
+import pymel.core as pm
+
+import ad_controller_lib as al
 
 reload(al)
 
@@ -9,6 +11,7 @@ layout = 400
 percentage = 0.01 * layout
 on_selector = 0
 previous_value = 0
+
 
 def ad_show_ui():
     adien_controller = 'AD_Controller'
@@ -18,9 +21,9 @@ def ad_show_ui():
         pm.deleteUI(adien_controller)
         if pm.window(shape_controller, exists=True):
             pm.deleteUI(shape_controller)
-    with pm.window(adien_controller, title='AD Controller', width=layout, height=400):
+    with pm.window(adien_controller, title='AD Controller', width=layout, height=200):
         # with pm.tabLayout('tab', width=layout * 1.05, height=400):
-        with pm.tabLayout('tab', width=layout, height=400):
+        with pm.tabLayout('tab', width=layout*1.01, height=200):
             with pm.scrollLayout('Create Controller', p='tab'):
                 with pm.columnLayout('Create_Controller_Column', w=layout,
                                      co=('both', 1 * percentage),
@@ -72,8 +75,8 @@ def ad_show_ui():
                             ad_channelbox_direct_connection()
                         with pm.rowLayout(nc=3, cw3=(26 * percentage, 34.5 * percentage, 34 * percentage
                                                      ), cl3=('right', 'right', 'right'),
-                                          columnAttach=[(2, 'both', 0.25 * percentage),
-                                                        (3, 'both', 0.25 * percentage)]):
+                                          columnAttach=[(2, 'both', 0.15 * percentage),
+                                                        (3, 'both', 0.15 * percentage)]):
                             pm.text(label='')
                             pm.button("List_Connection", l="List Connection", c='')
                             pm.button('Create_Connection', l="Create Connection", c='')
@@ -89,8 +92,8 @@ def ad_show_ui():
 
                         with pm.rowLayout(nc=3, cw3=(26 * percentage, 34.5 * percentage, 34 * percentage
                                                      ), cl3=('right', 'right', 'right'),
-                                          columnAttach=[(2, 'both', 0.25 * percentage),
-                                                        (3, 'both', 0.25 * percentage)]):
+                                          columnAttach=[(2, 'both', 0.15 * percentage),
+                                                        (3, 'both', 0.15 * percentage)]):
                             pm.text(label='')
                             pm.button('Reset_Color', l="Reset Color", c=partial(ad_reset_color_button))
                             pm.button("Replace_Color", l="Replace Color", c=partial(ad_replace_color_button))
@@ -109,17 +112,15 @@ def ad_show_ui():
                             ad_channelbox_scale()
                         with pm.rowLayout(nc=3, cw3=(26 * percentage, 34.5 * percentage, 34 * percentage
                                                      ), cl3=('right', 'right', 'right'),
-                                          columnAttach=[(2, 'both', 0.25 * percentage),
-                                                        (3, 'both', 0.25 * percentage)]):
+                                          columnAttach=[(2, 'both', 0.15 * percentage),
+                                                        (3, 'both', 0.15 * percentage)]):
                             pm.text(label='')
-                            pm.button("Hide_Lock_Channel", l="Hide and Lock", c=partial(ad_hide_and_lock_button))
-                            pm.button('Unide_Unlock_Channel', l="Unhide and Unlock",
-                                      c=partial(ad_unhide_and_unlock_button))
+                            pm.button("Hide_Unhide_Channel", l="Hide/Unhide", c=partial(ad_hide_unhide_button))
+                            pm.button('Lock_Unlock_Channel', l="Lock/Unlock",
+                                      c=partial(ad_lock_unlock_button))
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Resize', mh=1):
-
-
                         with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
                                           ):
@@ -139,10 +140,10 @@ def ad_show_ui():
                         with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)]):
                             pm.text('')
-                            with pm.rowColumnLayout(nc=8, cs=[(2,0.25*percentage),(3,0.25*percentage),
-                                                              (4,0.25*percentage), (5,0.25*percentage),
-                                                              (6,0.25*percentage), (7,0.25*percentage),
-                                                              (8,0.25*percentage)]):
+                            with pm.rowColumnLayout(nc=8, cs=[(2, 0.25 * percentage), (3, 0.25 * percentage),
+                                                              (4, 0.25 * percentage), (5, 0.25 * percentage),
+                                                              (6, 0.25 * percentage), (7, 0.25 * percentage),
+                                                              (8, 0.25 * percentage)]):
                                 icon_radio_control = pm.iconTextRadioCollection()
                                 circle = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circle.png',
                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(1))
@@ -173,22 +174,24 @@ def ad_show_ui():
                                 pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
                         with pm.columnLayout():
                             with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                              columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
+                                              columnAttach=[(1, 'both', 0.5 * percentage),
+                                                            (2, 'both', 0.5 * percentage)]
                                               ):
                                 pm.text('')
                                 with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
                                                   cl3=('center', 'center', 'center'),
-                                                  columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
+                                                  columnAttach=[(1, 'both', 0 * percentage),
+                                                                (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)]):
-                                    pm.button("Replace_Controller", l="Replace Ctrl", c=partial(ad_replacing_controller_color))
+                                    pm.button("Replace_Controller", l="Replace Ctrl",
+                                              c=partial(ad_replacing_controller_color))
 
-                                    pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl", c=partial(ad_tagging_untagging_button, True))
+                                    pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
+                                              c=partial(ad_tagging_untagging_button, True))
                                     pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
                                               c=partial(ad_tagging_untagging_button, False))
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
-
-
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     pm.separator(h=15, st="in", w=90 * percentage)
@@ -201,7 +204,7 @@ def ad_show_ui():
                         pm.button('Create_Controller', l="Create Controller", bgc=(0, 0.5, 0),
                                   c=partial(ad_create_controller_button))
             with pm.scrollLayout('Controller Utilities', p='tab'):
-                with pm.columnLayout('Controller_Utilities_Column', w=layout ,
+                with pm.columnLayout('Controller_Utilities_Column', w=layout,
                                      co=('both', 1 * percentage),
                                      adj=1):
                     # pm.separator(h=5, st="in", w=90 * percentage)
@@ -210,7 +213,7 @@ def ad_show_ui():
                             with pm.rowLayout(nc=1,
                                               cw=(1, 95 * percentage), cal=(1, 'right'),
                                               columnAttach=[(1, 'both', 0.25 * percentage),
-                                                           ],
+                                                            ],
                                               ):
                                 pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                           c=partial(ad_select_all_ad_controller_button), bgc=(0.0, 0.5, 0.0))
@@ -289,82 +292,157 @@ def ad_show_ui():
 
     pm.showWindow()
 
+
 def ad_replacing_controller_color(*args):
-    list_target = pm.ls(sl=1)
-    if not list_target:
-        om.MGlobal.displayError("No curves selected")
+    list_controller = pm.ls(sl=1)
+    if not list_controller:
+        om.MGlobal.displayError("No curves selected, you have to select origin and target curve!")
         return False
 
-    controller_replacing = al.ad_replacing_controller()
+    controller_replacing = al.ad_replacing_controller(list_controller)
     al.ad_replacing_color(controller_replacing[0], controller_replacing[1])
 
-def ad_unhide_and_unlock_button(*args):
+
+def ad_hide_unhide_button(*args):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayError("No objects selected")
         return False
     else:
         for item in selection:
-            ad_hide_and_unhide(ctrl=item, value=False)
+            ad_hide_unhide(ctrl=item)
 
 
-def ad_hide_and_lock_button(*args):
+def ad_lock_unlock_button(*args):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayError("No objects selected")
         return False
     else:
         for item in selection:
-            ad_hide_and_unhide(ctrl=item, value=True)
+            ad_lock_unlock(ctrl=item)
 
 
-def ad_hide_and_unhide(ctrl, value):
-    if ad_query_lock_unlock_channel("All_Trans"):
-        al.ad_lock_hide_attr(lock_channel=['tx', 'ty', 'tz'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel("Trans_X"):
-        al.ad_lock_hide_attr(lock_channel=['tx'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel("Trans_Y"):
-        al.ad_lock_hide_attr(lock_channel=['ty'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel("Trans_Z"):
-        al.ad_lock_hide_attr(lock_channel=['tz'], ctrl=ctrl,
-                             hide_object=value)
+def ad_hide_unhide(ctrl):
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        al.ad_hide_unhide_attr(channel=['tx'], ctrl=ctrl)
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        al.ad_hide_unhide_attr(channel=['ty'], ctrl=ctrl)
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        al.ad_hide_unhide_attr(channel=['tz'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        al.ad_hide_unhide_attr(channel=['rx'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        al.ad_hide_unhide_attr(channel=['ry'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        al.ad_hide_unhide_attr(channel=['rz'], ctrl=ctrl
+                               )
 
-    if ad_query_lock_unlock_channel('All_Rot'):
-        al.ad_lock_hide_attr(lock_channel=['rx', 'ry', 'rz'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel('Rot_X'):
-        al.ad_lock_hide_attr(lock_channel=['rx'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel('Rot_Y'):
-        al.ad_lock_hide_attr(lock_channel=['ry'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel('Rot_Z'):
-        al.ad_lock_hide_attr(lock_channel=['rz'], ctrl=ctrl,
-                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        al.ad_hide_unhide_attr(channel=['sx'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        al.ad_hide_unhide_attr(channel=['sy'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        al.ad_hide_unhide_attr(channel=['sz'], ctrl=ctrl
+                               )
 
-    if ad_query_lock_unlock_channel('All_Scale'):
-        al.ad_lock_hide_attr(lock_channel=['sx', 'sy', 'sz'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel('Scl_X'):
-        al.ad_lock_hide_attr(lock_channel=['sx'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel('Scl_Y'):
-        al.ad_lock_hide_attr(lock_channel=['sy'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_channel('Scl_Z'):
-        al.ad_lock_hide_attr(lock_channel=['sz'], ctrl=ctrl,
-                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
+        al.ad_hide_unhide_attr(channel=['v'], ctrl=ctrl
+                               )
 
-    if ad_query_lock_unlock_channel('Visibility'):
-        al.ad_lock_hide_attr(lock_channel=['v'], ctrl=ctrl,
-                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
+        list_attribute = ad_query_user_defined_channel(ctrl)
+        al.ad_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
 
 
-def ad_query_lock_unlock_channel(channel_name):
+def ad_lock_unlock(ctrl):
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        al.ad_lock_unlock_attr(channel=['tx'], ctrl=ctrl)
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        al.ad_lock_unlock_attr(channel=['ty'], ctrl=ctrl)
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        al.ad_lock_unlock_attr(channel=['tz'], ctrl=ctrl)
+
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        al.ad_lock_unlock_attr(channel=['rx'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        al.ad_lock_unlock_attr(channel=['ry'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        al.ad_lock_unlock_attr(channel=['rz'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        al.ad_lock_unlock_attr(channel=['sx'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        al.ad_lock_unlock_attr(channel=['sy'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        al.ad_lock_unlock_attr(channel=['sz'], ctrl=ctrl
+                               )
+
+    if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
+        al.ad_lock_unlock_attr(channel=['v'], ctrl=ctrl
+                               )
+    if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
+        list_attribute = ad_query_user_defined_channel(ctrl)
+        al.ad_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
+
+
+def ad_hide_and_lock(ctrl, value):
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        al.ad_lock_hide_attr(lock_hide_channel=['tx'], ctrl=ctrl,
+                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        al.ad_lock_hide_attr(lock_hide_channel=['ty'], ctrl=ctrl,
+                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        al.ad_lock_hide_attr(lock_hide_channel=['tz'], ctrl=ctrl,
+                             hide_object=value)
+
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        al.ad_lock_hide_attr(lock_hide_channel=['rx'], ctrl=ctrl,
+                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        al.ad_lock_hide_attr(lock_hide_channel=['ry'], ctrl=ctrl,
+                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        al.ad_lock_hide_attr(lock_hide_channel=['rz'], ctrl=ctrl,
+                             hide_object=value)
+
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        al.ad_lock_hide_attr(lock_hide_channel=['sx'], ctrl=ctrl,
+                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        al.ad_lock_hide_attr(lock_hide_channel=['sy'], ctrl=ctrl,
+                             hide_object=value)
+    if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        al.ad_lock_hide_attr(lock_hide_channel=['sz'], ctrl=ctrl,
+                             hide_object=value)
+
+    if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
+        al.ad_lock_hide_attr(lock_hide_channel=['v'], ctrl=ctrl,
+                             hide_object=value)
+
+
+def ad_query_user_defined_channel(ctrl):
+    list_attr = pm.listAttr(ctrl, ud=1)
+    if 'AD_Controller' in list_attr:
+        list_attr.remove('AD_Controller')
+        return list_attr
+    else:
+        return list_attr
+
+
+def ad_query_lock_unlock_hide_unhide_channel(channel_name):
     value = pm.checkBox(channel_name, q=True, value=True)
+
     return value
 
 
@@ -386,8 +464,10 @@ def ad_select_all_ad_controller_button(*args):
 
     pm.select(list_object)
 
+
 def ad_reset_color_button(*args):
     al.ad_ctrl_color_list(0)
+
 
 def ad_replace_color_button(*args):
     al.ad_ctrl_color_list(ad_set_color())
@@ -401,7 +481,7 @@ def ad_create_controller_button(*args):
     al.ad_ctrl_color(ctrl=controller_shape, color=ad_set_color())
 
     # controller hide and unlock
-    ad_hide_and_unhide(controller_shape, value=True)
+    ad_hide_and_lock(controller_shape, value=True)
 
 
 def ad_set_color(*args):
@@ -659,6 +739,7 @@ def ad_shape_controller_ui(default, *args):
 
     pm.showWindow()
 
+
 def ad_tagging_untagging_button(tagging, *args):
     selection = pm.ls(selection=True)
     if not selection:
@@ -674,6 +755,7 @@ def ad_tagging_untagging_button(tagging, *args):
                     al.ad_untagging(item)
             else:
                 om.MGlobal.displayError("Object type must be curve")
+
 
 def ad_defining_object_text_field(define_object, label):
     # if object doesn't has checkbox
@@ -753,6 +835,7 @@ def ad_controller_resize_slider(*args):
 def ad_controller_resize_reset(*args):
     pm.floatSlider('Controller_Resize', edit=True, v=1.0)
 
+
 def ad_enabling_disabling_ui(object, tx, value, *args):
     # query for enabling and disabling layout
     for item in object:
@@ -806,6 +889,8 @@ def ad_channelbox_rotation(*args):
     rot_x = pm.checkBox('Rot_X', label='Rotate X', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_X']))
     rot_y = pm.checkBox('Rot_Y', label='Rotate Y', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_Y']))
     rot_z = pm.checkBox('Rot_Z', label='Rotate Z', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_Z']))
+    user_defined = pm.checkBox('User_Def', label='User Defined', value=False)
+
     pm.setParent(u=True)
 
 
