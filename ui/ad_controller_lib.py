@@ -1309,7 +1309,32 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #         pm.setAttr('%s.xValue' % point, position[0]*size_obj )
 #         pm.setAttr('%s.yValue' % point, position[1]*size_obj )
 #         pm.setAttr('%s.zValue' % point, position[2]*size_obj )
+def ad_group_parent(groups, prefix, suffix, number='', side=''):
+    # create group hierarchy
+    grps = []
+    for i in range(len(groups)):
+        grps.append(mc.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, 'grp')))
 
+        if i > 0:
+            pm.parent(grps[i], grps[i - 1])
+            # parent_object(grps[i - 1], grps[i])
+
+    return grps
+
+def ad_prefix_name(obj):
+    if '_' in obj:
+        get_prefix_name = obj.split('_')[:-1]
+        joining = '_'.join(get_prefix_name)
+        return joining
+    else:
+        return obj
+
+def ad_group_ctrl(prefix, suffix, groups_ctrl, ctrl, side=''):
+    rename_controller = pm.rename(ctrl, '%s_%s' % (ad_prefix_name(prefix), suffix))
+    group_parent = ad_group_parent(groups_ctrl, '%s' % ad_prefix_name(prefix), suffix.title(), side=side)
+
+    return {'grpPrnt': group_parent,
+            'renCtrl': rename_controller}
 
 def ad_replacing_controller(list_controller):
     # list_controller = pm.ls(sl=1)

@@ -292,6 +292,87 @@ def ad_show_ui():
 
     pm.showWindow()
 
+def ad_create_controller_button(*args):
+    select_target = pm.ls(sl=1)
+
+    # change prefix
+    if select_target:
+        # create controller shape
+        controller_shape_prefix = ad_prefix_selection(select_target)
+    else:
+        controller_shape_prefix = ad_prefix_main()
+
+    # add suffix
+    controller_shape_prefix_suffix = pm.rename(controller_shape_prefix, controller_shape_prefix+ad_suffix_main())
+
+    # controller color
+    al.ad_ctrl_color(ctrl=controller_shape_prefix_suffix, color=ad_set_color())
+
+    # controller hide and unlock
+    ad_hide_and_lock(controller_shape_prefix_suffix, value=True)
+
+def ad_suffix_main():
+    suffix = pm.textFieldGrp('Suffix_Main', q=True, tx=True)
+    if suffix:
+        add_space = '_'+ suffix
+    else:
+        add_space = suffix
+    return add_space
+
+def ad_prefix_selection(selection):
+    for object in selection:
+        controller_shape = ad_action_ctrl_shape()
+        query_name = al.ad_prefix_name(object)
+        prefix_name = pm.rename(controller_shape, query_name)
+
+        return prefix_name
+
+def ad_prefix_main():
+    controller_shape = ad_action_ctrl_shape()
+    if pm.textFieldGrp('Prefix_Main', q=True, enable=True):
+        query_name = ad_query_textfield_object('Prefix_Main')[0]
+        prefix_name = pm.rename(controller_shape, query_name)
+    else:
+        prefix_name =controller_shape
+
+    return prefix_name
+
+    #     al.ad_group_ctrl(prefix = ad_query_list_textfield_object('Prefix_Main')[0],
+    #                      suffix, groups_ctrl, ctrl)
+    #
+    # pm.textFieldGrp(item, edit=True, enable=value, tx=tx)
+
+def ad_query_textfield_object(object_define, *args):
+    text = []
+    if pm.textFieldGrp(object_define, q=True, en=True):
+        if pm.textFieldGrp(object_define, q=True, tx=True):
+            text = pm.textFieldGrp(object_define, q=True, tx=True)
+        else:
+            pm.error("'%s' can not be empty!" % object_define)
+    else:
+        pass
+    return text, object_define
+
+def ad_query_list_textfield_object(object_define, *args):
+    listing_object = []
+    if pm.textFieldButtonGrp(object_define, q=True, en=True):
+        if pm.textFieldButtonGrp(object_define, q=True, tx=True):
+            text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
+            listing = text.split(',')
+            set_duplicate = set([x for x in listing if listing.count(x) > 1])
+            if set_duplicate:
+                for item in list(set_duplicate):
+                    pm.error("'%s' is duplicate object!" % item)
+            else:
+                for item in listing:
+                    listing_object.append(item)
+        else:
+            pm.error("'%s' can not be empty!" % object_define)
+    else:
+        pass
+
+    return listing_object, object_define
+###########
 
 def ad_replacing_controller_color(*args):
     list_controller = pm.ls(sl=1)
@@ -473,15 +554,6 @@ def ad_replace_color_button(*args):
     al.ad_ctrl_color_list(ad_set_color())
 
 
-def ad_create_controller_button(*args):
-    # create controller shape
-    controller_shape = ad_action_ctrl_shape()
-
-    # controller color
-    al.ad_ctrl_color(ctrl=controller_shape, color=ad_set_color())
-
-    # controller hide and unlock
-    ad_hide_and_lock(controller_shape, value=True)
 
 
 def ad_set_color(*args):

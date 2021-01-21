@@ -82,8 +82,8 @@ class ADCtrlDialog(QtWidgets.QDialog):
         form_layout = QtWidgets.QFormLayout()
         # PREFIX LAYOUT
         prefix_name_layout = QtWidgets.QHBoxLayout()
-        prefix_name_layout.addWidget(self.line_prefix_name)
         prefix_name_layout.addWidget(self.check_box_prefix_name)
+        prefix_name_layout.addWidget(self.line_prefix_name)
         form_layout.addRow("Prefix Name:", prefix_name_layout)
 
         form_layout.addRow("Suffix Name:", self.line_suffix_name)
@@ -154,13 +154,13 @@ class ADCtrlDialog(QtWidgets.QDialog):
         else:
             print('Not Create')
 
-if __name__ == "__main__":
-
-    try:
-        dialog.close() # pylint: disable=E0601
-        dialog.deleteLater()
-    except:
-        pass
-
-    dialog = ADCtrlDialog()
-    dialog.show()
+# if __name__ == "__main__":
+#
+#     try:
+#         dialog.close() # pylint: disable=E0601
+#         dialog.deleteLater()
+#     except:
+#         pass
+#
+#     dialog = ADCtrlDialog()
+#     dialog.show()
