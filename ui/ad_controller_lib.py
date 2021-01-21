@@ -1309,11 +1309,54 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #         pm.setAttr('%s.xValue' % point, position[0]*size_obj )
 #         pm.setAttr('%s.yValue' % point, position[1]*size_obj )
 #         pm.setAttr('%s.zValue' % point, position[2]*size_obj )
+def ad_name_query_shape(obj):
+    for i in obj:
+        objs = i.split('.')[0]
+        return objs
+
+
+def ad_joint(snap=None, poly_constraint=False, delete_constraint=True):
+    sel = pm.ls(sl=1, fl=1)
+    jnts = []
+    if snap:
+        for number, i in enumerate(sel):
+            pm.select(cl=1)
+            obj_name = ad_name_query_shape(sel)
+            jnt = pm.joint()
+            name_jnt = '%s%02d_%s' % (ad_prefix_name(obj_name), number + 1, 'jnt')
+            rnm = pm.rename(jnt, name_jnt)
+            if poly_constraint:
+                pm.select(i, rnm, r=True)
+                pm.runtime.PointOnPolyConstraint()
+                if delete_constraint:
+                    cons = pm.listRelatives(rnm, ad=1)
+                    pm.delete(cons)
+
+            else:
+                cls = pm.cluster(i)
+                pm.parentConstraint(cls, rnm, mo=0)
+                jnts.append(rnm)
+                pm.delete(cls)
+
+    else:
+        pm.select(cl=1)
+        obj_name = ad_name_query_shape(sel)
+        jnt = pm.joint()
+        cls = pm.cluster(sel)
+        name_jnt = '%s_%s' % (ad_prefix_name(obj_name), 'jnt')
+        rnm = pm.rename(jnt, name_jnt)
+        pm.parentConstraint(cls, rnm, mo=0)
+        # pm.delete(cls)
+        jnts.append(rnm)
+
+    return jnts
+
+
 def ad_group_parent(groups, prefix, suffix, number='', side=''):
     # create group hierarchy
     grps = []
     for i in range(len(groups)):
-        grps.append(mc.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, 'grp')))
+        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, 'grp')))
 
         if i > 0:
             pm.parent(grps[i], grps[i - 1])
@@ -1516,7 +1559,6 @@ def ad_ctrl_shape(shape):
     pm.setAttr(create_curve+'.AD_Controller', 1)
 
     return create_curve
-
 
 def ad_tagging(ctrl):
     attributes = pm.attributeQuery('AD_Controller', n=ctrl, ex=True)
