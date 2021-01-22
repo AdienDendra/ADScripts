@@ -1351,22 +1351,27 @@ def ad_name_query_shape(obj):
 #
 #     return jnts
 
-def ad_display(object, target):
+def ad_display(object, target, long_name='display', default_vis=1, k=True, cb=False):
     # create attr
-    pm.addAttr(object, ln='display', at='bool')
-    pm.setAttr(object+'.display', 1, e=True, k=True)
+    pm.addAttr(object, ln=long_name, at='bool')
+    pm.setAttr('%s.%s' % (object,long_name), default_vis, e=True, k=k, cb=cb)
 
-    pm.connectAttr(object+'.display', target+'.visibility')
+    pm.connectAttr('%s.%s' % (object,long_name), target+'.visibility')
 
 
-def ad_group_parent(groups, prefix, suffix, number='', side=''):
+def ad_group_parent(groups, prefix, suffix, side=''):
     # create group hierarchy
     grps = []
-    for i in range(len(groups)):
-        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix.title(), groups[i], number, side, 'grp')))
+    for number, group in enumerate(groups):
+        grps.append(pm.createNode('transform', n="%s%s%s%s_%s" % (prefix, group.title(), suffix.title(), side, 'grp')))
 
-        if i > 0:
-            pm.parent(grps[i], grps[i - 1])
+        if number > 0:
+            pm.parent(grps[number], grps[number - 1])
+    # for i in range(len(groups)):
+    #     grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix.title(), groups[i], number, side, 'grp')))
+    #
+    #     if i > 0:
+    #         pm.parent(grps[i], grps[i - 1])
             # parent_object(grps[i - 1], grps[i])
 
     return grps
@@ -1398,10 +1403,10 @@ def ad_replacing_controller(list_controller):
         target_shapes = pm.listRelatives(target, s=1)
         instance_query_shapes = pm.listRelatives(instance_controller, s=1)
         if not pm.objectType(target_shapes) == 'nurbsCurve' :
-            om.MGlobal.displayError("%s is not curve type object!" % target)
+            om.MGlobal.displayWarning("%s is not curve type object!" % target)
 
         elif not pm.objectType(instance_query_shapes) == 'nurbsCurve':
-            om.MGlobal.displayError("%s is not curve type object!" % instance_query_shapes)
+            om.MGlobal.displayWarning("%s is not curve type object!" % instance_query_shapes)
 
         else:
             instance_shapes = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
@@ -1545,7 +1550,7 @@ def ad_ctrl_color_list(color):
         for obj in selection:
             shapeNodes = pm.listRelatives(obj, shapes=True)
             if not pm.objectType(shapeNodes) == 'nurbsCurve':
-                om.MGlobal.displayWarning("%s is skipped. The object is not curve!" % shapeNodes)
+                pass
             else:
                 for shape in shapeNodes:
                     try:
@@ -1557,14 +1562,17 @@ def ad_ctrl_color_list(color):
     return True
 
 def ad_ctrl_color(ctrl, color):
-    list_relatives = pm.listRelatives(ctrl, s=1)[0]
-    pm.setAttr(list_relatives + '.ove', 1)
-    pm.setAttr(list_relatives + '.ovc', color)
+    list_relatives=[]
+    for item in ctrl:
+        list_relatives = pm.listRelatives(item, s=1)[0]
+        pm.setAttr(list_relatives + '.ove', 1)
+        pm.setAttr(list_relatives + '.ovc', color)
 
     return list_relatives
 
-def ad_ctrl_shape(shape):
-    create_curve = pm.curve(d=1, p=shape)
+def ad_ctrl_shape(shape, size_ctrl):
+    scale_shape = [[size_ctrl * i for i in j] for j in shape]
+    create_curve = pm.curve(d=1, p=scale_shape)
     pm.addAttr(create_curve, ln='AD_Controller', at='bool')
     pm.setAttr(create_curve+'.AD_Controller', 1)
 
@@ -1585,40 +1593,3 @@ def ad_untagging(ctrl):
     else:
         pm.addAttr(ctrl, ln='AD_Controller', at='bool')
         pm.setAttr(ctrl + '.AD_Controller', 0)
-
-#
-#
-# def create_ctrl(ctrl_size, shape):
-#     scale_ctrl = ut.scale_curve(ctrl_size, shape)
-#     ctrl = ut.controller(scale_ctrl)
-#     return ctrl
-#
-# def prefix_name(obj):
-#     if '_' in obj:
-#         get_prefix_name = obj.split('_')[:-1]
-#         joining = '_'.join(get_prefix_name)
-#         return joining
-#     else:
-#         return obj
-#
-# def parent_object(objBase, objTgt):
-#     parent_object = mc.parent(objTgt, objBase)
-#     return parent_object
-#
-# def group_parent(groups, prefix, suffix, number='', side=''):
-#     # create group hierarchy
-#     grps = []
-#     for i in range(len(groups)):
-#         grps.append(mc.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, GROUP)))
-#
-#         if i > 0:
-#             parent_object(grps[i - 1], grps[i])
-#
-#     return grps
-#
-# def ad_main_group():
-#     rename_controller = pm.rename(ctrl, '%s_%s' % (prefix_name(prefix), suffix))
-#     group_parents = group_parent(groups_ctrl, '%s' % prefix_name(prefix), suffix.title(), side=side)
-#
-#     return {'grpPrnt': group_parents,
-#             'renCtrl': rename_controller}

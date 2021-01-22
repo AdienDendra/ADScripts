@@ -33,20 +33,57 @@ def ad_show_ui():
                         with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
                                                 co=(1 * percentage, 'both', 1 * percentage),
                                                 cw=[(1, 5 * percentage), (2, 96 * percentage)]):
-                            pm.checkBox(label='',
-                                        cc=partial(ad_enabling_disabling_ui, ['Prefix_Main'], ''),
-                                        value=False)
-                            ad_defining_object_text_field_no_button(define_object='Prefix_Main', label="Prefix Main:",
-                                                                    add_feature=True, enable=False)
+                            # pm.checkBox(label='',
+                            #             cc=partial(ad_enabling_disabling_ui, ['Prefix_Main'], ''),
+                            #             value=False)
+                            # ad_defining_object_text_field_no_button(define_object='Prefix_Main', label="Prefix Main:",
+                            #                                         add_feature=True, enable=False)
                             pm.checkBox(label='',
                                         cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main,Offset'),
                                         value=True)
                             ad_defining_object_text_field_no_button(define_object='Parent_Group_Name',
                                                                     label="Parent Group:",
                                                                     add_feature=True, tx='Main,Offset', enable=True)
-                        ad_defining_object_text_field_no_button(define_object='Suffix_Main', tx='ctrl',
-                                                                label="Suffix Main:")
 
+
+
+                        with pm.rowColumnLayout(nc=6,
+                                                cs=[(3, 2 * percentage),(5, 2 * percentage)],
+                                                # co=(3 * percentage, 'both', 3 * percentage),
+                                                cw=[(1, 14 * percentage), (2, 11 * percentage), (3, 13 * percentage),
+                                                    (4, 30.5 * percentage),(5, 14 * percentage),(6, 9 * percentage)]):
+                            pm.checkBox('Side_1', label='Side 1:',
+                                        cc=partial(ad_enabling_disabling_ui, ['Side_1_Txt'], 'L_'),
+                                        value=False)
+                            ad_defining_object_text_field(define_object='Side_1_Txt', tx='L_', enable=False)
+
+                            pm.checkBox('Prefix_Main', label='Prefix:',
+                                        cc=partial(ad_enabling_disabling_ui, ['Prefix_Main_Txt'], ''),
+                                        value=False)
+                            ad_defining_object_text_field(define_object='Prefix_Main_Txt',
+                                                                   enable=False)
+                            pm.checkBox('Side_2', label='Side 2:',
+                                        cc=partial(ad_enabling_disabling_ui, ['Side_2_Txt'], 'LFT'),
+                                        value=False)
+                            ad_defining_object_text_field(define_object='Side_2_Txt', tx='LFT', enable=False)
+
+                        with pm.rowColumnLayout(nc=5, cs=[(2, 1 * percentage),(3, 2 * percentage)],
+                                                cw=[(2, 16 * percentage)]):
+                            # pm.text('Suffix:')
+                            # ad_defining_object_text_field(define_object='Suffix_Main', tx='ctrl')
+                            pm.textFieldGrp('Suffix_Main', label='Suffix:', cal=(1, "right"),
+                                            cw2=(26 * percentage, 15 * percentage),
+                                            cat=[(1, 'right', 2), (2, 'both', 2)], tx='ctrl')
+
+                            pm.checkBox('Adding_Ctrl_Child', label='',
+                                        cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
+                                        value=False)
+                            pm.textFieldGrp('Suffix_Child_Ctrl', label='Add Child Ctrl:', cal=(1, "right"),
+                                            cw2=(21 * percentage, 24 * percentage),
+                                            cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='Child')
+                        # pm.separator(h=5, st="in", w=95 * percentage)
+
+                    with pm.frameLayout(collapsable=True, l='Additional', mh=1):
                         with pm.rowLayout(nc=2, cw2=(26 * percentage, 50 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('')
@@ -54,13 +91,7 @@ def ad_show_ui():
                                 pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility',
                                             value=False)
                                 pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
-                                pm.checkBox('Adding_Ctrl_Child', label='Add Child Controller',
-                                            cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
-                                            value=False)
 
-                        pm.textFieldGrp('Suffix_Child_Ctrl', label='Adding Ctrl Child:', cal=(1, "right"),
-                                        cw2=(26 * percentage, 69 * percentage),
-                                        cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='Child')
 
                     # pm.separator(h=5, st="in", w=95 * percentage)
                     with pm.frameLayout(collapsable=True, l='Connection', mh=1):
@@ -297,21 +328,26 @@ def ad_create_controller_button(*args):
 
     if select:
         # create controller shape
-        controller_shape_prefix_suffix = ad_ctrl_prefix_suffix_selection(select)
+        controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix_selection(select)
         # match position
-        ad_match_position_with_object(selection=select, target=controller_shape_prefix_suffix)
+        ad_match_position_target_to_ctrl(selection=select, target=controller_shape_prefix_suffix)
 
     else:
         # create controller without selection
-        controller_shape_prefix_suffix = ad_ctrl_prefix_suffix_main()
+        controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix()
 
     # grouping controller
     if pm.textFieldGrp('Parent_Group_Name', q=True, enable=True):
-        ad_ctrl_grouping(controller=controller_shape_prefix_suffix)
+        ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix)
 
     # add visibility to target
     if select:
         ad_visibility_target(object=controller_shape_prefix_suffix, target=select)
+
+    print controller_shape_prefix_suffix
+
+    # add child controller
+    ad_child_ctrl(main_controller=controller_shape_prefix_suffix)
 
     # controller color
     al.ad_ctrl_color(ctrl=controller_shape_prefix_suffix, color=ad_set_color())
@@ -319,34 +355,29 @@ def ad_create_controller_button(*args):
     # controller hide and unlock
     ad_hide_and_lock(controller_shape_prefix_suffix, value=True)
 
-
 def ad_visibility_target(object, target):
-    # selected_object = pm.ls(sl=1)
     check_box = pm.checkBox('Target_Visibility', q=True, value=True)
     if check_box:
-        # if selected_object:
         for item, tgt in zip (object, target):
             al.ad_display(object=item, target=tgt)
-        # else:
-        #     om.MGlobal_displayWarning('visibility connection skipped')
     else:
         pass
 
-def ad_ctrl_grouping(controller):
+def ad_main_ctrl_grouping(controller):
     grouping_controller=[]
     for object_controller in controller:
         group_controller = al.ad_group_parent(groups= ad_query_list_textfield_object('Parent_Group_Name')[0],
                            prefix=al.ad_prefix_name(object_controller),
                            suffix=ad_query_textfield_object('Suffix_Main')[0])
 
-        match_position = ad_xform_position_rotation(origin=object_controller, target=group_controller[0])
-        parent_controller = pm.parent(object_controller, group_controller[-1])
+        ad_xform_position_rotation(origin=object_controller, target=group_controller[0])
+        pm.parent(object_controller, group_controller[-1])
         grouping_controller.append(group_controller)
         pm.select(cl=1)
 
     return grouping_controller
 
-def ad_match_position_with_object(selection, target):
+def ad_match_position_target_to_ctrl(selection, target):
     if '.' in str(selection[0]):
         sel = pm.ls(sl=1, fl=1)
 
@@ -381,26 +412,12 @@ def ad_match_position_with_object(selection, target):
         # query and match
         ad_xform_position_rotation(origin=jnt_position, target=target)
 
-        # position = pm.xform(jnt_position, ws=True, q=True, t=True)
-        # rotation = pm.xform(jnt_position, ws=True, q=True, ro=True)
-        #
-        # # match position
-        # target_position = pm.xform(target, ws=True, t=position)
-        # target_rotation = pm.xform(target, ws=True, ro=rotation)
-
         pm.delete(jnt_position)
 
     else:
         for object, tgt in zip (selection, target):
             # query and match
             ad_xform_position_rotation(origin=object, target=tgt)
-
-            # position = pm.xform(object, ws=True, q=True, t=True)
-            # rotation = pm.xform(object, ws=True, q=True, ro=True)
-            #
-            # # match position
-            # target_position = pm.xform(tgt, ws=True, t=position)
-            # target_rotation = pm.xform(tgt, ws=True, ro=rotation)
 
 def ad_xform_position_rotation(origin, target):
     origin_position = pm.xform(origin, ws=True, q=True, t=True)
@@ -419,20 +436,41 @@ def ad_xform_position_rotation(origin, target):
 def ad_suffix_main():
     suffix = pm.textFieldGrp('Suffix_Main', q=True, tx=True)
     if suffix:
-        add_space = '_'+ suffix
+        add_space = '_'+ suffix.lower()
     else:
         add_space = ''
     return add_space
 
-def ad_ctrl_prefix_suffix_selection(selection):
+def ad_child_ctrl(main_controller):
+    controller_childs=[]
+    check_box = pm.checkBox('Adding_Ctrl_Child', q=True, value=True)
+    query_name = ad_query_textfield_object('Suffix_Child_Ctrl')[0]
+    if check_box:
+        for controller in main_controller:
+            object_main_shape = pm.listRelatives(controller, shapes=1)[0]
+            controller_shape = ad_controller_shape(size_ctrl=0.8)
+            controller_child = pm.rename(controller_shape, al.ad_prefix_name(controller) + query_name.title() + ad_suffix_main())
+            ad_xform_position_rotation(origin=controller, target=controller_child)
+            pm.parent(controller_child, controller)
+            al.ad_display(object=object_main_shape, target=controller_child, long_name='childCtrl', default_vis=0,  k=False, cb=True)
+            controller_childs.append(controller_child)
+
+    else:
+        pass
+    # set color
+    al.ad_ctrl_color(ctrl=controller_childs, color=16)
+
+    return controller_childs
+
+def ad_main_ctrl_prefix_suffix_selection(selection):
     controller_shape_prefix_suffix_app=[]
     if '.' in str(selection[0]):
         # pass
         get_first_object = selection[0].split('Shape')[0]
-        query_name = ad_query_textfield_object('Prefix_Main')[0]
+        query_name = ad_query_textfield_object('Prefix_Main_Txt')[0]
         query_name_object = al.ad_prefix_name(get_first_object)
-        controller_shape = ad_action_ctrl_shape()
-        if pm.textFieldGrp('Prefix_Main', q=True, enable=True):
+        controller_shape = ad_controller_shape(size_ctrl=1.0)
+        if pm.textField('Prefix_Main_Txt', q=True, enable=True):
             controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + ad_suffix_main())
             controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
         else:
@@ -440,18 +478,16 @@ def ad_ctrl_prefix_suffix_selection(selection):
             controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
     else:
         for number, object in enumerate(selection):
-            query_name = ad_query_textfield_object('Prefix_Main')[0]
+            query_name = ad_query_textfield_object('Prefix_Main_Txt')[0]
             query_name_object = al.ad_prefix_name(object)
-            controller_shape = ad_action_ctrl_shape()
-            if pm.textFieldGrp('Prefix_Main', q=True, enable=True):
+            controller_shape = ad_controller_shape(size_ctrl=1.0)
+            if pm.textField('Prefix_Main_Txt', q=True, enable=True):
                 if len(selection) > 1:
                     controller_shape_prefix_suffix = pm.rename(controller_shape,
                                                                '%s%02d%s' % (query_name, number + 1, ad_suffix_main()))
                 else:
                     controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + ad_suffix_main())
-
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
             else:
                 controller_shape_prefix_suffix = pm.rename(controller_shape, query_name_object+ ad_suffix_main())
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
@@ -459,29 +495,23 @@ def ad_ctrl_prefix_suffix_selection(selection):
 
     return controller_shape_prefix_suffix_app
 
-
-def ad_ctrl_prefix_suffix_main():
+def ad_main_ctrl_prefix_suffix():
     controller_shape_prefix_suffix_app=[]
-    if pm.textFieldGrp('Prefix_Main', q=True, enable=True):
-        query_name = ad_query_textfield_object('Prefix_Main')[0]
-        controller_shape = ad_action_ctrl_shape()
+    if pm.textField('Prefix_Main_Txt', q=True, enable=True):
+        query_name = ad_query_textfield_object('Prefix_Main_Txt')[0]
+        controller_shape = ad_controller_shape(size_ctrl=1.0)
         suffix = ad_suffix_main()
         # new_name =  query_name.replace(query_name, '%s%02d' % (query_name, +1))
-
         # query_object = pm.objExists('%s%02d%s' % (query_name, +1, suffix))
-
         controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + suffix)
         query_object = controller_shape_prefix_suffix
         controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
         pm.select(cl=1)
-
     else:
-        controller_shape = ad_action_ctrl_shape()
+        controller_shape = ad_controller_shape(size_ctrl=1.0)
         controller_shape_prefix_suffix =pm.rename(controller_shape, controller_shape + ad_suffix_main())
         controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
         pm.select(cl=1)
-
     return controller_shape_prefix_suffix_app
 
 def ad_query_textfield_object(object_define, *args):
@@ -526,7 +556,6 @@ def ad_replacing_controller_color(*args):
     controller_replacing = al.ad_replacing_controller(list_controller)
     al.ad_replacing_color(controller_replacing[0], controller_replacing[1])
 
-
 def ad_hide_unhide_button(*args):
     selection = pm.ls(selection=True)
     if not selection:
@@ -536,7 +565,6 @@ def ad_hide_unhide_button(*args):
         for item in selection:
             ad_hide_unhide(ctrl=item)
 
-
 def ad_lock_unlock_button(*args):
     selection = pm.ls(selection=True)
     if not selection:
@@ -545,7 +573,6 @@ def ad_lock_unlock_button(*args):
     else:
         for item in selection:
             ad_lock_unlock(ctrl=item)
-
 
 def ad_hide_unhide(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
@@ -583,7 +610,6 @@ def ad_hide_unhide(ctrl):
         list_attribute = ad_query_user_defined_channel(ctrl)
         al.ad_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
 
-
 def ad_lock_unlock(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
         al.ad_lock_unlock_attr(channel=['tx'], ctrl=ctrl)
@@ -617,7 +643,6 @@ def ad_lock_unlock(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
         list_attribute = ad_query_user_defined_channel(ctrl)
         al.ad_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
-
 
 def ad_hide_and_lock(ctrl, value):
     if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
@@ -654,7 +679,6 @@ def ad_hide_and_lock(ctrl, value):
         al.ad_lock_hide_attr(lock_hide_channel=['v'], ctrl=ctrl,
                              hide_object=value)
 
-
 def ad_query_user_defined_channel(ctrl):
     list_attr = pm.listAttr(ctrl, ud=1)
     if 'AD_Controller' in list_attr:
@@ -663,12 +687,9 @@ def ad_query_user_defined_channel(ctrl):
     else:
         return list_attr
 
-
 def ad_query_lock_unlock_hide_unhide_channel(channel_name):
     value = pm.checkBox(channel_name, q=True, value=True)
-
     return value
-
 
 def ad_select_all_ad_controller_button(*args):
     list_scene = pm.ls(type='transform')
@@ -688,7 +709,6 @@ def ad_select_all_ad_controller_button(*args):
 
     pm.select(list_object)
 
-
 def ad_reset_color_button(*args):
     al.ad_ctrl_color_list(0)
 
@@ -700,104 +720,104 @@ def ad_set_color(*args):
     return controller_color
 
 
-def ad_action_ctrl_shape(*args):
+def ad_controller_shape(size_ctrl, *args):
     control_shape = []
     if on_selector == 1:
-        control_shape = al.ad_ctrl_shape(al.CIRCLE)
+        control_shape = al.ad_ctrl_shape(al.CIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 2:
-        control_shape = al.ad_ctrl_shape(al.LOCATOR)
+        control_shape = al.ad_ctrl_shape(al.LOCATOR, size_ctrl=size_ctrl)
     elif on_selector == 3:
-        control_shape = al.ad_ctrl_shape(al.CUBE)
+        control_shape = al.ad_ctrl_shape(al.CUBE, size_ctrl=size_ctrl)
     elif on_selector == 4:
-        control_shape = al.ad_ctrl_shape(al.CIRCLEHALF)
+        control_shape = al.ad_ctrl_shape(al.CIRCLEHALF, size_ctrl=size_ctrl)
     elif on_selector == 5:
-        control_shape = al.ad_ctrl_shape(al.SQUARE)
+        control_shape = al.ad_ctrl_shape(al.SQUARE, size_ctrl=size_ctrl)
     elif on_selector == 6:
-        control_shape = al.ad_ctrl_shape(al.JOINT)
+        control_shape = al.ad_ctrl_shape(al.JOINT, size_ctrl=size_ctrl)
     elif on_selector == 7:
-        control_shape = al.ad_ctrl_shape(al.CAPSULE)
+        control_shape = al.ad_ctrl_shape(al.CAPSULE, size_ctrl=size_ctrl)
     elif on_selector == 8:
-        control_shape = al.ad_ctrl_shape(al.STICKCIRCLE)
+        control_shape = al.ad_ctrl_shape(al.STICKCIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 9:
-        control_shape = al.ad_ctrl_shape(al.CIRCLEPLUSHALF)
+        control_shape = al.ad_ctrl_shape(al.CIRCLEPLUSHALF, size_ctrl=size_ctrl)
     elif on_selector == 10:
-        control_shape = al.ad_ctrl_shape(al.CIRCLEPLUS)
+        control_shape = al.ad_ctrl_shape(al.CIRCLEPLUS, size_ctrl=size_ctrl)
     elif on_selector == 11:
-        control_shape = al.ad_ctrl_shape(al.STICK2CIRCLE)
+        control_shape = al.ad_ctrl_shape(al.STICK2CIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 12:
-        control_shape = al.ad_ctrl_shape(al.STICKSQUARE)
+        control_shape = al.ad_ctrl_shape(al.STICKSQUARE, size_ctrl=size_ctrl)
     elif on_selector == 13:
-        control_shape = al.ad_ctrl_shape(al.STICK2SQUARE)
+        control_shape = al.ad_ctrl_shape(al.STICK2SQUARE, size_ctrl=size_ctrl)
     elif on_selector == 14:
-        control_shape = al.ad_ctrl_shape(al.STICKSTAR)
+        control_shape = al.ad_ctrl_shape(al.STICKSTAR, size_ctrl=size_ctrl)
     elif on_selector == 15:
-        control_shape = al.ad_ctrl_shape(al.CIRCLEPLUSARROW)
+        control_shape = al.ad_ctrl_shape(al.CIRCLEPLUSARROW, size_ctrl=size_ctrl)
     elif on_selector == 16:
-        control_shape = al.ad_ctrl_shape(al.RECTANGLE)
+        control_shape = al.ad_ctrl_shape(al.RECTANGLE, size_ctrl=size_ctrl)
     elif on_selector == 17:
-        control_shape = al.ad_ctrl_shape(al.ARROW)
+        control_shape = al.ad_ctrl_shape(al.ARROW, size_ctrl=size_ctrl)
     elif on_selector == 18:
-        control_shape = al.ad_ctrl_shape(al.ARROW3DFLAT)
+        control_shape = al.ad_ctrl_shape(al.ARROW3DFLAT, size_ctrl=size_ctrl)
     elif on_selector == 19:
-        control_shape = al.ad_ctrl_shape(al.ARROW2HALFCIRCULAR)
+        control_shape = al.ad_ctrl_shape(al.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 20:
-        control_shape = al.ad_ctrl_shape(al.ARROW2STRAIGHT)
+        control_shape = al.ad_ctrl_shape(al.ARROW2STRAIGHT, size_ctrl=size_ctrl)
     elif on_selector == 21:
-        control_shape = al.ad_ctrl_shape(al.ARROW2FLAT)
+        control_shape = al.ad_ctrl_shape(al.ARROW2FLAT, size_ctrl=size_ctrl)
     elif on_selector == 22:
-        control_shape = al.ad_ctrl_shape(al.ARROWHEAD)
+        control_shape = al.ad_ctrl_shape(al.ARROWHEAD, size_ctrl=size_ctrl)
     elif on_selector == 23:
-        control_shape = al.ad_ctrl_shape(al.ARROW90DEG)
+        control_shape = al.ad_ctrl_shape(al.ARROW90DEG, size_ctrl=size_ctrl)
     elif on_selector == 24:
-        control_shape = al.ad_ctrl_shape(al.SQUAREPLUS)
+        control_shape = al.ad_ctrl_shape(al.SQUAREPLUS, size_ctrl=size_ctrl)
     elif on_selector == 25:
-        control_shape = al.ad_ctrl_shape(al.JOINTPLUS)
+        control_shape = al.ad_ctrl_shape(al.JOINTPLUS, size_ctrl=size_ctrl)
     elif on_selector == 26:
-        control_shape = al.ad_ctrl_shape(al.HAND)
+        control_shape = al.ad_ctrl_shape(al.HAND, size_ctrl=size_ctrl)
     elif on_selector == 27:
-        control_shape = al.ad_ctrl_shape(al.ARROWCIRCULAR)
+        control_shape = al.ad_ctrl_shape(al.ARROWCIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 28:
-        control_shape = al.ad_ctrl_shape(al.PLUS)
+        control_shape = al.ad_ctrl_shape(al.PLUS, size_ctrl=size_ctrl)
     elif on_selector == 29:
-        control_shape = al.ad_ctrl_shape(al.PIVOT)
+        control_shape = al.ad_ctrl_shape(al.PIVOT, size_ctrl=size_ctrl)
     elif on_selector == 30:
-        control_shape = al.ad_ctrl_shape(al.KEYS)
+        control_shape = al.ad_ctrl_shape(al.KEYS, size_ctrl=size_ctrl)
     elif on_selector == 31:
-        control_shape = al.ad_ctrl_shape(al.PYRAMIDCIRCLE)
+        control_shape = al.ad_ctrl_shape(al.PYRAMIDCIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 32:
-        control_shape = al.ad_ctrl_shape(al.ARROW4CIRCULAR)
+        control_shape = al.ad_ctrl_shape(al.ARROW4CIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 33:
-        control_shape = al.ad_ctrl_shape(al.EYES)
+        control_shape = al.ad_ctrl_shape(al.EYES, size_ctrl=size_ctrl)
     elif on_selector == 34:
-        control_shape = al.ad_ctrl_shape(al.FOOTSTEP)
+        control_shape = al.ad_ctrl_shape(al.FOOTSTEP, size_ctrl=size_ctrl)
     elif on_selector == 35:
-        control_shape = al.ad_ctrl_shape(al.HALF3DCIRCLE)
+        control_shape = al.ad_ctrl_shape(al.HALF3DCIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 36:
-        control_shape = al.ad_ctrl_shape(al.CAPSULECURVE)
+        control_shape = al.ad_ctrl_shape(al.CAPSULECURVE, size_ctrl=size_ctrl)
     elif on_selector == 37:
-        control_shape = al.ad_ctrl_shape(al.ARROW4STRAIGHT)
+        control_shape = al.ad_ctrl_shape(al.ARROW4STRAIGHT, size_ctrl=size_ctrl)
     elif on_selector == 38:
-        control_shape = al.ad_ctrl_shape(al.ARROW3D)
+        control_shape = al.ad_ctrl_shape(al.ARROW3D, size_ctrl=size_ctrl)
     elif on_selector == 39:
-        control_shape = al.ad_ctrl_shape(al.PYRAMID)
+        control_shape = al.ad_ctrl_shape(al.PYRAMID, size_ctrl=size_ctrl)
     elif on_selector == 40:
-        control_shape = al.ad_ctrl_shape(al.ARROW3DCIRCULAR)
+        control_shape = al.ad_ctrl_shape(al.ARROW3DCIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 41:
-        control_shape = al.ad_ctrl_shape(al.CYLINDER)
+        control_shape = al.ad_ctrl_shape(al.CYLINDER, size_ctrl=size_ctrl)
     elif on_selector == 42:
-        control_shape = al.ad_ctrl_shape(al.ARROW2FLATHALF)
+        control_shape = al.ad_ctrl_shape(al.ARROW2FLATHALF, size_ctrl=size_ctrl)
     elif on_selector == 43:
-        control_shape = al.ad_ctrl_shape(al.FLAG)
+        control_shape = al.ad_ctrl_shape(al.FLAG, size_ctrl=size_ctrl)
     elif on_selector == 44:
-        control_shape = al.ad_ctrl_shape(al.WORLD)
+        control_shape = al.ad_ctrl_shape(al.WORLD, size_ctrl=size_ctrl)
     elif on_selector == 45:
-        control_shape = al.ad_ctrl_shape(al.SETUP)
+        control_shape = al.ad_ctrl_shape(al.SETUP, size_ctrl=size_ctrl)
     elif on_selector == 46:
-        control_shape = al.ad_ctrl_shape(al.STAR)
+        control_shape = al.ad_ctrl_shape(al.STAR, size_ctrl=size_ctrl)
     elif on_selector == 47:
-        control_shape = al.ad_ctrl_shape(al.DIAMOND)
+        control_shape = al.ad_ctrl_shape(al.DIAMOND, size_ctrl=size_ctrl)
     elif on_selector == 48:
-        control_shape = al.ad_ctrl_shape(al.STARSQUEEZE)
+        control_shape = al.ad_ctrl_shape(al.STARSQUEEZE, size_ctrl=size_ctrl)
     else:
         pass
     return control_shape
@@ -807,7 +827,6 @@ def ad_on_selection_ctrl_shape(on):
     # save the current shape selection into global variable
     global on_selector
     on_selector = on
-
 
 def ad_shape_controller_ui(default, *args):
     shape_controller = 'Shape_Controller'
@@ -964,15 +983,18 @@ def ad_tagging_untagging_button(tagging, *args):
                 else:
                     al.ad_untagging(item)
             else:
-                om.MGlobal.displayError("Object type must be curve")
+                pass
 
 
-def ad_defining_object_text_field(define_object, label):
+# def ad_defining_object_text_field(define_object, label):
+#     # if object doesn't has checkbox
+#     pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
+#                           bl="Get Object",
+#                           bc=partial(ad_adding_object_sel_to_textfield, define_object))
+
+def ad_defining_object_text_field(define_object, tx='', *args, **kwargs):
     # if object doesn't has checkbox
-    pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
-                          bl="Get Object",
-                          bc=partial(ad_adding_object_sel_to_textfield, define_object))
-
+    pm.textField(define_object, tx=tx, **kwargs)
 
 def ad_defining_object_text_field_no_button(define_object, label, add_feature=False, tx='', *args, **kwargs):
     if not add_feature:
@@ -1038,8 +1060,7 @@ def ad_controller_resize_slider(*args):
                 # self.prevValue = value
                 # previous_value = currentValue
             else:
-                om.MGlobal.displayError("Object type must be curve")
-                return False
+                pass
 
 
 def ad_controller_resize_reset(*args):
@@ -1052,6 +1073,8 @@ def ad_enabling_disabling_ui(object, tx, value, *args):
         objectType = pm.objectTypeUI(item)
         if objectType == 'rowGroupLayout':
             pm.textFieldGrp(item, edit=True, enable=value, tx=tx)
+        elif objectType == 'field':
+            pm.textField(item, edit=True, enable=value, tx=tx)
         else:
             pass
 
