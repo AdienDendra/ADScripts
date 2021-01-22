@@ -39,11 +39,11 @@ def ad_show_ui():
                             ad_defining_object_text_field_no_button(define_object='Prefix_Main', label="Prefix Main:",
                                                                     add_feature=True, enable=False)
                             pm.checkBox(label='',
-                                        cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main'),
+                                        cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main,Offset'),
                                         value=True)
                             ad_defining_object_text_field_no_button(define_object='Parent_Group_Name',
                                                                     label="Parent Group:",
-                                                                    add_feature=True, tx='Main', enable=True)
+                                                                    add_feature=True, tx='Main,Offset', enable=True)
                         ad_defining_object_text_field_no_button(define_object='Suffix_Main', tx='ctrl',
                                                                 label="Suffix Main:")
 
@@ -295,15 +295,23 @@ def ad_show_ui():
 def ad_create_controller_button(*args):
     select = pm.ls(sl=1)
 
-    # change prefix
     if select:
         # create controller shape
-        controller_shape_prefix_suffix = ad_prefix_suffix_selection(select)
+        controller_shape_prefix_suffix = ad_ctrl_prefix_suffix_selection(select)
         # match position
         ad_match_position_with_object(selection=select, target=controller_shape_prefix_suffix)
 
     else:
-        controller_shape_prefix_suffix = ad_prefix_suffix_main()
+        # create controller without selection
+        controller_shape_prefix_suffix = ad_ctrl_prefix_suffix_main()
+
+    # grouping controller
+    if pm.textFieldGrp('Parent_Group_Name', q=True, enable=True):
+        ad_ctrl_grouping(controller=controller_shape_prefix_suffix)
+
+    # add visibility to target
+    if select:
+        ad_visibility_target(object=controller_shape_prefix_suffix, target=select)
 
     # controller color
     al.ad_ctrl_color(ctrl=controller_shape_prefix_suffix, color=ad_set_color())
@@ -311,30 +319,68 @@ def ad_create_controller_button(*args):
     # controller hide and unlock
     ad_hide_and_lock(controller_shape_prefix_suffix, value=True)
 
+
+def ad_visibility_target(object, target):
+    # selected_object = pm.ls(sl=1)
+    check_box = pm.checkBox('Target_Visibility', q=True, value=True)
+    if check_box:
+        # if selected_object:
+        for item, tgt in zip (object, target):
+            al.ad_display(object=item, target=tgt)
+        # else:
+        #     om.MGlobal_displayWarning('visibility connection skipped')
+    else:
+        pass
+
+def ad_ctrl_grouping(controller):
+    grouping_controller=[]
+    for object_controller in controller:
+        group_controller = al.ad_group_parent(groups= ad_query_list_textfield_object('Parent_Group_Name')[0],
+                           prefix=al.ad_prefix_name(object_controller),
+                           suffix=ad_query_textfield_object('Suffix_Main')[0])
+
+        match_position = ad_xform_position_rotation(origin=object_controller, target=group_controller[0])
+        parent_controller = pm.parent(object_controller, group_controller[-1])
+        grouping_controller.append(group_controller)
+        pm.select(cl=1)
+
+    return grouping_controller
+
 def ad_match_position_with_object(selection, target):
     if '.' in str(selection[0]):
-        # # query value of manipulation position
-        # manipulated_position = pm.manipPivot(q=True, p=True)[0]
-        # print manipulated_position
-        # # query value of manipulation rotation
-        # manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
+        sel = pm.ls(sl=1, fl=1)
+
+        # query value of manipulation position
+        manipulated_position = pm.manipPivot(q=True, p=True)[0]
+
+        # query value of manipulation rotation
+        manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
         # print manipulated_position
 
-        # create joint for reference
-        jnt_position = al.ad_joint()
+        pm.select(cl=1)
+        obj_name = al.ad_name_query_shape(sel)
+        jnt = pm.joint()
+        cls = pm.cluster(selection)
+        name_jnt = '%s_%s' % (al.ad_prefix_name(obj_name), 'jnt')
+        jnt_position = pm.rename(jnt, name_jnt)
+        pm.parentConstraint(cls, jnt_position, mo=0)
+        pm.delete(cls)
 
-        # # set attribute rotate jnt
-        # if manipulated_rotation != (0, 0, 0):
-        #     pm.setAttr(jnt_position[0] + '.rotateX', list(manipulated_rotation)[0])
-        #     pm.setAttr(jnt_position[0] + '.rotateY', list(manipulated_rotation)[1])
-        #     pm.setAttr(jnt_position[0] + '.rotateZ', list(manipulated_rotation)[2])
-        #
-        # # set attribute translate jnt
-        # if manipulated_position != (0, 0, 0):
-        #     pm.setAttr(jnt_position[0] + '.translateX', list(manipulated_position)[0])
-        #     pm.setAttr(jnt_position[0] + '.translateY', list(manipulated_position)[1])
-        #     pm.setAttr(jnt_position[0] + '.translateZ', list(manipulated_position)[2])
-        #
+        # set attribute rotate jnt
+        if manipulated_rotation != (0, 0, 0):
+            pm.setAttr(jnt_position + '.rotateX', list(manipulated_rotation)[0])
+            pm.setAttr(jnt_position + '.rotateY', list(manipulated_rotation)[1])
+            pm.setAttr(jnt_position + '.rotateZ', list(manipulated_rotation)[2])
+
+        # set attribute translate jnt
+        if manipulated_position != (0, 0, 0):
+            pm.setAttr(jnt_position + '.translateX', list(manipulated_position)[0])
+            pm.setAttr(jnt_position + '.translateY', list(manipulated_position)[1])
+            pm.setAttr(jnt_position + '.translateZ', list(manipulated_position)[2])
+
+        # query and match
+        ad_xform_position_rotation(origin=jnt_position, target=target)
+
         # position = pm.xform(jnt_position, ws=True, q=True, t=True)
         # rotation = pm.xform(jnt_position, ws=True, q=True, ro=True)
         #
@@ -342,15 +388,33 @@ def ad_match_position_with_object(selection, target):
         # target_position = pm.xform(target, ws=True, t=position)
         # target_rotation = pm.xform(target, ws=True, ro=rotation)
 
+        pm.delete(jnt_position)
+
     else:
         for object, tgt in zip (selection, target):
-            position = pm.xform(object, ws=True, q=True, t=True)
-            rotation = pm.xform(object, ws=True, q=True, ro=True)
+            # query and match
+            ad_xform_position_rotation(origin=object, target=tgt)
 
-            # match position
-            target_position = pm.xform(tgt, ws=True, t=position)
-            target_rotation = pm.xform(tgt, ws=True, ro=rotation)
+            # position = pm.xform(object, ws=True, q=True, t=True)
+            # rotation = pm.xform(object, ws=True, q=True, ro=True)
+            #
+            # # match position
+            # target_position = pm.xform(tgt, ws=True, t=position)
+            # target_rotation = pm.xform(tgt, ws=True, ro=rotation)
 
+def ad_xform_position_rotation(origin, target):
+    origin_position = pm.xform(origin, ws=True, q=True, t=True)
+    origin_rotation = pm.xform(origin, ws=True, q=True, ro=True)
+
+    # match position
+    target_position = pm.xform(target, ws=True, t=origin_position)
+    target_rotation = pm.xform(target, ws=True, ro=origin_rotation)
+
+    return {'origin_position': origin_position,
+            'origin_rotation': origin_rotation,
+            'target_position': target_position,
+            'target_rotation':target_rotation
+            }
 
 def ad_suffix_main():
     suffix = pm.textFieldGrp('Suffix_Main', q=True, tx=True)
@@ -360,20 +424,20 @@ def ad_suffix_main():
         add_space = ''
     return add_space
 
-def ad_prefix_suffix_selection(selection):
+def ad_ctrl_prefix_suffix_selection(selection):
     controller_shape_prefix_suffix_app=[]
     if '.' in str(selection[0]):
+        # pass
         get_first_object = selection[0].split('Shape')[0]
         query_name = ad_query_textfield_object('Prefix_Main')[0]
         query_name_object = al.ad_prefix_name(get_first_object)
         controller_shape = ad_action_ctrl_shape()
         if pm.textFieldGrp('Prefix_Main', q=True, enable=True):
             controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + ad_suffix_main())
-            return controller_shape_prefix_suffix
+            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
         else:
             controller_shape_prefix_suffix = pm.rename(controller_shape, query_name_object + ad_suffix_main())
-            return controller_shape_prefix_suffix
-
+            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
     else:
         for number, object in enumerate(selection):
             query_name = ad_query_textfield_object('Prefix_Main')[0]
@@ -396,32 +460,29 @@ def ad_prefix_suffix_selection(selection):
     return controller_shape_prefix_suffix_app
 
 
-def ad_prefix_suffix_main():
+def ad_ctrl_prefix_suffix_main():
+    controller_shape_prefix_suffix_app=[]
     if pm.textFieldGrp('Prefix_Main', q=True, enable=True):
         query_name = ad_query_textfield_object('Prefix_Main')[0]
         controller_shape = ad_action_ctrl_shape()
         suffix = ad_suffix_main()
-        controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + suffix)
+        # new_name =  query_name.replace(query_name, '%s%02d' % (query_name, +1))
 
-        # filtering_object = filter(None, controller_shape_prefix_current.split(query_name + suffix))
-        # if filtering_object:
-        #     controller_shape_prefix_suffix = pm.rename(controller_shape_prefix_current, '%s%02d%s' % (query_name, int(filtering_object[0]), suffix))
-        # else:
-        #     controller_shape_prefix_suffix = controller_shape_prefix_current
+        # query_object = pm.objExists('%s%02d%s' % (query_name, +1, suffix))
+
+        controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + suffix)
+        query_object = controller_shape_prefix_suffix
+        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
         pm.select(cl=1)
 
     else:
         controller_shape = ad_action_ctrl_shape()
-        # number = filter(None, controller_shape.split('curve'))[0]
-
         controller_shape_prefix_suffix =pm.rename(controller_shape, controller_shape + ad_suffix_main())
-
-        #replacing = controller_shape_prefix_suffix_crv.replace('curve', 'null')
-        #controller_shape_prefix_suffix= pm.rename(controller_shape_prefix_suffix_crv, replacing)
+        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
         pm.select(cl=1)
 
-    return controller_shape_prefix_suffix
+    return controller_shape_prefix_suffix_app
 
 def ad_query_textfield_object(object_define, *args):
     text = []
@@ -436,9 +497,9 @@ def ad_query_textfield_object(object_define, *args):
 
 def ad_query_list_textfield_object(object_define, *args):
     listing_object = []
-    if pm.textFieldButtonGrp(object_define, q=True, en=True):
-        if pm.textFieldButtonGrp(object_define, q=True, tx=True):
-            text = pm.textFieldButtonGrp(object_define, q=True, tx=True)
+    if pm.textFieldGrp(object_define, q=True, en=True):
+        if pm.textFieldGrp(object_define, q=True, tx=True):
+            text = pm.textFieldGrp(object_define, q=True, tx=True)
             listing = text.split(',')
             set_duplicate = set([x for x in listing if listing.count(x) > 1])
             if set_duplicate:
@@ -453,6 +514,7 @@ def ad_query_list_textfield_object(object_define, *args):
         pass
 
     return listing_object, object_define
+
 ###########
 
 def ad_replacing_controller_color(*args):

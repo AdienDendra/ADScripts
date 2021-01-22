@@ -1315,54 +1315,62 @@ def ad_name_query_shape(obj):
         return objs
 
 
-def ad_joint(snap=None, poly_constraint=False, delete_constraint=True):
-    sel = pm.ls(sl=1, fl=1)
-    jnts = []
-    if snap:
-        for number, i in enumerate(sel):
-            pm.select(cl=1)
-            obj_name = ad_name_query_shape(sel)
-            jnt = pm.joint()
-            name_jnt = '%s%02d_%s' % (ad_prefix_name(obj_name), number + 1, 'jnt')
-            rnm = pm.rename(jnt, name_jnt)
-            if poly_constraint:
-                pm.select(i, rnm, r=True)
-                pm.runtime.PointOnPolyConstraint()
-                if delete_constraint:
-                    cons = pm.listRelatives(rnm, ad=1)
-                    pm.delete(cons)
+# def ad_joint(snap=None, poly_constraint=False, delete_constraint=True):
+#     sel = pm.ls(sl=1, fl=1)
+#     jnts = []
+#     if snap:
+#         for number, i in enumerate(sel):
+#             pm.select(cl=1)
+#             obj_name = ad_name_query_shape(sel)
+#             jnt = pm.joint()
+#             name_jnt = '%s%02d_%s' % (ad_prefix_name(obj_name), number + 1, 'jnt')
+#             rnm = pm.rename(jnt, name_jnt)
+#             if poly_constraint:
+#                 pm.select(i, rnm, r=True)
+#                 pm.runtime.PointOnPolyConstraint()
+#                 if delete_constraint:
+#                     cons = pm.listRelatives(rnm, ad=1)
+#                     pm.delete(cons)
+#
+#             else:
+#                 cls = pm.cluster(i)
+#                 pm.parentConstraint(cls, rnm, mo=0)
+#                 jnts.append(rnm)
+#                 pm.delete(cls)
+#
+#     else:
+#         pm.select(cl=1)
+#         obj_name = ad_name_query_shape(sel)
+#         jnt = pm.joint()
+#         cls = pm.cluster(sel)
+#         name_jnt = '%s_%s' % (ad_prefix_name(obj_name), 'jnt')
+#         rnm = pm.rename(jnt, name_jnt)
+#         pm.parentConstraint(cls, rnm, mo=0)
+#         # pm.delete(cls)
+#         jnts.append(rnm)
+#
+#     return jnts
 
-            else:
-                cls = pm.cluster(i)
-                pm.parentConstraint(cls, rnm, mo=0)
-                jnts.append(rnm)
-                pm.delete(cls)
+def ad_display(object, target):
+    # create attr
+    pm.addAttr(object, ln='display', at='bool')
+    pm.setAttr(object+'.display', 1, e=True, k=True)
 
-    else:
-        pm.select(cl=1)
-        obj_name = ad_name_query_shape(sel)
-        jnt = pm.joint()
-        cls = pm.cluster(sel)
-        name_jnt = '%s_%s' % (ad_prefix_name(obj_name), 'jnt')
-        rnm = pm.rename(jnt, name_jnt)
-        pm.parentConstraint(cls, rnm, mo=0)
-        # pm.delete(cls)
-        jnts.append(rnm)
-
-    return jnts
+    pm.connectAttr(object+'.display', target+'.visibility')
 
 
 def ad_group_parent(groups, prefix, suffix, number='', side=''):
     # create group hierarchy
     grps = []
     for i in range(len(groups)):
-        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix, groups[i], number, side, 'grp')))
+        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix.title(), groups[i], number, side, 'grp')))
 
         if i > 0:
             pm.parent(grps[i], grps[i - 1])
             # parent_object(grps[i - 1], grps[i])
 
     return grps
+    # group_parent = ut.group_parent(groups_ctrl, '%s' % ut.prefix_name(prefix), suffix.title(), side=side)
 
 def ad_prefix_name(obj):
     if '_' in obj:
@@ -1372,12 +1380,12 @@ def ad_prefix_name(obj):
     else:
         return obj
 
-def ad_group_ctrl(prefix, suffix, groups_ctrl, ctrl, side=''):
-    rename_controller = pm.rename(ctrl, '%s_%s' % (ad_prefix_name(prefix), suffix))
-    group_parent = ad_group_parent(groups_ctrl, '%s' % ad_prefix_name(prefix), suffix.title(), side=side)
-
-    return {'grpPrnt': group_parent,
-            'renCtrl': rename_controller}
+# def ad_group_ctrl(prefix, suffix, groups_ctrl, ctrl, side=''):
+#     rename_controller = pm.rename(ctrl, '%s_%s' % (ad_prefix_name(prefix), suffix))
+#     group_parent = ad_group_parent(groups_ctrl, '%s' % ad_prefix_name(prefix), suffix.title(), side=side)
+#
+#     return {'grpPrnt': group_parent,
+#             'renCtrl': rename_controller}
 
 def ad_replacing_controller(list_controller):
     # list_controller = pm.ls(sl=1)
@@ -1533,16 +1541,18 @@ def ad_ctrl_color_list(color):
     if not selection:
         om.MGlobal.displayError("No curves selected")
         return False
-
-    for obj in selection:
-        shapeNodes = pm.listRelatives(obj, shapes=True)
-
-        for shape in shapeNodes:
-            try:
-                pm.setAttr("{0}.overrideEnabled".format(shape), True)
-                pm.setAttr("{0}.overrideColor".format(shape), color)
-            except:
-                om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
+    else:
+        for obj in selection:
+            shapeNodes = pm.listRelatives(obj, shapes=True)
+            if not pm.objectType(shapeNodes) == 'nurbsCurve':
+                om.MGlobal.displayWarning("%s is skipped. The object is not curve!" % shapeNodes)
+            else:
+                for shape in shapeNodes:
+                    try:
+                        pm.setAttr("{0}.overrideEnabled".format(shape), True)
+                        pm.setAttr("{0}.overrideColor".format(shape), color)
+                    except:
+                        om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
 
     return True
 
