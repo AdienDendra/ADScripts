@@ -48,9 +48,9 @@ def ad_show_ui():
 
 
                         with pm.rowColumnLayout(nc=6,
-                                                cs=[(3, 2 * percentage),(5, 2 * percentage)],
+                                                cs=[(3, 1 * percentage),(5, 2 * percentage)],
                                                 # co=(3 * percentage, 'both', 3 * percentage),
-                                                cw=[(1, 14 * percentage), (2, 11 * percentage), (3, 13 * percentage),
+                                                cw=[(1, 14 * percentage), (2, 12 * percentage), (3, 13 * percentage),
                                                     (4, 30.5 * percentage),(5, 14 * percentage),(6, 9 * percentage)]):
                             pm.checkBox('Side_1', label='Side 1:',
                                         cc=partial(ad_enabling_disabling_ui, ['Side_1_Txt'], 'L_'),
@@ -67,20 +67,18 @@ def ad_show_ui():
                                         value=False)
                             ad_defining_object_text_field(define_object='Side_2_Txt', tx='LFT', enable=False)
 
-                        with pm.rowColumnLayout(nc=5, cs=[(2, 1 * percentage),(3, 2 * percentage)],
-                                                cw=[(2, 16 * percentage)]):
-                            # pm.text('Suffix:')
-                            # ad_defining_object_text_field(define_object='Suffix_Main', tx='ctrl')
-                            pm.textFieldGrp('Suffix_Main', label='Suffix:', cal=(1, "right"),
-                                            cw2=(26 * percentage, 15 * percentage),
-                                            cat=[(1, 'right', 2), (2, 'both', 2)], tx='ctrl')
+                        with pm.rowColumnLayout(nc=4, cs=[(1, 27 * percentage), (3, 2 * percentage)],
+                                                cw=[(2, 19 * percentage),(4, 15 * percentage)]):
 
-                            pm.checkBox('Adding_Ctrl_Child', label='',
+                            pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
                                         cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
                                         value=False)
-                            pm.textFieldGrp('Suffix_Child_Ctrl', label='Add Child Ctrl:', cal=(1, "right"),
-                                            cw2=(21 * percentage, 24 * percentage),
-                                            cat=[(1, 'right', 2), (2, 'both', 2)], enable=False, tx='Child')
+                            pm.textField('Suffix_Child_Ctrl',
+                                            enable=False, tx='Child')
+
+                            pm.text('Suffix:')
+                            # ad_defining_object_text_field(define_object='Suffix_Main', tx='ctrl')
+                            pm.textField('Suffix_Main', tx='ctrl')
                         # pm.separator(h=5, st="in", w=95 * percentage)
 
                     with pm.frameLayout(collapsable=True, l='Additional', mh=1):
@@ -434,7 +432,7 @@ def ad_xform_position_rotation(origin, target):
             }
 
 def ad_suffix_main():
-    suffix = pm.textFieldGrp('Suffix_Main', q=True, tx=True)
+    suffix = pm.textField('Suffix_Main', q=True, tx=True)
     if suffix:
         add_space = '_'+ suffix.lower()
     else:
@@ -454,7 +452,6 @@ def ad_child_ctrl(main_controller):
             pm.parent(controller_child, controller)
             al.ad_display(object=object_main_shape, target=controller_child, long_name='childCtrl', default_vis=0,  k=False, cb=True)
             controller_childs.append(controller_child)
-
     else:
         pass
     # set color
@@ -516,9 +513,9 @@ def ad_main_ctrl_prefix_suffix():
 
 def ad_query_textfield_object(object_define, *args):
     text = []
-    if pm.textFieldGrp(object_define, q=True, en=True):
-        if pm.textFieldGrp(object_define, q=True, tx=True):
-            text = pm.textFieldGrp(object_define, q=True, tx=True)
+    if pm.textField(object_define, q=True, en=True):
+        if pm.textField(object_define, q=True, tx=True):
+            text = pm.textField(object_define, q=True, tx=True)
         else:
             pm.error("'%s' can not be empty!" % object_define)
     else:
