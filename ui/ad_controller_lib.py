@@ -1,4 +1,3 @@
-from functools import partial
 import pymel.core as pm
 import maya.OpenMaya as om
 import maya.cmds as mc
@@ -1309,47 +1308,95 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #         pm.setAttr('%s.xValue' % point, position[0]*size_obj )
 #         pm.setAttr('%s.yValue' % point, position[1]*size_obj )
 #         pm.setAttr('%s.zValue' % point, position[2]*size_obj )
-def ad_name_query_shape(obj):
-    for i in obj:
-        objs = i.split('.')[0]
-        return objs
+# def ad_name_query_shape(obj):
+#     for i in obj:
+#         objs = i.split('.')[0]
+#         return objs
+def ad_query_textfield_object(object_define, *args):
+    text = []
+    if pm.textField(object_define, q=True, en=True):
+        if pm.textField(object_define, q=True, tx=True):
+            text = pm.textField(object_define, q=True, tx=True)
+        else:
+            pm.error("'%s' can not be empty!" % object_define)
+    else:
+        pass
+    return text, object_define
+
+def ad_query_list_textfield_object(object_define, *args):
+    listing_object = []
+    if pm.textField(object_define, q=True, en=True):
+        if pm.textField(object_define, q=True, tx=True):
+            text = pm.textField(object_define, q=True, tx=True)
+            listing = text.split(',')
+            set_duplicate = set([x for x in listing if listing.count(x) > 1])
+            if set_duplicate:
+                for item in list(set_duplicate):
+                    pm.error("'%s' is duplicate object!" % item)
+            else:
+                for item in listing:
+                    listing_object.append(item)
+        else:
+            pm.error("'%s' can not be empty!" % object_define)
+    else:
+        pass
+
+    return listing_object, object_define
+
+def ad_prefix(prefix_text):
+    if pm.textField(prefix_text, q=True, en=True):
+        return ad_query_textfield_object(object_define=prefix_text)[0]
+    else:
+        return ''
+
+def ad_match_position_target_to_ctrl(selection, target, manipulated_position,
+                                     manipulated_rotation):
+    if '.' in str(selection[0]):
+        cls = pm.cluster(selection)
+        pm.pointConstraint(cls, target[0], mo=0)
+        pm.delete(cls)
+
+        # set attribute rotate jnt
+        if manipulated_rotation != (0, 0, 0):
+            pm.setAttr(target[0] + '.rotateX', list(manipulated_rotation)[0])
+            pm.setAttr(target[0] + '.rotateY', list(manipulated_rotation)[1])
+            pm.setAttr(target[0] + '.rotateZ', list(manipulated_rotation)[2])
+
+        # set attribute translate jnt
+        if manipulated_position != (0, 0, 0):
+            pm.setAttr(target[0] + '.translateX', list(manipulated_position)[0])
+            pm.setAttr(target[0] + '.translateY', list(manipulated_position)[1])
+            pm.setAttr(target[0] + '.translateZ', list(manipulated_position)[2])
+    else:
+        for object, tgt in zip(selection, target):
+            # query and match
+            ad_xform_position_rotation(origin=object, target=tgt)
+
+def ad_xform_position_rotation(origin, target):
+    origin_position = pm.xform(origin, ws=True, q=True, t=True)
+    origin_rotation = pm.xform(origin, ws=True, q=True, ro=True)
+
+    # match position
+    target_position = pm.xform(target, ws=True, t=origin_position)
+    target_rotation = pm.xform(target, ws=True, ro=origin_rotation)
+
+    return {'origin_position': origin_position,
+            'origin_rotation': origin_rotation,
+            'target_position': target_position,
+            'target_rotation': target_rotation
+            }
 
 
-# def ad_joint(snap=None, poly_constraint=False, delete_constraint=True):
-#     sel = pm.ls(sl=1, fl=1)
-#     jnts = []
-#     if snap:
-#         for number, i in enumerate(sel):
-#             pm.select(cl=1)
-#             obj_name = ad_name_query_shape(sel)
-#             jnt = pm.joint()
-#             name_jnt = '%s%02d_%s' % (ad_prefix_name(obj_name), number + 1, 'jnt')
-#             rnm = pm.rename(jnt, name_jnt)
-#             if poly_constraint:
-#                 pm.select(i, rnm, r=True)
-#                 pm.runtime.PointOnPolyConstraint()
-#                 if delete_constraint:
-#                     cons = pm.listRelatives(rnm, ad=1)
-#                     pm.delete(cons)
-#
-#             else:
-#                 cls = pm.cluster(i)
-#                 pm.parentConstraint(cls, rnm, mo=0)
-#                 jnts.append(rnm)
-#                 pm.delete(cls)
-#
-#     else:
-#         pm.select(cl=1)
-#         obj_name = ad_name_query_shape(sel)
-#         jnt = pm.joint()
-#         cls = pm.cluster(sel)
-#         name_jnt = '%s_%s' % (ad_prefix_name(obj_name), 'jnt')
-#         rnm = pm.rename(jnt, name_jnt)
-#         pm.parentConstraint(cls, rnm, mo=0)
-#         # pm.delete(cls)
-#         jnts.append(rnm)
-#
-#     return jnts
+def ad_main_name(main_name):
+    if '_' in main_name:
+        get_prefix_name = main_name.split('_')[:-1]
+        joining = '_'.join(get_prefix_name)
+        return joining
+    else:
+        return main_name
+
+def ad_defining_object_text_field(define_object, tx='', *args, **kwargs):
+    pm.textField(define_object, tx=tx, **kwargs)
 
 def ad_display(object, target, long_name='display', default_vis=1, k=True, cb=False):
     # create attr
@@ -1359,54 +1406,29 @@ def ad_display(object, target, long_name='display', default_vis=1, k=True, cb=Fa
     pm.connectAttr('%s.%s' % (object,long_name), target+'.visibility')
 
 
-def ad_group_parent(groups, prefix, suffix, side=''):
+def ad_group_parent(groups, name, suffix, prefix_2, prefix_number):
     # create group hierarchy
     grps = []
     for number, group in enumerate(groups):
-        grps.append(pm.createNode('transform', n="%s%s%s%s_%s" % (prefix, group.title(), suffix.title(), side, 'grp')))
+        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (name, group.title(), suffix.title(), prefix_number, prefix_2, 'grp')))
 
         if number > 0:
             pm.parent(grps[number], grps[number - 1])
-    # for i in range(len(groups)):
-    #     grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (prefix, suffix.title(), groups[i], number, side, 'grp')))
-    #
-    #     if i > 0:
-    #         pm.parent(grps[i], grps[i - 1])
-            # parent_object(grps[i - 1], grps[i])
 
     return grps
-    # group_parent = ut.group_parent(groups_ctrl, '%s' % ut.prefix_name(prefix), suffix.title(), side=side)
 
-def ad_prefix_name(obj):
-    if '_' in obj:
-        get_prefix_name = obj.split('_')[:-1]
-        joining = '_'.join(get_prefix_name)
-        return joining
-    else:
-        return obj
 
-# def ad_group_ctrl(prefix, suffix, groups_ctrl, ctrl, side=''):
-#     rename_controller = pm.rename(ctrl, '%s_%s' % (ad_prefix_name(prefix), suffix))
-#     group_parent = ad_group_parent(groups_ctrl, '%s' % ad_prefix_name(prefix), suffix.title(), side=side)
-#
-#     return {'grpPrnt': group_parent,
-#             'renCtrl': rename_controller}
 
 def ad_replacing_controller(list_controller):
-    # list_controller = pm.ls(sl=1)
-    # if not list_controller:
-    #     om.MGlobal.displayError("No curves selected, you have to select origin and target curve!")
-    #     return False
-    # else:
     instance_controller = list_controller.pop(0)
     for target in list_controller:
         target_shapes = pm.listRelatives(target, s=1)
         instance_query_shapes = pm.listRelatives(instance_controller, s=1)
-        if not pm.objectType(target_shapes) == 'nurbsCurve' :
-            om.MGlobal.displayWarning("%s is not curve type object!" % target)
+        if not pm.objectType(target_shapes[0]) == 'nurbsCurve' :
+            om.MGlobal.displayWarning("%s is not curve type object! Replacing is skipped." % target)
 
-        elif not pm.objectType(instance_query_shapes) == 'nurbsCurve':
-            om.MGlobal.displayWarning("%s is not curve type object!" % instance_query_shapes)
+        elif not pm.objectType(instance_query_shapes[0]) == 'nurbsCurve':
+            om.MGlobal.displayError("%s is not curve type object!" % instance_controller)
 
         else:
             instance_shapes = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
@@ -1450,7 +1472,6 @@ def ad_replacing_controller(list_controller):
                     pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), value_attr)
                     pm.setAttr('%s.%s' % (instance_shapes, attr_tgt_shape), e=True, k=keyable, cb=channel_box,
                                l=lock)
-
             try:
                 # connection replace to instance
                 list_connections =  pm.listConnections(target_shapes, c=True, plugs=True)
@@ -1491,13 +1512,13 @@ def ad_replacing_color(source, target):
 def ad_scaling_controller(size_obj, ctrl_shape):
     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
     mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
-
-def ad_scale_controller(delta_value):
-    objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
-    for obj in objList:
-        currentScale = obj.scaleX.get()
-        obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
-        pm.makeIdentity(apply=True, s=1, n=0)
+#
+# def ad_scale_controller(delta_value):
+#     objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
+#     for obj in objList:
+#         currentScale = obj.scaleX.get()
+#         obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
+#         pm.makeIdentity(apply=True, s=1, n=0)
 
 def ad_attr_value(channel):
     attr_lock_list = []
@@ -1548,17 +1569,16 @@ def ad_ctrl_color_list(color):
         return False
     else:
         for obj in selection:
-            shapeNodes = pm.listRelatives(obj, shapes=True)
+            shapeNodes = pm.listRelatives(obj, shapes=True)[0]
+            print shapeNodes
             if not pm.objectType(shapeNodes) == 'nurbsCurve':
                 pass
             else:
-                for shape in shapeNodes:
-                    try:
-                        pm.setAttr("{0}.overrideEnabled".format(shape), True)
-                        pm.setAttr("{0}.overrideColor".format(shape), color)
-                    except:
-                        om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
-
+                try:
+                    pm.setAttr("{0}.overrideEnabled".format(shapeNodes), True)
+                    pm.setAttr("{0}.overrideColor".format(shapeNodes), color)
+                except:
+                    om.MGlobal.displayWarning("Failed to override color: {0}".format(shapeNodes))
     return True
 
 def ad_ctrl_color(ctrl, color):

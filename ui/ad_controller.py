@@ -1,4 +1,6 @@
+import re
 from functools import partial
+from string import digits
 
 import maya.OpenMaya as om
 import pymel.core as pm
@@ -22,67 +24,44 @@ def ad_show_ui():
         if pm.window(shape_controller, exists=True):
             pm.deleteUI(shape_controller)
     with pm.window(adien_controller, title='AD Controller', width=layout, height=200):
-        # with pm.tabLayout('tab', width=layout * 1.05, height=400):
-        with pm.tabLayout('tab', width=layout*1.01, height=200):
+        with pm.tabLayout('tab', width=layout * 1.01, height=200):
             with pm.scrollLayout('Create Controller', p='tab'):
-                with pm.columnLayout('Create_Controller_Column', w=layout,
-                                     co=('both', 1 * percentage),
-                                     adj=1):
-                    # pm.separator(h=5, st="in", w=90 * percentage)
+                with pm.columnLayout('Create_Controller_Column', w=layout, co=('both', 1 * percentage), adj=1):
+                    # DEFINE
                     with pm.frameLayout(collapsable=True, l='Define', mh=1):
-                        with pm.rowColumnLayout(nc=2, rowSpacing=(2, 1 * percentage),
-                                                co=(1 * percentage, 'both', 1 * percentage),
-                                                cw=[(1, 5 * percentage), (2, 96 * percentage)]):
-                            # pm.checkBox(label='',
-                            #             cc=partial(ad_enabling_disabling_ui, ['Prefix_Main'], ''),
-                            #             value=False)
-                            # ad_defining_object_text_field_no_button(define_object='Prefix_Main', label="Prefix Main:",
-                            #                                         add_feature=True, enable=False)
-                            pm.checkBox(label='',
+                        with pm.rowColumnLayout(nc=2, cw=[(2, 72 * percentage)]):
+                            pm.checkBox(label='Parent Group:',
                                         cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main,Offset'),
                                         value=True)
-                            ad_defining_object_text_field_no_button(define_object='Parent_Group_Name',
-                                                                    label="Parent Group:",
-                                                                    add_feature=True, tx='Main,Offset', enable=True)
+                            al.ad_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
+                                                             enable=True)
 
+                        with pm.rowColumnLayout(nc=6, cs=[(3, 1 * percentage), (5, 2 * percentage)],
+                                                cw=[(1, 15 * percentage), (2, 8 * percentage), (3, 13 * percentage),
+                                                    (4, 32 * percentage), (5, 15 * percentage), (6, 9.5 * percentage)]):
+                            pm.checkBox('Prefix_1', label='Prefix 1:', cc=partial(ad_enabling_disabling_ui,
+                                                                                  ['Prefix_1_Text'], 'L_'), value=False)
+                            al.ad_defining_object_text_field(define_object='Prefix_1_Text', tx='L_', enable=False)
 
+                            pm.checkBox('Name_CheckBox', label='Name:', cc=partial(ad_enabling_disabling_ui,
+                                                                                   ['Name_Text'], ''), value=False)
+                            al.ad_defining_object_text_field(define_object='Name_Text', enable=False)
+                            pm.checkBox('Prefix_2', label='Prefix 2:',
+                                        cc=partial(ad_enabling_disabling_ui, ['Prefix_2_Text'], 'LFT'), value=False)
+                            al.ad_defining_object_text_field(define_object='Prefix_2_Text', tx='LFT', enable=False)
 
-                        with pm.rowColumnLayout(nc=6,
-                                                cs=[(3, 1 * percentage),(5, 2 * percentage)],
-                                                # co=(3 * percentage, 'both', 3 * percentage),
-                                                cw=[(1, 14 * percentage), (2, 12 * percentage), (3, 13 * percentage),
-                                                    (4, 30.5 * percentage),(5, 14 * percentage),(6, 9 * percentage)]):
-                            pm.checkBox('Side_1', label='Side 1:',
-                                        cc=partial(ad_enabling_disabling_ui, ['Side_1_Txt'], 'L_'),
-                                        value=False)
-                            ad_defining_object_text_field(define_object='Side_1_Txt', tx='L_', enable=False)
-
-                            pm.checkBox('Prefix_Main', label='Prefix:',
-                                        cc=partial(ad_enabling_disabling_ui, ['Prefix_Main_Txt'], ''),
-                                        value=False)
-                            ad_defining_object_text_field(define_object='Prefix_Main_Txt',
-                                                                   enable=False)
-                            pm.checkBox('Side_2', label='Side 2:',
-                                        cc=partial(ad_enabling_disabling_ui, ['Side_2_Txt'], 'LFT'),
-                                        value=False)
-                            ad_defining_object_text_field(define_object='Side_2_Txt', tx='LFT', enable=False)
-
-                        with pm.rowColumnLayout(nc=4, cs=[(1, 27 * percentage), (3, 2 * percentage)],
-                                                cw=[(2, 19 * percentage),(4, 15 * percentage)]):
-
+                        with pm.rowColumnLayout(nc=4, cs=[(1, 24 * percentage), (3, 2 * percentage)],
+                                                cw=[(2, 20.5 * percentage), (4, 16.5 * percentage)]):
                             pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
                                         cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
                                         value=False)
-                            pm.textField('Suffix_Child_Ctrl',
-                                            enable=False, tx='Child')
-
+                            pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
                             pm.text('Suffix:')
-                            # ad_defining_object_text_field(define_object='Suffix_Main', tx='ctrl')
                             pm.textField('Suffix_Main', tx='ctrl')
-                        # pm.separator(h=5, st="in", w=95 * percentage)
 
+                    # ADDITIONAL
                     with pm.frameLayout(collapsable=True, l='Additional', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(26 * percentage, 50 * percentage), cl2=('right', 'left'),
+                        with pm.rowLayout(nc=2, cw2=(22.75 * percentage, 50 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('')
                             with pm.columnLayout():
@@ -90,59 +69,58 @@ def ad_show_ui():
                                             value=False)
                                 pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
 
-
                     # pm.separator(h=5, st="in", w=95 * percentage)
+                    # CONNECTION
                     with pm.frameLayout(collapsable=True, l='Connection', mh=1):
-                        # CONNECTION
-                        with pm.rowLayout('Connection', nc=3, cw3=(26 * percentage, 29 * percentage, 40 * percentage
-                                                                   ), cl3=('right', 'right', 'right'),
+                        with pm.rowLayout('Connection', nc=3,
+                                          cw3=(22.75 * percentage, 30 * percentage, 40 * percentage),
+                                          cl3=('right', 'right', 'right'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                        (3, 'both', 0.5 * percentage),
-                                                        ], rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
+                                                        (3, 'both', 0.5 * percentage), ],
+                                          rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
                             pm.text('')
                             ad_channelbox_constraint_connection()
                             ad_channelbox_direct_connection()
-                        with pm.rowLayout(nc=3, cw3=(26 * percentage, 34.5 * percentage, 34 * percentage
-                                                     ), cl3=('right', 'right', 'right'),
-                                          columnAttach=[(2, 'both', 0.15 * percentage),
-                                                        (3, 'both', 0.15 * percentage)]):
-                            pm.text(label='')
+                        with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+                                          cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
+                                                                                         (3, 'both',
+                                                                                          0.15 * percentage)]):
+                            pm.text('')
                             pm.button("List_Connection", l="List Connection", c='')
                             pm.button('Create_Connection', l="Create Connection", c='')
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Color', mh=1):
-                        with pm.rowLayout('Palette_Port', nc=2, cw2=(26 * percentage, 69 * percentage),
+                        with pm.rowLayout('Palette_Port', nc=2, cw2=(23.5 * percentage, 69 * percentage),
                                           cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
-                                          ):
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('')
                             ad_color_index()
 
-                        with pm.rowLayout(nc=3, cw3=(26 * percentage, 34.5 * percentage, 34 * percentage
-                                                     ), cl3=('right', 'right', 'right'),
-                                          columnAttach=[(2, 'both', 0.15 * percentage),
-                                                        (3, 'both', 0.15 * percentage)]):
+                        with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+                                          cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
+                                                                                         (3, 'both',
+                                                                                          0.15 * percentage)]):
                             pm.text(label='')
                             pm.button('Reset_Color', l="Reset Color", c=partial(ad_reset_color_button))
                             pm.button("Replace_Color", l="Replace Color", c=partial(ad_replace_color_button))
                     # pm.separator(h=5, st="in", w=90 * percentage)
 
                     with pm.frameLayout(collapsable=True, l='Channel', mh=1):
-                        with pm.rowLayout(nc=4, cw4=(26 * percentage, 29 * percentage, 23 * percentage, 22 * percentage
-                                                     ), cl4=('right', 'left', 'left', 'left'),
+                        with pm.rowLayout(nc=4,
+                                          cw4=(22.75 * percentage, 30 * percentage, 25 * percentage, 22 * percentage),
+                                          cl4=('right', 'left', 'left', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
-                                                        (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage),
-                                                        ],
+                                                        (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage), ],
                                           rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
                             pm.text('')
                             ad_channelbox_translation()
                             ad_channelbox_rotation()
                             ad_channelbox_scale()
-                        with pm.rowLayout(nc=3, cw3=(26 * percentage, 34.5 * percentage, 34 * percentage
-                                                     ), cl3=('right', 'right', 'right'),
-                                          columnAttach=[(2, 'both', 0.15 * percentage),
-                                                        (3, 'both', 0.15 * percentage)]):
+                        with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+                                          cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
+                                                                                         (3, 'both',
+                                                                                          0.15 * percentage)]):
                             pm.text(label='')
                             pm.button("Hide_Unhide_Channel", l="Hide/Unhide", c=partial(ad_hide_unhide_button))
                             pm.button('Lock_Unlock_Channel', l="Lock/Unlock",
@@ -150,23 +128,21 @@ def ad_show_ui():
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Resize', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
-                                          ):
+                        with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 72 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage),
+                                                        (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
-
                             pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5, step=0.001,
                                            dragCommand=partial(ad_controller_resize_slider),
-                                           changeCommand=partial(ad_controller_resize_reset)
-                                           )
-                        with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                                           changeCommand=partial(ad_controller_resize_reset))
+                        with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 71 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text('')
                             pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                       c=partial(ad_select_all_ad_controller_button))
 
                     with pm.frameLayout(collapsable=True, l='Shape', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
+                        with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 69 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)]):
                             pm.text('')
                             with pm.rowColumnLayout(nc=8, cs=[(2, 0.25 * percentage), (3, 0.25 * percentage),
@@ -176,281 +152,221 @@ def ad_show_ui():
                                 icon_radio_control = pm.iconTextRadioCollection()
                                 circle = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circle.png',
                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(1))
-                                locator = pm.iconTextRadioButton(st='iconOnly',
-                                                                 image='ad_icons/locator.png',
-                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(2))
-                                cube = pm.iconTextRadioButton(st='iconOnly',
-                                                              image='ad_icons/cube.png',
-                                                              onCommand=lambda x: ad_on_selection_ctrl_shape(3))
-                                circlehalf = pm.iconTextRadioButton(st='iconOnly',
-                                                                    image='ad_icons/circlehalf.png',
-                                                                    onCommand=lambda x: ad_on_selection_ctrl_shape(4))
-                                square = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/square.png',
-                                                                onCommand=lambda x: ad_on_selection_ctrl_shape(5))
-
-                                joint = pm.iconTextRadioButton(st='iconOnly',
-                                                               image='ad_icons/joint.png',
-                                                               onCommand=lambda x: ad_on_selection_ctrl_shape(6))
-
-                                capsule = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/capsule.png',
-                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(7))
-
-                                continues = pm.iconTextButton(st='iconOnly',
-                                                              hi='ad_icons/continue_hi.png',
-                                                              image='ad_icons/continue.png',
-                                                              c=partial(ad_shape_controller_ui, circle))
+                                # locator
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/locator.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(2))
+                                # cube
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/cube.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(3))
+                                # circlehalf
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circlehalf.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(4))
+                                # square
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/square.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(5))
+                                # joint
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/joint.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(6))
+                                # capsule
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/capsule.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(7))
+                                # continues
+                                pm.iconTextButton(st='iconOnly', hi='ad_icons/continue_hi.png',
+                                                  image='ad_icons/continue.png',
+                                                  c=partial(ad_shape_controller_ui, circle))
 
                                 pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
                         with pm.columnLayout():
-                            with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
+                            with pm.rowLayout(nc=2, cw2=(22.75 * percentage, 72 * percentage), cl2=('right', 'left'),
                                               columnAttach=[(1, 'both', 0.5 * percentage),
-                                                            (2, 'both', 0.5 * percentage)]
-                                              ):
+                                                            (2, 'both', 0.5 * percentage)]):
                                 pm.text('')
-                                with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
+                                with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 23.5 * percentage, 23.5 * percentage),
                                                   cl3=('center', 'center', 'center'),
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)]):
                                     pm.button("Replace_Controller", l="Replace Ctrl",
-                                              c=partial(ad_replacing_controller_color))
-
+                                              c=partial(ad_replacing_controller_button))
                                     pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
                                               c=partial(ad_tagging_untagging_button, True))
                                     pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
                                               c=partial(ad_tagging_untagging_button, False))
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
-
-                    # pm.separator(h=5, st="in", w=90 * percentage)
                     pm.separator(h=15, st="in", w=90 * percentage)
-
-                    with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage
-                                                 ), cl2=('right', 'right'),
-                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)
-                                                    ]):
+                    with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 71 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                         pm.text(label='')
                         pm.button('Create_Controller', l="Create Controller", bgc=(0, 0.5, 0),
                                   c=partial(ad_create_controller_button))
             with pm.scrollLayout('Controller Utilities', p='tab'):
-                with pm.columnLayout('Controller_Utilities_Column', w=layout,
-                                     co=('both', 1 * percentage),
-                                     adj=1):
+                with pm.columnLayout('Controller_Utilities_Column', w=layout, co=('both', 1 * percentage), adj=1):
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Save/Load', mh=1):
                         with pm.columnLayout():
-                            with pm.rowLayout(nc=1,
-                                              cw=(1, 95 * percentage), cal=(1, 'right'),
-                                              columnAttach=[(1, 'both', 0.25 * percentage),
-                                                            ],
-                                              ):
+                            with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
+                                              columnAttach=[(1, 'both', 0.25 * percentage), ], ):
                                 pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                           c=partial(ad_select_all_ad_controller_button), bgc=(0.0, 0.5, 0.0))
 
-                            with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage
-                                                         ), cl2=('right', 'right'),
+                            with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage), cl2=('right', 'right'),
                                               columnAttach=[(1, 'both', 0.15 * percentage),
                                                             (2, 'both', 0.15 * percentage)]):
                                 pm.button("Save", l="Save", c='', bgc=(0.5, 0.0, 0.0))
                                 pm.button('Load', l="Load", c='', bgc=(0.0, 0.0, 0.5))
                     with pm.frameLayout(collapsable=True, l='Rotate', mh=1):
-                        # with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                        #                   columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)],
-                        #                   ):
-                        #     pm.text(label='Resize:')
-                        #
-                        #     pm.floatSlider('Resize', min=-10.0, value=0.0, max=10.0, step=0.1,
-                        #                    dragCommand=partial(ad_controller_resize_slider),
-                        #                    changeCommand=partial(ad_controller_resize_reset)
-                        #
-                        #                    )
-
                         with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]
-                                          ):
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('Rotate:')
                             with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
                                               cl3=('center', 'center', 'center'),
                                               columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
-                                                            (3, 'both', 0 * percentage)]
-                                              ):
+                                                            (3, 'both', 0 * percentage)]):
                                 pm.button("Rotate_X", l="X", c='', bgc=(0.5, 0, 0))
                                 pm.button("Rotate_Y", l="Y", c='', bgc=(0, 0.5, 0))
                                 pm.button('Rotate_Z', l="Z", c='', bgc=(0, 0, 0.5))
                         # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Mirror', mh=1):
-                        # with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
-                        #                   columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)],
-                        #                   ):
-                        #     pm.text(label='Mirror Controller:')
-                        # with pm.columnLayout():
-                        with pm.rowColumnLayout(nc=3, cw=[(1, 42 * percentage), (2, 11 * percentage),
-                                                          (3, 42 * percentage)],
+                        with pm.rowColumnLayout(nc=3,
+                                                cw=[(1, 42 * percentage), (2, 11 * percentage), (3, 42 * percentage)],
                                                 cal=[(1, 'center'), (2, 'center'), (3, 'center')],
-                                                columnAttach=[(1, 'both', 0 * percentage),
-                                                              (2, 'both', 0 * percentage),
+                                                columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                               (3, 'both', 0 * percentage)]):
                             pm.text(label='From:')
                             pm.text(label='')
                             pm.text(label='To:')
 
                             pm.textFieldButtonGrp('From', label='', cal=(1, "right"),
-                                                  cw3=(0 * percentage, 33 * percentage, 7 * percentage),
-                                                  bl="<<", columnAttach=[(1, 'both', 0 * percentage),
-                                                                         (2, 'both', 0 * percentage),
-                                                                         (3, 'both', 0 * percentage)],
+                                                  cw3=(0 * percentage, 33 * percentage, 7 * percentage), bl="<<",
+                                                  columnAttach=[(1, 'both', 0 * percentage),
+                                                                (2, 'both', 0 * percentage),
+                                                                (3, 'both', 0 * percentage)],
                                                   bc=partial(ad_adding_object_sel_to_textfield, 'From'))
                             pm.text(label='>>>')
                             pm.textFieldButtonGrp('To', label='', cal=(1, "right"),
                                                   cw3=(0 * percentage, 33 * percentage, 7 * percentage),
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
-                                                                (3, 'both', 0 * percentage)],
-                                                  bl="<<",
+                                                                (3, 'both', 0 * percentage)], bl="<<",
                                                   bc=partial(ad_adding_object_sel_to_textfield, 'To'))
-
-                        with pm.rowLayout(nc=3, cw3=(31.6 * percentage, 31.6 * percentage, 31.6 * percentage
-                                                     ), cl3=('center', 'center', 'center'),
-                                          columnAttach=[(1, 'both', 0 * percentage),
-                                                        (2, 'both', 0 * percentage),
-                                                        (3, 'both', 0 * percentage)]
-                                          ):
+                        with pm.rowLayout(nc=3, cw3=(31.6 * percentage, 31.6 * percentage, 31.6 * percentage),
+                                          cl3=('center', 'center', 'center'),
+                                          columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
+                                                        (3, 'both', 0 * percentage)]):
                             pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
                             pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
                             pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
 
     pm.showWindow()
 
+
 def ad_create_controller_button(*args):
     select = pm.ls(sl=1)
 
+    # create controller
     if select:
+        # query value of manipulation position
+        manipulated_position = pm.manipPivot(q=True, p=True)[0]
+        # query value of manipulation rotation
+        manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
+
         # create controller shape
         controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix_selection(select)
         # match position
-        ad_match_position_target_to_ctrl(selection=select, target=controller_shape_prefix_suffix)
-
+        al.ad_match_position_target_to_ctrl(selection=select, target=controller_shape_prefix_suffix[0],
+                                            manipulated_position=manipulated_position,
+                                            manipulated_rotation=manipulated_rotation)
     else:
         # create controller without selection
         controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix()
 
     # grouping controller
-    if pm.textFieldGrp('Parent_Group_Name', q=True, enable=True):
-        ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix)
+    if pm.textField('Parent_Group_Name', q=True, enable=True):
+        ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1],
+                              prefix_2=al.ad_prefix('Prefix_2_Text'))
 
     # add visibility to target
     if select:
-        ad_visibility_target(object=controller_shape_prefix_suffix, target=select)
-
-    print controller_shape_prefix_suffix
+        ad_visibility_target(object=controller_shape_prefix_suffix[0], target=select)
 
     # add child controller
-    ad_child_ctrl(main_controller=controller_shape_prefix_suffix)
+    ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
 
     # controller color
-    al.ad_ctrl_color(ctrl=controller_shape_prefix_suffix, color=ad_set_color())
+    al.ad_ctrl_color(ctrl=controller_shape_prefix_suffix[0], color=ad_set_color())
 
     # controller hide and unlock
-    ad_hide_and_lock(controller_shape_prefix_suffix, value=True)
+    ad_hide_and_lock(controller_shape_prefix_suffix[0], value=True)
+
 
 def ad_visibility_target(object, target):
     check_box = pm.checkBox('Target_Visibility', q=True, value=True)
     if check_box:
-        for item, tgt in zip (object, target):
+        for item, tgt in zip(object, target):
             al.ad_display(object=item, target=tgt)
     else:
         pass
 
-def ad_main_ctrl_grouping(controller):
-    grouping_controller=[]
-    for object_controller in controller:
-        group_controller = al.ad_group_parent(groups= ad_query_list_textfield_object('Parent_Group_Name')[0],
-                           prefix=al.ad_prefix_name(object_controller),
-                           suffix=ad_query_textfield_object('Suffix_Main')[0])
 
-        ad_xform_position_rotation(origin=object_controller, target=group_controller[0])
+def ad_get_number_main_name(main_name):
+    try:
+        patterns = [r'\d+']
+        name_number = al.ad_main_name(main_name)
+        for p in patterns:
+            name_number = re.findall(p, name_number)[0]
+    except:
+        name_number = ''
+
+    # get the prefix without number
+    ad_main_name = str(al.ad_main_name(main_name)).translate(None, digits)
+
+    return name_number, ad_main_name
+
+
+def ad_main_ctrl_grouping(controller, main_name, prefix_2):
+    grouping_controller = []
+    for object_controller, name in zip(controller, main_name):
+        ad_main_name = ad_get_number_main_name(name)
+        group_controller = al.ad_group_parent(groups=al.ad_query_list_textfield_object('Parent_Group_Name')[0],
+                                              name=ad_main_name[1],
+                                              suffix=al.ad_query_textfield_object('Suffix_Main')[0],
+                                              prefix_number=ad_main_name[0], prefix_2=prefix_2)
+
+        al.ad_xform_position_rotation(origin=object_controller, target=group_controller[0])
         pm.parent(object_controller, group_controller[-1])
         grouping_controller.append(group_controller)
         pm.select(cl=1)
 
     return grouping_controller
 
-def ad_match_position_target_to_ctrl(selection, target):
-    if '.' in str(selection[0]):
-        sel = pm.ls(sl=1, fl=1)
-
-        # query value of manipulation position
-        manipulated_position = pm.manipPivot(q=True, p=True)[0]
-
-        # query value of manipulation rotation
-        manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
-        # print manipulated_position
-
-        pm.select(cl=1)
-        obj_name = al.ad_name_query_shape(sel)
-        jnt = pm.joint()
-        cls = pm.cluster(selection)
-        name_jnt = '%s_%s' % (al.ad_prefix_name(obj_name), 'jnt')
-        jnt_position = pm.rename(jnt, name_jnt)
-        pm.parentConstraint(cls, jnt_position, mo=0)
-        pm.delete(cls)
-
-        # set attribute rotate jnt
-        if manipulated_rotation != (0, 0, 0):
-            pm.setAttr(jnt_position + '.rotateX', list(manipulated_rotation)[0])
-            pm.setAttr(jnt_position + '.rotateY', list(manipulated_rotation)[1])
-            pm.setAttr(jnt_position + '.rotateZ', list(manipulated_rotation)[2])
-
-        # set attribute translate jnt
-        if manipulated_position != (0, 0, 0):
-            pm.setAttr(jnt_position + '.translateX', list(manipulated_position)[0])
-            pm.setAttr(jnt_position + '.translateY', list(manipulated_position)[1])
-            pm.setAttr(jnt_position + '.translateZ', list(manipulated_position)[2])
-
-        # query and match
-        ad_xform_position_rotation(origin=jnt_position, target=target)
-
-        pm.delete(jnt_position)
-
-    else:
-        for object, tgt in zip (selection, target):
-            # query and match
-            ad_xform_position_rotation(origin=object, target=tgt)
-
-def ad_xform_position_rotation(origin, target):
-    origin_position = pm.xform(origin, ws=True, q=True, t=True)
-    origin_rotation = pm.xform(origin, ws=True, q=True, ro=True)
-
-    # match position
-    target_position = pm.xform(target, ws=True, t=origin_position)
-    target_rotation = pm.xform(target, ws=True, ro=origin_rotation)
-
-    return {'origin_position': origin_position,
-            'origin_rotation': origin_rotation,
-            'target_position': target_position,
-            'target_rotation':target_rotation
-            }
 
 def ad_suffix_main():
     suffix = pm.textField('Suffix_Main', q=True, tx=True)
     if suffix:
-        add_space = '_'+ suffix.lower()
+        add_space = '_' + suffix.lower()
     else:
-        add_space = ''
+        add_space = ' '
     return add_space
 
-def ad_child_ctrl(main_controller):
-    controller_childs=[]
+
+def ad_child_ctrl(main_controller, main_name):
+    controller_childs = []
     check_box = pm.checkBox('Adding_Ctrl_Child', q=True, value=True)
-    query_name = ad_query_textfield_object('Suffix_Child_Ctrl')[0]
+    query_name = al.ad_query_textfield_object('Suffix_Child_Ctrl')[0]
     if check_box:
-        for controller in main_controller:
+        for controller, name in zip(main_controller, main_name):
+            ad_main_name = ad_get_number_main_name(name)
+
             object_main_shape = pm.listRelatives(controller, shapes=1)[0]
             controller_shape = ad_controller_shape(size_ctrl=0.8)
-            controller_child = pm.rename(controller_shape, al.ad_prefix_name(controller) + query_name.title() + ad_suffix_main())
-            ad_xform_position_rotation(origin=controller, target=controller_child)
+            controller_child = pm.rename(controller_shape,
+                                         ad_main_name[1] + query_name.title() + ad_main_name[0] + al.ad_prefix(
+                                             'Prefix_2_Text') + ad_suffix_main())
+            al.ad_xform_position_rotation(origin=controller, target=controller_child)
             pm.parent(controller_child, controller)
-            al.ad_display(object=object_main_shape, target=controller_child, long_name='childCtrl', default_vis=0,  k=False, cb=True)
+            al.ad_display(object=object_main_shape, target=controller_child, long_name='childCtrl', default_vis=0,
+                          k=False, cb=True)
             controller_childs.append(controller_child)
     else:
         pass
@@ -459,99 +375,114 @@ def ad_child_ctrl(main_controller):
 
     return controller_childs
 
+
 def ad_main_ctrl_prefix_suffix_selection(selection):
-    controller_shape_prefix_suffix_app=[]
+    controller_shape_prefix_suffix_app = []
+    main_name_for_grp = []
+
+    suffix = ad_suffix_main()
+    al.ad_query_textfield_object(object_define='Suffix_Main')
+    al.ad_query_textfield_object(object_define='Suffix_Child_Ctrl')
+    al.ad_query_list_textfield_object(object_define='Parent_Group_Name')
+
     if '.' in str(selection[0]):
-        # pass
         get_first_object = selection[0].split('Shape')[0]
-        query_name = ad_query_textfield_object('Prefix_Main_Txt')[0]
-        query_name_object = al.ad_prefix_name(get_first_object)
+        query_name = al.ad_query_textfield_object('Name_Text')[0]
+        query_name_object = al.ad_main_name(get_first_object)
         controller_shape = ad_controller_shape(size_ctrl=1.0)
-        if pm.textField('Prefix_Main_Txt', q=True, enable=True):
-            controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + ad_suffix_main())
+        if pm.textField('Name_Text', q=True, enable=True):
+            main_name_for_grp.append(al.ad_prefix('Prefix_1_Text') + query_name + suffix)
+            controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                       al.ad_prefix('Prefix_1_Text') + query_name + al.ad_prefix(
+                                                           'Prefix_2_Text') + suffix)
             controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+
         else:
-            controller_shape_prefix_suffix = pm.rename(controller_shape, query_name_object + ad_suffix_main())
+            main_name_for_grp.append(al.ad_prefix('Prefix_1_Text') + query_name_object + suffix)
+            controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                       al.ad_prefix('Prefix_1_Text') + query_name_object + al.ad_prefix(
+                                                           'Prefix_2_Text') + suffix)
             controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
     else:
         for number, object in enumerate(selection):
-            query_name = ad_query_textfield_object('Prefix_Main_Txt')[0]
-            query_name_object = al.ad_prefix_name(object)
+            query_name = al.ad_query_textfield_object('Name_Text')[0]
+            query_name_object = al.ad_main_name(object)
             controller_shape = ad_controller_shape(size_ctrl=1.0)
-            if pm.textField('Prefix_Main_Txt', q=True, enable=True):
+            if pm.textField('Name_Text', q=True, enable=True):
                 if len(selection) > 1:
+                    main_name_for_grp.append(
+                        '%s%s%02d%s' % (al.ad_prefix('Prefix_1_Text'), query_name, number + 1, suffix))
                     controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                               '%s%02d%s' % (query_name, number + 1, ad_suffix_main()))
+                                                               '%s%s%02d%s%s' % (
+                                                                   al.ad_prefix('Prefix_1_Text'), query_name,
+                                                                   number + 1,
+                                                                   al.ad_prefix('Prefix_2_Text'), suffix))
                 else:
-                    controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + ad_suffix_main())
+                    controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                               al.ad_prefix(
+                                                                   'Prefix_1_Text') + query_name + al.ad_prefix(
+                                                                   'Prefix_2_Text') + suffix)
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
             else:
-                controller_shape_prefix_suffix = pm.rename(controller_shape, query_name_object+ ad_suffix_main())
+                main_name_for_grp.append(al.ad_prefix('Prefix_1_Text') + query_name_object + suffix)
+                controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                           al.ad_prefix(
+                                                               'Prefix_1_Text') + query_name_object + al.ad_prefix(
+                                                               'Prefix_2_Text') + suffix)
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
                 pm.select(cl=1)
 
-    return controller_shape_prefix_suffix_app
+    return controller_shape_prefix_suffix_app, main_name_for_grp
+
 
 def ad_main_ctrl_prefix_suffix():
-    controller_shape_prefix_suffix_app=[]
-    if pm.textField('Prefix_Main_Txt', q=True, enable=True):
-        query_name = ad_query_textfield_object('Prefix_Main_Txt')[0]
+    controller_shape_prefix_suffix_app = []
+    main_name_for_grp = []
+    suffix = ad_suffix_main()
+    al.ad_query_textfield_object(object_define='Suffix_Main')
+    al.ad_query_textfield_object(object_define='Suffix_Child_Ctrl')
+    al.ad_query_list_textfield_object(object_define='Parent_Group_Name')
+
+    if al.ad_query_textfield_object(object_define='Name_Text')[0]:
+        query_name = al.ad_query_textfield_object('Name_Text')[0]
         controller_shape = ad_controller_shape(size_ctrl=1.0)
-        suffix = ad_suffix_main()
-        # new_name =  query_name.replace(query_name, '%s%02d' % (query_name, +1))
-        # query_object = pm.objExists('%s%02d%s' % (query_name, +1, suffix))
-        controller_shape_prefix_suffix = pm.rename(controller_shape, query_name + suffix)
-        query_object = controller_shape_prefix_suffix
+        controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                   al.ad_prefix('Prefix_1_Text') + query_name + al.ad_prefix(
+                                                       'Prefix_2_Text') + suffix)
+        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+        main_name_for_grp.append(al.ad_prefix('Prefix_1_Text') + query_name + suffix)
+
+        pm.select(cl=1)
+
+    else:
+        controller_shape = ad_controller_shape(size_ctrl=1.0)
+        main_name_for_grp.append(al.ad_prefix('Prefix_1_Text') + controller_shape + suffix)
+        controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                   al.ad_prefix('Prefix_1_Text') + controller_shape + al.ad_prefix(
+                                                       'Prefix_2_Text') + suffix)
         controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
         pm.select(cl=1)
-    else:
-        controller_shape = ad_controller_shape(size_ctrl=1.0)
-        controller_shape_prefix_suffix =pm.rename(controller_shape, controller_shape + ad_suffix_main())
-        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-        pm.select(cl=1)
-    return controller_shape_prefix_suffix_app
 
-def ad_query_textfield_object(object_define, *args):
-    text = []
-    if pm.textField(object_define, q=True, en=True):
-        if pm.textField(object_define, q=True, tx=True):
-            text = pm.textField(object_define, q=True, tx=True)
-        else:
-            pm.error("'%s' can not be empty!" % object_define)
-    else:
-        pass
-    return text, object_define
+    return controller_shape_prefix_suffix_app, main_name_for_grp
 
-def ad_query_list_textfield_object(object_define, *args):
-    listing_object = []
-    if pm.textFieldGrp(object_define, q=True, en=True):
-        if pm.textFieldGrp(object_define, q=True, tx=True):
-            text = pm.textFieldGrp(object_define, q=True, tx=True)
-            listing = text.split(',')
-            set_duplicate = set([x for x in listing if listing.count(x) > 1])
-            if set_duplicate:
-                for item in list(set_duplicate):
-                    pm.error("'%s' is duplicate object!" % item)
-            else:
-                for item in listing:
-                    listing_object.append(item)
-        else:
-            pm.error("'%s' can not be empty!" % object_define)
-    else:
-        pass
-
-    return listing_object, object_define
 
 ###########
 
-def ad_replacing_controller_color(*args):
+def ad_replacing_controller_button(*args):
     list_controller = pm.ls(sl=1)
+    # instance_controller = list_controller.pop(0)
     if not list_controller:
         om.MGlobal.displayError("No curves selected, you have to select origin and target curve!")
         return False
 
-    controller_replacing = al.ad_replacing_controller(list_controller)
-    al.ad_replacing_color(controller_replacing[0], controller_replacing[1])
+    else:
+        controller_replacing = al.ad_replacing_controller(list_controller)
+        al.ad_replacing_color(controller_replacing[0], controller_replacing[1])
+
 
 def ad_hide_unhide_button(*args):
     selection = pm.ls(selection=True)
@@ -562,6 +493,7 @@ def ad_hide_unhide_button(*args):
         for item in selection:
             ad_hide_unhide(ctrl=item)
 
+
 def ad_lock_unlock_button(*args):
     selection = pm.ls(selection=True)
     if not selection:
@@ -571,41 +503,32 @@ def ad_lock_unlock_button(*args):
         for item in selection:
             ad_lock_unlock(ctrl=item)
 
+
 def ad_hide_unhide(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
         al.ad_hide_unhide_attr(channel=['tx'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
         al.ad_hide_unhide_attr(channel=['ty'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
-        al.ad_hide_unhide_attr(channel=['tz'], ctrl=ctrl
-                               )
+        al.ad_hide_unhide_attr(channel=['tz'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
-        al.ad_hide_unhide_attr(channel=['rx'], ctrl=ctrl
-                               )
+        al.ad_hide_unhide_attr(channel=['rx'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
-        al.ad_hide_unhide_attr(channel=['ry'], ctrl=ctrl
-                               )
+        al.ad_hide_unhide_attr(channel=['ry'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
-        al.ad_hide_unhide_attr(channel=['rz'], ctrl=ctrl
-                               )
-
+        al.ad_hide_unhide_attr(channel=['rz'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
-        al.ad_hide_unhide_attr(channel=['sx'], ctrl=ctrl
-                               )
+        al.ad_hide_unhide_attr(channel=['sx'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
-        al.ad_hide_unhide_attr(channel=['sy'], ctrl=ctrl
-                               )
+        al.ad_hide_unhide_attr(channel=['sy'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
-        al.ad_hide_unhide_attr(channel=['sz'], ctrl=ctrl
-                               )
-
+        al.ad_hide_unhide_attr(channel=['sz'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
-        al.ad_hide_unhide_attr(channel=['v'], ctrl=ctrl
-                               )
-
+        al.ad_hide_unhide_attr(channel=['v'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
         list_attribute = ad_query_user_defined_channel(ctrl)
         al.ad_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
+
 
 def ad_lock_unlock(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
@@ -614,67 +537,58 @@ def ad_lock_unlock(ctrl):
         al.ad_lock_unlock_attr(channel=['ty'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
         al.ad_lock_unlock_attr(channel=['tz'], ctrl=ctrl)
-
     if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
-        al.ad_lock_unlock_attr(channel=['rx'], ctrl=ctrl
-                               )
+        al.ad_lock_unlock_attr(channel=['rx'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
-        al.ad_lock_unlock_attr(channel=['ry'], ctrl=ctrl
-                               )
+        al.ad_lock_unlock_attr(channel=['ry'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
-        al.ad_lock_unlock_attr(channel=['rz'], ctrl=ctrl
-                               )
+        al.ad_lock_unlock_attr(channel=['rz'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
-        al.ad_lock_unlock_attr(channel=['sx'], ctrl=ctrl
-                               )
+        al.ad_lock_unlock_attr(channel=['sx'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
-        al.ad_lock_unlock_attr(channel=['sy'], ctrl=ctrl
-                               )
+        al.ad_lock_unlock_attr(channel=['sy'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
-        al.ad_lock_unlock_attr(channel=['sz'], ctrl=ctrl
-                               )
-
+        al.ad_lock_unlock_attr(channel=['sz'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
-        al.ad_lock_unlock_attr(channel=['v'], ctrl=ctrl
-                               )
+        al.ad_lock_unlock_attr(channel=['v'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
         list_attribute = ad_query_user_defined_channel(ctrl)
         al.ad_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
 
+
 def ad_hide_and_lock(ctrl, value):
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
-        al.ad_lock_hide_attr(lock_hide_channel=['tx'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
-        al.ad_lock_hide_attr(lock_hide_channel=['ty'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
-        al.ad_lock_hide_attr(lock_hide_channel=['tz'], ctrl=ctrl,
-                             hide_object=value)
+    for item in ctrl:
+        if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
+            al.ad_lock_hide_attr(lock_hide_channel=['tx'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+            al.ad_lock_hide_attr(lock_hide_channel=['ty'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+            al.ad_lock_hide_attr(lock_hide_channel=['tz'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
+            al.ad_lock_hide_attr(lock_hide_channel=['rx'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+            al.ad_lock_hide_attr(lock_hide_channel=['ry'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+            al.ad_lock_hide_attr(lock_hide_channel=['rz'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
+            al.ad_lock_hide_attr(lock_hide_channel=['sx'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+            al.ad_lock_hide_attr(lock_hide_channel=['sy'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+            al.ad_lock_hide_attr(lock_hide_channel=['sz'], ctrl=item,
+                                 hide_object=value)
+        if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
+            al.ad_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
+                                 hide_object=value)
 
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
-        al.ad_lock_hide_attr(lock_hide_channel=['rx'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
-        al.ad_lock_hide_attr(lock_hide_channel=['ry'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
-        al.ad_lock_hide_attr(lock_hide_channel=['rz'], ctrl=ctrl,
-                             hide_object=value)
-
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
-        al.ad_lock_hide_attr(lock_hide_channel=['sx'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
-        al.ad_lock_hide_attr(lock_hide_channel=['sy'], ctrl=ctrl,
-                             hide_object=value)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
-        al.ad_lock_hide_attr(lock_hide_channel=['sz'], ctrl=ctrl,
-                             hide_object=value)
-
-    if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
-        al.ad_lock_hide_attr(lock_hide_channel=['v'], ctrl=ctrl,
-                             hide_object=value)
 
 def ad_query_user_defined_channel(ctrl):
     list_attr = pm.listAttr(ctrl, ud=1)
@@ -684,9 +598,11 @@ def ad_query_user_defined_channel(ctrl):
     else:
         return list_attr
 
+
 def ad_query_lock_unlock_hide_unhide_channel(channel_name):
     value = pm.checkBox(channel_name, q=True, value=True)
     return value
+
 
 def ad_select_all_ad_controller_button(*args):
     list_scene = pm.ls(type='transform')
@@ -706,11 +622,14 @@ def ad_select_all_ad_controller_button(*args):
 
     pm.select(list_object)
 
+
 def ad_reset_color_button(*args):
     al.ad_ctrl_color_list(0)
 
+
 def ad_replace_color_button(*args):
     al.ad_ctrl_color_list(ad_set_color())
+
 
 def ad_set_color(*args):
     controller_color = pm.palettePort('Pallete', query=True, setCurCell=True)
@@ -825,6 +744,7 @@ def ad_on_selection_ctrl_shape(on):
     global on_selector
     on_selector = on
 
+
 def ad_shape_controller_ui(default, *args):
     shape_controller = 'Shape_Controller'
     pm.window(shape_controller, exists=True)
@@ -835,134 +755,129 @@ def ad_shape_controller_ui(default, *args):
             pm.separator(h=7, st="in")
             with pm.rowColumnLayout(nc=10, rowOffset=[(1, 'top', 1), (2, 'top', 3), (3, 'top', 3)]):
                 pm.iconTextRadioButton(default, edit=True, select=True)
-
-                stickcircle = pm.iconTextRadioButton(st='iconOnly',
-                                                     image='ad_icons/stickcircle.png',
-                                                     onCommand=lambda x: ad_on_selection_ctrl_shape(8))
-
-                circleplushalf = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='ad_icons/circleplushalf.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(9))
-                circleplus = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='ad_icons/circleplus.png',
-                                                    onCommand=lambda x: ad_on_selection_ctrl_shape(10))
-                stick2circle = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='ad_icons/stick2circle.png',
-                                                      onCommand=lambda x: ad_on_selection_ctrl_shape(11))
-                sticksquare = pm.iconTextRadioButton(st='iconOnly',
-                                                     image='ad_icons/sticksquare.png',
-                                                     onCommand=lambda x: ad_on_selection_ctrl_shape(12))
-                stick2square = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='ad_icons/stick2square.png',
-                                                      onCommand=lambda x: ad_on_selection_ctrl_shape(13))
-                stickstar = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='ad_icons/stickstar.png',
-                                                   onCommand=lambda x: ad_on_selection_ctrl_shape(14))
-                circleplusarrow = pm.iconTextRadioButton(st='iconOnly',
-                                                         image='ad_icons/circleplusarrow.png',
-                                                         onCommand=lambda x: ad_on_selection_ctrl_shape(15))
-                rectangle = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='ad_icons/rectangle.png',
-                                                   onCommand=lambda x: ad_on_selection_ctrl_shape(16))
-
-                arrow = pm.iconTextRadioButton(st='iconOnly',
-                                               image='ad_icons/arrow.png',
-                                               onCommand=lambda x: ad_on_selection_ctrl_shape(17))
-                arrow3dflat = pm.iconTextRadioButton(st='iconOnly',
-                                                     image='ad_icons/arrow3dflat.png',
-                                                     onCommand=lambda x: ad_on_selection_ctrl_shape(18))
-                arrow2halfcircular = pm.iconTextRadioButton(st='iconOnly',
-                                                            image='ad_icons/arrow2halfcircular.png',
-                                                            onCommand=lambda x: ad_on_selection_ctrl_shape(19))
-                arrow2straight = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='ad_icons/arrow2straight.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(20))
-                arrow2flat = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='ad_icons/arrow2flat.png',
-                                                    onCommand=lambda x: ad_on_selection_ctrl_shape(21))
-                arrowhead = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='ad_icons/arrowhead.png',
-                                                   onCommand=lambda x: ad_on_selection_ctrl_shape(22))
-                arrow90deg = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='ad_icons/arrow90deg.png',
-                                                    onCommand=lambda x: ad_on_selection_ctrl_shape(23))
-                squareplus = pm.iconTextRadioButton(st='iconOnly',
-                                                    image='ad_icons/squareplus.png',
-                                                    onCommand=lambda x: ad_on_selection_ctrl_shape(24))
-                jointplus = pm.iconTextRadioButton(st='iconOnly',
-                                                   image='ad_icons/jointplus.png',
-                                                   onCommand=lambda x: ad_on_selection_ctrl_shape(25))
-                hand = pm.iconTextRadioButton(st='iconOnly',
-                                              image='ad_icons/hand.png',
-                                              onCommand=lambda x: ad_on_selection_ctrl_shape(26))
-
-                arrowcircular = pm.iconTextRadioButton(st='iconOnly',
-                                                       image='ad_icons/arrowcircular.png',
-                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(27))
-                plus = pm.iconTextRadioButton(st='iconOnly',
-                                              image='ad_icons/plus.png',
-                                              onCommand=lambda x: ad_on_selection_ctrl_shape(28))
-                pivot = pm.iconTextRadioButton(st='iconOnly',
-                                               image='ad_icons/pivot.png',
-                                               onCommand=lambda x: ad_on_selection_ctrl_shape(29))
-                keys = pm.iconTextRadioButton(st='iconOnly',
-                                              image='ad_icons/keys.png',
-                                              onCommand=lambda x: ad_on_selection_ctrl_shape(30))
-                pyramidcircle = pm.iconTextRadioButton(st='iconOnly',
-                                                       image='ad_icons/pyramidcircle.png',
-                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(31))
-                arrow4circular = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='ad_icons/arrow4circular.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(32))
-                eyes = pm.iconTextRadioButton(st='iconOnly',
-                                              image='ad_icons/eyes.png',
-                                              onCommand=lambda x: ad_on_selection_ctrl_shape(33))
-                footstep = pm.iconTextRadioButton(st='iconOnly',
-                                                  image='ad_icons/footstep.png',
-                                                  onCommand=lambda x: ad_on_selection_ctrl_shape(34))
-                half3dcircle = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='ad_icons/half3dcircle.png',
-                                                      onCommand=lambda x: ad_on_selection_ctrl_shape(35))
-                capsulecurve = pm.iconTextRadioButton(st='iconOnly',
-                                                      image='ad_icons/capsulecurve.png',
-                                                      onCommand=lambda x: ad_on_selection_ctrl_shape(36))
-
-                arrow4straight = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='ad_icons/arrow4straight.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(37))
-                arrow3d = pm.iconTextRadioButton(st='iconOnly',
-                                                 image='ad_icons/arrow3d.png',
-                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(38))
-                pyramid = pm.iconTextRadioButton(st='iconOnly',
-                                                 image='ad_icons/pyramid.png',
-                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(39))
-                arrow3dcircular = pm.iconTextRadioButton(st='iconOnly',
-                                                         image='ad_icons/arrow3dcircular.png',
-                                                         onCommand=lambda x: ad_on_selection_ctrl_shape(40))
-                cylinder = pm.iconTextRadioButton(st='iconOnly',
-                                                  image='ad_icons/cylinder.png',
-                                                  onCommand=lambda x: ad_on_selection_ctrl_shape(41))
-                arrow2flathalf = pm.iconTextRadioButton(st='iconOnly',
-                                                        image='ad_icons/arrow2flathalf.png',
-                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(42))
-                flag = pm.iconTextRadioButton(st='iconOnly',
-                                              image='ad_icons/flag.png',
-                                              onCommand=lambda x: ad_on_selection_ctrl_shape(43))
-                world = pm.iconTextRadioButton(st='iconOnly',
-                                               image='ad_icons/world.png',
-                                               onCommand=lambda x: ad_on_selection_ctrl_shape(44))
-                setup = pm.iconTextRadioButton(st='iconOnly',
-                                               image='ad_icons/setup.png',
-                                               onCommand=lambda x: ad_on_selection_ctrl_shape(45))
-                star = pm.iconTextRadioButton(st='iconOnly',
-                                              image='ad_icons/star.png',
-                                              onCommand=lambda x: ad_on_selection_ctrl_shape(46))
-                diamond = pm.iconTextRadioButton(st='iconOnly',
-                                                 image='ad_icons/diamond.png',
-                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(47))
-                starsqueeze = pm.iconTextRadioButton(st='iconOnly',
-                                                     image='ad_icons/starsqueeze.png',
-                                                     onCommand=lambda x: ad_on_selection_ctrl_shape(48))
+                # stickcircle
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/stickcircle.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(8))
+                # circleplushalf
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circleplushalf.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(9))
+                # circleplus
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circleplus.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(10))
+                # stick2circle
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/stick2circle.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(11))
+                # sticksquare
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/sticksquare.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(12))
+                # stick2square
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/stick2square.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(13))
+                # stickstar
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/stickstar.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(14))
+                # circleplusarrow
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circleplusarrow.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(15))
+                # rectangle
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/rectangle.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(16))
+                # arrow
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(17))
+                # arrow3dflat
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow3dflat.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(18))
+                # arrow2halfcircular
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow2halfcircular.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(19))
+                # arrow2straight
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow2straight.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(20))
+                # arrow2flat
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow2flat.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(21))
+                # arrowhead
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrowhead.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(22))
+                # arrow90deg
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow90deg.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(23))
+                # squareplus
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/squareplus.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(24))
+                # jointplus
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/jointplus.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(25))
+                # hand
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/hand.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(26))
+                # arrowcircular
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrowcircular.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(27))
+                # plus
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/plus.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(28))
+                # pivot
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/pivot.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(29))
+                # keys
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/keys.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(30))
+                # pyramidcircle
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/pyramidcircle.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(31))
+                # arrow4circular
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow4circular.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(32))
+                # eyes
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/eyes.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(33))
+                # footstep
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/footstep.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(34))
+                # half3dcircle
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/half3dcircle.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(35))
+                # capsulecurve
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/capsulecurve.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(36))
+                # arrow4straight
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow4straight.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(37))
+                # arrow3d
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow3d.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(38))
+                # pyramid
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/pyramid.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(39))
+                # arrow3dcircular
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow3dcircular.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(40))
+                # cylinder
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/cylinder.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(41))
+                # arrow2flathalf
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/arrow2flathalf.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(42))
+                # flag
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/flag.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(43))
+                # world
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/world.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(44))
+                # setup
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/setup.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(45))
+                # star
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/star.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(46))
+                # diamond
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/diamond.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(47))
+                # starsqueeze
+                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/starsqueeze.png',
+                                       onCommand=lambda x: ad_on_selection_ctrl_shape(48))
 
     pm.showWindow()
 
@@ -983,36 +898,7 @@ def ad_tagging_untagging_button(tagging, *args):
                 pass
 
 
-# def ad_defining_object_text_field(define_object, label):
-#     # if object doesn't has checkbox
-#     pm.textFieldButtonGrp(define_object, label=label, cal=(1, "right"),
-#                           bl="Get Object",
-#                           bc=partial(ad_adding_object_sel_to_textfield, define_object))
-
-def ad_defining_object_text_field(define_object, tx='', *args, **kwargs):
-    # if object doesn't has checkbox
-    pm.textField(define_object, tx=tx, **kwargs)
-
-def ad_defining_object_text_field_no_button(define_object, label, add_feature=False, tx='', *args, **kwargs):
-    if not add_feature:
-        # if object doesn't has checkbox
-        pm.textFieldGrp(define_object, label=label, cal=(1, "right"),
-                        cw2=(26 * percentage, 69 * percentage),
-                        cat=[(1, 'right', 2), (2, 'both', 2)], tx=tx)
-    else:
-        pm.textFieldGrp(define_object, label=label, cal=(1, "right"),
-                        cw2=(21 * percentage, 69 * percentage),
-                        cat=[(1, 'right', 2), (2, 'both', 2)], tx=tx,
-                        **kwargs)
-
-
-def ad_adding_multiple_object_sel_to_texfield(text_input, *args):
-    select = pm.ls(sl=True, l=True, tr=True)
-    list_joint = (','.join([item.name() for item in select]))
-    pm.textFieldGrp(text_input, e=True, tx=str(list_joint))
-
-
-def ad_adding_object_sel_to_textfield(text_input, button, *args):
+def ad_adding_object_sel_to_textfield(text_input, *args):
     # elect and add object
     select = pm.ls(sl=True, l=True, tr=True)
     if len(select) == 1:
@@ -1050,7 +936,6 @@ def ad_controller_resize_slider(*args):
             if pm.objectType(shape_node) == 'nurbsCurve':
                 # global previous_value
                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
-
                 # deltaValue = (previous_value/currentValue)
                 # new_value = deltaValue
                 al.ad_scaling_controller(currentValue, shape_node)
@@ -1080,57 +965,50 @@ def ad_color_index():
     MAX_OVERRIDE_COLORS = 32
     columns = MAX_OVERRIDE_COLORS / 2
     rows = 2
-    cell_width = 17
-    color_palette = pm.palettePort('Pallete', dimensions=(columns, rows),
-                                   transparent=0,
-                                   width=(columns * cell_width),
-                                   height=(rows * cell_width),
-                                   topDown=True,
-                                   colorEditable=False)
+    cell_width = 18
+    color_palette = pm.palettePort('Pallete', dimensions=(columns, rows), transparent=0, width=(columns * cell_width),
+                                   height=(rows * cell_width), topDown=True, colorEditable=False)
     for index in range(1, MAX_OVERRIDE_COLORS):
         color_component = pm.colorIndex(index, q=True)
-        pm.palettePort(color_palette,
-                       edit=True,
+        pm.palettePort(color_palette, edit=True,
                        rgbValue=(index, color_component[0], color_component[1], color_component[2]))
 
-    pm.palettePort(color_palette,
-                   edit=True,
-                   rgbValue=(0, 0.6, 0.6, 0.6))
+    pm.palettePort(color_palette, edit=True, rgbValue=(0, 0.6, 0.6, 0.6))
 
 
 def ad_channelbox_translation(*args):
     pm.columnLayout()
-    all_trans = pm.checkBox('All_Trans', label='All Translation', value=False,
-                            cc=partial(ad_checkbox_check_channel_translate, ['Trans_X', 'Trans_Y', 'Trans_Z']))
-    trans_x = pm.checkBox('Trans_X', label='Translate X', value=False,
-                          cc=partial(ad_checkbox_uncheck_all_channel, ['Trans_X']))
-    trans_y = pm.checkBox('Trans_Y', label='Translate Y', value=False,
-                          cc=partial(ad_checkbox_uncheck_all_channel, ['Trans_Y']))
-    trans_z = pm.checkBox('Trans_Z', label='Translate Z', value=False,
-                          cc=partial(ad_checkbox_uncheck_all_channel, ['Trans_Z']))
-    visibility = pm.checkBox('Visibility', label='Visibility', value=False)
+    pm.checkBox('All_Trans', label='All Translation', value=False,
+                cc=partial(ad_checkbox_check_channel_translate, ['Trans_X', 'Trans_Y', 'Trans_Z']))
+    pm.checkBox('Trans_X', label='Translate X', value=False,
+                cc=partial(ad_checkbox_uncheck_all_channel, ['Trans_X']))
+    pm.checkBox('Trans_Y', label='Translate Y', value=False,
+                cc=partial(ad_checkbox_uncheck_all_channel, ['Trans_Y']))
+    pm.checkBox('Trans_Z', label='Translate Z', value=False,
+                cc=partial(ad_checkbox_uncheck_all_channel, ['Trans_Z']))
+    pm.checkBox('Visibility', label='Visibility', value=False)
     pm.setParent(u=True)
 
 
 def ad_channelbox_rotation(*args):
     pm.columnLayout()
-    all_rot = pm.checkBox('All_Rot', label='All Rotation', value=False,
-                          cc=partial(ad_checkbox_check_channel_rotate, ['Rot_X', 'Rot_Y', 'Rot_Z']))
-    rot_x = pm.checkBox('Rot_X', label='Rotate X', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_X']))
-    rot_y = pm.checkBox('Rot_Y', label='Rotate Y', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_Y']))
-    rot_z = pm.checkBox('Rot_Z', label='Rotate Z', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_Z']))
-    user_defined = pm.checkBox('User_Def', label='User Defined', value=False)
+    pm.checkBox('All_Rot', label='All Rotation', value=False,
+                cc=partial(ad_checkbox_check_channel_rotate, ['Rot_X', 'Rot_Y', 'Rot_Z']))
+    pm.checkBox('Rot_X', label='Rotate X', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_X']))
+    pm.checkBox('Rot_Y', label='Rotate Y', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_Y']))
+    pm.checkBox('Rot_Z', label='Rotate Z', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Rot_Z']))
+    pm.checkBox('User_Def', label='User Defined', value=False)
 
     pm.setParent(u=True)
 
 
 def ad_channelbox_scale(*args):
     pm.columnLayout()
-    all_scale = pm.checkBox('All_Scale', label='All Scale', value=False,
-                            cc=partial(ad_checkbox_check_channel_scale, ['Scl_X', 'Scl_Y', 'Scl_Z']))
-    scale_x = pm.checkBox('Scl_X', label='Scale X', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Scl_X']))
-    scale_y = pm.checkBox('Scl_Y', label='Scale Y', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Scl_Y']))
-    scale_z = pm.checkBox('Scl_Z', label='Scale Z', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Scl_Z']))
+    pm.checkBox('All_Scale', label='All Scale', value=False,
+                cc=partial(ad_checkbox_check_channel_scale, ['Scl_X', 'Scl_Y', 'Scl_Z']))
+    pm.checkBox('Scl_X', label='Scale X', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Scl_X']))
+    pm.checkBox('Scl_Y', label='Scale Y', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Scl_Y']))
+    pm.checkBox('Scl_Z', label='Scale Z', value=False, cc=partial(ad_checkbox_uncheck_all_channel, ['Scl_Z']))
     pm.setParent(u=True)
 
 

@@ -29,9 +29,9 @@ def parentConsCtrl(objFirst, objScnd):
             sCtrlScndScnd = ut.scale_curve(1.00, shpScnd)
             CtrlScnd = ut.controller(sCtrlScndScnd)
 
-            renCtrlScnd = mc.rename(CtrlScnd, '%s%s' % (ut.ad_prefix_name(t), 'Tweak_ctrl'))
+            renCtrlScnd = mc.rename(CtrlScnd, '%s%s' % (ut.ad_main_name(t), 'Tweak_ctrl'))
 
-            grpPrntScnd = ut.group_parent(['Zro'], '%s' % ut.ad_prefix_name(t), 'TweakCtrl')
+            grpPrntScnd = ut.group_parent(['Zro'], '%s' % ut.ad_main_name(t), 'TweakCtrl')
 
             # parent gimbal CtrlScnd to main CtrlScnd
             ut.parent_object(grpPrntScnd, renCtrlScnd)

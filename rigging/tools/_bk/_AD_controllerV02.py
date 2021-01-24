@@ -112,11 +112,11 @@ def createControl(objectList = None,
 
             # prefix True or False
             if isinstance(prefix, str):
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(prefix), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(prefix), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(prefix), suffix.title())
             else:
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(jntPos[0]), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(jntPos[0]), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(jntPos[0]), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(jntPos[0]), suffix.title())
 
             parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
             cnntCtrl = renCtrl
@@ -129,9 +129,9 @@ def createControl(objectList = None,
                 # create gimbal control
                 ctrlGmb = ut.controller(sCrv)
                 if prefix == '':
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(jntPos[0]), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(jntPos[0]), ut.GIMBAL, suffix))
                 else:
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(prefix), ut.GIMBAL, suffix))
 
                 # gimbal control alias
                 cnntCtrl = renGmbl
@@ -240,15 +240,15 @@ def createControl(objectList = None,
                 # prefix True or False
                 if isinstance(prefix, str):
                     if len(objectList) > 1:
-                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.ad_prefix_name(prefix), number + 1, suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.ad_main_name(prefix), number + 1, suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(renCtrl), suffix.title())
                     else:
-                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(prefix), suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(renCtrl), suffix.title())
 
                 else:
-                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(obj), suffix))
-                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(obj), suffix.title())
+                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(obj), suffix))
+                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(obj), suffix.title())
 
                 parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
                 cnntCtrl = renCtrl
@@ -261,12 +261,12 @@ def createControl(objectList = None,
                     # create gimbal control
                     ctrlGmb = ut.controller(sCrv)
                     if prefix == '':
-                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(obj), ut.GIMBAL, suffix))
+                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(obj), ut.GIMBAL, suffix))
                     else:
                         if len(objectList) > 1:
-                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.ad_prefix_name(prefix), number + 1, ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.ad_main_name(prefix), number + 1, ut.GIMBAL, suffix))
                         else:
-                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(prefix), ut.GIMBAL, suffix))
 
                     # gimbal control alias
                     cnntCtrl = renGmbl
@@ -381,11 +381,11 @@ def createControl(objectList = None,
 
             # prefix True or False
             if isinstance(prefix, str):
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(prefix), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(prefix), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(prefix), suffix.title())
             else:
-                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(jntPos[0]), suffix))
-                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(jntPos[0]), suffix.title())
+                renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(jntPos[0]), suffix))
+                grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(jntPos[0]), suffix.title())
 
             parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
             cnntCtrl = renCtrl
@@ -398,9 +398,9 @@ def createControl(objectList = None,
                 # create gimbal control
                 ctrlGmb = ut.controller(sCrv)
                 if prefix == '':
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(jntPos[0]), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(jntPos[0]), ut.GIMBAL, suffix))
                 else:
-                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
+                    renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(prefix), ut.GIMBAL, suffix))
 
                 # gimbal control alias
                 cnntCtrl = renGmbl
@@ -509,15 +509,15 @@ def createControl(objectList = None,
                 # prefix True or False
                 if isinstance(prefix, str):
                     if len(sel) > 1:
-                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.ad_prefix_name(prefix), number + 1, suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s%02d_%s' % (ut.ad_main_name(prefix), number + 1, suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(renCtrl), suffix.title())
                     else:
-                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
-                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(renCtrl), suffix.title())
+                        renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(prefix), suffix))
+                        grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(renCtrl), suffix.title())
 
                 else:
-                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(obj), suffix))
-                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(obj), suffix.title())
+                    renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(obj), suffix))
+                    grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(obj), suffix.title())
 
                 parCtrl = ut.parent_object(grpPrnt[-1], renCtrl)
                 cnntCtrl = renCtrl
@@ -530,12 +530,12 @@ def createControl(objectList = None,
                     # create gimbal control
                     ctrlGmb = ut.controller(sCrv)
                     if prefix == '':
-                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(obj), ut.GIMBAL, suffix))
+                        renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(obj), ut.GIMBAL, suffix))
                     else:
                         if len(sel) > 1:
-                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.ad_prefix_name(prefix), number + 1, ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%02d%s_%s' % (ut.ad_main_name(prefix), number + 1, ut.GIMBAL, suffix))
                         else:
-                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
+                            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(prefix), ut.GIMBAL, suffix))
 
                     # gimbal control alias
                     cnntCtrl = renGmbl
@@ -622,8 +622,8 @@ def createControl(objectList = None,
 
         # prefix True or False
         if isinstance(prefix, str):
-            renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_prefix_name(prefix), suffix))
-            grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_prefix_name(prefix), suffix.title())
+            renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_main_name(prefix), suffix))
+            grpPrnt = ut.group_parent(groupsCtrl, '%s' % ut.ad_main_name(prefix), suffix.title())
 
         else:
             return mc.warning('Please insert name in prefix parameter!')
@@ -639,7 +639,7 @@ def createControl(objectList = None,
             # create gimbal control
             ctrlGmb = ut.controller(sCrv)
 
-            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_prefix_name(prefix), ut.GIMBAL, suffix))
+            renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_main_name(prefix), ut.GIMBAL, suffix))
 
             # gimbal control alias
             cnntCtrl = renGmbl
