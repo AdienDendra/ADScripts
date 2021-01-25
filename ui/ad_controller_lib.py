@@ -1312,6 +1312,45 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #     for i in obj:
 #         objs = i.split('.')[0]
 #         return objs
+
+def ad_parent_constraint(obj_base, obj_target, mo=1):
+    print obj_base
+    print obj_target
+    par_constraint = pm.parentConstraint(obj_base, obj_target, mo=mo)
+    split = par_constraint.split('_')
+    x = '_'.join(split[:-1])
+    n = x.replace(x, x + '_pac')
+    new_name = [pm.rename(par_constraint, n)]
+    return new_name
+
+
+def ad_orient_constraint(obj_base, obj_target, mo=1):
+    orient_constraint = pm.orientConstraint(obj_base, obj_target, mo=mo)
+    split = orient_constraint.split('_')
+    x = '_'.join(split[:-1])
+    n = x.replace(x, x + '_oc')
+    new_name = [pm.rename(orient_constraint, n)]
+    return new_name
+
+
+def ad_point_constraint(obj_base, obj_target, mo=1):
+    point_constraint = pm.pointConstraint(obj_base, obj_target, mo=mo)
+    split = point_constraint.split('_')
+    x = '_'.join(split[:-1])
+    n = x.replace(x, x + '_pc')
+    new_name = [pm.rename(point_constraint, n)]
+    return new_name
+
+
+def ad_scale_constraint(obj_base, obj_target, mo=1):
+    scale_constraint = pm.scaleConstraint(obj_base, obj_target, mo=mo)
+    split = scale_constraint.split('_')
+    x = '_'.join(split[:-1])
+    n = x.replace(x, x + '_sc')
+    new_name = [pm.rename(scale_constraint, n)]
+
+    return new_name
+
 def ad_query_textfield_object(object_define, *args):
     text = []
     if pm.textField(object_define, q=True, en=True):

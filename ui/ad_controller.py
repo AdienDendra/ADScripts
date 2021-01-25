@@ -87,7 +87,7 @@ def ad_show_ui():
                                                                                           0.15 * percentage)]):
                             pm.text('')
                             pm.button("List_Connection", l="List Connection", c='')
-                            pm.button('Create_Connection', l="Create Connection", c='')
+                            pm.button('Create_Connection', l="Create Connection", c=partial(ad_create_connection_button))
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Color', mh=1):
@@ -375,6 +375,32 @@ def ad_child_ctrl(main_controller, main_name):
 
     return controller_childs
 
+def ad_create_connection_button(*args):
+    list_controller = pm.ls(sl=1)
+    if len(list_controller) < 2:
+        om.MGlobal_displayError('Select minimum two objects')
+    else:
+        instance_controller = list_controller.pop(0)
+        for item in list_controller:
+            ad_connection(ctrl=instance_controller, target=item)
+
+def ad_connection(ctrl, target):
+    if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
+        al.ad_point_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
+        al.ad_orient_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
+        al.ad_scale_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
+        al.ad_parent_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Parent'):
+        pm.parent(target, ctrl)
+    if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
+        pm.connectAttr(ctrl+'.translate',  target+'.translate')
+    if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
+        pm.connectAttr(ctrl+'.rotate',  target+'.rotate')
+    if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
+        pm.connectAttr(ctrl+'.scale',  target+'.scale')
 
 def ad_main_ctrl_prefix_suffix_selection(selection):
     controller_shape_prefix_suffix_app = []
