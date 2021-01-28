@@ -27,19 +27,14 @@ def ad_show_ui():
         with pm.tabLayout('tab', width=layout * 1.01, height=200):
             with pm.scrollLayout('Create Controller', p='tab'):
                 with pm.columnLayout('Create_Controller_Column', w=layout, co=('both', 1 * percentage), adj=1):
-                    # DEFINE
-                    with pm.frameLayout(collapsable=True, l='Define', mh=1):
-                        with pm.rowColumnLayout(nc=2, cw=[(2, 72 * percentage)]):
-                            pm.checkBox(label='Parent Group:',
-                                        cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main,Offset'),
-                                        value=True)
-                            al.ad_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
-                                                             enable=True)
-
-                        with pm.rowColumnLayout(nc=6, cs=[(3, 1 * percentage), (5, 2 * percentage)],
-                                                cw=[(1, 15 * percentage), (2, 8 * percentage), (3, 13 * percentage),
-                                                    (4, 32 * percentage), (5, 15 * percentage), (6, 9.5 * percentage)]):
-                            pm.checkBox('Prefix_1', label='Prefix 1:', cc=partial(ad_enabling_disabling_ui,
+                    # ADDITIONAL
+                    with pm.frameLayout(collapsable=True, l='Naming', mh=1):
+                        with pm.rowColumnLayout(nc=8, rowAttach=(2,'top', 0), cs=[(3, 1 * percentage), (5, 1 * percentage),
+                                                                                  (7, 1 * percentage)],
+                                                cw=[(1, 12 * percentage), (2, 7 * percentage), (3, 13 * percentage),
+                                                    (4, 20 * percentage), (5, 15 * percentage), (6, 9.5 * percentage),
+                                                    (8, 8* percentage)]):
+                            pm.checkBox('Prefix_1', label='Prfx 1:', cc=partial(ad_enabling_disabling_ui,
                                                                                   ['Prefix_1_Text'], 'L_'), value=False)
                             al.ad_defining_object_text_field(define_object='Prefix_1_Text', tx='L_', enable=False)
 
@@ -50,30 +45,26 @@ def ad_show_ui():
                                         cc=partial(ad_enabling_disabling_ui, ['Prefix_2_Text'], 'LFT'), value=False)
                             al.ad_defining_object_text_field(define_object='Prefix_2_Text', tx='LFT', enable=False)
 
-                        with pm.rowColumnLayout(nc=4, cs=[(1, 24 * percentage), (3, 2 * percentage)],
-                                                cw=[(2, 20.5 * percentage), (4, 16.5 * percentage)]):
-                            pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
-                                        cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
-                                        value=False)
-                            pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
                             pm.text('Suffix:')
                             pm.textField('Suffix_Main', tx='ctrl')
 
-                    # ADDITIONAL
-                    with pm.frameLayout(collapsable=True, l='Additional', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(22.75 * percentage, 50 * percentage), cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
-                            pm.text('')
-                            with pm.columnLayout():
-                                pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility',
-                                            value=False)
-                                pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
+
+                        # with pm.rowColumnLayout(nc=4, cs=[(1, 24 * percentage), (3, 2 * percentage)],
+                        #                         cw=[(2, 20.5 * percentage), (4, 16.5 * percentage)]):
+                        #     # pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
+                        #     #             cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
+                        #     #             value=False)
+                        #     # pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
+                        #     pm.text('Suffix:')
+                        #     pm.textField('Suffix_Main', tx='ctrl')
+
+
 
                     # pm.separator(h=5, st="in", w=95 * percentage)
                     # CONNECTION
                     with pm.frameLayout(collapsable=True, l='Connection', mh=1):
                         with pm.rowLayout('Connection', nc=3,
-                                          cw3=(22.75 * percentage, 30 * percentage, 40 * percentage),
+                                          cw3=(18.5 * percentage, 32 * percentage, 40 * percentage),
                                           cl3=('right', 'right', 'right'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
                                                         (3, 'both', 0.5 * percentage), ],
@@ -81,7 +72,30 @@ def ad_show_ui():
                             pm.text('')
                             ad_channelbox_constraint_connection()
                             ad_channelbox_direct_connection()
-                        with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+
+                        # with pm.rowLayout(nc=2, cw2=(22.75 * percentage, 72 * percentage), cl2=('right', 'left'),
+                        #                   columnAttach=[(1, 'both', 0.5 * percentage),
+                        #                                 (2, 'both', 0.5 * percentage)]):
+                        #     pm.text('')
+                        #     with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 23.5 * percentage, 23.5 * percentage),
+                        #                       cl3=('center', 'center', 'center'),
+                        #                       columnAttach=[(1, 'both', 0 * percentage),
+                        #                                     (2, 'both', 0 * percentage),
+                        #                                     (3, 'both', 0 * percentage)]):
+                        #
+                        #         pm.button("Create_Grp_Select", l="Create Grp Select",
+                        #                   c='')
+                        #         pm.button("List_Connection", l="List Connection", c='')
+                        #         pm.button('Create_Connection', l="Connect Object",
+                        #                   c=partial(ad_create_connection_button))
+                        #
+                        #
+                        #         # pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
+                        #         #           c=partial(ad_tagging_untagging_button, True))
+                        #         # pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
+                        #         #           c=partial(ad_tagging_untagging_button, False))
+
+                        with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
                                           cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
@@ -91,13 +105,13 @@ def ad_show_ui():
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Color', mh=1):
-                        with pm.rowLayout('Palette_Port', nc=2, cw2=(23.5 * percentage, 69 * percentage),
+                        with pm.rowLayout('Palette_Port', nc=2, cw2=(18.5 * percentage, 69 * percentage),
                                           cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('')
                             ad_color_index()
 
-                        with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+                        with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
                                           cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
@@ -108,7 +122,7 @@ def ad_show_ui():
 
                     with pm.frameLayout(collapsable=True, l='Channel', mh=1):
                         with pm.rowLayout(nc=4,
-                                          cw4=(22.75 * percentage, 30 * percentage, 25 * percentage, 22 * percentage),
+                                          cw4=(18.5 * percentage, 32 * percentage, 27 * percentage, 22 * percentage),
                                           cl4=('right', 'left', 'left', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
                                                         (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage), ],
@@ -117,7 +131,7 @@ def ad_show_ui():
                             ad_channelbox_translation()
                             ad_channelbox_rotation()
                             ad_channelbox_scale()
-                        with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+                        with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
                                           cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
@@ -128,27 +142,57 @@ def ad_show_ui():
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Resize', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 72 * percentage), cl2=('right', 'left'),
+                        with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage),
                                                         (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
                             pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5, step=0.001,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset))
-                        with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 71 * percentage), cl2=('right', 'left'),
+                        with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text('')
                             pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                       c=partial(ad_select_all_ad_controller_button))
+                    # DEFINE
+                    # with pm.frameLayout(collapsable=True, l='Parent Group', mh=1):
+                    #     with pm.rowColumnLayout(nc=3, cw=[(2, 56 * percentage)], cs=[(3, 1 * percentage)]):
+                    #         pm.checkBox(label='Name List:',
+                    #                     cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main,Offset'),
+                    #                     value=True)
+                    #         al.ad_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
+                    #                                          enable=True)
+                    #         pm.button("Create_Grp_Select", l="Create Group", c='')
 
-                    with pm.frameLayout(collapsable=True, l='Shape', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 69 * percentage), cl2=('right', 'left'),
+
+                        # with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
+                        #                   cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
+                        #                                                                  (3, 'both',
+                        #                                                                   0.15 * percentage)]):
+                        #     pm.text(l='')
+                        #     pm.button("Create_Grp_Select", l="Create Group Obj Select", c='')
+                        #     pm.text(l='')
+
+                    with pm.frameLayout(collapsable=True, l='Group and Shape', mh=1):
+                        with pm.rowColumnLayout(nc=3, cw=[(2, 56 * percentage)], cs=[(3, 1 * percentage)]):
+                            pm.checkBox(label='Name List:',
+                                        cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'],
+                                                   'Main,Offset'),
+                                        value=True)
+                            al.ad_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
+                                                             enable=True
+                                                             )
+                            pm.button("Create_Grp_Select", l="Create Group", c=partial(ad_group_button))
+
+                        with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)]):
                             pm.text('')
-                            with pm.rowColumnLayout(nc=8, cs=[(2, 0.25 * percentage), (3, 0.25 * percentage),
+                            with pm.rowColumnLayout(nc=9,
+                                                    cs=[(2, 0.25 * percentage), (3, 0.25 * percentage),
                                                               (4, 0.25 * percentage), (5, 0.25 * percentage),
                                                               (6, 0.25 * percentage), (7, 0.25 * percentage),
-                                                              (8, 0.25 * percentage)]):
+                                                              (8, 0.25 * percentage)]
+                                                    ):
                                 icon_radio_control = pm.iconTextRadioCollection()
                                 circle = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circle.png',
                                                                 onCommand=lambda x: ad_on_selection_ctrl_shape(1))
@@ -170,36 +214,57 @@ def ad_show_ui():
                                 # capsule
                                 pm.iconTextRadioButton(st='iconOnly', image='ad_icons/capsule.png',
                                                        onCommand=lambda x: ad_on_selection_ctrl_shape(7))
+                                # stickcircle
+                                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/stickcircle.png',
+                                                       onCommand=lambda x: ad_on_selection_ctrl_shape(8))
                                 # continues
                                 pm.iconTextButton(st='iconOnly', hi='ad_icons/continue_hi.png',
                                                   image='ad_icons/continue.png',
                                                   c=partial(ad_shape_controller_ui, circle))
 
                                 pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
-                        with pm.columnLayout():
-                            with pm.rowLayout(nc=2, cw2=(22.75 * percentage, 72 * percentage), cl2=('right', 'left'),
-                                              columnAttach=[(1, 'both', 0.5 * percentage),
-                                                            (2, 'both', 0.5 * percentage)]):
-                                pm.text('')
-                                with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 23.5 * percentage, 23.5 * percentage),
-                                                  cl3=('center', 'center', 'center'),
-                                                  columnAttach=[(1, 'both', 0 * percentage),
-                                                                (2, 'both', 0 * percentage),
-                                                                (3, 'both', 0 * percentage)]):
-                                    pm.button("Replace_Controller", l="Replace Ctrl",
-                                              c=partial(ad_replacing_controller_button))
-                                    pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
-                                              c=partial(ad_tagging_untagging_button, True))
-                                    pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
-                                              c=partial(ad_tagging_untagging_button, False))
+                        with pm.rowLayout(nc=2, cw2=(18 * percentage, 80 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage),
+                                                        (2, 'both', 0.5 * percentage)]):
+                            pm.text('')
+                            with pm.rowLayout(nc=3, cw3=(25 * percentage, 25 * percentage, 25 * percentage),
+                                              cl3=('center', 'center', 'center'),
+                                              columnAttach=[(1, 'both', 0 * percentage),
+                                                            (2, 'both', 0 * percentage),
+                                                            (3, 'both', 0 * percentage)]):
+                                pm.button("Replace_Controller", l="Replace Ctrl",
+                                          c=partial(ad_replacing_controller_button))
+                                pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
+                                          c=partial(ad_tagging_untagging_button, True))
+                                pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
+                                          c=partial(ad_tagging_untagging_button, False))
 
-                    # pm.separator(h=5, st="in", w=90 * percentage)
-                    pm.separator(h=15, st="in", w=90 * percentage)
-                    with pm.rowLayout(nc=2, cw2=(23.5 * percentage, 71 * percentage), cl2=('right', 'left'),
-                                      columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
-                        pm.text(label='')
-                        pm.button('Create_Controller', l="Create Controller", bgc=(0, 0.5, 0),
-                                  c=partial(ad_create_controller_button))
+                    with pm.frameLayout(collapsable=True, l='Additional', mh=1):
+                        with pm.columnLayout():
+                            with pm.rowLayout(nc=2, cw2=(17.5 * percentage, 50 * percentage), cl2=('right', 'left'),
+                                              columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                                pm.text('')
+                                with pm.columnLayout():
+                                    with pm.rowColumnLayout(nc=2):
+                                        pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
+                                                    cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
+                                                    value=False)
+                                        pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
+                                    with pm.rowColumnLayout():
+                                        pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility',
+                                                    value=False)
+                                        pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False)
+
+
+
+                    # pm.separator(h=15, st="in", w=90 * percentage)
+                    with pm.frameLayout(collapsable=True, l='Run', mh=1):
+                        with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
+                            pm.text(label='')
+                            pm.button('Create_Controller', l="Create Controller With All Define Above", bgc=(0, 0.5, 0),
+                                      c=partial(ad_create_controller_button))
+
             with pm.scrollLayout('Controller Utilities', p='tab'):
                 with pm.columnLayout('Controller_Utilities_Column', w=layout, co=('both', 1 * percentage), adj=1):
                     # pm.separator(h=5, st="in", w=90 * percentage)
@@ -277,13 +342,18 @@ def ad_create_controller_button(*args):
         al.ad_match_position_target_to_ctrl(selection=select, target=controller_shape_prefix_suffix[0],
                                             manipulated_position=manipulated_position,
                                             manipulated_rotation=manipulated_rotation)
+        # constraint or parent
+        for ctrl, target in zip (controller_shape_prefix_suffix[0], select):
+            ad_connection(ctrl=ctrl, target=target)
+
     else:
         # create controller without selection
         controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix()
 
     # grouping controller
     if pm.textField('Parent_Group_Name', q=True, enable=True):
-        ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1],
+        ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix[0],
+                              main_name=controller_shape_prefix_suffix[1],
                               prefix_2=al.ad_prefix('Prefix_2_Text'))
 
     # add visibility to target
@@ -299,6 +369,19 @@ def ad_create_controller_button(*args):
     # controller hide and unlock
     ad_hide_and_lock(controller_shape_prefix_suffix[0], value=True)
 
+def ad_group_button(*args):
+    select = pm.ls(sl=1)
+    # grouping controller
+    if pm.textField('Parent_Group_Name', q=True, enable=True):
+        for item in select:
+            name = ad_get_number_main_name(item)
+            group = al.ad_group_parent(groups=al.ad_query_list_textfield_object('Parent_Group_Name')[0],
+                                       name=name[1],
+                                       suffix=al.ad_get_suffix_main(item),
+                                       prefix_number=name[0], prefix_2=al.ad_prefix('Prefix_2_Text'))
+            pm.parent(item, group[-1])
+    else:
+        pass
 
 def ad_visibility_target(object, target):
     check_box = pm.checkBox('Target_Visibility', q=True, value=True)
@@ -307,7 +390,6 @@ def ad_visibility_target(object, target):
             al.ad_display(object=item, target=tgt)
     else:
         pass
-
 
 def ad_get_number_main_name(main_name):
     try:
@@ -330,7 +412,7 @@ def ad_main_ctrl_grouping(controller, main_name, prefix_2):
         ad_main_name = ad_get_number_main_name(name)
         group_controller = al.ad_group_parent(groups=al.ad_query_list_textfield_object('Parent_Group_Name')[0],
                                               name=ad_main_name[1],
-                                              suffix=al.ad_query_textfield_object('Suffix_Main')[0],
+                                              suffix=ad_suffix_main(),
                                               prefix_number=ad_main_name[0], prefix_2=prefix_2)
 
         al.ad_xform_position_rotation(origin=object_controller, target=group_controller[0])
@@ -344,11 +426,10 @@ def ad_main_ctrl_grouping(controller, main_name, prefix_2):
 def ad_suffix_main():
     suffix = pm.textField('Suffix_Main', q=True, tx=True)
     if suffix:
-        add_space = '_' + suffix.lower()
+        add_space = suffix.lower()
+        return add_space
     else:
-        add_space = ' '
-    return add_space
-
+        om.MGlobal_displayError('suffix cannot be empty!')
 
 def ad_child_ctrl(main_controller, main_name):
     controller_childs = []
@@ -365,7 +446,7 @@ def ad_child_ctrl(main_controller, main_name):
                                              'Prefix_2_Text') + ad_suffix_main())
             al.ad_xform_position_rotation(origin=controller, target=controller_child)
             pm.parent(controller_child, controller)
-            al.ad_display(object=object_main_shape, target=controller_child, long_name='childCtrl', default_vis=0,
+            al.ad_display(object=object_main_shape, target=controller_child, long_name=query_name+'Ctrl', default_vis=0,
                           k=False, cb=True)
             controller_childs.append(controller_child)
     else:
@@ -781,9 +862,6 @@ def ad_shape_controller_ui(default, *args):
             pm.separator(h=7, st="in")
             with pm.rowColumnLayout(nc=10, rowOffset=[(1, 'top', 1), (2, 'top', 3), (3, 'top', 3)]):
                 pm.iconTextRadioButton(default, edit=True, select=True)
-                # stickcircle
-                pm.iconTextRadioButton(st='iconOnly', image='ad_icons/stickcircle.png',
-                                       onCommand=lambda x: ad_on_selection_ctrl_shape(8))
                 # circleplushalf
                 pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circleplushalf.png',
                                        onCommand=lambda x: ad_on_selection_ctrl_shape(9))
@@ -983,6 +1061,8 @@ def ad_enabling_disabling_ui(object, tx, value, *args):
             pm.textFieldGrp(item, edit=True, enable=value, tx=tx)
         elif objectType == 'field':
             pm.textField(item, edit=True, enable=value, tx=tx)
+        elif objectType == 'button':
+            pm.button(item, edit=True, enable=value, tx=tx)
         else:
             pass
 
@@ -991,7 +1071,7 @@ def ad_color_index():
     MAX_OVERRIDE_COLORS = 32
     columns = MAX_OVERRIDE_COLORS / 2
     rows = 2
-    cell_width = 18
+    cell_width = 19
     color_palette = pm.palettePort('Pallete', dimensions=(columns, rows), transparent=0, width=(columns * cell_width),
                                    height=(rows * cell_width), topDown=True, colorEditable=False)
     for index in range(1, MAX_OVERRIDE_COLORS):

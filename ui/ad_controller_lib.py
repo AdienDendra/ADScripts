@@ -1434,6 +1434,14 @@ def ad_main_name(main_name):
     else:
         return main_name
 
+def ad_get_suffix_main(main_name):
+    if '_' in main_name:
+        get_suffix_name = main_name.split('_')[-1]
+        # joining = '_'.join(get_prefix_name)
+    else:
+        get_suffix_name = ''
+    return get_suffix_name
+
 def ad_defining_object_text_field(define_object, tx='', *args, **kwargs):
     pm.textField(define_object, tx=tx, **kwargs)
 
