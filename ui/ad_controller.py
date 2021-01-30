@@ -426,7 +426,7 @@ def ad_main_ctrl_grouping(controller, main_name, prefix_2):
 def ad_suffix_main():
     suffix = pm.textField('Suffix_Main', q=True, tx=True)
     if suffix:
-        add_space = suffix.lower()
+        add_space =suffix.lower()
         return add_space
     else:
         om.MGlobal_displayError('suffix cannot be empty!')
@@ -443,7 +443,7 @@ def ad_child_ctrl(main_controller, main_name):
             controller_shape = ad_controller_shape(size_ctrl=0.8)
             controller_child = pm.rename(controller_shape,
                                          ad_main_name[1] + query_name.title() + ad_main_name[0] + al.ad_prefix(
-                                             'Prefix_2_Text') + ad_suffix_main())
+                                             'Prefix_2_Text') + '_'+ ad_suffix_main())
             al.ad_xform_position_rotation(origin=controller, target=controller_child)
             pm.parent(controller_child, controller)
             al.ad_display(object=object_main_shape, target=controller_child, long_name=query_name+'Ctrl', default_vis=0,
@@ -487,7 +487,7 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
     controller_shape_prefix_suffix_app = []
     main_name_for_grp = []
 
-    suffix = ad_suffix_main()
+    suffix = '_' + ad_suffix_main()
     al.ad_query_textfield_object(object_define='Suffix_Main')
     al.ad_query_textfield_object(object_define='Suffix_Child_Ctrl')
     al.ad_query_list_textfield_object(object_define='Parent_Group_Name')
@@ -527,6 +527,7 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
                                                                    number + 1,
                                                                    al.ad_prefix('Prefix_2_Text'), suffix))
                 else:
+                    main_name_for_grp.append(al.ad_prefix('Prefix_1_Text') + query_name + suffix)
                     controller_shape_prefix_suffix = pm.rename(controller_shape,
                                                                al.ad_prefix(
                                                                    'Prefix_1_Text') + query_name + al.ad_prefix(
@@ -542,14 +543,14 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
                 pm.select(cl=1)
-
+    print controller_shape_prefix_suffix_app, main_name_for_grp
     return controller_shape_prefix_suffix_app, main_name_for_grp
 
 
 def ad_main_ctrl_prefix_suffix():
     controller_shape_prefix_suffix_app = []
     main_name_for_grp = []
-    suffix = ad_suffix_main()
+    suffix = '_' + ad_suffix_main()
     al.ad_query_textfield_object(object_define='Suffix_Main')
     al.ad_query_textfield_object(object_define='Suffix_Child_Ctrl')
     al.ad_query_list_textfield_object(object_define='Parent_Group_Name')
