@@ -48,19 +48,6 @@ def ad_show_ui():
                             pm.text('Suffix:')
                             pm.textField('Suffix_Main', tx='ctrl')
 
-
-                        # with pm.rowColumnLayout(nc=4, cs=[(1, 24 * percentage), (3, 2 * percentage)],
-                        #                         cw=[(2, 20.5 * percentage), (4, 16.5 * percentage)]):
-                        #     # pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
-                        #     #             cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
-                        #     #             value=False)
-                        #     # pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
-                        #     pm.text('Suffix:')
-                        #     pm.textField('Suffix_Main', tx='ctrl')
-
-
-
-                    # pm.separator(h=5, st="in", w=95 * percentage)
                     # CONNECTION
                     with pm.frameLayout(collapsable=True, l='Connection', mh=1):
                         with pm.rowLayout('Connection', nc=3,
@@ -72,28 +59,6 @@ def ad_show_ui():
                             pm.text('')
                             ad_channelbox_constraint_connection()
                             ad_channelbox_direct_connection()
-
-                        # with pm.rowLayout(nc=2, cw2=(22.75 * percentage, 72 * percentage), cl2=('right', 'left'),
-                        #                   columnAttach=[(1, 'both', 0.5 * percentage),
-                        #                                 (2, 'both', 0.5 * percentage)]):
-                        #     pm.text('')
-                        #     with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 23.5 * percentage, 23.5 * percentage),
-                        #                       cl3=('center', 'center', 'center'),
-                        #                       columnAttach=[(1, 'both', 0 * percentage),
-                        #                                     (2, 'both', 0 * percentage),
-                        #                                     (3, 'both', 0 * percentage)]):
-                        #
-                        #         pm.button("Create_Grp_Select", l="Create Grp Select",
-                        #                   c='')
-                        #         pm.button("List_Connection", l="List Connection", c='')
-                        #         pm.button('Create_Connection', l="Connect Object",
-                        #                   c=partial(ad_create_connection_button))
-                        #
-                        #
-                        #         # pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
-                        #         #           c=partial(ad_tagging_untagging_button, True))
-                        #         # pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
-                        #         #           c=partial(ad_tagging_untagging_button, False))
 
                         with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
                                           cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
@@ -154,25 +119,7 @@ def ad_show_ui():
                             pm.text('')
                             pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                       c=partial(ad_select_all_ad_controller_button))
-                    # DEFINE
-                    # with pm.frameLayout(collapsable=True, l='Parent Group', mh=1):
-                    #     with pm.rowColumnLayout(nc=3, cw=[(2, 56 * percentage)], cs=[(3, 1 * percentage)]):
-                    #         pm.checkBox(label='Name List:',
-                    #                     cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'], 'Main,Offset'),
-                    #                     value=True)
-                    #         al.ad_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
-                    #                                          enable=True)
-                    #         pm.button("Create_Grp_Select", l="Create Group", c='')
-
-
-                        # with pm.rowLayout(nc=3, cw3=(23.5 * percentage, 36 * percentage, 35 * percentage),
-                        #                   cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
-                        #                                                                  (3, 'both',
-                        #                                                                   0.15 * percentage)]):
-                        #     pm.text(l='')
-                        #     pm.button("Create_Grp_Select", l="Create Group Obj Select", c='')
-                        #     pm.text(l='')
-
+                    # GROUP AND SHAPE
                     with pm.frameLayout(collapsable=True, l='Group and Shape', mh=1):
                         with pm.rowColumnLayout(nc=3, cw=[(2, 56 * percentage)], cs=[(3, 1 * percentage)]):
                             pm.checkBox(label='Name List:',
@@ -343,8 +290,30 @@ def ad_create_controller_button(*args):
                                             manipulated_position=manipulated_position,
                                             manipulated_rotation=manipulated_rotation)
         # constraint or parent
-        for ctrl, target in zip (controller_shape_prefix_suffix[0], select):
-            ad_connection(ctrl=ctrl, target=target)
+        get_objects = []
+        if '.' in str(select[0]):
+            for item in select:
+                get_object = item.split('.')
+                parent_query = pm.listRelatives(get_object[0], p=True)
+                get_objects.append(parent_query[0])
+
+            listing = list(set(get_objects))
+            for target in listing:
+                # add visibility to target
+                print target
+
+                ad_visibility_target(object=controller_shape_prefix_suffix[0][0],
+                                     target=target)
+
+                ad_connection(ctrl=controller_shape_prefix_suffix[0][0], target=target)
+
+
+        else:
+            for ctrl, target in zip (controller_shape_prefix_suffix[0], select):
+                ad_connection(ctrl=ctrl, target=target)
+
+                # add visibility to target
+                ad_visibility_target(object=ctrl, target=target)
 
     else:
         # create controller without selection
@@ -356,9 +325,9 @@ def ad_create_controller_button(*args):
                               main_name=controller_shape_prefix_suffix[1],
                               prefix_2=al.ad_prefix('Prefix_2_Text'))
 
-    # add visibility to target
-    if select:
-        ad_visibility_target(object=controller_shape_prefix_suffix[0], target=select)
+    # # add visibility to target
+    # if select:
+    #     ad_visibility_target(object=controller_shape_prefix_suffix[0], target=select)
 
     # add child controller
     ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
@@ -386,8 +355,7 @@ def ad_group_button(*args):
 def ad_visibility_target(object, target):
     check_box = pm.checkBox('Target_Visibility', q=True, value=True)
     if check_box:
-        for item, tgt in zip(object, target):
-            al.ad_display(object=item, target=tgt)
+        al.ad_display(object=object, target=target)
     else:
         pass
 
@@ -402,7 +370,6 @@ def ad_get_number_main_name(main_name):
 
     # get the prefix without number
     ad_main_name = str(al.ad_main_name(main_name)).translate(None, digits)
-
     return name_number, ad_main_name
 
 
@@ -543,7 +510,7 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
                 pm.select(cl=1)
-    print controller_shape_prefix_suffix_app, main_name_for_grp
+    # print controller_shape_prefix_suffix_app, main_name_for_grp
     return controller_shape_prefix_suffix_app, main_name_for_grp
 
 
