@@ -1314,8 +1314,6 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #         return objs
 
 def ad_parent_constraint(obj_base, obj_target, mo=1):
-    print obj_base
-    print obj_target
     par_constraint = pm.parentConstraint(obj_base, obj_target, mo=mo)
     split = par_constraint.split('_')
     x = '_'.join(split[:-1])
@@ -1447,11 +1445,12 @@ def ad_defining_object_text_field(define_object, tx='', *args, **kwargs):
 
 def ad_display(object, target, long_name='display', default_vis=1, k=True, cb=False):
     # create attr
-    pm.addAttr(object, ln=long_name, at='bool')
+    if not pm.objExists(object+'.'+long_name):
+        pm.addAttr(object, ln=long_name, at='bool')
+    else:
+        pass
     pm.setAttr('%s.%s' % (object,long_name), default_vis, e=True, k=k, cb=cb)
-
     pm.connectAttr('%s.%s' % (object,long_name), target+'.visibility')
-
 
 def ad_group_parent(groups, name, suffix, prefix_2, prefix_number):
     # create group hierarchy
@@ -1617,7 +1616,6 @@ def ad_ctrl_color_list(color):
     else:
         for obj in selection:
             shapeNodes = pm.listRelatives(obj, shapes=True)[0]
-            print shapeNodes
             if not pm.objectType(shapeNodes) == 'nurbsCurve':
                 pass
             else:

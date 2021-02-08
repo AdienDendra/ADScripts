@@ -289,7 +289,10 @@ def ad_create_controller_button(*args):
         al.ad_match_position_target_to_ctrl(selection=select, target=controller_shape_prefix_suffix[0],
                                             manipulated_position=manipulated_position,
                                             manipulated_rotation=manipulated_rotation)
-        # constraint or parent
+        # add child controller
+        add_child_ctrl = ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
+
+        # if component mode
         get_objects = []
         if '.' in str(select[0]):
             for item in select:
@@ -299,38 +302,35 @@ def ad_create_controller_button(*args):
 
             listing = list(set(get_objects))
             for target in listing:
+                # add connection
+                if add_child_ctrl:
+                    ad_connection(ctrl=add_child_ctrl[0], target=target)
+                else:
+                    ad_connection(ctrl=controller_shape_prefix_suffix[0][0], target=target)
                 # add visibility to target
-                print target
-
                 ad_visibility_target(object=controller_shape_prefix_suffix[0][0],
                                      target=target)
-
-                ad_connection(ctrl=controller_shape_prefix_suffix[0][0], target=target)
-
-
+        # object mode
         else:
-            for ctrl, target in zip (controller_shape_prefix_suffix[0], select):
-                ad_connection(ctrl=ctrl, target=target)
-
+            for ctrl, target, child_ctrl in zip (controller_shape_prefix_suffix[0], select, add_child_ctrl):
+                # add connection
+                if add_child_ctrl:
+                    ad_connection(ctrl=child_ctrl, target=target)
+                else:
+                    ad_connection(ctrl=ctrl, target=target)
                 # add visibility to target
                 ad_visibility_target(object=ctrl, target=target)
-
     else:
         # create controller without selection
         controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix()
+        # add child controller
+        ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
 
     # grouping controller
     if pm.textField('Parent_Group_Name', q=True, enable=True):
         ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix[0],
                               main_name=controller_shape_prefix_suffix[1],
                               prefix_2=al.ad_prefix('Prefix_2_Text'))
-
-    # # add visibility to target
-    # if select:
-    #     ad_visibility_target(object=controller_shape_prefix_suffix[0], target=select)
-
-    # add child controller
-    ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
 
     # controller color
     al.ad_ctrl_color(ctrl=controller_shape_prefix_suffix[0], color=ad_set_color())
@@ -348,6 +348,7 @@ def ad_group_button(*args):
                                        name=name[1],
                                        suffix=al.ad_get_suffix_main(item),
                                        prefix_number=name[0], prefix_2=al.ad_prefix('Prefix_2_Text'))
+            al.ad_xform_position_rotation(origin=item, target=group[0])
             pm.parent(item, group[-1])
     else:
         pass
