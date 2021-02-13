@@ -92,22 +92,28 @@ def look_at_gift():
 
 def put_on_party_hat():
     hat = pm.PyNode("PartyHat")
+    birdy = pm.PyNode('Birdy')
     birdy_likes_his_hat_here = pm.dt.Matrix([
         [0.99, -0.13, 0.022, 0.0],
         [0.13, 0.97, -0.16, 0.0],
         [0, 0.167, 0.985, 0.0],
         [12.13, 83.57, -15.185, 1.0],
     ])
-    print pm.dt.Vector(birdy_likes_his_hat_here).get()
+    position_birdy = pm.xform(birdy, q=True, m=True)
+    print position_birdy
+    [0.7797672568842143, -0.4750407758702958, 0.4077980950811512, 0.0,
+     0.4364356809126459, 0.8216065262485838, 0.12255659989689752, 0.0,
+     -0.3932689586134617, 0.08241201558696216, 0.84798661168925, 0.0,
+     0.0, 178.67416191492592, 0.0, 1.0]
 
-    # print pm.xform(birdy_likes_his_hat_here, q=True, m=True, t=True)
-    postion_hat = pm.xform(hat, ws=True, q=True, t=True)
-    print postion_hat
+    a = pm.dt.Vector(position_birdy.get())
+    print a
+    # postion_hat = pm.xform(birdy_likes_his_hat_here, q=True, m=True)
+    # print postion_hat
 
-    x =  birdy_likes_his_hat_here + postion_hat
+    # matrix =  position_birdy + birdy_likes_his_hat_here
     # print x
-
-    # pm.xform(hat, ws=True, m=x)
+    # pm.xform(hat, ws=True, m=matrix)
 
 
 
