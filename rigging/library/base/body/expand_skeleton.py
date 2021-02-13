@@ -93,7 +93,10 @@ class Build:
                            self.pair_blend + '.weight')
 
             # ADD TO SETS
-            mc.sets(driver_adjust_joint, add='BODY_SKIN_LN')
+            if mc.objExists('BODY_SKIN_LN'):
+                mc.sets(driver_adjust_joint, add='BODY_SKIN_LN')
+            else:
+                pass
 
     # ==================================================================================================================
     #                                               GENERAL FUNCTION

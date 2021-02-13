@@ -755,69 +755,6 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
     if mc.objExists('anim_grp'):
         mc.parent(base.anim_control, 'anim_grp')
 
-
-
-    # DELETE NECK JOINT
-    mc.delete(sAdd.neck)
-
-    # PARENT TO ADD JOINT TO SKELETON GROUP
-    selection = [sAdd.spine_list[0], sAdd.upLeg_LFT, sAdd.upLeg_RGT]
-    list_relatives = mc.listRelatives(selection, c=1, ad=1)
-    list_object = []
-    for obj in list_relatives:
-        list_object.append(obj)
-        list_object.extend(selection)
-        while '' in list_object:
-            list_object.remove('')
-
-    mc.parent(list(set(list_object)), base.skeleton_grp)
-
-    # delete unused bones
-    mc.delete(sFk.thumb1_LFT, sFk.thumb1_RGT)
-    mc.delete(sIk.thumb1_LFT, sIk.thumb1_RGT)
-    mc.delete(sFk.hand_LFT, sFk.hand_RGT)
-    mc.delete(sIk.index1_LFT, sIk.index1_RGT)
-    mc.delete(sIk.middle1_LFT, sIk.middle1_RGT)
-    mc.delete(sIk.ring1_LFT, sIk.ring1_RGT)
-    mc.delete(sIk.pinky1_LFT, sIk.pinky1_RGT)
-    mc.delete(sFk.palm_LFT, sFk.palm_RGT)
-    mc.delete(sIk.palm_LFT, sIk.palm_RGT)
-
-    mc.delete(ss.upArm_LFT, ss.upArm_RGT)
-
-    # if leg_left:
-    #     if foot_left:
-    #         mc.delete(ss.heel_LFT, ss.footIn_LFT, ss.footOut_LFT, ss.toe_LFT, sj.heel_LFT, sj.footIn_LFT,
-    #                   sj.footOut_LFT)
-    #
-    # if leg_right:
-    #     if foot_right:
-    #         mc.delete(ss.heel_RGT, ss.footIn_RGT, ss.footOut_RGT, ss.toe_RGT, sj.heel_RGT, sj.footIn_RGT,
-    #                   sj.footOut_RGT)
-    if leg_left:
-        if foot_left:
-            mc.delete(ss.heel_LFT, ss.footIn_LFT, ss.footOut_LFT, ss.toe_LFT)
-
-    if leg_right:
-        if foot_right:
-            mc.delete(ss.heel_RGT, ss.footIn_RGT, ss.footOut_RGT, ss.toe_RGT)
-
-    mc.delete(sFk.heel_LFT, sFk.heel_RGT)
-    mc.delete(sFk.footIn_LFT, sFk.footIn_RGT)
-    mc.delete(sFk.footOut_LFT, sFk.footOut_RGT)
-    mc.delete(sIk.heel_LFT, sIk.heel_RGT)
-    mc.delete(sIk.footIn_LFT, sIk.footIn_RGT)
-    mc.delete(sIk.footOut_LFT, sIk.footOut_RGT)
-
-    mc.delete(sTwistHelp.wrist_LFT, sTwistHelp.wrist_RGT)
-    mc.delete(sTwistHelp.ankle_LFT, sTwistHelp.ankle_RGT)
-
-    mc.delete(ss.root)
-    mc.delete(sIk.root)
-    mc.delete(sFk.root)
-    mc.delete(sAdd.root)
-    mc.delete(sTwistHelp.root)
-
     if game_bind_joint:
         mc.parent(sGame.root, 'skeleton_grp')
 
@@ -852,33 +789,45 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 
         # constraining the skn to game joint
         for skin_joint, game in zip(bind_sj, bind_game):
-            constraint = au.parent_scale_constraint(skin_joint, game, mo=1)
-            mc.parent(constraint[0], constraint[1], 'additional_grp')
+            if mc.objExists(skin_joint) and mc.objExists(game):
+                constraint = au.parent_scale_constraint(skin_joint, game, mo=1)
+                mc.parent(constraint[0], constraint[1], 'additional_grp')
 
         # clavicle constraint
-        clav_constraint_LFT = au.parent_scale_constraint(ss.clav_LFT, sGame.clav_LFT)
-        clav_constraint_RGT = au.parent_scale_constraint(ss.clav_RGT, sGame.clav_RGT)
-
-        # ankle constraint
-        ankle_constraint_LFT = au.parent_scale_constraint(ss.ankle_LFT, sGame.ankle_LFT)
-        ankle_constraint_RGT = au.parent_scale_constraint(ss.ankle_RGT, sGame.ankle_RGT)
-
-        # ankle constraint
-        ball_constraint_LFT = au.parent_scale_constraint(ss.ball_LFT, sGame.ball_LFT)
-        ball_constraint_RGT = au.parent_scale_constraint(ss.ball_RGT, sGame.ball_RGT)
-
-        mc.parent(clav_constraint_LFT[0], clav_constraint_LFT[1], clav_constraint_RGT[0], clav_constraint_RGT[1],
-                  ankle_constraint_LFT[0], ankle_constraint_LFT[1], ankle_constraint_RGT[0], ankle_constraint_RGT[1],
-                  ball_constraint_LFT[0], ball_constraint_LFT[1], ball_constraint_RGT[0], ball_constraint_RGT[1],
+        if clavicle_left:
+            clav_constraint_LFT = au.parent_scale_constraint(ss.clav_LFT, sGame.clav_LFT)
+            mc.parent(clav_constraint_LFT[0], clav_constraint_LFT[1],
+                      'additional_grp')
+        if clavicle_right:
+            clav_constraint_RGT = au.parent_scale_constraint(ss.clav_RGT, sGame.clav_RGT)
+            mc.parent(clav_constraint_RGT[0], clav_constraint_RGT[1],
                   'additional_grp')
 
+        # ankle constraint
+        if leg_left:
+            ankle_constraint_LFT = au.parent_scale_constraint(ss.ankle_LFT, sGame.ankle_LFT)
+            ball_constraint_LFT = au.parent_scale_constraint(ss.ball_LFT, sGame.ball_LFT)
+            mc.parent(
+                      ankle_constraint_LFT[0], ankle_constraint_LFT[1],
+                      ball_constraint_LFT[0], ball_constraint_LFT[1],
+                      'additional_grp')
+            # delete unused joint
+            mc.delete(sGame.heel_LFT, sGame.footIn_LFT, sGame.footOut_LFT, sj.heel_LFT, sj.footIn_LFT, sj.footOut_LFT)
+
+        # ankle constraint
+        if leg_right:
+            ankle_constraint_RGT = au.parent_scale_constraint(ss.ankle_RGT, sGame.ankle_RGT)
+            ball_constraint_RGT = au.parent_scale_constraint(ss.ball_RGT, sGame.ball_RGT)
+
+            mc.parent(ankle_constraint_RGT[0], ankle_constraint_RGT[1],
+                      ball_constraint_RGT[0], ball_constraint_RGT[1],
+                      'additional_grp')
+
+            # delete unused joint
+            mc.delete(sGame.heel_RGT, sGame.footIn_RGT, sGame.footOut_RGT, sj.heel_RGT, sj.footIn_RGT, sj.footOut_RGT)
 
         # delete unused joint
-        mc.delete(sGame.neck, sj.neck, sGame.heel_LFT, sGame.footIn_LFT,
-                          sGame.footOut_LFT, sGame.heel_RGT, sGame.footIn_RGT,
-                          sGame.footOut_RGT, sj.heel_LFT, sj.footIn_LFT,
-                          sj.footOut_LFT, sj.heel_RGT, sj.footIn_RGT,
-                          sj.footOut_RGT)
+        mc.delete(sGame.neck, sj.neck)
 
     else:
         # SETS LN JOINT
@@ -899,5 +848,56 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
                 mc.delete(sj.heel_RGT, sj.footIn_RGT,
                           sj.footOut_RGT)
 
+        # DELETE NECK JOINT
+    mc.delete(sAdd.neck)
+
+    # PARENT TO ADD JOINT TO SKELETON GROUP
+    selection = [sAdd.spine_list[0], sAdd.upLeg_LFT, sAdd.upLeg_RGT]
+    list_relatives = mc.listRelatives(selection, c=1, ad=1)
+    list_object = []
+    for obj in list_relatives:
+        list_object.append(obj)
+        list_object.extend(selection)
+        while '' in list_object:
+            list_object.remove('')
+
+    mc.parent(list(set(list_object)), base.skeleton_grp)
+
+    # delete unused bones
+    mc.delete(sFk.thumb1_LFT, sFk.thumb1_RGT)
+    mc.delete(sIk.thumb1_LFT, sIk.thumb1_RGT)
+    mc.delete(sFk.hand_LFT, sFk.hand_RGT)
+    mc.delete(sIk.index1_LFT, sIk.index1_RGT)
+    mc.delete(sIk.middle1_LFT, sIk.middle1_RGT)
+    mc.delete(sIk.ring1_LFT, sIk.ring1_RGT)
+    mc.delete(sIk.pinky1_LFT, sIk.pinky1_RGT)
+    mc.delete(sFk.palm_LFT, sFk.palm_RGT)
+    mc.delete(sIk.palm_LFT, sIk.palm_RGT)
+
+    mc.delete(ss.upArm_LFT, ss.upArm_RGT)
+
+    if leg_left:
+        if foot_left:
+            mc.delete(sj.ball_LFT, ss.ball_LFT, ss.heel_LFT, ss.footIn_LFT, ss.footOut_LFT, ss.toe_LFT)
+
+    if leg_right:
+        if foot_right:
+            mc.delete(ss.heel_RGT, ss.footIn_RGT, ss.footOut_RGT, ss.toe_RGT)
+
+    mc.delete(sFk.heel_LFT, sFk.heel_RGT)
+    mc.delete(sFk.footIn_LFT, sFk.footIn_RGT)
+    mc.delete(sFk.footOut_LFT, sFk.footOut_RGT)
+    mc.delete(sIk.heel_LFT, sIk.heel_RGT)
+    mc.delete(sIk.footIn_LFT, sIk.footIn_RGT)
+    mc.delete(sIk.footOut_LFT, sIk.footOut_RGT)
+
+    mc.delete(sTwistHelp.wrist_LFT, sTwistHelp.wrist_RGT)
+    mc.delete(sTwistHelp.ankle_LFT, sTwistHelp.ankle_RGT)
+
+    mc.delete(ss.root)
+    mc.delete(sIk.root)
+    mc.delete(sFk.root)
+    mc.delete(sAdd.root)
+    mc.delete(sTwistHelp.root)
 
     print('100% | clean up!')

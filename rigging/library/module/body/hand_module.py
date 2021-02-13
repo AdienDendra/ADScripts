@@ -216,7 +216,8 @@ class Hand:
                 self.change_pos_ctrl(thumb_finger_base, self.thumb_finger1.control)
 
             else:
-                mc.delete(thumb_finger_base)
+                pass
+                # mc.delete(thumb_finger_base)
 
             # ==========================================================================================================
             #                                                INDEX CONTROLLER
@@ -320,7 +321,8 @@ class Hand:
                 self.change_pos_ctrl(index_finger_base, self.index_finger1.control)
 
             else:
-                mc.delete(index_finger_base)
+                pass
+                # mc.delete(index_finger_base)
             # ==========================================================================================================
             #                                                MIDDLE CONTROLLER
             # ==========================================================================================================
@@ -423,7 +425,8 @@ class Hand:
                 self.change_pos_ctrl(middle_finger_base, self.middle_finger1.control)
 
             else:
-                mc.delete(middle_finger_base)
+                pass
+                # mc.delete(middle_finger_base)
             # ==========================================================================================================
             #                                                RING CONTROLLER
             # ==========================================================================================================
@@ -528,7 +531,8 @@ class Hand:
                 self.change_pos_ctrl(ring_finger_base, self.ring_finger1.control)
 
             else:
-                mc.delete(ring_finger_base)
+                pass
+                # mc.delete(ring_finger_base)
 
             # ==========================================================================================================
             #                                                PINKY CONTROLLER
@@ -633,7 +637,8 @@ class Hand:
                 self.change_pos_ctrl(pinky_finger_base, self.pinky_finger1.control)
 
             else:
-                mc.delete(pinky_finger_base)
+                pass
+                # mc.delete(pinky_finger_base)
 
     # ==================================================================================================================
     #                                               GENERAL FUNCTION FINGER

@@ -438,7 +438,8 @@ def add_expand_joint(number_arm_detail_ctrl=5,
                      ring_expand_joint=True,
                      pinky_expand_joint=True,
                      left_side='LFT',
-                     right_side='RGT'):
+                     right_side='RGT',
+                     size=1.0):
     print('------------------------------')
     print('Adding joint deform...........')
 
@@ -515,7 +516,8 @@ def add_expand_joint(number_arm_detail_ctrl=5,
                     ring_expand_joint=ring_expand_joint,
                     pinky_expand_joint=pinky_expand_joint,
                     suffix_parent_joint='skn',
-                    suffix_duplicate_expand_joint='jnt'
+                    suffix_duplicate_expand_joint='jnt',
+                    size=size
                     )
 
     print('------------------------------')

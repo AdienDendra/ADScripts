@@ -86,7 +86,8 @@ class JointExpand:
                  ring_expand_joint,
                  pinky_expand_joint,
                  suffix_parent_joint,
-                 suffix_duplicate_expand_joint
+                 suffix_duplicate_expand_joint,
+                 size
                  ):
         self.prefix_spine = prefix_spine
         self.prefix_arm_setup = prefix_arm_setup
@@ -118,7 +119,8 @@ class JointExpand:
         # ==================================================================================================================
         if mc.objExists('%sSetup_ctrl' % (self.prefix_spine)):
             self.spine_expand(spine_expand_joint=spine_expand_joint, spine_joint_grp=spine_joint_grp, multiply=1,
-                              suffix_parent_joint=suffix_parent_joint, suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                              suffix_parent_joint=suffix_parent_joint, suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
 
         if mc.objExists('%s%s_ctrl' % (self.prefix_arm_setup, left_side)):
             self.arm_expand(upperArm_expand_joint=upperArm_expand_joint, side=left_side, upArm_joint_grp=upArm_joint_LFT_grp,
@@ -126,7 +128,8 @@ class JointExpand:
                             elbow_joint_grp=elbow_joint_LFT_grp, wrist_expand_joint=wrist_expand_joint,
                             wrist_joint_grp=wrist_joint_LFT_grp,
                             multiply=1, suffix_parent_joint=suffix_parent_joint,
-                            suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                            suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
             self.finger_expand(side=left_side, thumb_joint_grp=thumb_joint_LFT_grp, thumb_expand_joint=thumb_expand_joint,
                                index_joint_grp=index_joint_LFT_grp, index_expand_joint=index_expand_joint,
                                middle_joint_grp=middle_joint_LFT_grp, middle_expand_joint=middle_expand_joint,
@@ -134,14 +137,16 @@ class JointExpand:
                                ring_expand_joint=ring_expand_joint, pinky_joint_grp=pinky_joint_LFT_grp,
                                pinky_expand_joint=pinky_expand_joint,
                                multiply=1, suffix_parent_joint=suffix_parent_joint,
-                               suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                               suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
 
         if mc.objExists('%s%s_ctrl' % (self.prefix_arm_setup, right_side)):
             self.arm_expand(upperArm_expand_joint=upperArm_expand_joint, side=right_side, upArm_joint_grp=upArm_joint_RGT_grp,
                             elbow_expand_joint=elbow_expand_joint, number_arm_detail_ctrl=number_arm_detail_ctrl,
                             elbow_joint_grp=elbow_joint_RGT_grp, wrist_expand_joint=wrist_expand_joint,
                             wrist_joint_grp=wrist_joint_RGT_grp,
-                            multiply=-1, suffix_parent_joint=suffix_parent_joint, suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                            multiply=-1, suffix_parent_joint=suffix_parent_joint, suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
             self.finger_expand(side=right_side, thumb_joint_grp=thumb_joint_RGT_grp, thumb_expand_joint=thumb_expand_joint,
                                index_joint_grp=index_joint_RGT_grp, index_expand_joint=index_expand_joint,
                                middle_joint_grp=middle_joint_RGT_grp, middle_expand_joint=middle_expand_joint,
@@ -149,7 +154,8 @@ class JointExpand:
                                ring_expand_joint=ring_expand_joint, pinky_joint_grp=pinky_joint_RGT_grp,
                                pinky_expand_joint=pinky_expand_joint,
                                multiply=-1, suffix_parent_joint=suffix_parent_joint,
-                               suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                               suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
 
         if mc.objExists('%s%s_ctrl' % (self.prefix_leg_setup, left_side)):
             self.leg_expand(side=left_side, upperLeg_expand_joint=upperLeg_expand_joint,
@@ -159,7 +165,8 @@ class JointExpand:
                             ankle_expand_joint=ankle_expand_joint, ankle_joint_grp=ankle_joint_LFT_grp,
                             ball_expand_joint=ball_expand_joint,
                             ball_joint_grp=ball_joint_LFT_grp, multiply=1, suffix_parent_joint=suffix_parent_joint,
-                            suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                            suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
 
         if mc.objExists('%s%s_ctrl' % (self.prefix_leg_setup, right_side)):
             self.leg_expand(side=right_side, upperLeg_expand_joint=upperLeg_expand_joint,
@@ -169,7 +176,8 @@ class JointExpand:
                             ankle_expand_joint=ankle_expand_joint, ankle_joint_grp=ankle_joint_RGT_grp,
                             ball_expand_joint=ball_expand_joint,
                             ball_joint_grp=ball_joint_RGT_grp, multiply=-1, suffix_parent_joint=suffix_parent_joint,
-                            suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
+                            suffix_duplicate_expand_joint=suffix_duplicate_expand_joint,
+                              scale=size)
 
         # # ==================================================================================================================
         # #                                        ADDITIONAL NECK PARAMETERS
@@ -197,7 +205,7 @@ class JointExpand:
     # ==================================================================================================================
     #                                            EXPAND JOINT COMPILE
     # ==================================================================================================================
-    def spine_expand(self, spine_expand_joint, spine_joint_grp, multiply, suffix_parent_joint, suffix_duplicate_expand_joint):
+    def spine_expand(self, spine_expand_joint, spine_joint_grp, multiply, suffix_parent_joint, suffix_duplicate_expand_joint, scale):
 
         if mc.objExists('spine01_skn'):
             if mc.objExists('spine%sOutLeft01_grp' % (self.sAdd_prefix_value)):
@@ -207,28 +215,28 @@ class JointExpand:
                     # SPINE OUT LEFT
                     self.add_spine_joint(rotation='Z', joint_grp=spine_joint_grp, rotation_pair_blend=1,
                                          offset_translation_position='X',
-                                         offset_value=multiply * 1.5, position_name='OutLeft',
+                                         offset_value=multiply * 1.5*scale, position_name='OutLeft',
                                          add_joint=spine_expand_joint,
                                          prefix=self.prefix_spine, suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # SPINE OUT RIGHT
                     self.add_spine_joint(rotation='Z', joint_grp=spine_joint_grp, rotation_pair_blend=1,
                                          offset_translation_position='X',
-                                         offset_value=multiply * -1.5, position_name='OutRight',
+                                         offset_value=multiply * -1.5*scale, position_name='OutRight',
                                          add_joint=spine_expand_joint,
                                          prefix=self.prefix_spine, suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # SPINE OUT FRONT
                     self.add_spine_joint(rotation='X', joint_grp=spine_joint_grp, rotation_pair_blend=1,
                                          offset_translation_position='Z',
-                                         offset_value=multiply * 1.5, position_name='Front',
+                                         offset_value=multiply * 1.5*scale, position_name='Front',
                                          add_joint=spine_expand_joint,
                                          prefix=self.prefix_spine, suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # SPINE OUT RIGHT
                     self.add_spine_joint(rotation='X', joint_grp=spine_joint_grp, rotation_pair_blend=1,
                                          offset_translation_position='Z',
-                                         offset_value=multiply * -1.5, position_name='Back',
+                                         offset_value=multiply * -1.5*scale, position_name='Back',
                                          add_joint=spine_expand_joint,
                                          prefix=self.prefix_spine, suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
@@ -237,7 +245,7 @@ class JointExpand:
 
     def arm_expand(self, upperArm_expand_joint, side, upArm_joint_grp, elbow_expand_joint, number_arm_detail_ctrl,
                    elbow_joint_grp, wrist_expand_joint, wrist_joint_grp, multiply, suffix_parent_joint,
-                   suffix_duplicate_expand_joint):
+                   suffix_duplicate_expand_joint,scale):
 
         if mc.objExists('upArm%s_skn' % (side)):
             # UPPERARM UP
@@ -251,7 +259,7 @@ class JointExpand:
 
                     self.add_upperArm_joint(add_joint=upperArm_expand_joint, side=side, joint_grp=upArm_joint_grp,
                                             rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                            offset_value=multiply * -0.5, position_name='Up',
+                                            offset_value=multiply * -0.5*scale, position_name='Up',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # UPPERARM DOWN
@@ -260,7 +268,7 @@ class JointExpand:
 
                     self.add_upperArm_joint(add_joint=upperArm_expand_joint, side=side, joint_grp=upArm_joint_grp,
                                             rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                            offset_value=multiply * 0.5, position_name='Down',
+                                            offset_value=multiply * 0.5*scale, position_name='Down',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # UPPERARM FRONT
@@ -268,7 +276,7 @@ class JointExpand:
                                              prefix_expand_joint=self.prefix_upperArm, side=side, position_name='Front')
                     self.add_upperArm_joint(add_joint=upperArm_expand_joint, side=side, joint_grp=upArm_joint_grp,
                                             rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                            offset_value=multiply * 0.5, position_name='Front',
+                                            offset_value=multiply * 0.5*scale, position_name='Front',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # UPPERARM BACK
@@ -276,7 +284,7 @@ class JointExpand:
                                              prefix_expand_joint=self.prefix_upperArm, side=side, position_name='Back')
                     self.add_upperArm_joint(add_joint=upperArm_expand_joint, side=side, joint_grp=upArm_joint_grp,
                                             rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                            offset_value=multiply * -0.5, position_name='Back',
+                                            offset_value=multiply * -0.5*scale, position_name='Back',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -293,7 +301,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=elbow_joint_grp,
                                          rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                         offset_value=multiply * 0.5, position_name='Front',
+                                         offset_value=multiply * 0.5*scale, position_name='Front',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -304,7 +312,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=elbow_joint_grp,
                                          rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                         offset_value=multiply * -0.5, position_name='Back',
+                                         offset_value=multiply * -0.5*scale, position_name='Back',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -315,7 +323,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=elbow_joint_grp,
                                          rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                         offset_value=multiply * -0.5, position_name='Up',
+                                         offset_value=multiply * -0.5*scale, position_name='Up',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -326,7 +334,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=elbow_joint_grp,
                                          rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                         offset_value=multiply * 0.5, position_name='Down',
+                                         offset_value=multiply * 0.5*scale, position_name='Down',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -343,7 +351,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=wrist_joint_grp,
                                          rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                         offset_value=multiply * -0.5, position_name='Up',
+                                         offset_value=multiply * -0.5*scale, position_name='Up',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -354,7 +362,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=wrist_joint_grp,
                                          rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                         offset_value=multiply * 0.5, position_name='Down',
+                                         offset_value=multiply * 0.5*scale, position_name='Down',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # WRIST FRONT
@@ -364,7 +372,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=wrist_joint_grp,
                                          rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                         offset_value=multiply * 0.5, position_name='Front',
+                                         offset_value=multiply * 0.5*scale, position_name='Front',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # WRIST BACK
@@ -374,7 +382,7 @@ class JointExpand:
                                          number_arm_detail_ctrl=number_arm_detail_ctrl,
                                          joint_grp=wrist_joint_grp,
                                          rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                         offset_value=multiply * -0.5, position_name='Back',
+                                         offset_value=multiply * -0.5*scale, position_name='Back',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -382,7 +390,7 @@ class JointExpand:
 
     def finger_expand(self, side, thumb_joint_grp, thumb_expand_joint, index_joint_grp, index_expand_joint,
                       middle_joint_grp, middle_expand_joint, ring_joint_grp, ring_expand_joint, pinky_joint_grp,
-                      pinky_expand_joint, multiply, suffix_parent_joint, suffix_duplicate_expand_joint):
+                      pinky_expand_joint, multiply, suffix_parent_joint, suffix_duplicate_expand_joint,scale):
         # FINGER UP
         if mc.objExists('thumb02%s_skn' % (side)):
             if mc.objExists('thumb%sUp02%s_grp' % (self.sAdd_prefix_value, side)):
@@ -391,14 +399,14 @@ class JointExpand:
                 if thumb_expand_joint:
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=thumb_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * -0.25, position_name='Up',
+                                          offset_value=multiply * -0.25*scale, position_name='Up',
                                           add_joint=thumb_expand_joint,
                                           thumb=True,
                                           prefix=self.prefix_thumb, suffix_parent_joint=suffix_parent_joint,
                                           suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=thumb_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * 0.25, position_name='Down',
+                                          offset_value=multiply * 0.25*scale, position_name='Down',
                                           add_joint=thumb_expand_joint,
                                           thumb=True,
                                           prefix=self.prefix_thumb, suffix_parent_joint=suffix_parent_joint,
@@ -413,14 +421,14 @@ class JointExpand:
                 if index_expand_joint:
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=index_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * -0.25, position_name='Up',
+                                          offset_value=multiply * -0.25*scale, position_name='Up',
                                           add_joint=index_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_index, suffix_parent_joint=suffix_parent_joint,
                                           suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=index_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * 0.25, position_name='Down',
+                                          offset_value=multiply * 0.25*scale, position_name='Down',
                                           add_joint=index_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_index, suffix_parent_joint=suffix_parent_joint,
@@ -434,14 +442,14 @@ class JointExpand:
                 if middle_expand_joint:
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=middle_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * -0.25, position_name='Up',
+                                          offset_value=multiply * -0.25*scale, position_name='Up',
                                           add_joint=middle_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_middle, suffix_parent_joint=suffix_parent_joint,
                                           suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=middle_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * 0.25, position_name='Down',
+                                          offset_value=multiply * 0.25*scale, position_name='Down',
                                           add_joint=middle_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_middle, suffix_parent_joint=suffix_parent_joint,
@@ -455,14 +463,14 @@ class JointExpand:
                 if ring_expand_joint:
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=ring_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * -0.25, position_name='Up',
+                                          offset_value=multiply * -0.25*scale, position_name='Up',
                                           add_joint=ring_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_ring, suffix_parent_joint=suffix_parent_joint,
                                           suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=ring_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * 0.25, position_name='Down',
+                                          offset_value=multiply * 0.25*scale, position_name='Down',
                                           add_joint=ring_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_ring, suffix_parent_joint=suffix_parent_joint,
@@ -476,14 +484,14 @@ class JointExpand:
                 if pinky_expand_joint:
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=pinky_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * -0.25, position_name='Up',
+                                          offset_value=multiply * -0.25*scale, position_name='Up',
                                           add_joint=pinky_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_pinky, suffix_parent_joint=suffix_parent_joint,
                                           suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     self.add_finger_joint(side=side, rotation='Z', joint_grp=pinky_joint_grp, rotation_pair_blend=1,
                                           offset_translation_position='X',
-                                          offset_value=multiply * 0.25, position_name='Down',
+                                          offset_value=multiply * 0.25*scale, position_name='Down',
                                           add_joint=pinky_expand_joint,
                                           thumb=False,
                                           prefix=self.prefix_pinky, suffix_parent_joint=suffix_parent_joint,
@@ -492,7 +500,7 @@ class JointExpand:
 
     def leg_expand(self, side, upperLeg_expand_joint, upLeg_joint_grp, knee_expand_joint, number_leg_detail_ctrl, knee_joint_grp,
                    ankle_expand_joint, ankle_joint_grp, ball_expand_joint, ball_joint_grp, multiply, suffix_parent_joint,
-                   suffix_duplicate_expand_joint):
+                   suffix_duplicate_expand_joint,scale):
         if mc.objExists('upLeg%s_skn' % (side)):
             if mc.objExists('upLeg%sOut%s_grp' % (self.sAdd_prefix_value, side)):
                 print('object upLeg %s expand joint already made!' % side)
@@ -503,7 +511,7 @@ class JointExpand:
                                              prefix_expand_joint=self.prefix_upperLeg, side=side, position_name='Out')
                     self.add_upperLeg_joint(add_joint=upperLeg_expand_joint, side=side, joint_grp=upLeg_joint_grp,
                                             rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                            offset_value=multiply * -0.5, position_name='Out',
+                                            offset_value=multiply * -0.5*scale, position_name='Out',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -512,7 +520,7 @@ class JointExpand:
                                              prefix_expand_joint=self.prefix_upperLeg, side=side, position_name='Front')
                     self.add_upperLeg_joint(add_joint=upperLeg_expand_joint, side=side, joint_grp=upLeg_joint_grp,
                                             rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                            offset_value=multiply * 0.5, position_name='Front',
+                                            offset_value=multiply * 0.5*scale, position_name='Front',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -521,7 +529,7 @@ class JointExpand:
                                              prefix_expand_joint=self.prefix_upperLeg, side=side, position_name='Back')
                     self.add_upperLeg_joint(add_joint=upperLeg_expand_joint, side=side, joint_grp=upLeg_joint_grp,
                                             rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                            offset_value=multiply * -0.5, position_name='Back',
+                                            offset_value=multiply * -0.5*scale, position_name='Back',
                                             suffix_parent_joint=suffix_parent_joint,
                                             suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -538,7 +546,7 @@ class JointExpand:
                                         number_leg_detail_ctrl=number_leg_detail_ctrl,
                                         joint_grp=knee_joint_grp,
                                         rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                        offset_value=multiply * 0.5, position_name='Front',
+                                        offset_value=multiply * 0.5*scale, position_name='Front',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # KNEE BACK
@@ -548,7 +556,7 @@ class JointExpand:
                                         number_leg_detail_ctrl=number_leg_detail_ctrl,
                                         joint_grp=knee_joint_grp,
                                         rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                        offset_value=multiply * -0.5, position_name='Back',
+                                        offset_value=multiply * -0.5*scale, position_name='Back',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -559,7 +567,7 @@ class JointExpand:
                                         number_leg_detail_ctrl=number_leg_detail_ctrl,
                                         joint_grp=knee_joint_grp,
                                         rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                        offset_value=multiply * -0.5, position_name='Out',
+                                        offset_value=multiply * -0.5*scale, position_name='Out',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # KNEE IN
@@ -569,7 +577,7 @@ class JointExpand:
                                         number_leg_detail_ctrl=number_leg_detail_ctrl,
                                         joint_grp=knee_joint_grp,
                                         rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                        offset_value=multiply * 0.5, position_name='In',
+                                        offset_value=multiply * 0.5*scale, position_name='In',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -586,7 +594,7 @@ class JointExpand:
                                          number_leg_detail_ctrl=number_leg_detail_ctrl,
                                          joint_grp=ankle_joint_grp,
                                          rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                         offset_value=multiply * 0.5, position_name='Front',
+                                         offset_value=multiply * 0.5*scale, position_name='Front',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # ANKLE BACK
@@ -596,7 +604,7 @@ class JointExpand:
                                          number_leg_detail_ctrl=number_leg_detail_ctrl,
                                          joint_grp=ankle_joint_grp,
                                          rotation='X', rotation_pair_blend=1, offset_translation_position='Z',
-                                         offset_value=multiply * -0.5, position_name='Back',
+                                         offset_value=multiply * -0.5*scale, position_name='Back',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # ANKLE OUT
@@ -606,7 +614,7 @@ class JointExpand:
                                          number_leg_detail_ctrl=number_leg_detail_ctrl,
                                          joint_grp=ankle_joint_grp,
                                          rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                         offset_value=multiply * -0.5, position_name='Out',
+                                         offset_value=multiply * -0.5*scale, position_name='Out',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # ANKLE IN
@@ -616,7 +624,7 @@ class JointExpand:
                                          number_leg_detail_ctrl=number_leg_detail_ctrl,
                                          joint_grp=ankle_joint_grp,
                                          rotation='Z', rotation_pair_blend=1, offset_translation_position='X',
-                                         offset_value=multiply * 0.5, position_name='In',
+                                         offset_value=multiply * 0.5*scale, position_name='In',
                                          suffix_parent_joint=suffix_parent_joint,
                                          suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
@@ -634,7 +642,7 @@ class JointExpand:
                                         rotation='X',
                                         rotation_pair_blend=1,
                                         offset_translation_position='Z',
-                                        offset_value=multiply * 0.5, position_name='Up',
+                                        offset_value=multiply * 0.5*scale, position_name='Up',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # BALL DOWN
@@ -644,7 +652,7 @@ class JointExpand:
                                         rotation='X',
                                         rotation_pair_blend=1,
                                         offset_translation_position='Z',
-                                        offset_value=multiply * -0.5, position_name='Down',
+                                        offset_value=multiply * -0.5*scale, position_name='Down',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # BALL OUT
@@ -654,7 +662,7 @@ class JointExpand:
                                         rotation='Y',
                                         rotation_pair_blend=1,
                                         offset_translation_position='X',
-                                        offset_value=multiply * -0.5, position_name='Out',
+                                        offset_value=multiply * -0.5*scale, position_name='Out',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
                     # BALL IN
@@ -664,7 +672,7 @@ class JointExpand:
                                         rotation='Y',
                                         rotation_pair_blend=1,
                                         offset_translation_position='X',
-                                        offset_value=multiply * 0.5, position_name='In',
+                                        offset_value=multiply * 0.5*scale, position_name='In',
                                         suffix_parent_joint=suffix_parent_joint,
                                         suffix_duplicate_expand_joint=suffix_duplicate_expand_joint)
 
