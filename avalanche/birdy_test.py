@@ -79,27 +79,32 @@ def fix_present():
 def look_at_gift():
     bird = pm.PyNode("Birdy")
     # gift = pm.pyNode('BirthdayPresent')
-    bird_pos = bird.getTranslation(worldSpace=1)
+    # get rotation
+    bird_pos = bird.getRotation(ws=1)
+
+    # get radian
+    radian =360/ (360*(3.14159/180))
+    # reverse value and multiplying by radians
+    bird_posx = -3*bird_pos.x * radian
+    bird_posy = -2*bird_pos.y * radian
+    bird_posz =  1*bird_pos.z * radian
+    # print bird_posx
+    # print bird_posy
+    # print bird_posz
+
     mtx = pm.xform(bird, q=True, ws=True, m=True)
-    print mtx
-    x =[0.7797672568842147, -0.4750407758702952, -0.40779809508115117, 0.0,
-        0.4364356809126453, 0.8216065262485841, 0.12255659989689753, 0.0,
-        0.3932689586134618, -0.0824120155869618, 0.84798661168925, 0.0,
-        0.0, 178.67416191492592, 0.0, 1.0]
-    w =[0.7797647613028733, -0.4750392555411378, -0.40780463793978, 0.0,
-        0.529926765433197, 0.7646509706831203, 0.12255620766452145, 0.0,
-        0.2536092025988317, -0.31167160472779437, 0.8479838977774422, 0.0,
-        0.0, 178.67416191492592, 0.0, 1.0]
+    # print mtx
+
 
     # Invert rotation columns,
     # rx = [n * -1 for n in mtx[0:9:4]]
     # ry = [n * -1 for n in mtx[1:10:4]]
     # rz = [n * -1 for n in mtx[2:11:4]]
     # print rz
-    x = [0,1,2,3,
-         4,5,6,7,
-         8,9,10,11,
-         12,13,14,15]
+    # x = [0,1,2,3,
+    #      4,5,6,7,
+    #      8,9,10,11,
+    #      12,13,14,15]
 
     # Invert translation row,
     # t = [n * -1 for n in mtx[12:15]]
@@ -115,7 +120,7 @@ def look_at_gift():
     # mtx[2:11:4] = rz
 
     # mtx[12] = t[1]
-    pm.xform(bird, ws=True, m=w)
+    pm.xform(bird, ws=True, ro=((bird_posx), (bird_posy), (bird_posz)))
 
     # matrix = pm.dt.Matrix(pm.xform(bird, ws=True, q=True, m=True))
     # revere_matrix = matrix.inverse()
