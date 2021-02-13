@@ -80,11 +80,47 @@ def look_at_gift():
     bird = pm.PyNode("Birdy")
     # gift = pm.pyNode('BirthdayPresent')
     bird_pos = bird.getTranslation(worldSpace=1)
+    mtx = pm.xform(bird, q=True, ws=True, m=True)
+    print mtx
+    x =[0.7797672568842147, -0.4750407758702952, -0.40779809508115117, 0.0,
+        0.4364356809126453, 0.8216065262485841, 0.12255659989689753, 0.0,
+        0.3932689586134618, -0.0824120155869618, 0.84798661168925, 0.0,
+        0.0, 178.67416191492592, 0.0, 1.0]
+    w =[0.7797647613028733, -0.4750392555411378, -0.40780463793978, 0.0,
+        0.529926765433197, 0.7646509706831203, 0.12255620766452145, 0.0,
+        0.2536092025988317, -0.31167160472779437, 0.8479838977774422, 0.0,
+        0.0, 178.67416191492592, 0.0, 1.0]
 
-    matrix = pm.dt.Matrix(pm.xform(bird, ws=True, q=True, m=True))
-    revere_matrix = matrix.inverse()
+    # Invert rotation columns,
+    # rx = [n * -1 for n in mtx[0:9:4]]
+    # ry = [n * -1 for n in mtx[1:10:4]]
+    # rz = [n * -1 for n in mtx[2:11:4]]
+    # print rz
+    x = [0,1,2,3,
+         4,5,6,7,
+         8,9,10,11,
+         12,13,14,15]
 
-    pm.xform(bird, ws=True, m=revere_matrix)
+    # Invert translation row,
+    # t = [n * -1 for n in mtx[12:15]]
+
+    # Set matrix based on given plane, and whether to include behaviour or not.
+    # if across is 'XY':
+    # mtx[14] = t[2]  # set inverse of the Z translation
+
+        # Set inverse of all rotation columns but for the one we've set translate to.
+        # if behaviour:
+    # mtx[0:9:4] = rx
+    # mtx[1:10:4] = ry
+    # mtx[2:11:4] = rz
+
+    # mtx[12] = t[1]
+    pm.xform(bird, ws=True, m=w)
+
+    # matrix = pm.dt.Matrix(pm.xform(bird, ws=True, q=True, m=True))
+    # revere_matrix = matrix.inverse()
+    #
+    # pm.xform(bird, ws=True, m=revere_matrix)
 
     # bird_rot = bird.getRotation(worldSpace=1)
     # print bird_rot
@@ -96,22 +132,22 @@ def look_at_gift():
 
 def put_on_party_hat():
     hat = pm.PyNode("PartyHat")
-    birdy = pm.PyNode('Birdy')
-    birdy_likes_his_hat_here = pm.dt.Matrix([
-        [0.99, -0.13, 0.022, 0.0],
-        [0.13, 0.97, -0.16, 0.0],
-        [0, 0.167, 0.985, 0.0],
-        [12.13, 83.57, -15.185, 1.0],
-    ])
-    birdy_matrix =  pm.dt.Matrix(pm.xform(birdy, ws=True, q=True, m=True))
-    birdy_position = birdy_matrix.__getitem__(3)
-    target_hat_position =  birdy_likes_his_hat_here.__getitem__(3)
-    adding_birdy_pos_and_target_position = birdy_position + target_hat_position
+    # birdy = pm.PyNode('Birdy')
+    hat_spot = pm.PyNode('hat_spot')
+
+    hat_spot_mtx =pm.dt.Matrix(pm.xform(hat_spot, ws=True, q=True, m=True))
+    # birdy_matrix =  pm.dt.Matrix(pm.xform(birdy, ws=True, q=True, m=True))
+
+    # birdy_position = birdy_matrix.__getitem__(3)
+    target_hat_position =  hat_spot_mtx.__getitem__(3)
+
+    # adding_birdy_pos_and_target_position = (target_hat_position)
 
     # insert the adding value into the position
-    birdy_likes_his_hat_here.__setitem__(3, adding_birdy_pos_and_target_position)
+    hat_spot_mtx.__setitem__(3, target_hat_position)
+
     # set the hat position
-    pm.xform(hat, ws=True, m=birdy_likes_his_hat_here)
+    pm.xform(hat, ws=True, m=hat_spot_mtx)
 
 
 
