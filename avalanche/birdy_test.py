@@ -78,17 +78,21 @@ def fix_present():
 
 def look_at_gift():
     bird = pm.PyNode("Birdy")
-    gift = pm.pyNode('BirthdayPresent')
+    # gift = pm.pyNode('BirthdayPresent')
     bird_pos = bird.getTranslation(worldSpace=1)
+
+    matrix = pm.dt.Matrix(pm.xform(bird, ws=True, q=True, m=True))
+    revere_matrix = matrix.inverse()
+
+    pm.xform(bird, ws=True, m=revere_matrix)
+
     # bird_rot = bird.getRotation(worldSpace=1)
-    # pm.move(bird_rot.x, bird_rot.y, bird_rot.z, bird)
-    # [0.7797672568842143, -0.4750407758702958, 0.4077980950811512, 0.0,
-    #  0.4364356809126459, 0.8216065262485838, 0.12255659989689752, 0.0,
-    #  -0.3932689586134617, 0.08241201558696216, 0.84798661168925, 0.0,
-    #  0.0, 178.67416191492592, 0.0, 1.0]
-    #
+    # print bird_rot
+    # print bird_rot.x*-1
+
+    # pm.setAttr(bird+'.rotate', (bird_rot.x*-1), (bird_rot.y*-2), (bird_rot.z*1), type='double3')
+
     # print matrix
-    print bird_pos
 
 def put_on_party_hat():
     hat = pm.PyNode("PartyHat")
