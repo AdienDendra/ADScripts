@@ -82,6 +82,9 @@ class UiDialog(QtWidgets.QDialog):
 
         # LAYOUT
         prefix_name_layout = QtWidgets.QHBoxLayout()
+        form_layout.addRow("Prefix Name:", prefix_name_layout)
+        v_layout = QtWidgets.QVBoxLayout(self)
+
         prefix_name_layout.addWidget(self.line_search_name)
         prefix_name_layout.addWidget(self.line_replace_name)
         prefix_name_layout.addWidget(self.excute_button)
