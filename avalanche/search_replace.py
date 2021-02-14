@@ -47,30 +47,30 @@ class UiDialog(QtWidgets.QDialog):
         self.line_replace_name = QtWidgets.QLineEdit()
         # self.lineSuffixName.setFixedWidth(200)
 
-        self.line_grp_ctrl = QtWidgets.QLineEdit()
-        # self.lineGrpCtrl.setFixedWidth(200)
-
-        self.spin_box_ctrl_size = QtWidgets.QDoubleSpinBox()
-        self.spin_box_ctrl_size.setFixedWidth(80)
-        self.spin_box_ctrl_size.setMaximum(100.00)
-        self.spin_box_ctrl_size.setMinimum(0.01)
-        self.spin_box_ctrl_size.setValue(1.00)
-
-        self.obj_visibility = QtWidgets.QCheckBox()
-        self.color_button = QtWidgets.QPushButton('Show Colors')
+        # self.line_grp_ctrl = QtWidgets.QLineEdit()
+        # # self.lineGrpCtrl.setFixedWidth(200)
+        #
+        # self.spin_box_ctrl_size = QtWidgets.QDoubleSpinBox()
+        # self.spin_box_ctrl_size.setFixedWidth(80)
+        # self.spin_box_ctrl_size.setMaximum(100.00)
+        # self.spin_box_ctrl_size.setMinimum(0.01)
+        # self.spin_box_ctrl_size.setValue(1.00)
+        #
+        # self.obj_visibility = QtWidgets.QCheckBox()
         self.excute_button = QtWidgets.QPushButton('Do It')
+        # self.excute_button = QtWidgets.QPushButton('Do It')
 
-        # GIMBAL CTRL
-        self.gimbal_ctrl = QtWidgets.QCheckBox()
-        self.translate_gimbal_all = QtWidgets.QCheckBox('All')
-        self.translate_gimbal_X = QtWidgets.QCheckBox('X')
-        self.translate_gimbal_Y = QtWidgets.QCheckBox('Y')
-        self.translate_gimbal_Z = QtWidgets.QCheckBox('Z')
-
-        self.rotate_gimbal_all = QtWidgets.QCheckBox('All')
-        self.rotate_gimbal_X = QtWidgets.QCheckBox('X')
-        self.rotate_gimbal_Y = QtWidgets.QCheckBox('Y')
-        self.rotate_gimbal_Z = QtWidgets.QCheckBox('Z')
+        # # GIMBAL CTRL
+        # self.gimbal_ctrl = QtWidgets.QCheckBox()
+        # self.translate_gimbal_all = QtWidgets.QCheckBox('All')
+        # self.translate_gimbal_X = QtWidgets.QCheckBox('X')
+        # self.translate_gimbal_Y = QtWidgets.QCheckBox('Y')
+        # self.translate_gimbal_Z = QtWidgets.QCheckBox('Z')
+        #
+        # self.rotate_gimbal_all = QtWidgets.QCheckBox('All')
+        # self.rotate_gimbal_X = QtWidgets.QCheckBox('X')
+        # self.rotate_gimbal_Y = QtWidgets.QCheckBox('Y')
+        # self.rotate_gimbal_Z = QtWidgets.QCheckBox('Z')
 
         # self.checkBox1 = QtWidgets.QCheckBox("CheckBox1")
         # self.checkBox2 = QtWidgets.QCheckBox("Chec kBox2")
@@ -82,8 +82,8 @@ class UiDialog(QtWidgets.QDialog):
 
         # LAYOUT
         prefix_name_layout = QtWidgets.QHBoxLayout()
-        form_layout.addRow("Prefix Name:", prefix_name_layout)
-        v_layout = QtWidgets.QVBoxLayout(self)
+        # form_layout.addRow("Prefix Name:", prefix_name_layout)
+        # v_layout = QtWidgets.QVBoxLayout(self)
 
         prefix_name_layout.addWidget(self.line_search_name)
         prefix_name_layout.addWidget(self.line_replace_name)
@@ -96,46 +96,55 @@ class UiDialog(QtWidgets.QDialog):
 
 
     def create_connection(self):
-        self.line_search_name.editingFinished.connect(self.line_prefix_name_text)
-        self.line_replace_name.editingFinished.connect(self.line_suffix_name_text)
+        self.line_search_name.editingFinished.connect(self.line_search_name_text)
+        self.line_replace_name.editingFinished.connect(self.line_replace_name_text)
+        self.excute_button.clicked.connect(self.excuted_replacing_name)
 
-        self.obj_visibility.toggled.connect(self.hidden_object_vis)
-        self.gimbal_ctrl.toggled.connect(self.gimbal_ctrl_create)
-        self.color_button.clicked.connect(self.color_selected_ctrl)
+        # self.obj_visibility.toggled.connect(self.hidden_object_vis)
+        # self.gimbal_ctrl.toggled.connect(self.gimbal_ctrl_create)
+        # self.color_button.clicked.connect(self.color_selected_ctrl)
 
-    def color_selected_ctrl(self):
-        self.initialColor = QtWidgets.QColorDialog.getColor(self.initialColor, self)
-        print("Red:{0} Green:{1} Blue:{2}".format(self.initialColor.red(),
-                                                  self.initialColor.green(),
-                                                  self.initialColor.blue()))
+    def excuted_replacing_name(self):
+        get_search_object = self.line_search_name_text()
+        replacing_object = self.line_replace_name_text()
+        replacing = get_search_object.replace(get_search_object, replacing_object)
+        renaming = pm.rename(get_search_object, replacing)
 
-    def line_prefix_name_text(self):
-        prefixName = self.line_search_name.text()
+        # self.initialColor = QtWidgets.QColorDialog.getColor(self.initialColor, self)
+        # print("Red:{0} Green:{1} Blue:{2}".format(self.initialColor.red(),
+        #                                           self.initialColor.green(),
+        #                                           self.initialColor.blue()))
 
-        print(prefixName)
+    def line_search_name_text(self):
+        search = self.line_search_name.text()
+        return search
 
-    def line_suffix_name_text(self):
-        suffixName = self.line_replace_name.text()
-        print('_%s' % suffixName)
+    def line_replace_name_text(self):
+        replace = self.line_replace_name.text()
+        return replace
 
-    def hidden_object_vis(self):
-        hidden = self.obj_visibility.isChecked()
-        if hidden:
-            print('Hidden')
-        else:
-            print('Visible')
-        # mainLayout.addWidget(self.linePrefixName)
-        # mainLayout.addWidget(self.checkBox1)
-        # mainLayout.addWidget(self.checkBox2)
-        # mainLayout.addWidget(self.button1)
-        # mainLayout.addWidget(self.button2)
+    # def button_excute(self):
+    #     # if pm.objExists(self.line_search_name_text()):
 
-    def gimbal_ctrl_create(self):
-        create = self.gimbal_ctrl.isChecked()
-        if create:
-            print('Create')
-        else:
-            print('Not Create')
+
+    # def hidden_object_vis(self):
+    #     hidden = self.obj_visibility.isChecked()
+    #     if hidden:
+    #         print('Hidden')
+    #     else:
+    #         print('Visible')
+    #     # mainLayout.addWidget(self.linePrefixName)
+    #     # mainLayout.addWidget(self.checkBox1)
+    #     # mainLayout.addWidget(self.checkBox2)
+    #     # mainLayout.addWidget(self.button1)
+    #     # mainLayout.addWidget(self.button2)
+    #
+    # def gimbal_ctrl_create(self):
+    #     create = self.gimbal_ctrl.isChecked()
+    #     if create:
+    #         print('Create')
+    #     else:
+    #         print('Not Create')
 
 # if __name__ == "__main__":
 #
