@@ -10,6 +10,7 @@ import pymel.core as pm
 def fix_present():
     present = pm.PyNode("BirthdayPresent")
     for vtx in present.getShape().vtx:
+        # print vtx
         # pos = pm.xform(vtx, q=True, ws=True, t=True)
         # print pos
         # start_vector = pm.dt.Vector(3, pos[0], pos[1], pos[2])
@@ -25,9 +26,12 @@ def fix_present():
         # pm.xform(vtx, ws=True, m=sphere)
 
         position = pm.xform(vtx, q=True, os=True, t=True)
+
         position_ws = pm.xform(vtx, q=True, ws=True, t=True)
+
         # print position
-        # print position_ws
+        print position
+        print position_ws
 
         # start_point = pm.dt.Point(position)
         start_vector = pm.dt.Vector(position[0], position[1], position[2])
@@ -35,22 +39,43 @@ def fix_present():
 
         start_vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         subtract_vec = start_vector_ws - start_vector
+
+        # print start_vector
+        move_x_dif = start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) +
+                                        (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
+
+        move_y_dif =  start_vector[1] * pm.dt.sqrt(1.0 - (start_vector[2] * start_vector[2] / 2.0) - (start_vector[0] * start_vector[0] / 2.0) +
+                                          (start_vector[2] * start_vector[2] * start_vector[0] * start_vector[0] / 3.0))
+
+        move_z_dif = start_vector[2] * pm.dt.sqrt(1.0 - (start_vector[0] * start_vector[0] / 2.0) - (start_vector[1] * start_vector[1] / 2.0) +
+                                         (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[1] / 3.0))
+
         # print start_vector_ws
         # vectorize = pm.dt.Vector(position[0], position[1], subtract_vec[2])
         # print subtract_vec
         # print pos
 
-        # print start_vector
-        result =(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) + (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
-
-        move_x = start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) +
-                                        (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
-        # print move_x
-        move_y =  start_vector[1]  * pm.dt.sqrt(1.0 - (start_vector[2] * start_vector[2] / 2.0) - (start_vector[0] * start_vector[0] / 2.0) +
-                                          (start_vector[2] * start_vector[2] * start_vector[0] * start_vector[0] / 3.0))
-        print move_y
-        move_z = start_vector[2] * pm.dt.sqrt(1.0 - (start_vector[0] * start_vector[0] / 2.0) - (start_vector[1] * start_vector[1] / 2.0) +
-                                         (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[1] / 3.0))
+        # # print start_vector
+        # # result =(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) + (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
+        # move_x_dif = pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) +
+        #                                 (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
+        # # print move_x
+        # move_y_dif =  pm.dt.sqrt(1.0 - (start_vector[2] * start_vector[2] / 2.0) - (start_vector[0] * start_vector[0] / 2.0) +
+        #                                   (start_vector[2] * start_vector[2] * start_vector[0] * start_vector[0] / 3.0))
+        # # print move_y
+        # move_z_dif = pm.dt.sqrt(1.0 - (start_vector[0] * start_vector[0] / 2.0) - (start_vector[1] * start_vector[1] / 2.0) +
+        #                                  (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[1] / 3.0))
+        #
+        #
+        #
+        # move_x = start_vector[0] * pm.dt.sqrt(1.0 - (move_y_dif * move_y_dif / 2.0) - (move_z_dif * move_z_dif / 2.0) +
+        #                                 (move_y_dif * move_y_dif * move_z_dif * move_z_dif / 3.0))
+        # # print move_x
+        # move_y =  start_vector[1]  * pm.dt.sqrt(1.0 - (move_z_dif * move_z_dif / 2.0) - (move_x_dif * move_x_dif / 2.0) +
+        #                                   (move_z_dif * move_z_dif * move_x_dif * move_x_dif / 3.0))
+        # # print move_y
+        # move_z = start_vector[2] * pm.dt.sqrt(1.0 - (move_x_dif * move_x_dif / 2.0) - (move_y_dif * move_y_dif / 2.0) +
+        #                                  (move_x_dif * move_x_dif * move_y_dif * move_y_dif / 3.0))
 
         # move_x = start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) +
         #                                 (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
@@ -83,10 +108,37 @@ def fix_present():
         # print move_x
         # print move_y
         # print move_z
-        # pm.move(move_x-subtract_vec[0], move_y-subtract_vec[1], move_z-subtract_vec[2], vtx)
+        # move_first = pm.move(move_x-subtract_vec[0], move_y-subtract_vec[1], move_z-subtract_vec[2], vtx)
+        # print move_first
+        # pm.move(move_x, move_y, move_z, vtx)
+        # move_x_dif = move_x_dif+ position_ws[0]
+        # move_y_dif = move_y_dif+ position_ws[1]
+        # move_z_dif = move_z_dif+ position_ws[2]
 
-        # pm.move(move_x+position_ws[0], move_y+position_ws[1], move_z+position_ws[2], vtx)
-        pm.move(move_x, move_y, move_z, vtx)
+        # move_first = pm.move(move_x+position_ws[0], move_y+position_ws[1], move_z+position_ws[2], vtx)
+        # print move_first
+        # move_first = pm.move(move_x+subtract_vec[0], move_y+subtract_vec[1], move_z+subtract_vec[2], vtx)
+
+        move_x = move_x_dif * pm.dt.sqrt(1.0 - (move_y_dif * move_y_dif / 2.0) - (move_z_dif * move_z_dif / 2.0) +
+                                        (move_y_dif * move_y_dif * move_z_dif * move_z_dif / 3.0))
+        # print move_x
+        move_y =  move_y_dif  * pm.dt.sqrt(1.0 - (move_z_dif * move_z_dif / 2.0) - (move_x_dif * move_x_dif / 2.0) +
+                                          (move_z_dif * move_z_dif * move_x_dif * move_x_dif / 3.0))
+        # print move_y
+        move_z = move_z_dif* pm.dt.sqrt(1.0 - (move_x_dif * move_x_dif / 2.0) - (move_y_dif * move_y_dif / 2.0) +
+                                         (move_x_dif * move_x_dif * move_y_dif * move_y_dif / 3.0))
+
+        # move_x = start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) - (start_vector[2] * start_vector[2] / 2.0) +
+        #                                 (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0))
+        # # print move_x
+        # move_y =  start_vector[1] * pm.dt.sqrt(1.0 - (start_vector[2] * start_vector[2] / 2.0) - (move_x * move_x / 2.0) +
+        #                                   (start_vector[2] * start_vector[2] * move_x * move_x / 3.0))
+        #
+        # move_z = start_vector[2] * pm.dt.sqrt(1.0 - (move_x * move_x / 2.0) - (move_y * move_y / 2.0) +
+        #                                  (move_x * move_x * move_y * move_y / 3.0))
+
+
+        pm.move(move_x*0.5, move_y*0.5, move_z*0.5, vtx)
 
         #
         # pm.move(move_x-pos[0], move_y-pos[1], move_z-pos[2], vtx)
@@ -105,13 +157,14 @@ def look_at_gift():
     bird = pm.PyNode("Birdy")
     # gift = pm.pyNode('BirthdayPresent')
     # get rotation
-    bird_pos = bird.getRotation(ws=1)
+    bird_pos = bird.getTranslation(ws=1)
+    print bird_pos
 
     # get radian
     radian =360/ (360*(3.14159/180))
     # reverse value and multiplying by radians
     bird_posx = -3*bird_pos.x * radian
-    bird_posy = -2*bird_pos.y * radian
+    bird_posy = 2*bird_pos.y * radian
     bird_posz =  1*bird_pos.z * radian
     # print bird_posx
     # print bird_posy
