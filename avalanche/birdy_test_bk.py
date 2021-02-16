@@ -12,12 +12,8 @@ def fix_present():
     for vtx in present.getShape().vtx:
         # print vtx
         position = pm.xform(vtx, q=True, os=True, t=True)
-
-
         position_ws = pm.xform(vtx, q=True, ws=True, t=True)
-        print position
         start_vector = pm.dt.Vector(position[0], position[1], position[2])
-
         start_vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         subtract_vec = start_vector_ws - start_vector
 
