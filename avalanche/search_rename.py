@@ -1,4 +1,3 @@
-# from __builtin__ import long
 import pymel.core as pm
 import maya.OpenMayaUI as omui
 from PySide2 import QtCore
@@ -31,7 +30,6 @@ class SearchRenameDialog(QtWidgets.QDialog):
         self.setMinimumWidth(350)
 
         self.setWindowFlags(self.windowFlags() ^ QtCore.Qt.WindowContextHelpButtonHint)
-        # self.initialColor = QtGui.QColor(255, 0, 0)
 
         self.create_widgets()
         self.create_layouts()
@@ -68,15 +66,17 @@ class SearchRenameDialog(QtWidgets.QDialog):
         get_search_object = self.line_search_name_text()
         replacing_object = self.line_replace_name_text()
 
-        if pm.objExists(get_search_object):
-            try:
-                pm.ls(replacing_object)
-                replacing = get_search_object.replace(get_search_object, replacing_object)
-                pm.rename(get_search_object, replacing)
-            except Exception:
-                pm.displayWarning('Replacing text is empty, skip replacing!')
+        if get_search_object:
+            if pm.objExists(get_search_object):
+                if replacing_object:
+                    replacing = get_search_object.replace(get_search_object, replacing_object)
+                    pm.rename(get_search_object, replacing)
+                else:
+                    pm.displayWarning('Replacing text is empty, skip replacing!')
+            else:
+                pm.displayError('There is no object %s exists in the scene' % get_search_object)
         else:
-            pm.displayError('There is no object %s exists in the scene' % get_search_object)
+            pm.displayError("Text box line 'Find' cannot be empty! Fill it with one object from the scene.")
 
     def line_search_name_text(self):
         search = self.line_find_name.text()
@@ -85,19 +85,3 @@ class SearchRenameDialog(QtWidgets.QDialog):
     def line_replace_name_text(self):
         replace = self.line_rename_name.text()
         return replace
-
-# from avalanche import search_rename
-# reload(search_rename)
-#
-# SearchRenameDialog.show_ui()
-
-# if __name__ == "__main__":
-#
-#     try:
-#         dialog.close() # pylint: disable=E0601
-#         dialog.deleteLater()
-#     except:
-#         pass
-#
-#     dialog = SearchRenameDialog()
-#     dialog.show()
