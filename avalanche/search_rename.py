@@ -26,7 +26,7 @@ class SearchRenameDialog(QtWidgets.QDialog):
     def __init__(self, parent=maya_main_window()):
         super(SearchRenameDialog, self).__init__(parent)
 
-        self.setWindowTitle("Search and Rename")
+        self.setWindowTitle("Find and Rename")
         self.setMinimumWidth(350)
 
         self.setWindowFlags(self.windowFlags() ^ QtCore.Qt.WindowContextHelpButtonHint)
