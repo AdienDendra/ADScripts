@@ -38,6 +38,57 @@ def fix_present():
         pm.move(move_x*0.5+(vector_position[0]), move_y*0.5+(vector_position[1]), move_z*0.5+(vector_position[2]), vtx)
 
 def look_at_gift():
+    import maya.OpenMaya as om
+    import math
+
+    eyeAim = om.MVector().xAxis
+    eyeUp = om.MVector().yAxis
+
+    targetDag = om.MDagPath()
+    sel = om.MSelectionList()
+    sel.add('BirthdayPresent')
+    sel.getDagPath(0, targetDag)
+    targetDag.fullPathName()
+
+    eyeDag = om.MDagPath()
+    sel = om.MSelectionList()
+    sel.add('Birdy')
+    sel.getDagPath(0, eyeDag)
+    eyeDag.fullPathName()
+
+    # eyeDag, targetDag = pbApi.api_getMDagPath('Birdy', 'BirthdayPresent')
+
+    transformFn = om.MFnTransform(eyeDag)
+    eyePivotPOS = transformFn.rotatePivot(om.MSpace.kWorld)
+
+    transformFn = om.MFnTransform(targetDag)
+    targetPivotPOS = transformFn.rotatePivot(om.MSpace.kWorld)
+
+    aimVector = (targetPivotPOS - eyePivotPOS)
+    eyeU = aimVector.normal()
+    worldUp = om.MGlobal.upAxis()
+
+    eyeV = worldUp
+    eyeW = (eyeU ^ eyeV).normal()
+
+    eyeV = eyeW ^ eyeU
+    quaternion = om.MQuaternion()
+    quaternionU = om.MQuaternion(eyeAim, eyeU)
+    quaternion = quaternionU
+
+    upRotated = eyeUp.rotateBy(quaternion)
+    angle = math.acos(upRotated * eyeV)
+    quaternionV = om.MQuaternion(angle, eyeU)
+
+    if not eyeV.isEquivalent(upRotated.rotateBy(quaternionV), 1.0e-5):
+        angle = (2 * math.pi) - angle
+        quaternionV = om.MQuaternion(angle, eyeU)
+
+    quaternion *= quaternionV
+
+    transformFn.setObject(eyeDag)
+    transformFn.setRotation(quaternion)
+
     bird = pm.PyNode("Birdy")
     # bird_pos = bird.getRotation(ws=1)
 
@@ -64,6 +115,7 @@ def look_at_gift():
     # pm.xform(bird, ws=True, ro=((newVector[0]* math.radians(45)), (newVector[1]* math.radians(45)), (newVector[2]* math.radians(45))))
 
     mtx = pm.xform(bird, q=True, ws=True, m=True)
+    print mtx
     # print mtx
     #
     # print mtx
@@ -75,24 +127,24 @@ def look_at_gift():
     # # Invert rotation columns,
     # rx = [n * -1 for n in mtx[0:9:4]] #xy
     # ry = [n * -1 for n in mtx[1:10:4]] #yz
-    rz = [n for n in mtx[2:11:4]]
+    # rz = [n for n in mtx[2:11:4]]
     # print rz
     # print mtx
     # mtx =[0.7797672568842147, -0.4750407758702952, 0.40779809508115117, 0.0,
     #       0.4364356809126453, 0.8216065262485841, 0.12255659989689753, 0.0,
     #       -0.3932689586134618, 0.0824120155869618, 0.84798661168925, 0.0,
     #       0.0, 178.67416191492592, 0.0, 1.0]
-    x = [n for n in mtx[2:11:4]]
-    print x
+    # x = [n for n in mtx[2:11:4]]
+    # print x
 
     rz = [n * -1 for n in mtx[2:11:4]] #z1
     # print rz
-    mtx[2:11:4] = rz
+    # mtx[2:11:4] = rz
     # print mtx
-    mtx_2 = [0.7797672568842147, -0.4750407758702952, -0.40779809508115117, 0.0,
-             0.4364356809126453, 0.8216065262485841, -0.12255659989689753, 0.0,
-             -0.3932689586134618, 0.0824120155869618, -0.84798661168925, 0.0,
-             0.0,178.67416191492592, 0.0, 1.0]
+    # mtx_2 = [0.7797672568842147, -0.4750407758702952, -0.40779809508115117, 0.0,
+    #          0.4364356809126453, 0.8216065262485841, -0.12255659989689753, 0.0,
+    #          -0.3932689586134618, 0.0824120155869618, -0.84798661168925, 0.0,
+    #          0.0,178.67416191492592, 0.0, 1.0]
 
     # print rz
     # # rotate_x = [n * -1 for n in mtx[0:9:4]]
@@ -120,10 +172,15 @@ def look_at_gift():
     #
     # mtx[12] = t[1]
     #
-    # # matrix = pm.dt.Matrix(pm.xform(bird, ws=True, q=True, m=True))
+    # matrix = pm.dt.Matrix(pm.xform(bird, ws=True, q=True, m=True))
     # revere_matrix = mtx.inverse()
     #
-    # pm.xform(bird, ws=True, m=mtx)
+    print mtx
+    mtx = [0.7797672568842143, -0.4750407758702958, -0.4077980950811512, 0.0,
+           0.4364356809126459, 0.8216065262485838, -0.12255659989689752, 0.0,
+           -0.3932689586134617, 0.08241201558696216, -0.84798661168925, 0.0,
+           0.0, 178.67416191492592, 0.0, 1.0]
+    pm.xform(bird, ws=True, m=mtx)
     #
     # # bird_rot = bird.getRotation(worldSpace=1)
     # # print bird_rot
@@ -132,6 +189,39 @@ def look_at_gift():
     # # pm.setAttr(bird+'.rotate', (bird_rot.x*-1), (bird_rot.y*-2), (bird_rot.z*1), type='double3')
     #
     # # print matrix
+
+
+    # numbers are approximated!
+    from maya.api.OpenMaya import MMatrix
+    import pymel.core as pm
+
+    # 45 degrees in Z
+    z_rot = pm.dt.Matrix([0.707, 0.707, 0, 0, -0.707, 0.707, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
+
+    # 30 degrees in Y
+    y_rot = pm.dt.Matrix([0.866, 0, 0.5, 0,
+                          0, 1, 0, 0,
+                          -0.5, 0, 0.866, 0,
+                          0, 0, 0, 1])
+
+    a = pm.dt.Matrix([0.7797672568842143, -0.4750407758702958, 0.4077980950811512, 0.0,
+                      0.4364356809126459, 0.8216065262485838, 0.12255659989689752, 0.0,
+                      -0.3932689586134617, 0.08241201558696216, 0.84798661168925, 0.0,
+                      0.0, 178.67416191492592, 0.0, 1.0])
+
+    yz_matrix = y_rot * a
+
+    pm.xform('Birdy', ws=True, m=yz_matrix)
+
+    zy_matrix = z_rot * y_rot
+
+    print (yz_matrix)
+    #  MMatrix([0.612, 0.707, 0.354, 0, -0.612, 0.707, -0.354, -0.5, 0, 0.866, 0, 0,0, 0, 1])
+
+    print (zy_matrix)
+
+
+    #  MMatrix([0.612, 0.707, 0.354, 0, -707, 0.707, 0, -0.354, -0.354, 0.866, 0, 0,0, 0, 1])
 
 def put_on_party_hat():
     hat = pm.PyNode("PartyHat")
