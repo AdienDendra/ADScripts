@@ -8,13 +8,13 @@ def maya_main_window():
     main_window_ptr = omui.MQtUtil.mainWindow()
     return wrapInstance(long(main_window_ptr), QtWidgets.QWidget)
 
-class SearchRenameDialog(QtWidgets.QDialog):
+class FindRenameDialog(QtWidgets.QDialog):
     dialogInstance = None
 
     @classmethod
     def show_ui(cls):
         if not cls.dialogInstance:
-            cls.dialogInstance = SearchRenameDialog()
+            cls.dialogInstance = FindRenameDialog()
 
         if cls.dialogInstance.isHidden():
             cls.dialogInstance.show()
@@ -24,7 +24,7 @@ class SearchRenameDialog(QtWidgets.QDialog):
             cls.dialogInstance.activateWindow()
 
     def __init__(self, parent=maya_main_window()):
-        super(SearchRenameDialog, self).__init__(parent)
+        super(FindRenameDialog, self).__init__(parent)
 
         self.setWindowTitle("Find and Rename")
         self.setMinimumWidth(350)
