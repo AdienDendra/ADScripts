@@ -11,7 +11,7 @@ AUTHOR:
     Adien Dendra
 
 CONTACT:
-    adien.dendra@gmail.com | hello@adiendendra.com
+    avalanche.dendra@gmail.com | hello@adiendendra.com
 
 VERSION:
     1.0 - 17 August 2020 - Initial Release

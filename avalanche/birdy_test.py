@@ -15,11 +15,11 @@ def fix_present():
         position = pm.xform(vtx, q=True, os=True, t=True)
         position_ws = pm.xform(vtx, q=True, ws=True, t=True)
         start_vector = pm.dt.Vector(position[0], position[1], position[2])
-        print start_vector
 
         start_vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         vector_position = start_vector_ws- start_vector
         start_vector =  start_vector*2
+        print start_vector
 
         move_x = (start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) -
                                                (start_vector[2] * start_vector[2] / 2.0) +
@@ -32,6 +32,9 @@ def fix_present():
         move_z = (start_vector[2] * pm.dt.sqrt(1.0 - (start_vector[0] * start_vector[0] / 2.0) -
                                                (start_vector[1] * start_vector[1] / 2.0) +
                                                (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[1] / 3.0)))
+
+        # pm.move(move_x+(vector_position[0]), move_y+(vector_position[1]), move_z+(vector_position[2]), vtx)
+
         pm.move(move_x*0.5+(vector_position[0]), move_y*0.5+(vector_position[1]), move_z*0.5+(vector_position[2]), vtx)
 
 def look_at_gift():

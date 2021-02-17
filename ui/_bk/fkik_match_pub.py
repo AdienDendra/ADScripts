@@ -8,7 +8,7 @@ USAGE:
 AUTHOR:
     Adien Dendra
 CONTACT:
-    adien.dendra@gmail.com | hello@adiendendra.com
+    avalanche.dendra@gmail.com | hello@adiendendra.com
 VERSION:
     1.0 - 20 September 2020 - Initial Release
 ***************************************************************
