@@ -35,7 +35,7 @@ def get_ikh_poleVec_position(ikHandle, length):
     mid_joint_position = mc.xform(ik_jnt_list[1], q=1, ws=1, t=1)
     end_joint_position = mc.xform(ik_jnt_list[2], q=1, ws=1, t=1)
 
-    pole_vec_position =  (root_joint_position, mid_joint_position, end_joint_position, length)
+    pole_vec_position = get_poleVec_position(root_joint_position, mid_joint_position, end_joint_position, length)
 
     return pole_vec_position
 

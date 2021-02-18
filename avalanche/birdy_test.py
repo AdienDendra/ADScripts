@@ -10,25 +10,25 @@ def fix_present():
     present = pm.PyNode("BirthdayPresent")
     for vtx in present.getShape().vtx:
         # print vtx
-        position = pm.xform(vtx, q=True, os=True, t=True)
+        position_os = pm.xform(vtx, q=True, os=True, t=True)
         position_ws = pm.xform(vtx, q=True, ws=True, t=True)
-        start_vector = pm.dt.Vector(position[0], position[1], position[2])
+        vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
 
-        start_vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-        vector_position = start_vector_ws- start_vector
-        start_vector =  start_vector*2
+        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+        vector_position = vector_ws - vector_os
+        vector_optimum = vector_os * 2
 
-        move_x = (start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) -
-                                               (start_vector[2] * start_vector[2] / 2.0) +
-                                               (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0)))
+        move_x = (vector_optimum[0] * pm.dt.sqrt(1.0 - (vector_optimum[1] * vector_optimum[1] / 2.0) -
+                                                 (vector_optimum[2] * vector_optimum[2] / 2.0) +
+                                                 (vector_optimum[1] * vector_optimum[1] * vector_optimum[2] * vector_optimum[2] / 3.0)))
 
-        move_y = (start_vector[1] * pm.dt.sqrt(1.0 - (start_vector[2] * start_vector[2] / 2.0) -
-                                               (start_vector[0] * start_vector[0] / 2.0) +
-                                               (start_vector[2] * start_vector[2] * start_vector[0] * start_vector[0] / 3.0)))
+        move_y = (vector_optimum[1] * pm.dt.sqrt(1.0 - (vector_optimum[2] * vector_optimum[2] / 2.0) -
+                                                 (vector_optimum[0] * vector_optimum[0] / 2.0) +
+                                                 (vector_optimum[2] * vector_optimum[2] * vector_optimum[0] * vector_optimum[0] / 3.0)))
 
-        move_z = (start_vector[2] * pm.dt.sqrt(1.0 - (start_vector[0] * start_vector[0] / 2.0) -
-                                               (start_vector[1] * start_vector[1] / 2.0) +
-                                               (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[1] / 3.0)))
+        move_z = (vector_optimum[2] * pm.dt.sqrt(1.0 - (vector_optimum[0] * vector_optimum[0] / 2.0) -
+                                                 (vector_optimum[1] * vector_optimum[1] / 2.0) +
+                                                 (vector_optimum[0] * vector_optimum[0] * vector_optimum[1] * vector_optimum[1] / 3.0)))
 
         pm.move(move_x+(vector_position[0]), move_y+(vector_position[1]), move_z+(vector_position[2]), vtx)
 
