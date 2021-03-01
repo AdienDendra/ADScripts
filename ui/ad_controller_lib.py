@@ -1555,9 +1555,22 @@ def ad_replacing_color(source, target):
                 om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
     return True
 
-def ad_scaling_controller(size_obj, ctrl_shape):
-    points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-    mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
+# def ad_scaling_controllers(size_obj, ctrl_shape):
+#     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+#     mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
+
+def ad_scaling_controller(current_value, ctrl_shape):
+    present = pm.PyNode(ctrl_shape)
+    for cv in present.getShape().cv:
+        position_os = pm.xform(cv, q=True, os=True, t=True)
+        position_ws = pm.xform(cv, q=True, ws=True, t=True)
+        vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+        sub_vector = vector_ws - vector_os
+        vector_optimum = ((vector_os * (current_value*0.5)) + sub_vector)
+
+        pm.move(vector_os[0]+vector_optimum[0], vector_os[1]+vector_optimum[1], vector_os[2]+vector_optimum[2], cv)
+
 #
 # def ad_scale_controller(delta_value):
 #     objList = [pm.PyNode(node) for node in pm.ls(selection=True)]

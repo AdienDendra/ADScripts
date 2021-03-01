@@ -111,7 +111,7 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0.5 * percentage),
                                                         (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
-                            pm.floatSlider('Controller_Resize', min=0.5, value=1.0, max=1.5, step=0.001,
+                            pm.floatSlider('Controller_Resize', min=-1.0, value=0.0, max=1.0, step=0.001,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset))
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
@@ -209,7 +209,7 @@ def ad_show_ui():
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text(label='')
-                            pm.button('Create_Controller', l="Create Controller With All Define Above", bgc=(0, 0.5, 0),
+                            pm.button('Create_Controller', l="Create Controller With All Defined Above", bgc=(0, 0.5, 0),
                                       c=partial(ad_create_controller_button))
 
             with pm.scrollLayout('Controller Utilities', p='tab'):
@@ -228,13 +228,14 @@ def ad_show_ui():
                                 pm.button("Save", l="Save", c='', bgc=(0.5, 0.0, 0.0))
                                 pm.button('Load', l="Load", c='', bgc=(0.0, 0.0, 0.5))
                     with pm.frameLayout(collapsable=True, l='Rotate', mh=1):
-                        with pm.rowLayout(nc=2, cw2=(26 * percentage, 69 * percentage), cl2=('right', 'left'),
+                        with pm.rowLayout(nc=2, cw2=(18 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('Rotate:')
-                            with pm.rowLayout(nc=3, cw3=(22.5 * percentage, 22.5 * percentage, 22.5 * percentage),
-                                              cl3=('center', 'center', 'center'),
+                            with pm.rowLayout(nc=4, cw4=(10 * percentage, 21.5 * percentage, 21.5 * percentage, 21.5 * percentage),
+                                              cl4=('center', 'center', 'center','center'),
                                               columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
-                                                            (3, 'both', 0 * percentage)]):
+                                                            (3, 'both', 0 * percentage), (4, 'both', 0 * percentage)]):
+                                pm.intField('Degree_Rotate', value=90)
                                 pm.button("Rotate_X", l="X", c='', bgc=(0.5, 0, 0))
                                 pm.button("Rotate_Y", l="Y", c='', bgc=(0, 0.5, 0))
                                 pm.button('Rotate_Z', l="Z", c='', bgc=(0, 0, 0.5))
@@ -245,23 +246,23 @@ def ad_show_ui():
                                                 cal=[(1, 'center'), (2, 'center'), (3, 'center')],
                                                 columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                               (3, 'both', 0 * percentage)]):
-                            pm.text(label='From:')
+                            pm.text(label='From Prefix:')
                             pm.text(label='')
-                            pm.text(label='To:')
+                            pm.text(label='To Prefix:')
 
-                            pm.textFieldButtonGrp('From', label='', cal=(1, "right"),
-                                                  cw3=(0 * percentage, 33 * percentage, 7 * percentage), bl="<<",
+                            pm.textFieldButtonGrp('From_Prefix', label='', cal=(1, "right"),
+                                                  cw3=(10 * percentage, 13 * percentage, 7 * percentage), bl="<<",
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
-                                                                (3, 'both', 0 * percentage)],
-                                                  bc=partial(ad_adding_object_sel_to_textfield, 'From'))
+                                                                (3, 'both', 0 * percentage)], tx='L_',
+                                                  bc=partial(ad_adding_object_sel_to_textfield, 'From_Prefix'))
                             pm.text(label='>>>')
-                            pm.textFieldButtonGrp('To', label='', cal=(1, "right"),
-                                                  cw3=(0 * percentage, 33 * percentage, 7 * percentage),
+                            pm.textFieldButtonGrp('To_Prefix', label='', cal=(1, "right"),
+                                                  cw3=(10 * percentage, 13 * percentage, 7 * percentage),
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
-                                                                (3, 'both', 0 * percentage)], bl="<<",
-                                                  bc=partial(ad_adding_object_sel_to_textfield, 'To'))
+                                                                (3, 'both', 0 * percentage)], bl="<<", tx='R_',
+                                                  bc=partial(ad_adding_object_sel_to_textfield, 'To_Prefix'))
                         with pm.rowLayout(nc=3, cw3=(31.6 * percentage, 31.6 * percentage, 31.6 * percentage),
                                           cl3=('center', 'center', 'center'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
@@ -1008,18 +1009,19 @@ def ad_controller_resize_slider(*args):
             shape_node = pm.listRelatives(item, s=True)[0]
             if pm.objectType(shape_node) == 'nurbsCurve':
                 # global previous_value
-                currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
+                current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
+                # delta_value = (current_value - previous_value)
                 # deltaValue = (previous_value/currentValue)
                 # new_value = deltaValue
-                al.ad_scaling_controller(currentValue, shape_node)
+                al.ad_scaling_controller(current_value, item)
                 # self.prevValue = value
-                # previous_value = currentValue
+                # previous_value = current_value
             else:
                 pass
 
 
 def ad_controller_resize_reset(*args):
-    pm.floatSlider('Controller_Resize', edit=True, v=1.0)
+    pm.floatSlider('Controller_Resize', edit=True, v=0.0)
 
 
 def ad_enabling_disabling_ui(object, tx, value, *args):
