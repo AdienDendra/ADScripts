@@ -1,6 +1,5 @@
-import pymel.core as pm
 import maya.OpenMaya as om
-import maya.cmds as mc
+import pymel.core as pm
 
 CIRCLEPLUS = [[1.1300200000000005, -4.996003610813204e-16, 0.0], [1.00412, 1.1102230246251565e-16, 0.0],
               [0.99176, -8.326672684688674e-17, -0.15708], [0.9549800000000004, -2.498001805406602e-16, -0.31029],
@@ -163,7 +162,11 @@ STICKCIRCLE = [[1.3793950895567024, -3.44631117065615e-17, 0.0], [1.383213207759
                [0.0034473407341919934, 0.0, 0.0]]
 STICK2SQUARE = [[-1.37962, 0.0, 0.0], [-1.38011, 0.31012, 0.0], [-1.69023, 0.31012, 0.0],
                 [-1.69023, 0.31012, 0.0], [-2.00035, 0.31012, 0.0], [-2.00035, 0.0, 0.0], [-2.00035, 0.0, 0.0],
-                [-2.00035, -0.31012, 0.0], [-1.69023, -0.31012, 0.0], [-1.69023, -0.31012, 0.0], [-1.38011, -0.31012, 0.0], [-1.37962, 0.0, 0.0], [0.0, 0.0, 0.0], [1.37962, 0.0, 0.0], [1.38011, 0.31012, 0.0], [1.69023, 0.31012, 0.0], [1.69023, 0.31012, 0.0], [2.00035, 0.31012, 0.0], [2.00035, 0.0, 0.0], [2.00035, 0.0, 0.0], [2.00035, -0.31012, 0.0], [1.69023, -0.31012, 0.0], [1.69023, -0.31012, 0.0], [1.38011, -0.31012, 0.0], [1.37962, 0.0, 0.0]]
+                [-2.00035, -0.31012, 0.0], [-1.69023, -0.31012, 0.0], [-1.69023, -0.31012, 0.0],
+                [-1.38011, -0.31012, 0.0], [-1.37962, 0.0, 0.0], [0.0, 0.0, 0.0], [1.37962, 0.0, 0.0],
+                [1.38011, 0.31012, 0.0], [1.69023, 0.31012, 0.0], [1.69023, 0.31012, 0.0], [2.00035, 0.31012, 0.0],
+                [2.00035, 0.0, 0.0], [2.00035, 0.0, 0.0], [2.00035, -0.31012, 0.0], [1.69023, -0.31012, 0.0],
+                [1.69023, -0.31012, 0.0], [1.38011, -0.31012, 0.0], [1.37962, 0.0, 0.0]]
 
 STICKSQUARE = [[2.8399564837671026e-15, 0.0, 0.0], [1.3800105877892714, -2.524080871237907e-16, 0.0],
                [1.3800105877892714, -0.3098272227100781, 0.0], [2.000361849527144, -0.30982722271007784, 0.0],
@@ -175,11 +178,27 @@ STICK2CIRCLE = [[-1.37962, 0.0, 0.0], [-1.38343, 0.04855, 0.0], [-1.39478, 0.095
                 [-1.73795, 0.30656, 0.0], [-1.78523, 0.29519, 0.0], [-1.83015, 0.27655, 0.0], [-1.87161, 0.2511, 0.0],
                 [-1.90858, 0.21947, 0.0], [-1.94016, 0.18244, 0.0], [-1.96556, 0.14091, 0.0], [-1.98417, 0.09591, 0.0],
                 [-1.99552, 0.04855, 0.0], [-1.99934, 0.0, 0.0], [-1.99934, 0.0, 0.0], [-1.99552, -0.04855, 0.0],
-                [-1.98417, -0.09591, 0.0], [-1.96556, -0.14091, 0.0], [-1.94016, -0.18244, 0.0], [-1.90858, -0.21947, 0.0],
-                [-1.87161, -0.2511, 0.0], [-1.83015, -0.27655, 0.0], [-1.78523, -0.29519, 0.0], [-1.73795, -0.30656, 0.0],
-                [-1.68948, -0.31038, 0.0], [-1.68948, -0.31038, 0.0], [-1.64101, -0.30656, 0.0], [-1.59373, -0.29519, 0.0],
-                [-1.54881, -0.27655, 0.0], [-1.50735, -0.2511, 0.0], [-1.47037, -0.21947, 0.0], [-1.4388, -0.18244, 0.0],
-                [-1.41339, -0.14091, 0.0], [-1.39478, -0.09591, 0.0], [-1.38343, -0.04855, 0.0], [-1.37962, 0.0, 0.0], [0.0, 0.0, 0.0], [1.37962, 0.0, 0.0], [1.38343, 0.04855, 0.0], [1.39478, 0.09591, 0.0], [1.41339, 0.14091, 0.0], [1.4388, 0.18244, 0.0], [1.47037, 0.21947, 0.0], [1.50735, 0.2511, 0.0], [1.54881, 0.27655, 0.0], [1.59373, 0.29519, 0.0], [1.64101, 0.30656, 0.0], [1.68948, 0.31038, 0.0], [1.68948, 0.31038, 0.0], [1.73795, 0.30656, 0.0], [1.78523, 0.29519, 0.0], [1.83015, 0.27655, 0.0], [1.87161, 0.2511, 0.0], [1.90858, 0.21947, 0.0], [1.94016, 0.18244, 0.0], [1.96556, 0.14091, 0.0], [1.98417, 0.09591, 0.0], [1.99552, 0.04855, 0.0], [1.99934, 0.0, 0.0], [1.99934, 0.0, 0.0], [1.99552, -0.04855, 0.0], [1.98417, -0.09591, 0.0], [1.96556, -0.14091, 0.0], [1.94016, -0.18244, 0.0], [1.90858, -0.21947, 0.0], [1.87161, -0.2511, 0.0], [1.83015, -0.27655, 0.0], [1.78523, -0.29519, 0.0], [1.73795, -0.30656, 0.0], [1.68948, -0.31038, 0.0], [1.68948, -0.31038, 0.0], [1.64101, -0.30656, 0.0], [1.59373, -0.29519, 0.0], [1.54881, -0.27655, 0.0], [1.50735, -0.2511, 0.0], [1.47037, -0.21947, 0.0], [1.4388, -0.18244, 0.0], [1.41339, -0.14091, 0.0], [1.39478, -0.09591, 0.0], [1.38343, -0.04855, 0.0], [1.37962, 0.0, 0.0]]
+                [-1.98417, -0.09591, 0.0], [-1.96556, -0.14091, 0.0], [-1.94016, -0.18244, 0.0],
+                [-1.90858, -0.21947, 0.0],
+                [-1.87161, -0.2511, 0.0], [-1.83015, -0.27655, 0.0], [-1.78523, -0.29519, 0.0],
+                [-1.73795, -0.30656, 0.0],
+                [-1.68948, -0.31038, 0.0], [-1.68948, -0.31038, 0.0], [-1.64101, -0.30656, 0.0],
+                [-1.59373, -0.29519, 0.0],
+                [-1.54881, -0.27655, 0.0], [-1.50735, -0.2511, 0.0], [-1.47037, -0.21947, 0.0],
+                [-1.4388, -0.18244, 0.0],
+                [-1.41339, -0.14091, 0.0], [-1.39478, -0.09591, 0.0], [-1.38343, -0.04855, 0.0], [-1.37962, 0.0, 0.0],
+                [0.0, 0.0, 0.0], [1.37962, 0.0, 0.0], [1.38343, 0.04855, 0.0], [1.39478, 0.09591, 0.0],
+                [1.41339, 0.14091, 0.0], [1.4388, 0.18244, 0.0], [1.47037, 0.21947, 0.0], [1.50735, 0.2511, 0.0],
+                [1.54881, 0.27655, 0.0], [1.59373, 0.29519, 0.0], [1.64101, 0.30656, 0.0], [1.68948, 0.31038, 0.0],
+                [1.68948, 0.31038, 0.0], [1.73795, 0.30656, 0.0], [1.78523, 0.29519, 0.0], [1.83015, 0.27655, 0.0],
+                [1.87161, 0.2511, 0.0], [1.90858, 0.21947, 0.0], [1.94016, 0.18244, 0.0], [1.96556, 0.14091, 0.0],
+                [1.98417, 0.09591, 0.0], [1.99552, 0.04855, 0.0], [1.99934, 0.0, 0.0], [1.99934, 0.0, 0.0],
+                [1.99552, -0.04855, 0.0], [1.98417, -0.09591, 0.0], [1.96556, -0.14091, 0.0], [1.94016, -0.18244, 0.0],
+                [1.90858, -0.21947, 0.0], [1.87161, -0.2511, 0.0], [1.83015, -0.27655, 0.0], [1.78523, -0.29519, 0.0],
+                [1.73795, -0.30656, 0.0], [1.68948, -0.31038, 0.0], [1.68948, -0.31038, 0.0], [1.64101, -0.30656, 0.0],
+                [1.59373, -0.29519, 0.0], [1.54881, -0.27655, 0.0], [1.50735, -0.2511, 0.0], [1.47037, -0.21947, 0.0],
+                [1.4388, -0.18244, 0.0], [1.41339, -0.14091, 0.0], [1.39478, -0.09591, 0.0], [1.38343, -0.04855, 0.0],
+                [1.37962, 0.0, 0.0]]
 
 RECTANGLE = [[-1.4910668771146764, 0.0, -0.9940445847431187], [1.4910668771146764, 0.0, -0.9940445847431187],
              [1.4910668771146764, 0.0, 0.9940445847431187], [-1.4910668771146764, 0.0, 0.9940445847431187],
@@ -807,35 +826,34 @@ ARROW4STRAIGHT = [[-0.9983883971657876, 0.0, 0.0], [-0.5990330382994733, 0.0, -0
                   [-0.1996776794331576, 0.0, 0.5990330382994733], [-0.1996776794331576, 0.0, 0.1996776794331576],
                   [-0.5990330382994733, 0.0, 0.1996776794331576], [-0.5990330382994733, 0.0, 0.3993553588663152],
                   [-0.9983883971657876, 0.0, 0.0]]
+ARROW3D = [[0.0, 1.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0], [0.0, 0.0, 0.0],
+           [0.0, 0.0, 0.0], [-2.9349871510930825e-06, 0.0, -0.8325912952423096], [0.08, 0.0, -0.8322415349953303],
+           [-2.9349871775177957e-06, 0.0, -0.832591317545347], [-0.08, 0.0, -0.8322415349953303], [0.0, 0.0, -1.0],
+           [0.08, 0.0, -0.8322415349953303], [-2.9349871775177957e-06, 0.0, -0.832591317545347],
+           [-2.9349871816685955e-06, 0.08, -0.8322415349953303], [0.0, 0.0, -1.0],
+           [-2.9349871816685955e-06, -0.08, -0.8322415349953303], [-2.9349871775177957e-06, 0.0, -0.832591317545347],
+           [-2.1316282072803006e-14, 0.0, 0.0], [-2.9349871775177957e-06, 0.0, 0.832591317545347],
+           [-0.08, 0.0, 0.8322415349953303], [0.0, 0.0, 1.0], [0.08, 0.0, 0.8322415349953303],
+           [-2.9349871775177957e-06, 0.0, 0.832591317545347], [-2.9349871816685955e-06, -0.08, 0.8322415349953303],
+           [0.0, 0.0, 1.0], [-2.9349871816685955e-06, 0.08, 0.8322415349953303],
+           [-2.9349871775177957e-06, 0.0, 0.832591317545347], [-2.1316282072803006e-14, 0.0, 0.0],
+           [0.8325883825581697, 0.0, 0.0], [0.8322386000081496, 0.0, 0.08], [1.0, 0.0, 0.0],
+           [0.8322386000081496, 0.0, -0.08], [0.8325883825581697, 0.0, 0.0], [0.8322386000081496, 0.08, 0.0],
+           [1.0, 0.0, 0.0], [0.8322386000081496, -0.08, 0.0], [0.8325883825581697, 0.0, 0.0],
+           [-2.1316282072803006e-14, 0.0, 0.0], [-0.8325350924734789, 0.0, 0.0], [-0.8323036300415579, 0.0, 0.08],
+           [-1.0, 0.0, 0.0], [-0.8323036300415579, 0.0, -0.08], [-0.8325350924734789, 0.0, 0.0],
+           [-0.8323036300415579, 0.08, 0.0], [-1.0, 0.0, 0.0], [-0.8323036300415579, -0.08, 0.0],
+           [-0.8325350924734789, 0.0, 0.0], [-2.1316282072803006e-14, 0.0, 0.0],
+           [-2.9349871775177957e-06, 0.832591317545347, 0.0], [-0.08, 0.8322415349953303, 0.0], [0.0, 1.0, 0.0],
+           [0.08, 0.8322415349953303, 0.0], [-2.9349871775177957e-06, 0.832591317545347, 0.0],
+           [-2.9349871816685955e-06, 0.8322415349953303, 0.08], [0.0, 1.0, 0.0],
+           [-2.9349871816685955e-06, 0.8322415349953303, -0.08], [-2.9349871775177957e-06, 0.832591317545347, 0.0],
+           [-2.1316282072803006e-14, 0.0, 0.0], [-2.9349871775177957e-06, -0.832591317545347, 0.0],
+           [-0.08, -0.8322415349953303, 0.0], [0.0, -1.0, 0.0], [0.08, -0.8322415349953303, 0.0],
+           [-2.9349871775177957e-06, -0.832591317545347, 0.0], [-2.9349871816685955e-06, -0.8322415349953303, -0.08],
+           [0.0, -1.0, 0.0], [-2.9349871816685955e-06, -0.8322415349953303, 0.08],
+           [-2.9349871775177957e-06, -0.832591317545347, 0.0]]
 
-ARROW3D = [[0.10963379999997869, 0.0, -0.5211738], [-2.1316282072803006e-14, 0.0, -0.5938023],
-           [-0.10963380000002132, 0.0, -0.5211738], [-2.1316282072803006e-14, 0.0, -0.9818754000000001],
-           [0.10963379999997869, 0.0, -0.5211738], [-2.1316282072803006e-14, 0.0, -0.5938023],
-           [-2.1316282072803006e-14, 0.1096338, -0.5211738], [-2.1316282072803006e-14, 0.0, -0.9818754000000001],
-           [-2.1316282072803006e-14, -0.1096338, -0.5211738], [-2.1316282072803006e-14, 0.0, -0.5938023],
-           [-2.1316282072803006e-14, 0.0, 0.0], [-2.1316282072803006e-14, 0.0, 0.5938023],
-           [-0.10963380000002132, 0.0, 0.5211738], [-2.1316282072803006e-14, 0.0, 0.9818754000000001],
-           [0.10963379999997869, 0.0, 0.5211738], [-2.1316282072803006e-14, 0.0, 0.5938023],
-           [-2.1316282072803006e-14, -0.1096338, 0.5211738], [-2.1316282072803006e-14, 0.0, 0.9818754000000001],
-           [-2.1316282072803006e-14, 0.1096338, 0.5211738], [-2.1316282072803006e-14, 0.0, 0.5938023],
-           [-2.1316282072803006e-14, 0.0, 0.0], [0.5938022999999787, 0.0, 0.0], [0.5211737999999787, 0.0, 0.1096338],
-           [0.9818753999999787, 0.0, 0.0], [0.5211737999999787, 0.0, -0.1096338], [0.5938022999999787, 0.0, 0.0],
-           [0.5211737999999787, 0.1096338, 0.0], [0.9818753999999787, 0.0, 0.0], [0.5211737999999787, -0.1096338, 0.0],
-           [0.5938022999999787, 0.0, 0.0], [-2.1316282072803006e-14, 0.0, 0.0], [-0.5938023000000213, 0.0, 0.0],
-           [-0.5211738000000213, 0.0, 0.1096338], [-0.9818754000000214, 0.0, 0.0],
-           [-0.5211738000000213, 0.0, -0.1096338], [-0.5938023000000213, 0.0, 0.0],
-           [-0.5211738000000213, 0.1096338, 0.0], [-0.9818754000000214, 0.0, 0.0],
-           [-0.5211738000000213, -0.1096338, 0.0], [-0.5938023000000213, 0.0, 0.0], [-2.1316282072803006e-14, 0.0, 0.0],
-           [-2.1316282072803006e-14, 0.5938023, 0.0], [-0.10963380000002132, 0.5211738, 0.0],
-           [-2.1316282072803006e-14, 0.9818754000000001, 0.0], [0.10963379999997869, 0.5211738, 0.0],
-           [-2.1316282072803006e-14, 0.5938023, 0.0], [-2.1316282072803006e-14, 0.5211738, 0.1096338],
-           [-2.1316282072803006e-14, 0.9818754000000001, 0.0], [-2.1316282072803006e-14, 0.5211738, -0.1096338],
-           [-2.1316282072803006e-14, 0.5938023, 0.0], [-2.1316282072803006e-14, 0.0, 0.0],
-           [-2.1316282072803006e-14, -0.5938023, 0.0], [-0.10963380000002132, -0.5211738, 0.0],
-           [-2.1316282072803006e-14, -0.9818754000000001, 0.0], [0.10963379999997869, -0.5211738, 0.0],
-           [-2.1316282072803006e-14, -0.5938023, 0.0], [-2.1316282072803006e-14, -0.5211738, -0.1096338],
-           [-2.1316282072803006e-14, -0.9818754000000001, 0.0], [-2.1316282072803006e-14, -0.5211738, 0.1096338],
-           [-2.1316282072803006e-14, -0.5938023, 0.0]]
 ARROW3DFLAT = [[0.14316906937233417, 0.0, -0.6805927362478895], [-2.1316282072803006e-14, 0.0, -0.6806627028155027],
                [-0.14316906937237553, 0.0, -0.6805927362478895], [-2.1316282072803006e-14, 0.0, -0.9818754000000001],
                [0.14316906937233417, 0.0, -0.6805927362478895], [-2.1316282072803006e-14, 0.0, -0.6806627028155027],
@@ -1284,7 +1302,30 @@ SETUP = [[0.388453, 4.3419999999999996e-10, 0.0640551],
          [0.559279, 0.0, 0.83146], [0.454066, 0.0, 0.624968], [0.624968, 0.0, 0.454066], [0.83146, 0.0, 0.559279],
          [0.941186, 0.0, 0.343929], [0.734694, 0.0, 0.238717], [0.772503, -8.63339e-09, 5.1800300000000004e-08]]
 STAR = [[1.7004453639835406e-15, -0.7200345985899305, -7.942952889804963e-16],
-        [0.26058532048278865, -0.9725674676653387, 1.9656927610124178e-16], [0.3643968933013128, -0.6218672562759475, 1.4280045265640082e-15], [0.71275394524471, -0.7127549886850846, 8.41175905342258e-16], [0.6310585453961821, -0.3552056041810745, 1.3750926261939013e-15], [0.9725664242249659, -0.26058566829624585, 6.602336936254819e-16], [0.7292258877101586, 0.009191289120243706, 5.81414120642293e-16], [0.9725664242249655, 0.2605842770424157, 1.4292380934217856e-15], [0.6310585453961821, 0.37358985723204086, 1.1369890745284183e-15], [0.7127539452447106, 0.712753597431252, 5.697625877670944e-16], [0.3643968933013135, 0.6402498345164203, -5.297357871299572e-16], [0.26058532048278943, 0.9725674676653387, 9.316470112006479e-16], [7.679430676054701e-16, 0.7384138272094085, -1.4292380934217856e-15], [-0.2605853204827893, 0.9725674676653387, 8.63793681806856e-16], [-0.36439689330131175, 0.6402498345164231, -6.675665889151998e-17], [-0.7127539452447099, 0.712753597431252, 4.3405592897951015e-16], [-0.6310585453961812, 0.37358985723204086, 7.930617221227221e-16], [-0.9725664242249659, 0.2605842770424157, 9.316470112006479e-16], [-0.7292258877101601, 0.009191289120240195, -5.297357871299572e-16], [-0.9725664242249659, -0.2605856682962476, 7.054692465546765e-16], [-0.6310585453961819, -0.3552056041810745, 1.1634450247134728e-15], [-0.71275394524471, -0.7127549886850846, 6.828514700900795e-16], [-0.36439689330131286, -0.6218672562759475, 4.226784195319719e-16], [-0.26058532048278743, -0.9725674676653387, 1.4292380934217856e-15], [1.7004453639835406e-15, -0.7200345985899305, -7.942952889804963e-16]]
+        [0.26058532048278865, -0.9725674676653387, 1.9656927610124178e-16],
+        [0.3643968933013128, -0.6218672562759475, 1.4280045265640082e-15],
+        [0.71275394524471, -0.7127549886850846, 8.41175905342258e-16],
+        [0.6310585453961821, -0.3552056041810745, 1.3750926261939013e-15],
+        [0.9725664242249659, -0.26058566829624585, 6.602336936254819e-16],
+        [0.7292258877101586, 0.009191289120243706, 5.81414120642293e-16],
+        [0.9725664242249655, 0.2605842770424157, 1.4292380934217856e-15],
+        [0.6310585453961821, 0.37358985723204086, 1.1369890745284183e-15],
+        [0.7127539452447106, 0.712753597431252, 5.697625877670944e-16],
+        [0.3643968933013135, 0.6402498345164203, -5.297357871299572e-16],
+        [0.26058532048278943, 0.9725674676653387, 9.316470112006479e-16],
+        [7.679430676054701e-16, 0.7384138272094085, -1.4292380934217856e-15],
+        [-0.2605853204827893, 0.9725674676653387, 8.63793681806856e-16],
+        [-0.36439689330131175, 0.6402498345164231, -6.675665889151998e-17],
+        [-0.7127539452447099, 0.712753597431252, 4.3405592897951015e-16],
+        [-0.6310585453961812, 0.37358985723204086, 7.930617221227221e-16],
+        [-0.9725664242249659, 0.2605842770424157, 9.316470112006479e-16],
+        [-0.7292258877101601, 0.009191289120240195, -5.297357871299572e-16],
+        [-0.9725664242249659, -0.2605856682962476, 7.054692465546765e-16],
+        [-0.6310585453961819, -0.3552056041810745, 1.1634450247134728e-15],
+        [-0.71275394524471, -0.7127549886850846, 6.828514700900795e-16],
+        [-0.36439689330131286, -0.6218672562759475, 4.226784195319719e-16],
+        [-0.26058532048278743, -0.9725674676653387, 1.4292380934217856e-15],
+        [1.7004453639835406e-15, -0.7200345985899305, -7.942952889804963e-16]]
 DIAMOND = [[0.0, 1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [-1.0, 0.0, 0.0], [0.0, 0.0, -1.0],
            [0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0], [0.0, 0.0, -1.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0],
            [-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [1.0, 0.0, 0.0]]
@@ -1299,6 +1340,7 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
                [0.16, 0.0, -0.61], [0.1, 0.0, -0.77], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9], [0.06, 0.0, -0.9],
                [0.06, 0.0, -0.9]]
 
+
 # def ad_scaling_controller(size_obj, ctrl_shape):
 #     # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
 #     points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
@@ -1312,8 +1354,37 @@ STARSQUEEZE = [[0.06, 0.0, -0.9], [0.0, 0.0, -1.22], [-0.06, 0.0, -0.9], [-0.09,
 #     for i in obj:
 #         objs = i.split('.')[0]
 #         return objs
+def ad_lib_pivot_controller(controller, parent_constraint_node, suffix):
+    # pm.select(cl=1)
+    joint = pm.joint(n='instance_pivot')
+    pm.setAttr(joint+'.drawStyle', 2)
+    controller_rs = ad_lib_ctrl_shape(ARROW3D, size_ctrl=0.8)
+    ad_lib_ctrl_color(ctrl=[controller_rs], color=20)
+    pm.rename(controller_rs, ad_lib_main_name(controller) + 'Pivot' + suffix)
 
-def ad_parent_constraint(obj_base, obj_target, mo=1):
+    # parent relatives
+    shape_ctrl = pm.listRelatives(controller_rs, s=True)[0]
+    pm.parent(shape_ctrl, joint, r=True, s=True)
+    pm.delete(controller_rs)
+
+    joint_new_name = pm.rename(joint, ad_lib_main_name(controller) + 'Pivot' + suffix)
+    ad_lib_xform_position_rotation(origin=controller, target=joint_new_name)
+    pm.parent(joint_new_name, controller)
+
+    # connect pivot
+    pm.connectAttr(joint+'.translate', controller+'.rotatePivot')
+    pm.connectAttr(joint+'.translate', controller+'.scalePivot')
+
+    # create decompose matrix
+    decompose_matrix = pm.createNode('decomposeMatrix', n=ad_lib_main_name(joint_new_name)+'_dmtx')
+    pm.connectAttr(joint_new_name+'.inverseMatrix', decompose_matrix+'.inputMatrix')
+    pm.connectAttr(decompose_matrix+'.outputTranslate', parent_constraint_node +'.target[0].targetOffsetTranslate')
+
+    ad_lib_lock_hide_attr(lock_hide_channel=['r','s','v','radius'], ctrl=joint_new_name, hide_object=True, cb=0)
+
+    return joint_new_name
+
+def ad_lib_parent_constraint(obj_base, obj_target, mo=1):
     par_constraint = pm.parentConstraint(obj_base, obj_target, mo=mo)
     split = par_constraint.split('_')
     x = '_'.join(split[:-1])
@@ -1322,7 +1393,7 @@ def ad_parent_constraint(obj_base, obj_target, mo=1):
     return new_name
 
 
-def ad_orient_constraint(obj_base, obj_target, mo=1):
+def ad_lib_orient_constraint(obj_base, obj_target, mo=1):
     orient_constraint = pm.orientConstraint(obj_base, obj_target, mo=mo)
     split = orient_constraint.split('_')
     x = '_'.join(split[:-1])
@@ -1331,7 +1402,7 @@ def ad_orient_constraint(obj_base, obj_target, mo=1):
     return new_name
 
 
-def ad_point_constraint(obj_base, obj_target, mo=1):
+def ad_lib_point_constraint(obj_base, obj_target, mo=1):
     point_constraint = pm.pointConstraint(obj_base, obj_target, mo=mo)
     split = point_constraint.split('_')
     x = '_'.join(split[:-1])
@@ -1340,7 +1411,7 @@ def ad_point_constraint(obj_base, obj_target, mo=1):
     return new_name
 
 
-def ad_scale_constraint(obj_base, obj_target, mo=1):
+def ad_lib_scale_constraint(obj_base, obj_target, mo=1):
     scale_constraint = pm.scaleConstraint(obj_base, obj_target, mo=mo)
     split = scale_constraint.split('_')
     x = '_'.join(split[:-1])
@@ -1349,7 +1420,8 @@ def ad_scale_constraint(obj_base, obj_target, mo=1):
 
     return new_name
 
-def ad_query_textfield_object(object_define, *args):
+
+def ad_lib_query_textfield_object(object_define, *args):
     text = []
     if pm.textField(object_define, q=True, en=True):
         if pm.textField(object_define, q=True, tx=True):
@@ -1360,7 +1432,8 @@ def ad_query_textfield_object(object_define, *args):
         pass
     return text, object_define
 
-def ad_query_list_textfield_object(object_define, *args):
+
+def ad_lib_query_list_textfield_object(object_define, *args):
     listing_object = []
     if pm.textField(object_define, q=True, en=True):
         if pm.textField(object_define, q=True, tx=True):
@@ -1380,14 +1453,16 @@ def ad_query_list_textfield_object(object_define, *args):
 
     return listing_object, object_define
 
-def ad_prefix(prefix_text):
+
+def ad_lib_prefix(prefix_text):
     if pm.textField(prefix_text, q=True, en=True):
-        return ad_query_textfield_object(object_define=prefix_text)[0]
+        return ad_lib_query_textfield_object(object_define=prefix_text)[0]
     else:
         return ''
 
-def ad_match_position_target_to_ctrl(selection, target, manipulated_position,
-                                     manipulated_rotation):
+
+def ad_lib_match_position_target_to_ctrl(selection, target, manipulated_position,
+                                         manipulated_rotation):
     if '.' in str(selection[0]):
         cls = pm.cluster(selection)
         pm.pointConstraint(cls, target[0], mo=0)
@@ -1407,9 +1482,10 @@ def ad_match_position_target_to_ctrl(selection, target, manipulated_position,
     else:
         for object, tgt in zip(selection, target):
             # query and match
-            ad_xform_position_rotation(origin=object, target=tgt)
+            ad_lib_xform_position_rotation(origin=object, target=tgt)
 
-def ad_xform_position_rotation(origin, target):
+
+def ad_lib_xform_position_rotation(origin, target):
     origin_position = pm.xform(origin, ws=True, q=True, t=True)
     origin_rotation = pm.xform(origin, ws=True, q=True, ro=True)
 
@@ -1424,7 +1500,7 @@ def ad_xform_position_rotation(origin, target):
             }
 
 
-def ad_main_name(main_name):
+def ad_lib_main_name(main_name):
     if '_' in main_name:
         get_prefix_name = main_name.split('_')[:-1]
         joining = '_'.join(get_prefix_name)
@@ -1432,7 +1508,8 @@ def ad_main_name(main_name):
     else:
         return main_name
 
-def ad_get_suffix_main(main_name):
+
+def ad_lib_get_suffix_main(main_name):
     if '_' in main_name:
         get_suffix_name = main_name.split('_')[-1]
         # joining = '_'.join(get_prefix_name)
@@ -1440,23 +1517,27 @@ def ad_get_suffix_main(main_name):
         get_suffix_name = ''
     return get_suffix_name
 
-def ad_defining_object_text_field(define_object, tx='', *args, **kwargs):
+
+def ad_lib_defining_object_text_field(define_object, tx='', *args, **kwargs):
     pm.textField(define_object, tx=tx, **kwargs)
 
-def ad_display(object, target, long_name='display', default_vis=1, k=True, cb=False):
+
+def ad_lib_display(object, target, long_name='display', default_vis=1, k=True, cb=False):
     # create attr
-    if not pm.objExists(object+'.'+long_name):
+    if not pm.objExists(object + '.' + long_name):
         pm.addAttr(object, ln=long_name, at='bool')
     else:
         pass
-    pm.setAttr('%s.%s' % (object,long_name), default_vis, e=True, k=k, cb=cb)
-    pm.connectAttr('%s.%s' % (object,long_name), target+'.visibility')
+    pm.setAttr('%s.%s' % (object, long_name), default_vis, e=True, k=k, cb=cb)
+    pm.connectAttr('%s.%s' % (object, long_name), target + '.visibility')
 
-def ad_group_parent(groups, name, suffix, prefix_2, prefix_number):
+
+def ad_lib_group_parent(groups, name, suffix, prefix_2, prefix_number):
     # create group hierarchy
     grps = []
     for number, group in enumerate(groups):
-        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (name, group.title(), suffix.title(), prefix_number, prefix_2, 'grp')))
+        grps.append(pm.createNode('transform', n="%s%s%s%s%s_%s" % (
+        name, group.title(), suffix.title(), prefix_number, prefix_2, 'grp')))
 
         if number > 0:
             pm.parent(grps[number], grps[number - 1])
@@ -1464,13 +1545,12 @@ def ad_group_parent(groups, name, suffix, prefix_2, prefix_number):
     return grps
 
 
-
-def ad_replacing_controller(list_controller):
+def ad_lib_replacing_controller(list_controller):
     instance_controller = list_controller.pop(0)
     for target in list_controller:
         target_shapes = pm.listRelatives(target, s=1)
         instance_query_shapes = pm.listRelatives(instance_controller, s=1)
-        if not pm.objectType(target_shapes[0]) == 'nurbsCurve' :
+        if not pm.objectType(target_shapes[0]) == 'nurbsCurve':
             om.MGlobal.displayWarning("%s is not curve type object! Replacing is skipped." % target)
 
         elif not pm.objectType(instance_query_shapes[0]) == 'nurbsCurve':
@@ -1480,14 +1560,12 @@ def ad_replacing_controller(list_controller):
             instance_shapes = pm.duplicate(instance_controller.getShape(), addShape=True)[0]
             pm.parent(instance_shapes, target, r=True, s=True)
 
-
             list_attribute_target_shapes = pm.listAttr(target_shapes, ud=1)
             list_attribute_instance_shapes = pm.listAttr(instance_shapes, ud=1)
 
             for list_attr_ins_shape in list_attribute_instance_shapes:
                 pm.setAttr('%s.%s' % (instance_shapes, list_attr_ins_shape), e=True, l=False)
                 pm.deleteAttr('%s.%s' % (instance_shapes, list_attr_ins_shape))
-
 
             for attr_tgt_shape in list_attribute_target_shapes:
                 get_type_attr = pm.attributeQuery(attr_tgt_shape, n=target_shapes[0], attributeType=True)
@@ -1520,8 +1598,8 @@ def ad_replacing_controller(list_controller):
                                l=lock)
             try:
                 # connection replace to instance
-                list_connections =  pm.listConnections(target_shapes, c=True, plugs=True)
-                for connection, attr_tgt_shape in zip (list_connections, list_attribute_target_shapes):
+                list_connections = pm.listConnections(target_shapes, c=True, plugs=True)
+                for connection, attr_tgt_shape in zip(list_connections, list_attribute_target_shapes):
                     spliting = connection[0].split('.')
                     new_instance_shape = connection[0].replace(str(spliting[0]), str(instance_shapes))
                     pm.disconnectAttr(connection[0], connection[1])
@@ -1537,7 +1615,8 @@ def ad_replacing_controller(list_controller):
 
     return instance_controller, list_controller
 
-def ad_replacing_color(source, target):
+
+def ad_lib_replacing_color(source, target):
     if not source:
         om.MGlobal.displayError("No curves selected")
         return False
@@ -1555,11 +1634,12 @@ def ad_replacing_color(source, target):
                 om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
     return True
 
+
 # def ad_scaling_controllers(size_obj, ctrl_shape):
 #     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
 #     mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
 
-def ad_scaling_controller(current_value, ctrl_shape):
+def ad_lib_scaling_controller(current_value, ctrl_shape):
     present = pm.PyNode(ctrl_shape)
     for cv in present.getShape().cv:
         position_os = pm.xform(cv, q=True, os=True, t=True)
@@ -1567,9 +1647,11 @@ def ad_scaling_controller(current_value, ctrl_shape):
         vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
         vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         sub_vector = vector_ws - vector_os
-        vector_optimum = ((vector_os * (current_value*0.5)) + sub_vector)
+        vector_optimum = ((vector_os * (current_value * 0.5)) + sub_vector)
 
-        pm.move(vector_os[0]+vector_optimum[0], vector_os[1]+vector_optimum[1], vector_os[2]+vector_optimum[2], cv)
+        pm.move(vector_os[0] + vector_optimum[0], vector_os[1] + vector_optimum[1], vector_os[2] + vector_optimum[2],
+                cv)
+
 
 #
 # def ad_scale_controller(delta_value):
@@ -1579,7 +1661,7 @@ def ad_scaling_controller(current_value, ctrl_shape):
 #         obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
 #         pm.makeIdentity(apply=True, s=1, n=0)
 
-def ad_attr_value(channel):
+def ad_lib_attr_value(channel):
     attr_lock_list = []
     for lc in channel:
         if lc in ['t', 'r', 's']:
@@ -1591,37 +1673,40 @@ def ad_attr_value(channel):
     return attr_lock_list
 
 
-def ad_hide_unhide_attr(channel, ctrl):
-    attr_lock_list = ad_attr_value(channel)
+def ad_lib_hide_unhide_attr(channel, ctrl):
+    attr_lock_list = ad_lib_attr_value(channel)
     for at in attr_lock_list:
-        query_object_hide = pm.getAttr(ctrl+'.'+ at, k=True)
+        query_object_hide = pm.getAttr(ctrl + '.' + at, k=True)
         if query_object_hide:
             pm.setAttr(ctrl + '.' + at, k=False)
         else:
             pm.setAttr(ctrl + '.' + at, k=True)
     return attr_lock_list
 
-def ad_lock_unlock_attr(channel, ctrl):
-    attr_lock_list = ad_attr_value(channel)
+
+def ad_lib_lock_unlock_attr(channel, ctrl):
+    attr_lock_list = ad_lib_attr_value(channel)
     for at in attr_lock_list:
-        query_object_lock = pm.getAttr(ctrl+'.'+ at, l=True)
+        query_object_lock = pm.getAttr(ctrl + '.' + at, l=True)
         if query_object_lock:
             pm.setAttr(ctrl + '.' + at, l=False)
         else:
             pm.setAttr(ctrl + '.' + at, l=True)
     return attr_lock_list
 
-def ad_lock_hide_attr(lock_hide_channel, ctrl, hide_object):
-    attr_lock_list = ad_attr_value(lock_hide_channel)
+
+def ad_lib_lock_hide_attr(lock_hide_channel, ctrl, hide_object, **kwargs):
+    attr_lock_list = ad_lib_attr_value(lock_hide_channel)
     for at in attr_lock_list:
         if hide_object:
-            pm.setAttr(ctrl + '.' + at, l=1, k=0)
+            pm.setAttr(ctrl + '.' + at, l=1, k=0, **kwargs)
         else:
-            pm.setAttr(ctrl + '.' + at, l=0, k=1)
+            pm.setAttr(ctrl + '.' + at, l=0, k=1, **kwargs)
 
     return attr_lock_list
 
-def ad_ctrl_color_list(color):
+
+def ad_lib_ctrl_color_list(color):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayError("No curves selected")
@@ -1639,8 +1724,9 @@ def ad_ctrl_color_list(color):
                     om.MGlobal.displayWarning("Failed to override color: {0}".format(shapeNodes))
     return True
 
-def ad_ctrl_color(ctrl, color):
-    list_relatives=[]
+
+def ad_lib_ctrl_color(ctrl, color):
+    list_relatives = []
     for item in ctrl:
         list_relatives = pm.listRelatives(item, s=1)[0]
         pm.setAttr(list_relatives + '.ove', 1)
@@ -1648,15 +1734,17 @@ def ad_ctrl_color(ctrl, color):
 
     return list_relatives
 
-def ad_ctrl_shape(shape, size_ctrl):
+
+def ad_lib_ctrl_shape(shape, size_ctrl):
     scale_shape = [[size_ctrl * i for i in j] for j in shape]
     create_curve = pm.curve(d=1, p=scale_shape)
     pm.addAttr(create_curve, ln='AD_Controller', at='bool')
-    pm.setAttr(create_curve+'.AD_Controller', 1)
+    pm.setAttr(create_curve + '.AD_Controller', 1)
 
     return create_curve
 
-def ad_tagging(ctrl):
+
+def ad_lib_tagging(ctrl):
     attributes = pm.attributeQuery('AD_Controller', n=ctrl, ex=True)
     if attributes:
         pm.setAttr(ctrl + '.AD_Controller', 1)
@@ -1664,7 +1752,8 @@ def ad_tagging(ctrl):
         pm.addAttr(ctrl, ln='AD_Controller', at='bool')
         pm.setAttr(ctrl + '.AD_Controller', 1)
 
-def ad_untagging(ctrl):
+
+def ad_lib_untagging(ctrl):
     attributes = pm.attributeQuery('AD_Controller', n=ctrl, ex=True)
     if attributes:
         pm.setAttr(ctrl + '.AD_Controller', 0)

@@ -266,7 +266,7 @@ def sourceJointSkinMatrix(obj):
 def groupFK(obj):
     for i in obj:
         splitName = i.split('|')[0]
-        grpParent = au.group_parent(['ParentPos', 'PosSDK'], au.ad_main_name(i), '')
+        grpParent = au.group_parent(['ParentPos', 'PosSDK'], au.ad_lib_main_name(i), '')
         au.match_position(splitName, grpParent[0])
         return grpParent
 
