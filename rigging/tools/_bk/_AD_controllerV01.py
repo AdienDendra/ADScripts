@@ -1663,7 +1663,7 @@ def createControl( select ='',
 
         # create main control
         sCtrl = ut.scale_curve(ctrlSize, shape)
-        ctrl = ut.controller(sCtrl)
+        ctrl = ut.create_controller(sCtrl)
 
         if prefix == '':
             renCtrl = mc.rename(ctrl, '%s_%s' % (ut.ad_lib_main_name(obj), suffix))
@@ -1681,7 +1681,7 @@ def createControl( select ='',
             # scaling size gimbal from the main ctrl
             sCrv = ut.scale_curve(ctrlSize * 0.75, shape)
             # create gimbal control
-            ctrlGmb = ut.controller(sCrv)
+            ctrlGmb = ut.create_controller(sCrv)
             if prefix == '':
                 renGmbl = mc.rename(ctrlGmb, '%s_%s' % (ut.ad_lib_main_name(obj), ut.GIMBAL))
             else:

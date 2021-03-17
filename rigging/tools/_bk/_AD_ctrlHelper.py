@@ -27,7 +27,7 @@ def parentConsCtrl(objFirst, objScnd):
         for t in objScnd:
             shpScnd = ut.get_transform_shape_position(t)
             sCtrlScndScnd = ut.scale_curve(1.00, shpScnd)
-            CtrlScnd = ut.controller(sCtrlScndScnd)
+            CtrlScnd = ut.create_controller(sCtrlScndScnd)
 
             renCtrlScnd = mc.rename(CtrlScnd, '%s%s' % (ut.ad_lib_main_name(t), 'Tweak_ctrl'))
 

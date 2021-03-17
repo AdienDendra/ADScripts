@@ -108,7 +108,7 @@ def createControl(objectList = None,
 
             # create control
             sCtrl = ut.scale_curve(ctrlSize, shape)
-            ctrl = ut.controller(sCtrl)
+            ctrl = ut.create_controller(sCtrl)
 
             # prefix True or False
             if isinstance(prefix, str):
@@ -127,7 +127,7 @@ def createControl(objectList = None,
                 sCrv = ut.scale_curve(ctrlSize * 0.75, shape)
 
                 # create gimbal control
-                ctrlGmb = ut.controller(sCrv)
+                ctrlGmb = ut.create_controller(sCrv)
                 if prefix == '':
                     renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_lib_main_name(jntPos[0]), ut.GIMBAL, suffix))
                 else:
@@ -235,7 +235,7 @@ def createControl(objectList = None,
         else:
             for number, obj in enumerate(objectList):
                 sCtrl = ut.scale_curve(ctrlSize, shape)
-                ctrl = ut.controller(sCtrl)
+                ctrl = ut.create_controller(sCtrl)
 
                 # prefix True or False
                 if isinstance(prefix, str):
@@ -259,7 +259,7 @@ def createControl(objectList = None,
                     sCrv = ut.scale_curve(ctrlSize * 0.75, shape)
 
                     # create gimbal control
-                    ctrlGmb = ut.controller(sCrv)
+                    ctrlGmb = ut.create_controller(sCrv)
                     if prefix == '':
                         renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_lib_main_name(obj), ut.GIMBAL, suffix))
                     else:
@@ -377,7 +377,7 @@ def createControl(objectList = None,
 
             # create control
             sCtrl = ut.scale_curve(ctrlSize, shape)
-            ctrl = ut.controller(sCtrl)
+            ctrl = ut.create_controller(sCtrl)
 
             # prefix True or False
             if isinstance(prefix, str):
@@ -396,7 +396,7 @@ def createControl(objectList = None,
                 sCrv = ut.scale_curve(ctrlSize * 0.75, shape)
 
                 # create gimbal control
-                ctrlGmb = ut.controller(sCrv)
+                ctrlGmb = ut.create_controller(sCrv)
                 if prefix == '':
                     renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_lib_main_name(jntPos[0]), ut.GIMBAL, suffix))
                 else:
@@ -504,7 +504,7 @@ def createControl(objectList = None,
         else:
             for number, obj in enumerate(sel):
                 sCtrl = ut.scale_curve(ctrlSize, shape)
-                ctrl = ut.controller(sCtrl)
+                ctrl = ut.create_controller(sCtrl)
 
                 # prefix True or False
                 if isinstance(prefix, str):
@@ -528,7 +528,7 @@ def createControl(objectList = None,
                     sCrv = ut.scale_curve(ctrlSize * 0.75, shape)
 
                     # create gimbal control
-                    ctrlGmb = ut.controller(sCrv)
+                    ctrlGmb = ut.create_controller(sCrv)
                     if prefix == '':
                         renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_lib_main_name(obj), ut.GIMBAL, suffix))
                     else:
@@ -618,7 +618,7 @@ def createControl(objectList = None,
     # if there is object selected
     else:
         sCtrl = ut.scale_curve(ctrlSize, shape)
-        ctrl = ut.controller(sCtrl)
+        ctrl = ut.create_controller(sCtrl)
 
         # prefix True or False
         if isinstance(prefix, str):
@@ -637,7 +637,7 @@ def createControl(objectList = None,
             sCrv = ut.scale_curve(ctrlSize * 0.75, shape)
 
             # create gimbal control
-            ctrlGmb = ut.controller(sCrv)
+            ctrlGmb = ut.create_controller(sCrv)
 
             renGmbl = mc.rename(ctrlGmb, '%s%s_%s' % (ut.ad_lib_main_name(prefix), ut.GIMBAL, suffix))
 

@@ -8,7 +8,7 @@ def controlShapeQuery(obj):
         return shapeNode
 
 def controlShapeCreate(obj):
-    ctrl = ut.controller(obj)
+    ctrl = ut.create_controller(obj)
     return  ctrl
 
 def listAttrUserDefined(obj):
