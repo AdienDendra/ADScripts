@@ -357,7 +357,7 @@ class Lr_Control():
 #                                                MOTION PATH                                                           #
 #**********************************************************************************************************************#
 class Lr_MotionPath():
-    def __init__(self, curve='', world_up_loc='', controller=False):
+    def __init__(self, curve='', world_up_loc='', set_value_length =1, controller=False):
         # load Plug-ins
         lr_load_matrix_quad_plugin()
 
@@ -369,6 +369,9 @@ class Lr_MotionPath():
         create_ik = lr_joint_on_curve(curve=curve, world_up_loc=world_up_loc, delete_group=False,
                                       ctrl=controller)
         arc_length = mc.arclen(curve)
+
+        value_length = arc_length/set_value_length
+
         print arc_length
 
         ctrl = Lr_Control(match_obj_first_position=create_ik['joints'][0], prefix=lr_prefix_name(curve),
@@ -390,7 +393,7 @@ class Lr_MotionPath():
             mc.connectAttr('time1.outTime', mult_timing + '.input2')
 
             add_speed = mc.shadingNode('addDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'SpeedAdd' + '_adl')
-            mc.setAttr(add_speed + '.input2', ((motion_path_uvalue * 1000)))
+            mc.setAttr(add_speed + '.input2', (((motion_path_uvalue/value_length) * 1000)))
 
             mult_offset = mc.shadingNode('multiplyDivide', asUtility=1, n=lr_prefix_name(i) + 'SpeedOffset' + '_mdn')
             mc.setAttr(mult_offset + '.operation', 2)
@@ -753,6 +756,8 @@ def lr_joint_on_curve(curve='', world_up_loc='', spline_ik=None, delete_group=Tr
                 'ctrl': controls,
                 'ikHdl': ikHdl,
                 'curve': curve}
+
+    print motion_paths
 
     return {'joints': transform,
             'motionPath': motion_paths,
