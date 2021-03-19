@@ -394,6 +394,9 @@ CUBE = [[-1.0, 1.0, 1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, 1.0, 1.0], 
 
 layout = 200
 percentage = 0.01 * layout
+on_selector = 0
+on_side = 0
+
 #**********************************************************************************************************************#
 #                                                    UI                                                                #
 #**********************************************************************************************************************#
@@ -403,36 +406,82 @@ def show_ui():
     if pm.window(snake_rig, exists=True):
         pm.deleteUI(snake_rig)
     with pm.window(snake_rig, title='Larian Rig Test Adien', width=layout, height=200):
-        with pm.columnLayout('Create__Column', w=layout*1.04, co=('both', 1 * percentage), adj=1):
+        with pm.columnLayout('Create_Column', w=layout*1.06, co=('both', 1 * percentage), adj=1):
             # ADDITIONAL
+            pm.separator(h=8, st=None, w=90 * percentage)
             with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
                               columnAttach=[(1, 'both', 0),(2, 'both', 0)],
-                              rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
+                              rowAttach=[(1, 'bottom', 0.5),(2, 'bottom', 0.5) ]):
                 pm.button('Create_Template', l="Create Template Joint",
                           c=partial(Lr_Template))
                 pm.button('Delete_Template', l="Del",  bgc=(0.5, 0, 0), c=partial(lr_delete_template))
 
-            pm.separator(h=8, st="in", w=90 * percentage)
-            pm.textFieldGrp('Prefix_Name', label='Prefix Name:', cal=(1, "right"),
-                                  cw2=(50 * percentage, 25 * percentage, ),
-                                  columnAttach=[(1, 'both', 0 * percentage),
-                                                (2, 'both', 0 * percentage),
-                                                ], tx='snake')
+            #pm.separator(h=8, st="in", w=90 * percentage)
+            with pm.frameLayout(collapsable=True, l='Create Rig', mh=3):
+                with pm.columnLayout('Path', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
+                    pm.textFieldGrp('Prefix_Name', label='Prefix Name:', cal=(1, "right"),
+                                          cw2=(40 * percentage, 25 * percentage, ),
+                                          columnAttach=[(1, 'both', 0 * percentage),
+                                                        (2, 'both', 0 * percentage),
+                                                        ], tx='snake')
 
-            with pm.rowLayout(nc=2, cw2=(50 * percentage, 25 * percentage), cl2=('right', 'left'),
-                              columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
-                pm.text('Skeleton Number:')
-                pm.intField('Skeleton_Number', value=20)
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 25 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                        pm.text('Body Skeleton:')
+                        pm.intField('Body_Skeleton', value=20)
 
-            with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
-                              columnAttach=[(1, 'both', 0),(2, 'both', 0)],
-                              rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
-                pm.button('Create_Rig', l="Create Rig", bgc=(0, 0.5, 0),
-                          c=partial(lr_create_rig))
-                pm.button('Delete_Rig', l="Del", bgc=(0.5, 0, 0),
-                          c=partial(lr_delete_rig))
+                    with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
+                                      columnAttach=[(1, 'both', 0),(2, 'both', 0)],
+                                      rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
+                        pm.button('Create_Rig', l="Create Rig", bgc=(0, 0.5, 0),
+                                  c=partial(lr_create_rig))
+                        pm.button('Delete_Rig', l="Del", bgc=(0.5, 0, 0),
+                                  c=partial(lr_delete_rig))
 
-            pm.separator(h=8, st="in", w=90 * percentage)
+            # pm.separator(h=8, st="in", w=90 * percentage)
+            with pm.frameLayout(collapsable=True, l='Create Path', mh=3):
+                with pm.columnLayout('Path', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 25 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                        pm.text('Path Size:')
+                        pm.intField('Path_Size', value=40)
+                    with pm.rowLayout(nc=3, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                          (3, 'left', 1 * percentage)],
+                                      cw3=(40 * percentage, 16 * percentage, 16 * percentage)):
+                        pm.text('Tip Position:')
+                        direction_control_position = pm.radioCollection('Tip_Position')
+                        direction_positve = pm.radioButton(label='+',
+                                                           onCommand=lambda x: lr_on_position_tip_radio_button(1))
+                        pm.radioButton(label='-', onCommand=lambda x: lr_on_position_tip_radio_button(2))
+                        pm.radioCollection(direction_control_position, edit=True, select=direction_positve)
+
+                    with pm.rowLayout(nc=4, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
+                                                          (3, 'left', 1 * percentage), (4, 'left', 1 * percentage)],
+                                      cw4=(40 * percentage, 16 * percentage, 16 * percentage, 16 * percentage)):
+                        pm.text('Rig Direction:')
+                        direction_control_translate = pm.radioCollection('Rig_Direction')
+                        pm.radioButton(label='Tx', onCommand=lambda x: lr_on_selection_button(1))
+                        pm.radioButton(label='Ty', onCommand=lambda x: lr_on_selection_button(2))
+                        direction_translateZ = pm.radioButton(label='Tz', onCommand=lambda x: lr_on_selection_button(3))
+                        pm.radioCollection(direction_control_translate, edit=True, select=direction_translateZ)
+
+                    with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
+                                      columnAttach=[(1, 'both', 0),(2, 'both', 0)],
+                                      rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
+                        pm.button('Create_Path', l="Create Path",
+                                  c=partial(lr_create_path))
+                        pm.button('Delete_Path', l="Del", bgc=(0.5, 0, 0),
+                                  c=partial(lr_delete_path))
+
+                    with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
+                                      columnAttach=[(1, 'both', 0),(2, 'both', 0)],
+                                      rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
+                        pm.button('Attach_To_Path', l="Attach To Path",
+                                  c=partial(lr_create_rig))
+                        pm.button('Reset', l="Res", bgc=(0, 0.5, 0),
+                                  c=partial(lr_delete_rig))
+                    pm.separator(h=8, st="in", w=90 * percentage)
+
 
     pm.showWindow()
 #**********************************************************************************************************************#
@@ -509,15 +558,33 @@ class Lr_Template():
 class Lr_RigUI():
     def __init__(self):
         self.prefix_name = pm.textFieldGrp( "Prefix_Name", query=True, text=True )
-        self.skeleton_number = pm.intField( "Skeleton_Number", query=True, value=True )
+        self.body_skeleton = pm.intField("Body_Skeleton", query=True, value=True)
+        self.path_size = pm.intField("Path_Size", query=True, value=True)
+        # self.tip_position = pm.radioCollection('Tip_Position', query=True, select=True)
+
+        self.rig_direction = lr_action_translate_radio_button()
+        self.tip_position = ad_action_position_tip_radio_button()
+
 
     def set_prefix_name(self, prefix_name):
         self.prefix_name = prefix_name
         pm.textFieldGrp( "Prefix_Name", edit=True, text=prefix_name )
 
-    def ser_skeleton_number(self, skeleton_number):
+    def set_body_skeleton(self, skeleton_number):
         self.prefix_name = skeleton_number
-        pm.intField( "Skeleton_Number", edit=True, value=skeleton_number )
+        pm.intField( "Body_Skeleton", edit=True, value=skeleton_number )
+
+    def set_path_size(self, path_size):
+        self.path_size = path_size
+        pm.intField( "Path_Size", edit=True, value=path_size )
+
+    # def set_tip_position(self, ad_action_position_tip_radio_button):
+    #     self.tip_position = ad_action_position_tip_radio_button
+    #     self.tip_position = pm.radioCollection('Tip_Position', query=True, select=ad_action_position_tip_radio_button())
+
+    def set_rig_direction(self, rig_direction):
+        self.rig_direction = rig_direction
+        pm.radioCollection('Tip_Position', query=True, select=rig_direction)
 
 class Lr_Control():
     def __init__(self, match_obj_second_position=None, match_obj_first_position=False,
@@ -593,7 +660,7 @@ class Lr_Control():
 class Lr_GeneralBase:
     # top structure
     def __init__(self,
-                 lockChannels=['t', 'r', 's'],
+                 lockChannels=['t', 'r', 's'], prefix='',
                  scale=1.0
                  ):
         """
@@ -604,7 +671,7 @@ class Lr_GeneralBase:
         """
         # make world control
         world_control = Lr_Control(
-            prefix='World',
+            prefix='World%s' % prefix,
             suffix='Ctrl',
             groups_ctrl=['Zro'],
             ctrl_size=scale * 5,
@@ -615,7 +682,7 @@ class Lr_GeneralBase:
 
         # make placer control
         place_control = Lr_Control(
-            prefix='Place',
+            prefix='Place%s' % prefix,
             suffix='Ctrl',
             groups_ctrl=['Zro'],
             ctrl_size=scale * 5,
@@ -625,34 +692,34 @@ class Lr_GeneralBase:
         )
 
         # create group and parenting corresponding to its grp
-        self.root_grp = mc.group(n='Rig_Grp', em=1)
-        self.world_grp = mc.group(n='World_Grp', em=1, p=self.root_grp)
+        self.root_grp = mc.group(n='Rig%s_Grp' % prefix, em=1)
+        self.world_grp = mc.group(n='World%s_Grp' % prefix, em=1, p=self.root_grp)
         mc.parent(world_control.control, self.world_grp)
 
-        self.place_grp = mc.group(n='Place_Grp', em=1, p=world_control.control)
+        self.place_grp = mc.group(n='Place%s_Grp' % prefix, em=1, p=world_control.control)
         mc.parent(place_control.control, self.place_grp)
 
-        self.anim_grp = mc.group(n='anim_grp', em=1, p=place_control.control)
+        self.anim_grp = mc.group(n='anim%s_grp' % prefix, em=1, p=place_control.control)
 
-        self.util_grp = mc.group(n='Utils_Grp', em=1, p=self.world_grp)
+        self.util_grp = mc.group(n='Utils%s_Grp' % prefix, em=1, p=self.world_grp)
 
         # deleting grp parent ctrl
         mc.delete(world_control.parent_control[0])
         mc.delete(place_control.parent_control[0])
 
         # create more group for other utilities
-        self.anim_util_grp = mc.group(n='Anim_Grp', em=1, p=self.util_grp)
+        self.anim_util_grp = mc.group(n='Anim%s_Grp' % prefix, em=1, p=self.util_grp)
 
-        self.joint_grp = mc.group(n='Joint_Grp', em=1, p=self.anim_util_grp)
-        self.curve_grp = mc.group(n='Curve_Grp', em=1, p=self.anim_util_grp)
-        self.surface_grp = mc.group(n='Surface_Grp', em=1, p=self.anim_util_grp)
-        self.locator_grp = mc.group(n='Locator_Grp', em=1, p=self.anim_util_grp)
-        self.ik_handle_grp = mc.group(n='IkHandle_Grp', em=1, p=self.anim_util_grp)
-        self.cluster_grp = mc.group(n='Cluster_Grp', em=1, p=self.anim_util_grp)
+        self.joint_grp = mc.group(n='Joint%s_Grp' % prefix, em=1, p=self.anim_util_grp)
+        self.curve_grp = mc.group(n='Curve%s_Grp' % prefix, em=1, p=self.anim_util_grp)
+        self.surface_grp = mc.group(n='Surface%s_Grp' % prefix, em=1, p=self.anim_util_grp)
+        self.locator_grp = mc.group(n='Locator%s_Grp' % prefix, em=1, p=self.anim_util_grp)
+        self.ik_handle_grp = mc.group(n='IkHandle%s_Grp' % prefix, em=1, p=self.anim_util_grp)
+        self.cluster_grp = mc.group(n='Cluster%s_Grp' % prefix, em=1, p=self.anim_util_grp)
 
-        self.still_grp = mc.group(n='Still_Grp', em=1, p=self.util_grp)
+        self.still_grp = mc.group(n='Still%s_Grp' % prefix, em=1, p=self.util_grp)
 
-        self.geo_grp = mc.group(n='Geo_Grp', em=1, p=self.root_grp)
+        self.geo_grp = mc.group(n='Geo%s_Grp' % prefix, em=1, p=self.root_grp)
 
         # locking the atributes directories
         lr_lock_hide_attr(lockChannels, self.util_grp)
@@ -691,7 +758,7 @@ def lr_create_rig(*args):
             MainRig = Lr_GeneralBase()
             RigUI = Lr_RigUI()
             # base to tip
-            body = lr_base_tip_jointIk_bind(prefix=RigUI.prefix_name, skeleton_number=RigUI.skeleton_number)
+            body = lr_base_tip_jointIk_bind(prefix=RigUI.prefix_name, skeleton_number=RigUI.body_skeleton)
 
             # head part
             head = lr_head_setup(prefix=RigUI.prefix_name)
@@ -730,142 +797,178 @@ def lr_delete_rig(*args):
     else:
         om.MGlobal.displayError('There is no rig in the scene')
 
-class Lr_PathLine():
-    def __init__(self, curve_attach, curve):
-        lr_load_matrix_quad_plugin()
-        lr_motion_path(curve_attach=curve_attach, curve=curve, bind_joint='', group_joint='', world_up_loc='', fa='z', ua='x')
+def lr_create_path(*args):
+    RigUI = Lr_RigUI()
+    lr_path_curve_attach(parallel_axis=RigUI.rig_direction, prefix=RigUI.prefix_name, tip_pos=RigUI.tip_position,
+                         path_size=RigUI.path_size)
 
-# class Lr_MotionPaths():
-#     def __init__(self, curve='', world_up_loc='', set_value_length =1, controller=False):
-#         # load Plug-ins
-#         lr_load_matrix_quad_plugin()
-#
-#         # all_grp = mc.group(empty=True, n=lr_prefix_name(curve) + 'MotionLoop' + '_grp')
-#         # setup_grp = mc.group(empty=True, n=lr_prefix_name(curve) + 'Setup' + '_grp')
-#         # grp_jnt = mc.group(empty=True, n=lr_prefix_name(curve) + 'Joints' + '_grp')
-#         # grp_crv = mc.group(empty=True, n=lr_prefix_name(curve) + 'Crv' + '_grp')
-#         #
-#         # create_ik = lr_joint_on_curve(curve=curve, world_up_loc=world_up_loc, delete_group=False,
-#         #                               ctrl=controller)
-#         # arc_length = mc.arclen(curve)
-#         #
-#         # value_length = arc_length/set_value_length
-#         #
-#         #
-#         # ctrl = Lr_Control(match_obj_first_position=create_ik['joints'][0], prefix=lr_prefix_name(curve),
-#         #                   shape=STAR,
-#         #                   groups_ctrl=['Zro'], ctrl_size=10.0,
-#         #                   ctrl_color='blue', lock_channels=['r', 's', 'v'])
-#
-#         attribute_speed = lr_add_attribute(objects=[ctrl.control], long_name=['speed'], min=0, dv=0, max=50, at="float",
-#                                            keyable=True)
-#
-#         lr_change_position(ctrl.control, 'xy')
-#
-#         for i, ctrls in zip(create_ik['motionPath'], create_ik['ctrl']):
-#
-#             motion_path_uvalue = mc.getAttr(i + '.u')
-#
-#             mult_timing = mc.shadingNode('multDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'TimeMult' + '_mdl')
-#             mc.connectAttr(ctrl.control + '.%s' % attribute_speed, mult_timing + '.input1')
-#             mc.connectAttr('time1.outTime', mult_timing + '.input2')
-#
-#             add_speed = mc.shadingNode('addDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'SpeedAdd' + '_adl')
-#             mc.setAttr(add_speed + '.input2', (((motion_path_uvalue/value_length) * 1000)))
-#
-#             mult_offset = mc.shadingNode('multiplyDivide', asUtility=1, n=lr_prefix_name(i) + 'SpeedOffset' + '_mdn')
-#             mc.setAttr(mult_offset + '.operation', 2)
-#             mc.setAttr(mult_offset + '.input2X', 1000)
-#             mc.connectAttr(add_speed + '.output', mult_offset + '.input1X')
-#
-#             condition_speed = mc.shadingNode('condition', asUtility=1, n=lr_prefix_name(i) + 'Speed' + '_cnd')
-#             mc.setAttr(condition_speed + '.operation', 2)
-#             mc.connectAttr(mult_timing + '.output', condition_speed + '.firstTerm')
-#
-#             add_value = mc.shadingNode('plusMinusAverage', asUtility=1, n=lr_prefix_name(i) + 'Speed' + '_pma')
-#             mc.connectAttr(mult_offset + '.outputX', add_value + '.input1D[0]')
-#             mc.setAttr(add_value + '.input1D[1]', 1)
-#
-#             mc.connectAttr(mult_offset + '.outputX', condition_speed + '.colorIfTrueR')
-#             mc.connectAttr(add_value + '.output1D', condition_speed + '.colorIfFalseR')
-#
-#             mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=0, v=0)
-#             mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=1, v=1)
-#
-#             mc.keyTangent(i + '_uValue', edit=True, inTangentType='linear', outTangentType='linear')
-#
-#             mc.setAttr(i + '_uValue' + '.preInfinity', 3)
-#             mc.setAttr(i + '_uValue' + '.postInfinity', 3)
-#
-#             if controller:
-#                 pos_offset_attr = lr_add_attribute(objects=[ctrls], long_name=['posOffset'], dv=0, min=0, at="float",
-#                                                    keyable=True)
-#
-#                 obj_offset = mc.shadingNode('plusMinusAverage', asUtility=1, n=lr_prefix_name(i) + 'ObjSpeed' + '_pma')
-#                 mc.connectAttr(mult_timing + '.output', obj_offset + '.input1D[0]')
-#                 mc.connectAttr(obj_offset + '.output1D', add_speed + '.input1')
-#
-#                 obj_condition = mc.shadingNode('condition', asUtility=1, n=lr_prefix_name(i) + 'ObjSpeed' + '_cnd')
-#                 mc.setAttr(obj_condition + '.operation', 4)
-#                 mc.connectAttr(mult_timing + '.output', obj_condition + '.firstTerm')
-#
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfTrueR', cd=ctrls + '.%s' % pos_offset_attr, dv=0, v=0)
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfTrueR', cd=ctrls + '.%s' % pos_offset_attr, dv=1, v=-1)
-#
-#                 mc.keyTangent(obj_condition + '_colorIfTrueR', edit=True, inTangentType='spline', outTangentType='spline')
-#
-#                 mc.setAttr(obj_condition + '_colorIfTrueR' + '.preInfinity', 1)
-#                 mc.setAttr(obj_condition + '_colorIfTrueR' + '.postInfinity', 1)
-#
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfFalseR', cd=ctrls + '.%s' % pos_offset_attr, dv=0, v=0)
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfFalseR', cd=ctrls + '.%s' % pos_offset_attr, dv=1, v=1)
-#
-#                 mc.keyTangent(obj_condition + '_colorIfFalseR', edit=True, inTangentType='spline', outTangentType='spline')
-#
-#                 mc.setAttr(obj_condition + '_colorIfFalseR' + '.preInfinity', 1)
-#                 mc.setAttr(obj_condition + '_colorIfFalseR' + '.postInfinity', 1)
-#
-#                 mc.connectAttr(obj_condition + '.outColorR', obj_offset + '.input1D[1]')
-#
-#             else:
-#                 mc.connectAttr(mult_timing + '.output', add_speed + '.input1')
-#
-#             mc.setAttr(i + '.u', lock=True)
-#
-#         decompose = mc.shadingNode('decomposeMatrix', asUtility=1, n=lr_prefix_name(curve) + 'Scale' + 'dmt')
-#         mc.connectAttr(grp_crv + '.worldMatrix[0]', decompose + '.inputMatrix')
-#
-#         for i in create_ik['joints']:
-#             mc.connectAttr(decompose + '.outputScale', i + '.scale')
-#             lr_lock_attr(['t', 'r', 's'], i)
-#
-#         mc.parent(create_ik['joints'], grp_jnt)
-#         # mc.parent(createIk['wUpLocGrp'], grpJnt)
-#
-#         mc.parent(curve, grp_crv)
-#
-#         mc.parent(grp_jnt, grp_crv, setup_grp)
-#         mc.parent(ctrl.parent_control[0], setup_grp, all_grp)
-#
-#         # mc.setAttr(createIk['wUpLoc']+'.visibility', 0)
-#         lr_lock_attr(['t', 'r', 's'], curve)
-#         lr_lock_attr(['t', 'r', 's'], grp_jnt)
-#         lr_lock_attr(['t', 'r', 's'], setup_grp)
-#
-#         mc.select(cl=1)
-#**********************************************************************************************************************#
-#                                             ARGS TEMPLATE ; RIG                                                      #
-#**********************************************************************************************************************#
+def lr_delete_path(*args):
+    if mc.objExists('RigPath_Grp'):
+        mc.delete('RigPath_Grp')
+    else:
+        om.MGlobal.displayError('There is no path setup in the scene')
 
+#**********************************************************************************************************************#
+#                                               PATH LINE FUNCTION                                                     #
+#**********************************************************************************************************************#
+def lr_on_selection_button(on):
+    # save the current shape selection into global variable
+    global on_selector
+    on_selector = on
+
+def lr_action_translate_radio_button(*args):
+    # value_translate, axis_translate = [], [],
+    axis_translate=[]
+    # query object with value on shape selector status
+    if on_selector == 1:
+        axis_translate = 'translateX'
+    elif on_selector == 2:
+        axis_translate = 'translateY'
+    elif on_selector == 3:
+        axis_translate = 'translateZ'
+    else:
+        pass
+    # value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
+    return axis_translate
+
+def lr_on_position_tip_radio_button(on):
+    # save the current shape selection into global variable
+    global on_side
+    on_side = on
+
+def ad_action_position_tip_radio_button(*args):
+    side = []
+    if on_side == 1:
+        side = '+'
+    elif on_side == 2:
+        side = '-'
+    else:
+        pass
+    return side
+
+def lr_path_curve_attach(parallel_axis, prefix, tip_pos, path_size):
+    # Check joint tmp
+    add_prefix ='Path'
+    if mc.objExists('tmp_grp'):
+        list_tmp_jnt = lr_sorted_joint_tmp()
+        if mc.objExists(prefix + 'Main_geo'):
+            om.MGlobal.displayError('Path already exists. Please delete the previous path first.')
+        else:
+            Main_Controller = Lr_GeneralBase(prefix=add_prefix)
+            skeleton = path_size
+            size = float(skeleton)
+            scale = skeleton / 2
+
+            # Tip point dictionary towards
+            tip_point_dic = {'+': [(size / 2.0 * -1) * scale, (size / 2.0) * scale],
+                             '-': [(size / 2.0) * scale, (size / 2.0 * -1) * scale]}
+            base_point = []
+            tip_point = []
+            if tip_pos in tip_point_dic.keys():
+                pos = (0, 0, 0)
+                base_point = tip_point_dic[tip_pos][0]
+                tip_point = tip_point_dic[tip_pos][1]
+            else:
+                om.MGlobal.displayError('The string %s in tipPos argument is not found. Fill with + or -' % tip_pos)
+
+            tmp_plane_dic = {'translateX': [(0, 1, 0), size * scale, (1.0 / size), size, 1],
+                             'translateY': [(1, 0, 0), 1 * scale, size, 1, size],
+                             'translateZ': [(0, 1, 0), 1 * scale, size, 1, size]}
+
+            # Create a NURBS-plane to use as a module
+            tmp_plane = mc.nurbsPlane(axis=tmp_plane_dic[parallel_axis][0], width=tmp_plane_dic[parallel_axis][1],
+                                      lengthRatio=tmp_plane_dic[parallel_axis][2], u=tmp_plane_dic[parallel_axis][3],
+                                      v=tmp_plane_dic[parallel_axis][4], degree=3, ch=0)[0]
+
+            # Create Joint reference
+            mc.select(cl=1)
+            create_joint = mc.joint(radius=scale / 5)
+
+            # Duplicate joint from reference for skinning to the wire curve
+            joint_path_base = mc.duplicate(create_joint, n=prefix + 'Base' + add_prefix + 'Tmp' + '_jnt')
+            joint_path_tip = mc.duplicate(create_joint, n=prefix + 'Tip' + add_prefix + 'Tmp' + '_jnt')
+
+            # Set the position for joints
+            mc.setAttr((joint_path_base[0] + '.translate'), base_point, pos[1], pos[2])
+            mc.setAttr((joint_path_tip[0] + '.translate'), tip_point, pos[1], pos[2])
+
+            # Grouping the joints to have rotation according to parallel axis
+            grp_joint_orient = mc.group(joint_path_base[0], joint_path_tip[0])
+
+            # Set the rotation group joints
+            if parallel_axis == 'translateZ':
+                mc.setAttr((grp_joint_orient + '.rotate'), 0, -90, 0)
+            if parallel_axis == 'translateY':
+                mc.setAttr((grp_joint_orient + '.rotate'), 0, 0, 90)
+
+            mc.setAttr(tmp_plane + '.%s' % parallel_axis, abs(base_point))
+            mc.setAttr(grp_joint_orient + '.%s' % parallel_axis, abs(base_point))
+
+            # Create the NURBS-planes to use in the setup
+            geo_main = mc.duplicate(tmp_plane, name=(prefix + 'Main_geo'))
+            geo_Fk_curve = mc.duplicate(tmp_plane, name=(prefix + 'FkCurve' + '_geo'))
+            geo_Ik_curve = mc.duplicate(tmp_plane, name=(prefix + 'IkCurve' + '_geo'))
+
+            # Unparent from the group
+            mc.parent(joint_path_base, joint_path_tip, w=1)
+
+            # Check joint tmp
+            mc.delete(mc.orientConstraint(list_tmp_jnt[0], joint_path_base))
+            mc.delete(mc.orientConstraint(list_tmp_jnt[0], joint_path_tip))
+
+            # Freezing rotation
+            mc.makeIdentity(joint_path_base, apply=True, t=1, r=1, s=1, n=0, pn=1)
+            mc.makeIdentity(joint_path_tip, apply=True, t=1, r=1, s=1, n=0, pn=1)
+
+            # lr_base_tip_joint_bind(base=joint_path_base, tip=joint_path_tip, prefix=prefix+'PathIk', skeleton_number=skeleton/2,
+            #                        suffix='jnt', shape=CUBE, size=5.0, color='yellow')
+            # lr_base_tip_joint_spline_Ik(base=joint_path_base, tip=joint_path_tip, prefix=prefix+'PathFk', skeleton_number=skeleton/8, suffix='jnt')
+            path_connection = lr_path_joint(joint_path_base=joint_path_base, joint_path_tip=joint_path_tip,
+                                            prefix=prefix, skeleton=skeleton, add_prefix=add_prefix)
+
+            # parent to main group
+            mc.parent(path_connection[0][0], path_connection[1], Main_Controller.anim_grp)
+            mc.parent(path_connection[2], path_connection[3][0], Main_Controller.joint_grp)
+            mc.parent(geo_main, geo_Fk_curve, geo_Ik_curve, Main_Controller.surface_grp)
+
+            # Delete the module surface and group rotation driver
+            mc.delete(create_joint, tmp_plane, grp_joint_orient, joint_path_tip, joint_path_base)
+
+    else:
+        om.MGlobal.displayError('Please create template joint before create path.' )
+
+def lr_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_prefix):
+
+    joint_Ik = lr_base_tip_joint_bind(base=joint_path_base, tip=joint_path_tip, prefix=prefix + add_prefix + 'Ik', skeleton_number=skeleton / 2,
+                                      suffix='jnt', shape=CUBE, shape_2=CUBE, size=skeleton/8, color='red', color_2='red')
+    joint_Fk = lr_base_tip_joint_spline_Ik(base=joint_path_base, tip=joint_path_tip, prefix=prefix+add_prefix+'Fk', skeleton_number=skeleton/8, suffix='jnt')
+
+    # create controller fk
+    mainGroup = []
+    ctrl = []
+    for number, item in enumerate(joint_Fk):
+        controller = Lr_Control(match_obj_first_position=item,
+                                prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
+                                ctrl_color='yellow', ctrl_size=skeleton/2,
+                                lock_channels=['v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
+        ctrl.append(controller.control)
+        mainGroup.append(controller.parent_control[0])
+
+        if number > 0:
+            mc.parent(mainGroup[number], ctrl[number - 1])
+
+    return mainGroup, joint_Ik[1], joint_Ik[0], joint_Fk
+
+def lr_path_line(curve_attach, curve):
+    lr_load_matrix_quad_plugin()
+    lr_motion_path(curve_attach=curve_attach, curve=curve, bind_joint='', group_joint='', world_up_loc='', fa='z', ua='x')
 
 #**********************************************************************************************************************#
 #                                               CREATE RIG FUNCTION                                                    #
 #**********************************************************************************************************************#
-
 def lr_sorted_joint_tmp():
     tmp_grp = 'tmp_grp'
     list_tmp_jnt = sorted(mc.listConnections(tmp_grp + '.message'))
-    print list_tmp_jnt
     # [u'bodyBase_tmp', u'bodyTip_tmp', u'head_tmp', u'jawTip_tmp', u'jaw_tmp', u'leftFang_tmp', u'rightFang_tmp',
     #  u'tongueTip_tmp', u'tongue_tmp', u'upperJawTip_tmp', u'upperJaw_tmp']
 
@@ -874,7 +977,6 @@ def lr_sorted_joint_tmp():
 def lr_tongue_setup(prefix):
     list_tmp_jnt = lr_sorted_joint_tmp()
     joint = lr_base_tip_joint_spline_Ik(base=list_tmp_jnt[8], tip=list_tmp_jnt[7], prefix=prefix + 'Tongue', skeleton_number=8)
-    print joint
 
     mainGroup=[]
     ctrl = []
@@ -988,32 +1090,32 @@ def lr_base_tip_jointIk_spline_solver(base, tip, prefix, skeleton_number):
     return {'list_jointIk':list_jointIk, 'spline_hdl':spline_hdl[0],
             'hdl_curve' : hdl_curve}
 
-def lr_base_tip_joint_bind(base, tip, prefix, skeleton_number):
-    bind_joint = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix='bind',
+def lr_base_tip_joint_bind(base, tip, prefix, skeleton_number, suffix='bind', shape=STAR, shape_2=CIRCLE, size=2.0, color='red', color_2='yellow'):
+    bind_joint = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix=suffix,
                                          skeleton_number=skeleton_number / 2)
     group_head = []
     controller_head = []
     for item in bind_joint[0:2]:
         controller = Lr_Control(match_obj_first_position=item,
                                 prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
-                                ctrl_color='red', ctrl_size=2.0,
-                                lock_channels=['v'], shape=STAR, connection=['parent'])
+                                ctrl_color=color, ctrl_size=size,
+                                lock_channels=['v'], shape=shape, connection=['parent'])
         group_head.append(controller.parent_control[0])
         controller_head.append(controller.control)
 
     for item in bind_joint[2:]:
         rest_controller = Lr_Control(match_obj_first_position=item,
                    prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
-                   ctrl_color='yellow',
-                   lock_channels=['v'], shape=CIRCLE, connection=['parent'])
+                   ctrl_color=color_2,
+                   lock_channels=['v'], shape=shape_2, connection=['parent'])
         group_head.append(rest_controller.parent_control[0])
         controller_head.append(rest_controller.control)
 
 
     return bind_joint, group_head, controller_head
 
-def lr_base_tip_joint_spline_Ik(base, tip, prefix, skeleton_number):
-    list_jointIk = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix='jnt',
+def lr_base_tip_joint_spline_Ik(base, tip, prefix, skeleton_number, suffix='jnt'):
+    list_jointIk = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix=suffix,
                                            skeleton_number=skeleton_number)
     for i in range(len(list_jointIk)):
         if i > 0:
