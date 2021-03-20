@@ -396,6 +396,7 @@ layout = 200
 percentage = 0.01 * layout
 on_selector = 0
 on_side = 0
+add_prefix = 'Path'
 
 #**********************************************************************************************************************#
 #                                                    UI                                                                #
@@ -428,7 +429,7 @@ def show_ui():
                     with pm.rowLayout(nc=2, cw2=(40 * percentage, 25 * percentage), cl2=('right', 'left'),
                                       columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                         pm.text('Body Skeleton:')
-                        pm.intField('Body_Skeleton', value=20)
+                        pm.intField('Body_Skeleton', value=20, minValue=5)
 
                     with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
                                       columnAttach=[(1, 'both', 0),(2, 'both', 0)],
@@ -444,7 +445,7 @@ def show_ui():
                     with pm.rowLayout(nc=2, cw2=(40 * percentage, 25 * percentage), cl2=('right', 'left'),
                                       columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                         pm.text('Path Size:')
-                        pm.intField('Path_Size', value=80)
+                        pm.intField('Path_Size', value=80, minValue=10)
                     with pm.rowLayout(nc=3, columnAttach=[(1, 'right', 0), (2, 'left', 1 * percentage),
                                                           (3, 'left', 1 * percentage)],
                                       cw3=(40 * percentage, 16 * percentage, 16 * percentage)):
@@ -476,7 +477,7 @@ def show_ui():
                                       columnAttach=[(1, 'both', 0),(2, 'both', 0)],
                                       rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
                         pm.button('Attach_To_Path', l="Attach To Path",
-                                  c=partial(lr_create_rig))
+                                  c=partial(lr_attach_to_path))
                         pm.button('Reset', l="Res", bgc=(0, 0.5, 0),
                                   c=partial(lr_delete_rig))
                     pm.separator(h=8, st="in", w=90 * percentage)
@@ -658,7 +659,8 @@ class Lr_Control():
 class Lr_GeneralBase:
     # top structure
     def __init__(self,
-                 lockChannels=['t', 'r', 's'], prefix='',
+                 lockChannels=['t', 'r', 's'], prefix='', color_world='darkGreen',
+                 color_place='yellow',
                  scale=1.0
                  ):
         """
@@ -673,7 +675,7 @@ class Lr_GeneralBase:
             suffix='Ctrl',
             groups_ctrl=['Zro'],
             ctrl_size=scale * 5,
-            ctrl_color='darkGreen',
+            ctrl_color=color_world,
             lock_channels=['v'],
             shape=CIRCLE,
         )
@@ -684,7 +686,7 @@ class Lr_GeneralBase:
             suffix='Ctrl',
             groups_ctrl=['Zro'],
             ctrl_size=scale * 5,
-            ctrl_color='yellow',
+            ctrl_color=color_place,
             lock_channels=['v'],
             shape=WORLD,
         )
@@ -748,16 +750,17 @@ def lr_delete_template(*args):
         om.MGlobal.displayError('There is no template joint in the scene')
 
 def lr_create_rig(*args):
-    if mc.objExists('Rig_Grp'):
+    RigUI = Lr_RigUI()
+    if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
         om.MGlobal.displayError('Rig already exists. please delete the previous rig first')
     else:
         tmp_grp = 'tmp_grp'
         if mc.objExists(tmp_grp):
             mc.hide(tmp_grp)
-            MainRig = Lr_GeneralBase()
-            RigUI = Lr_RigUI()
+            MainRig = Lr_GeneralBase(prefix=RigUI.prefix_name.title())
             # base to tip
-            body = lr_create_rig_base_tip_jointIk_bind(prefix=RigUI.prefix_name, skeleton_number=RigUI.body_skeleton)
+            body = lr_create_rig_base_tip_final(prefix=RigUI.prefix_name, skeleton_number=RigUI.body_skeleton,
+                                                anim_grp=MainRig.anim_grp, curve_grp=MainRig.curve_grp)
 
             # head part
             head = lr_create_rig_head(prefix=RigUI.prefix_name)
@@ -784,28 +787,48 @@ def lr_create_rig(*args):
             mc.parent(body['spline_hdl'], MainRig.ik_handle_grp)
 
         else:
-            om.MGlobal.displayError('before create rig, please create template joint first.')
+            om.MGlobal.displayError('before create rig %s, please create template joint first.' % RigUI.prefix_name)
 
 def lr_delete_rig(*args):
-    if mc.objExists('Rig_Grp'):
-        mc.delete('Rig_Grp')
+    RigUI = Lr_RigUI()
+    if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
+        mc.delete('Rig%s_Grp' % RigUI.prefix_name.title())
         if mc.objExists('tmp_grp'):
             mc.setAttr('tmp_grp.visibility',1)
         else:
             pass
     else:
-        om.MGlobal.displayError('There is no rig in the scene')
+        om.MGlobal.displayError('There is no rig %s in the scene' % RigUI.prefix_name)
 
 def lr_create_path(*args):
     RigUI = Lr_RigUI()
     lr_create_path_setup(parallel_axis=RigUI.rig_direction, prefix=RigUI.prefix_name, tip_pos=RigUI.tip_position,
-                         path_size=RigUI.path_size)
+                         path_size=RigUI.path_size, prefix_rig_name=RigUI.prefix_name.title())
 
 def lr_delete_path(*args):
-    if mc.objExists('RigPath_Grp'):
-        mc.delete('RigPath_Grp')
+    RigUI = Lr_RigUI()
+
+    if mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
+        mc.delete('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix))
     else:
-        om.MGlobal.displayError('There is no path setup in the scene')
+        om.MGlobal.displayError('There is no path %s setup in the scene' % RigUI.prefix_name)
+
+def lr_attach_to_path(*args):
+    RigUI = Lr_RigUI()
+    if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()) and mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
+        # query curve
+        curve_grp = 'Curve%s_Grp' % RigUI.prefix_name.title()
+        attr_curve_grp = mc.listAttr(curve_grp, ud=True)[0]
+        curve = mc.listConnections(curve_grp + '.' + attr_curve_grp, d=1)[0]
+
+        curve_attach_grp = 'Curve%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
+        attr_curve_path_grp = mc.listAttr(curve_attach_grp, ud=True)[0]
+        curve_attach = mc.listConnections(curve_attach_grp + '.' + attr_curve_path_grp, d=1)[0]
+
+        lr_path_line(curve_attach=curve_attach, curve=curve, fa=RigUI.rig_direction, prefix=RigUI.prefix_name,
+                     path_size=RigUI.path_size, prefix_rig_name=RigUI.prefix_name.title())
+    else:
+        om.MGlobal.displayError('Please create rig and create path %s first' % RigUI.prefix_name)
 
 #**********************************************************************************************************************#
 #                                             CREATE PATH FUNCTION                                                     #
@@ -845,15 +868,16 @@ def lr_create_path_action_pos_radio_button(*args):
         pass
     return side
 
-def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size):
+def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_name):
     # Check joint tmp
-    add_prefix ='Path'
     if mc.objExists('tmp_grp'):
         list_tmp_jnt = lr_create_rig_sorted_joint_tmp()
         if mc.objExists(prefix + 'Main_geo'):
             om.MGlobal.displayError('Path already exists. Please delete the previous path first.')
         else:
-            Main_Controller = Lr_GeneralBase(prefix=add_prefix)
+            Main_Controller = Lr_GeneralBase(prefix=prefix_rig_name.title()+add_prefix, scale=8, color_world='red',
+                 color_place='blue')
+
             skeleton = path_size
             size = float(skeleton)
             scale = skeleton / 2
@@ -894,7 +918,8 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size):
             # create curve
             curve = lr_base_tip_jointFk_spline(base=joint_path_base, tip=joint_path_tip, prefix=prefix + add_prefix,
                                        skeleton_number=skeleton/2, spline_handle=False)
-
+            # add message
+            lr_add_message(object_origin=curve['hdl_curve'], object_target=Main_Controller.curve_grp, ln=curve['hdl_curve']+'_msg')
 
             # Grouping the joints to have rotation according to parallel axis
             grp_joint_orient = mc.group(joint_path_base[0], joint_path_tip[0], curve['hdl_curve'])
@@ -923,7 +948,7 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size):
 
             # Create path joint
             path_connection = lr_create_path_joint(joint_path_base=joint_path_base, joint_path_tip=joint_path_tip,
-                                                   prefix=prefix, skeleton=skeleton, add_prefix=add_prefix)
+                                                   prefix=prefix, skeleton=skeleton, add_prefix=add_prefix, anim_grp=Main_Controller.anim_grp)
 
 
             # Freezing rotation
@@ -999,11 +1024,11 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size):
     else:
         om.MGlobal.displayError('Please create template joint before create path.' )
 
-def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_prefix):
-
+def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_prefix, anim_grp):
     joint_Ik = lr_create_rig_base_tip_joint_bind(base=joint_path_base, tip=joint_path_tip, prefix=prefix + add_prefix + 'Ik',
                                                  skeleton_number=skeleton / 2,
-                                                 suffix='jnt', shape=CUBE, shape_2=CUBE, size=skeleton/8, color='red', color_2='red')
+                                                 suffix='jnt', shape=CUBE, shape_2=CUBE, size=skeleton/16,
+                                                 color='turquoiseBlue', color_2='turquoiseBlue', anim_grp=anim_grp)
     joint_Fk = lr_create_rig_base_tip_jointFk_spline(base=joint_path_base, tip=joint_path_tip, prefix=prefix + add_prefix + 'Fk',
                                                      skeleton_number=skeleton / 8, suffix='jnt')
 
@@ -1018,7 +1043,7 @@ def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_
     for number, item in enumerate(joint_Fk):
         controller = Lr_Control(match_obj_first_position=item,
                                 prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
-                                ctrl_color='yellow', ctrl_size=skeleton/2,
+                                ctrl_color='lightPink', ctrl_size=skeleton/4,
                                 lock_channels=['v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
         ctrl.append(controller.control)
         mainGroup.append(controller.parent_control[0])
@@ -1031,9 +1056,29 @@ def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_
 #**********************************************************************************************************************#
 #                                        ATTACH TO PATH FUNCTION                                                       #
 #**********************************************************************************************************************#
-def lr_path_line(curve_attach, curve):
+def lr_path_line(curve_attach, curve, fa, prefix, path_size, prefix_rig_name):
     lr_load_matrix_quad_plugin()
-    lr_motion_path(curve_attach=curve_attach, curve=curve, bind_joint='', group_joint='', world_up_loc='', fa='z', ua='x')
+
+    # query bind and group bind
+    anim_grp = 'anim%s_grp' % (prefix_rig_name)
+    attach_prefix= 'Attach'
+    attr = mc.listAttr(anim_grp, ud=True)
+    group_joint = []
+    bind_joint = []
+    for item in attr:
+        grp_jnt = mc.listConnections(anim_grp + '.' + item, d=1)[0]
+        group_joint.append(grp_jnt)
+
+    for item in group_joint:
+        list_attr = mc.listAttr(item, ud=True)[0]
+        bind = mc.listConnections(item + '.' + list_attr, d=1)[0]
+        bind_joint.append(bind)
+
+    # world locator
+    world_up_loc = mc.spaceLocator(n=prefix+add_prefix+attach_prefix, p=(0, path_size, 0))
+    mc.hide(world_up_loc)
+
+    lr_motion_path(curve_attach=curve_attach, curve=curve, bind_joint=bind_joint, group_joint=group_joint, world_up_loc='', fa=fa)
 
 #**********************************************************************************************************************#
 #                                               CREATE RIG FUNCTION                                                    #
@@ -1126,25 +1171,29 @@ def lr_create_rig_head_area(position_sorted, joint_name, color, shape, size):
             'mainGrp': controller.parent_control[0],
             'joint':joint}
 
-def lr_create_rig_base_tip_jointIk_bind(prefix, skeleton_number):
+def lr_create_rig_base_tip_final(prefix, skeleton_number, anim_grp, curve_grp):
     list_tmp_jnt = lr_create_rig_sorted_joint_tmp()
 
     bind_joint = lr_create_rig_base_tip_joint_bind(base=list_tmp_jnt[0], tip=list_tmp_jnt[1], prefix=prefix + 'Body',
-                                                   skeleton_number=skeleton_number)
-    spline_jointIk = lr_base_tip_jointFk_spline(base=list_tmp_jnt[0], tip=list_tmp_jnt[1], prefix=prefix + 'Body',
+                                                   skeleton_number=skeleton_number, anim_grp=anim_grp)
+    spline_jointFk = lr_base_tip_jointFk_spline(base=list_tmp_jnt[0], tip=list_tmp_jnt[1], prefix=prefix + 'Body',
                                                 skeleton_number=skeleton_number)
+    # add message
+    lr_add_message(object_origin=spline_jointFk['hdl_curve'], object_target=curve_grp,
+                   ln=spline_jointFk['hdl_curve'] + '_msg')
 
     # skinning the joint to the bind curve
-    mc.skinCluster(bind_joint[0], spline_jointIk['hdl_curve'],
-                                  n='%s%s' % (prefix, 'SkinCluster'), tsb=True, bm=0, sm=0, nw=1, mi=1)
-    return {'list_jointIk': spline_jointIk['list_jointIk'],
-            'spline_hdl' : spline_jointIk['spline_hdl'],
-            'hdl_curve':spline_jointIk['hdl_curve'],
+    mc.skinCluster(bind_joint[0], spline_jointFk['hdl_curve'],
+                   n='%s%s' % (prefix, 'SkinCluster'), tsb=True, bm=0, sm=0, nw=1, mi=1)
+    return {'list_jointIk': spline_jointFk['list_jointIk'],
+            'spline_hdl' : spline_jointFk['spline_hdl'],
+            'hdl_curve':spline_jointFk['hdl_curve'],
             'group_joint': bind_joint[1],
             'ctrl_joint' : bind_joint[2]}
 
-def lr_create_rig_base_tip_joint_bind(base, tip, prefix, skeleton_number, suffix='bind',
+def lr_create_rig_base_tip_joint_bind(base, tip, prefix, skeleton_number, anim_grp, suffix='bind',
                                       shape=STAR, shape_2=CIRCLE, size=2.0, color='red', color_2='yellow'):
+
     bind_joint = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix=suffix,
                                          skeleton_number=skeleton_number / 2)
     group_head = []
@@ -1156,15 +1205,22 @@ def lr_create_rig_base_tip_joint_bind(base, tip, prefix, skeleton_number, suffix
                                 lock_channels=['v'], shape=shape, connection=['parent'])
         group_head.append(controller.parent_control[0])
         controller_head.append(controller.control)
+        lr_add_message(object_origin=item, object_target=controller.parent_control[0], ln=item+'_msg')
+
 
     for item in bind_joint[2:]:
         rest_controller = Lr_Control(match_obj_first_position=item,
                    prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
-                   ctrl_color=color_2,
+                   ctrl_color=color_2, ctrl_size=size,
                    lock_channels=['v'], shape=shape_2, connection=['parent'])
         group_head.append(rest_controller.parent_control[0])
         controller_head.append(rest_controller.control)
+        lr_add_message(object_origin=item, object_target=rest_controller.parent_control[0], ln=item+'_msg')
 
+
+    # add message
+    for item in group_head:
+        lr_add_message(object_origin=item, object_target=anim_grp, ln=item+'_msg')
 
     return bind_joint, group_head, controller_head
 
@@ -1180,6 +1236,10 @@ def lr_create_rig_base_tip_jointFk_spline(base, tip, prefix, skeleton_number, su
 #**********************************************************************************************************************#
 #                                                   GENERAL FUNCTION                                                   #
 #**********************************************************************************************************************#
+def lr_add_message(object_origin, object_target, ln=''):
+    mc.addAttr(object_target, ln=ln, at='message')
+    mc.connectAttr(object_origin + '.message', '%s.%s' % (object_target, ln))
+
 def lr_skin_matrix_list_from_joint(obj):
     for item in lr_joint_destination_matrix(obj):
         split = item.split('.')[1:]
@@ -1202,7 +1262,6 @@ def lr_query_skin_name(obj):
 def lr_connect_follicle_rotation(follicleNode, follicleTransf):
     conn = mc.connectAttr(follicleNode + '.outRotate', follicleTransf + '.rotate')
     return conn
-
 
 def lr_connect_follicle_translation(follicleNode, follicleTransf):
     conn = mc.connectAttr(follicleNode + '.outTranslate', follicleTransf + '.translate')
@@ -1232,6 +1291,7 @@ def lr_item_follicle(items, obj_tansform, suffix):
     return {'item': items,
             'follicle': follicles,
             'folShape': follicle_shape}
+
 def lr_create_follicle_selection(obj_select, obj_mesh, connect=None, prefix=None, suffix=None, scale=None, connect_follicle=['']):
     obj_mesh = mc.listRelatives(obj_mesh, s=1)[0]
 
@@ -1567,7 +1627,7 @@ def lr_add_attribute(objects=[], long_name=[''], nice_name='', separator=False, 
                     (obj + '.' + long_name[x]), k=keyable, e=1, cb=channel_box)
     return long_name[0]
 
-def lr_motion_path(curve_attach='', curve='', bind_joint='', group_joint='', world_up_loc='', fa='z', ua='x'):
+def lr_motion_path(curve_attach='', curve='', bind_joint=[''], group_joint=[''], world_up_loc='', fa='z', ua='y'):
     arc_length_attach = mc.arclen(curve_attach)
     arc_length =mc.arclen(curve)
     value_length = arc_length_attach / arc_length
@@ -1575,15 +1635,17 @@ def lr_motion_path(curve_attach='', curve='', bind_joint='', group_joint='', wor
     number_of_joint = len(bind_joint)
     position = (value_length/(number_of_joint-1))
     motion_paths =[]
+    print group_joint
+    print bind_joint
     for number, (group, joint) in enumerate (zip (group_joint, bind_joint)):
-        motion_path = mc.pathAnimation(group, fractionMode=True, fa=fa, ua=ua,
-                                       wut='objectrotation',
-                                       wuo=world_up_loc,
-                                       c=curve_attach,
+        print group
+        print joint
+        motion_path = mc.pathAnimation(group, fractionMode=True, fa=fa, ua=ua, wut='objectrotation',
+                                       wuo=world_up_loc, c=curve_attach,
                                        n=lr_prefix_name(joint) + '_mpt')
         ranges = position * number
         mc.cutKey(motion_path + '.u', time=())
-        mc.setAttr(motion_path + '.u', ranges)
+        mc.setAttr(motion_path + '.uValue', ranges)
         motion_paths.append(motion_path)
 
     return motion_paths
