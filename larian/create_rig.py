@@ -400,6 +400,7 @@ percentage = 0.01 * layout
 on_selector = 0
 on_side = 0
 add_prefix = 'Path'
+GEO = [u'SNAKE_Viper_Body_A_Mesh', u'SNAKE_Viper_Head_A_Mesh', u'SNAKE_Viper_Eye_A_Mesh']
 
 #**********************************************************************************************************************#
 #                                                    UI                                                                #
@@ -475,6 +476,17 @@ def show_ui():
                                   c=partial(lr_create_path))
                         pm.button('Delete_Path', l="Del", bgc=(0.5, 0, 0),
                                   c=partial(lr_delete_path))
+
+                    pm.separator(h=8, st="in", w=90 * percentage)
+                    with pm.rowLayout(nc=2, cw2=(50 * percentage, 50 * percentage), cl2=('right','right'),
+                                      columnAttach=[(1, 'both', 0),(2, 'both', 0)],
+                                      rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
+                        pm.button('Load_Skin', l="Load Skin Weight",
+                                  c=partial(lr_load_skin))
+                        pm.button('Load_Ctrl', l="Load Ctrl Shape",
+                                  c=partial(lr_load_ctrl))
+                    pm.separator(h=8, st="in", w=90 * percentage)
+
             with pm.frameLayout(collapsable=True, l='Attach Path', mh=3):
                 with pm.columnLayout('AttachPath', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
                     with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
@@ -507,16 +519,7 @@ def show_ui():
                         pm.button('Reset', l="Res", bgc=(0.5, 0, 0),
                                   c=partial(lr_reset_attach))
 
-                    pm.separator(h=8, st="in", w=90 * percentage)
 
-                    with pm.rowLayout(nc=2, cw2=(50 * percentage, 50 * percentage), cl2=('right','right'),
-                                      columnAttach=[(1, 'both', 0),(2, 'both', 0)],
-                                      rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
-                        pm.button('Load_Skin', l="Load Skin Weight",
-                                  c=partial(lr_load_skin))
-                        pm.button('Load_Ctrl', l="Load Ctrl Shape",
-                                  c=partial(lr_load_ctrl))
-                    pm.separator(h=8, st="in", w=90 * percentage)
 
 
     pm.showWindow()
@@ -530,10 +533,10 @@ class Lr_Template():
         else:
             self.body_base = self.joint_template(name_template='bodyBase_tmp', pos_x=0, pos_y=0, pos_z=111)
             self.body_tip = self.joint_template(name_template='bodyTip_tmp', pos_x=0, pos_y=0, pos_z=-132)
-            self.head = self.joint_template(name_template='head_tmp', pos_x=0, pos_y=3.398, pos_z=112.608)
-            self.upperJaw_joint = self.joint_template(name_template='upperJaw_tmp', pos_x=0, pos_y=3.6, pos_z=116.357)
+            self.head = self.joint_template(name_template='head_tmp', pos_x=0, pos_y=3.398, pos_z=111.63343365)
+            self.upperJaw_joint = self.joint_template(name_template='upperJaw_tmp', pos_x=0, pos_y=3.6, pos_z=115.57511046)
             self.upperJaw_tip = self.joint_template(name_template='upperJawTip_tmp', pos_x=0, pos_y=3.6, pos_z=125.248)
-            self.jaw_joint = self.joint_template(name_template='jaw_tmp', pos_x=0, pos_y=2.956, pos_z=115.01)
+            self.jaw_joint = self.joint_template(name_template='jaw_tmp', pos_x=0, pos_y=3.11584354, pos_z=113.89205641)
             self.jaw_tip = self.joint_template(name_template='jawTip_tmp', pos_x=0, pos_y=-4.005, pos_z=121.998)
             self.tongue = self.joint_template(name_template='tongue_tmp', pos_x=0, pos_y=1.137, pos_z=116.245)
             self.tongue_tip = self.joint_template(name_template='tongueTip_tmp', pos_x=0, pos_y=-7.289, pos_z=127.29)
@@ -827,7 +830,7 @@ def lr_create_rig(*args):
             mc.parent(head['mainGrp'], body['ctrl_joint'][0])
 
             # parent to general base
-            mc.parent(body['list_jointIk'][0], head['joint'], jaw['joint'], upperJaw['joint'], leftFang['joint'],
+            mc.parent(body['list_jointFk'][0], head['joint'], jaw['joint'], upperJaw['joint'], leftFang['joint'],
                       rightFang['joint'],
                       tongue['joint'][0],
                       MainRig.joint_grp)
@@ -836,6 +839,8 @@ def lr_create_rig(*args):
             mc.parent(body['spline_hdl'], MainRig.ik_handle_grp)
 
             mc.hide(MainRig.curve_grp)
+            for item in GEO:
+                mc.parent(item, MainRig.geo_grp)
 
         else:
             om.MGlobal.displayError('before create rig %s, please create template joint first.' % RigUI.prefix_name)
@@ -843,6 +848,10 @@ def lr_create_rig(*args):
 def lr_delete_rig(*args):
     RigUI = Lr_RigUI()
     if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
+        geo_grp = 'Geo%s_Grp' % RigUI.prefix_name.title()
+        list_relatives = mc.listRelatives(geo_grp, c=True)
+        for item in list_relatives:
+            mc.parent(item, w=1)
         mc.delete('Rig%s_Grp' % RigUI.prefix_name.title())
         if mc.objExists('tmp_grp'):
             mc.setAttr('tmp_grp.visibility',1)
@@ -1158,7 +1167,7 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             mc.setAttr(Main_Controller.util_grp+'.inheritsTransform', 0)
 
             # Delete the module surface and group rotation driver
-            mc.delete(create_joint, tmp_plane, grp_joint_orient, joint_path_tip, joint_path_base, curve['list_jointIk'][0],
+            mc.delete(create_joint, tmp_plane, grp_joint_orient, joint_path_tip, joint_path_base, curve['list_jointFk'][0],
                       Main_Controller.geo_grp)
 
     else:
@@ -1408,10 +1417,17 @@ def lr_create_rig_base_tip_final(prefix, skeleton_number, anim_grp, curve_grp, s
         lr_add_message(object_origin=reference_position, object_target=still_rig_group, ln=reference_position + '_msg')
         mc.parent(reference_position, still_rig_group)
 
+    # scale constraint
+    decompose = mc.createNode('decomposeMatrix', n=prefix + 'Body'+'_dmtx')
+    mc.connectAttr(anim_grp + '.worldMatrix[0]', decompose + '.inputMatrix')
+    for joint in spline_jointFk['list_jointFk']:
+        mc.connectAttr(decompose + '.outputScale', joint + '.scale')
+        # lr_connect_attr_scale(anim_grp, joint)
+
     # skinning the joint to the bind curve
     mc.skinCluster(bind_joint[0], spline_jointFk['hdl_curve'],
                    n='%s%s' % (prefix, 'SkinCluster'), tsb=True, bm=0, sm=0, nw=1, mi=1)
-    return {'list_jointIk': spline_jointFk['list_jointIk'],
+    return {'list_jointFk': spline_jointFk['list_jointFk'],
             'spline_hdl' : spline_jointFk['spline_hdl'],
             'hdl_curve':spline_jointFk['hdl_curve'],
             'group_joint': bind_joint[1],
@@ -1428,7 +1444,7 @@ def lr_create_rig_base_tip_joint_bind(base, tip, prefix, skeleton_number, anim_g
         controller = Lr_Control(match_obj_first_position=item,
                                 prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
                                 ctrl_color=color, ctrl_size=size,
-                                lock_channels=['v'], shape=shape, connection=['parent'])
+                                lock_channels=['r','s','v'], shape=shape, connection=['parent'])
         group_head.append(controller.parent_control[0])
         controller_head.append(controller.control)
         lr_add_message(object_origin=item, object_target=controller.parent_control[0], ln=item+'_msg')
@@ -1438,7 +1454,7 @@ def lr_create_rig_base_tip_joint_bind(base, tip, prefix, skeleton_number, anim_g
         rest_controller = Lr_Control(match_obj_first_position=item,
                    prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
                    ctrl_color=color_2, ctrl_size=size,
-                   lock_channels=['v'], shape=shape_2, connection=['parent'])
+                   lock_channels=['r','s','v'], shape=shape_2, connection=['parent'])
         group_head.append(rest_controller.parent_control[0])
         controller_head.append(rest_controller.control)
         lr_add_message(object_origin=item, object_target=rest_controller.parent_control[0], ln=item+'_msg')
@@ -1451,13 +1467,13 @@ def lr_create_rig_base_tip_joint_bind(base, tip, prefix, skeleton_number, anim_g
     return bind_joint, group_head, controller_head
 
 def lr_create_rig_base_tip_jointFk_spline(base, tip, prefix, skeleton_number, suffix='jnt'):
-    list_jointIk = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix=suffix,
+    list_jointFk = lr_base_tip_split_joint(obj_base=base, obj_tip=tip, prefix=prefix, suffix=suffix,
                                            skeleton_number=skeleton_number)
-    for i in range(len(list_jointIk)):
+    for i in range(len(list_jointFk)):
         if i > 0:
-            mc.parent(list_jointIk[i], list_jointIk[i - 1])
+            mc.parent(list_jointFk[i], list_jointFk[i - 1])
 
-    return list_jointIk
+    return list_jointFk
 
 #**********************************************************************************************************************#
 #                                                   GENERAL FUNCTION                                                   #
@@ -1599,10 +1615,10 @@ def lr_create_follicle_selection(obj_select, obj_mesh, connect=None, prefix=None
     return follicle_transform, follicle_shape
 
 def lr_base_tip_jointFk_spline(base, tip, prefix, skeleton_number, spline_handle=True):
-    list_jointIk = lr_create_rig_base_tip_jointFk_spline(base=base, tip=tip, prefix=prefix, skeleton_number=skeleton_number)
+    list_jointFk = lr_create_rig_base_tip_jointFk_spline(base=base, tip=tip, prefix=prefix, skeleton_number=skeleton_number)
 
-    head_ik_joint = mc.xform(list_jointIk[0], q=1, ws=True, t=1)
-    tail_ik_joint = mc.xform(list_jointIk[-1], q=1, ws=True, t=1)
+    head_ik_joint = mc.xform(list_jointFk[0], q=1, ws=True, t=1)
+    tail_ik_joint = mc.xform(list_jointFk[-1], q=1, ws=True, t=1)
 
     # create curve for ik spline
     curve_ik_spline_detail = mc.curve(d=3, ep=[head_ik_joint, tail_ik_joint])
@@ -1611,20 +1627,16 @@ def lr_base_tip_jointFk_spline(base, tip, prefix, skeleton_number, spline_handle
 
     hdl_curve = mc.rename(curve_ik_spline_detail, '%s_crv' % (prefix + 'Fk'))
 
-    # # reverse direction
-    # if reverse:
-    #     mc.reverseCurve(hdl_curve, ch=True, rpo=True)
-
     if spline_handle:
-        spline_hdl = mc.ikHandle(sj=list_jointIk[0], ee=list_jointIk[-1],
-                                sol='ikSplineSolver',
-                                n='%s_hdl' % (prefix + 'Fk'), ccv=False,
-                                c=hdl_curve, ns=1, rootOnCurve=True)
+        spline_hdl = mc.ikHandle(sj=list_jointFk[0], ee=list_jointFk[-1],
+                                 sol='ikSplineSolver',
+                                 n='%s_hdl' % (prefix + 'Fk'), ccv=False,
+                                 c=hdl_curve, ns=1, rootOnCurve=True)
 
-        return {'list_jointIk': list_jointIk, 'spline_hdl':spline_hdl[0],
+        return {'list_jointFk': list_jointFk, 'spline_hdl':spline_hdl[0],
                 'hdl_curve': hdl_curve}
     else:
-        return {'list_jointIk': list_jointIk,
+        return {'list_jointFk': list_jointFk,
                 'hdl_curve': hdl_curve}
 
 def lr_base_tip_split_joint(obj_base, obj_tip, prefix, suffix, skeleton_number=1):
@@ -1643,6 +1655,7 @@ def lr_base_tip_split_joint(obj_base, obj_tip, prefix, suffix, skeleton_number=1
     skeleton_base = mc.joint(name='%s%s_%s' % (prefix, str(1).zfill(2), suffix))
     mc.delete(mc.parentConstraint(obj_base, skeleton_base))
     mc.makeIdentity(skeleton_base, apply=True, t=1, r=1, s=1, n=0, pn=1)
+    mc.hide(skeleton_base)
 
     list = []
     new_list = []
@@ -1653,6 +1666,7 @@ def lr_base_tip_split_joint(obj_base, obj_tip, prefix, suffix, skeleton_number=1
         mc.makeIdentity(segment, apply=True, t=1, r=1, s=1, n=0, pn=1)
 
         new_name = mc.rename(segment, str('%s%01d_%s' % (prefix, (i + 2), 'ref')))
+        mc.hide(new_name)
         list.append(new_name)
         mc.move(segment_location.x, segment_location.y, segment_location.z, new_name)
         segment_location = segment_location + segment_vector
@@ -1661,6 +1675,7 @@ def lr_base_tip_split_joint(obj_base, obj_tip, prefix, suffix, skeleton_number=1
     skeleton_tip = mc.joint(name='%s%s_%s' % (prefix, str(list.index(list[-1]) + 3).zfill(2), suffix))
     mc.delete(mc.parentConstraint(obj_tip, skeleton_tip))
     mc.makeIdentity(skeleton_tip, apply=True, t=1, r=1, s=1, n=0, pn=1)
+    mc.hide(skeleton_tip)
 
     for i in list:
         new_name = mc.rename(i, '%s%s_%s' % (prefix, str(list.index(i) + 2).zfill(2), suffix))
@@ -1861,288 +1876,14 @@ def lr_add_attribute(objects=[], long_name=[''], nice_name='', separator=False, 
                     (obj + '.' + long_name[x]), k=keyable, e=1, cb=channel_box)
     return long_name[0]
 
-
-# class Lr_MotionPaths():
-#     def __init__(self, curve='', world_up_loc='', set_value_length =1, controller=False):
-#         # load Plug-ins
-#         lr_load_matrix_quad_plugin()
-#
-#         all_grp = mc.group(empty=True, n=lr_prefix_name(curve) + 'MotionLoop' + '_grp')
-#         setup_grp = mc.group(empty=True, n=lr_prefix_name(curve) + 'Setup' + '_grp')
-#         grp_jnt = mc.group(empty=True, n=lr_prefix_name(curve) + 'Joints' + '_grp')
-#         grp_crv = mc.group(empty=True, n=lr_prefix_name(curve) + 'Crv' + '_grp')
-#
-#         create_ik = lr_joint_on_curve(curve=curve, world_up_loc=world_up_loc, delete_group=False,
-#                                       ctrl=controller)
-#         arc_length = mc.arclen(curve)
-#
-#         value_length = arc_length/set_value_length
-#
-#
-#         ctrl = Lr_Control(match_obj_first_position=create_ik['joints'][0], prefix=lr_prefix_name(curve),
-#                           shape=STAR,
-#                           groups_ctrl=['Zro'], ctrl_size=10.0,
-#                           ctrl_color='blue', lock_channels=['r', 's', 'v'])
-#
-#         attribute_speed = lr_add_attribute(objects=[ctrl.control], long_name=['speed'], min=0, dv=0, max=50, at="float",
-#                                            keyable=True)
-#
-#         lr_change_position(ctrl.control, 'xy')
-#
-#         for i, ctrls in zip(create_ik['motionPath'], create_ik['ctrl']):
-#
-#             motion_path_uvalue = mc.getAttr(i + '.u')
-#
-#             mult_timing = mc.shadingNode('multDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'TimeMult' + '_mdl')
-#             mc.connectAttr(ctrl.control + '.%s' % attribute_speed, mult_timing + '.input1')
-#             mc.connectAttr('time1.outTime', mult_timing + '.input2')
-#
-#             add_speed = mc.shadingNode('addDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'SpeedAdd' + '_adl')
-#             mc.setAttr(add_speed + '.input2', (((motion_path_uvalue/value_length) * 1000)))
-#
-#             mult_offset = mc.shadingNode('multiplyDivide', asUtility=1, n=lr_prefix_name(i) + 'SpeedOffset' + '_mdn')
-#             mc.setAttr(mult_offset + '.operation', 2)
-#             mc.setAttr(mult_offset + '.input2X', 1000)
-#             mc.connectAttr(add_speed + '.output', mult_offset + '.input1X')
-#
-#             condition_speed = mc.shadingNode('condition', asUtility=1, n=lr_prefix_name(i) + 'Speed' + '_cnd')
-#             mc.setAttr(condition_speed + '.operation', 2)
-#             mc.connectAttr(mult_timing + '.output', condition_speed + '.firstTerm')
-#
-#             add_value = mc.shadingNode('plusMinusAverage', asUtility=1, n=lr_prefix_name(i) + 'Speed' + '_pma')
-#             mc.connectAttr(mult_offset + '.outputX', add_value + '.input1D[0]')
-#             mc.setAttr(add_value + '.input1D[1]', 1)
-#
-#             mc.connectAttr(mult_offset + '.outputX', condition_speed + '.colorIfTrueR')
-#             mc.connectAttr(add_value + '.output1D', condition_speed + '.colorIfFalseR')
-#
-#             mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=0, v=0)
-#             mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=1, v=1)
-#
-#             mc.keyTangent(i + '_uValue', edit=True, inTangentType='linear', outTangentType='linear')
-#
-#             mc.setAttr(i + '_uValue' + '.preInfinity', 3)
-#             mc.setAttr(i + '_uValue' + '.postInfinity', 3)
-#
-#             if controller:
-#                 pos_offset_attr = lr_add_attribute(objects=[ctrls], long_name=['posOffset'], dv=0, min=0, at="float",
-#                                                    keyable=True)
-#
-#                 obj_offset = mc.shadingNode('plusMinusAverage', asUtility=1, n=lr_prefix_name(i) + 'ObjSpeed' + '_pma')
-#                 mc.connectAttr(mult_timing + '.output', obj_offset + '.input1D[0]')
-#                 mc.connectAttr(obj_offset + '.output1D', add_speed + '.input1')
-#
-#                 obj_condition = mc.shadingNode('condition', asUtility=1, n=lr_prefix_name(i) + 'ObjSpeed' + '_cnd')
-#                 mc.setAttr(obj_condition + '.operation', 4)
-#                 mc.connectAttr(mult_timing + '.output', obj_condition + '.firstTerm')
-#
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfTrueR', cd=ctrls + '.%s' % pos_offset_attr, dv=0, v=0)
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfTrueR', cd=ctrls + '.%s' % pos_offset_attr, dv=1, v=-1)
-#
-#                 mc.keyTangent(obj_condition + '_colorIfTrueR', edit=True, inTangentType='spline', outTangentType='spline')
-#
-#                 mc.setAttr(obj_condition + '_colorIfTrueR' + '.preInfinity', 1)
-#                 mc.setAttr(obj_condition + '_colorIfTrueR' + '.postInfinity', 1)
-#
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfFalseR', cd=ctrls + '.%s' % pos_offset_attr, dv=0, v=0)
-#                 mc.setDrivenKeyframe(obj_condition + '.colorIfFalseR', cd=ctrls + '.%s' % pos_offset_attr, dv=1, v=1)
-#
-#                 mc.keyTangent(obj_condition + '_colorIfFalseR', edit=True, inTangentType='spline', outTangentType='spline')
-#
-#                 mc.setAttr(obj_condition + '_colorIfFalseR' + '.preInfinity', 1)
-#                 mc.setAttr(obj_condition + '_colorIfFalseR' + '.postInfinity', 1)
-#
-#                 mc.connectAttr(obj_condition + '.outColorR', obj_offset + '.input1D[1]')
-#
-#             else:
-#                 mc.connectAttr(mult_timing + '.output', add_speed + '.input1')
-#
-#             mc.setAttr(i + '.u', lock=True)
-#
-#         decompose = mc.shadingNode('decomposeMatrix', asUtility=1, n=lr_prefix_name(curve) + 'Scale' + 'dmt')
-#         mc.connectAttr(grp_crv + '.worldMatrix[0]', decompose + '.inputMatrix')
-#
-#         for i in create_ik['joints']:
-#             mc.connectAttr(decompose + '.outputScale', i + '.scale')
-#             lr_lock_attr(['t', 'r', 's'], i)
-#
-#         mc.parent(create_ik['joints'], grp_jnt)
-#         # mc.parent(createIk['wUpLocGrp'], grpJnt)
-#
-#         mc.parent(curve, grp_crv)
-#
-#         mc.parent(grp_jnt, grp_crv, setup_grp)
-#         mc.parent(ctrl.parent_control[0], setup_grp, all_grp)
-#
-#         # mc.setAttr(createIk['wUpLoc']+'.visibility', 0)
-#         lr_lock_attr(['t', 'r', 's'], curve)
-#         lr_lock_attr(['t', 'r', 's'], grp_jnt)
-#         lr_lock_attr(['t', 'r', 's'], setup_grp)
-#
-#         mc.select(cl=1)
-
-# def lr_joint_on_curve(curve='', world_up_loc='', spline_ik=None, delete_group=True, ctrl=False):
-#     newJnt = lr_create_joint_lid(curve)
-#
-#     num = (1.0 / (int(newJnt[3]) - 1))
-#
-#     transform = []
-#     controls = []
-#     motion_paths = []
-#     joints = []
-#     ikHdl = None
-#
-#     for n, i in enumerate(newJnt[0]):
-#         ranges = num * n
-#
-#         if ctrl:
-#             new_transform = Lr_Control(match_obj_first_position=i, prefix=lr_prefix_name(i) + 'Jnt', shape=CIRCLE,
-#                                        groups_ctrl=['Zro'], ctrl_size=2.0,
-#                                        ctrl_color='blue', lock_channels=['r', 's', 'v'],
-#                                        connection=['parent'])
-#             motion_path = mc.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
-#                                            wut='objectrotation',
-#                                            wuo=world_up_loc,
-#                                            c=curve,
-#                                            n=lr_prefix_name(i) + '_mpt')
-#
-#             transform.append(new_transform.parent_control[0])
-#             controls.append(new_transform.control)
-#             new_transform = new_transform.control
-#
-#         else:
-#             new_transform = mc.createNode('transform', n=lr_prefix_name(i) + 'Jnt_grp')
-#             mc.parent(i, new_transform)
-#             motion_path = mc.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
-#                                            wut='objectrotation',
-#                                            wuo=world_up_loc,
-#                                            c=curve,
-#                                            n=lr_prefix_name(i) + '_mpt')
-#             transform.append(new_transform)
-#             controls.append(newJnt[0])
-#
-#         mc.cutKey(motion_path + '.u', time=())
-#         mc.setAttr(motion_path + '.u', ranges)
-#         motion_paths.append(motion_path)
-#
-#         mc.setAttr(i + '.translate', 0, 0, 0, type='double3')
-#         mc.setAttr(i + '.rotate', 0, 0, 0, type='double3')
-#
-#         joints.append(i)
-#
-#         if delete_group:
-#             mc.parent(joints[n], w=True)
-#             mc.delete(new_transform + '.tx', icn=1)
-#             mc.delete(new_transform + '.ty', icn=1)
-#             mc.delete(new_transform + '.tz', icn=1)
-#             mc.delete(new_transform + '.rx', icn=1)
-#             mc.delete(new_transform + '.ry', icn=1)
-#             mc.delete(new_transform + '.rz', icn=1)
-#             mc.xform(new_transform, ws=True, ro=(0, 0, 0))
-#             mc.delete(motion_path)
-#             mc.delete(new_transform)
-#
-#             if n > 0:
-#                 mc.parent(joints[n], joints[n - 1])
-#
-#             mc.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
-#
-#     if spline_ik:
-#         if not delete_group:
-#             mc.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
-#         else:
-#             ikHdl = mc.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
-#                                 n=lr_prefix_name(curve) + '_ikh')
-#
-#         return {'joints': transform,
-#                 'motionPath': motion_paths,
-#                 'ctrl': controls,
-#                 'ikHdl': ikHdl,
-#                 'curve': curve}
-#
-#
-#     return {'joints': transform,
-#             'motionPath': motion_paths,
-#             'ctrl': controls,
-#             'ikHdl': ikHdl,
-#             'wUpLoc': newJnt[1],
-#             'curve': curve}
-
-# def lr_create_joint_lid(crv):
-#     all_joint = []
-#     all_locator = []
-#     ranges = []
-#     for i, v in enumerate(mc.ls('%s.cv[0:*]' % crv, fl=True)):
-#         # create joint
-#         mc.select(cl=1)
-#         joint = mc.joint(n='%s%02d%s' % (lr_prefix_name(crv), (i + 1), '_jnt'), rad=0.1)
-#         pos = mc.xform(v, q=1, ws=1, t=1)
-#         mc.xform(joint, ws=1, t=pos)
-#         all_joint.append(joint)
-#
-#         ranges.append(i)
-#
-#     length = len(ranges)
-#     return all_joint, all_locator, ranges, length
-
-# def lr_change_position(shape, destination):
-#     points = mc.ls('%s.cv[0:*]' % shape, fl=True)
-#
-#     for i in points:
-#         xforms = mc.xform(i, q=1, os=1, t=1)
-#         forms_x = xforms[0]
-#         forms_y = xforms[1]
-#         forms_z = xforms[2]
-#         rev_forms_x = xforms[0] * -1
-#         rev_forms_y = xforms[1] * -1
-#         rev_forms_z = xforms[2] * -1
-#
-#         if destination == '-':
-#             move = mc.setAttr(i + '.xValue', rev_forms_x)
-#             move = mc.setAttr(i + '.yValue', rev_forms_y)
-#             move = mc.setAttr(i + '.zValue', rev_forms_z)
-#
-#         elif destination == 'xy' or destination == 'yx':
-#             move = mc.setAttr(i + '.xValue', forms_y)
-#             move = mc.setAttr(i + '.yValue', forms_x)
-#             move = mc.setAttr(i + '.zValue', forms_z)
-#
-#         elif destination == 'xz' or destination == 'zx':
-#             move = mc.setAttr(i + '.xValue', forms_z)
-#             move = mc.setAttr(i + '.yValue', forms_y)
-#             move = mc.setAttr(i + '.zValue', forms_x)
-#
-#         elif destination == 'yz' or destination == 'zy':
-#             move = mc.setAttr(i + '.xValue', forms_x)
-#             move = mc.setAttr(i + '.yValue', forms_z)
-#             move = mc.setAttr(i + '.zValue', forms_y)
-#
-#         else:
-#             mc.error('please check your dest parameter name!')
-
-# def lr_lock_attr(lock_channel, ctrl):
-#     attrLockList = []
-#     for lc in lock_channel:
-#         if lc in ['t', 'r', 's']:
-#             for axis in ['x', 'y', 'z']:
-#                 at = lc + axis
-#                 attrLockList.append(at)
-#         else:
-#             attrLockList.append(lc)
-#
-#     for at in attrLockList:
-#         mc.setAttr(ctrl + '.' + at, l=1)
-#
-#     return attrLockList
-
 #**********************************************************************************************************************#
 #                                                   SKIN CTRL FUNCTION                                                 #
 #**********************************************************************************************************************#
 def lr_readSelectedWeight(weightFolderPath=''):
     # Import skin weight values into selected geometries
     # sels = mc.ls(sl=True)
-    sels = [u'SNAKE_Viper_Body_A_Mesh', u'SNAKE_Viper_Head_A_Mesh', u'SNAKE_Viper_Eye_A_Mesh']
-    for sel in sels:
+    # sels = [u'SNAKE_Viper_Body_A_Mesh', u'SNAKE_Viper_Head_A_Mesh', u'SNAKE_Viper_Eye_A_Mesh']
+    for sel in GEO:
 
         if not weightFolderPath:
             dataFld = lr_getDataFld()
@@ -2158,7 +1899,7 @@ def lr_readSelectedWeight(weightFolderPath=''):
             print('Cannot find weight file for %s' % sel)
             print(e)
 
-    mc.select(sels)
+    mc.select(GEO)
     mc.confirmDialog(title='Progress', message='Importing weight is done.')
 
 def lr_getDataFld():
