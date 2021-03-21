@@ -4,6 +4,9 @@ import maya.OpenMaya as om
 from functools import partial
 import re
 from string import digits
+import os
+import pickle
+import maya.mel as mm
 
 WORLD = [[2.249819018465117e-06, 4.4954081543323836e-21, -0.9995246068942343],
          [-0.14364550934591647, 4.4954081543323836e-21, -0.8558768477293006],
@@ -421,12 +424,12 @@ def show_ui():
             with pm.frameLayout(collapsable=True, l='Create Rig', mh=3):
                 with pm.columnLayout('Path', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
                     pm.textFieldGrp('Prefix_Name', label='Prefix Name:', cal=(1, "right"),
-                                          cw2=(40 * percentage, 25 * percentage, ),
+                                          cw2=(40 * percentage, 40 * percentage, ),
                                           columnAttach=[(1, 'both', 0 * percentage),
                                                         (2, 'both', 0 * percentage),
                                                         ], tx='snake')
 
-                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 25 * percentage), cl2=('right', 'left'),
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
                                       columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                         pm.text('Body Skeleton:')
                         pm.intField('Body_Skeleton', value=20, minValue=5)
@@ -441,8 +444,8 @@ def show_ui():
 
             # pm.separator(h=8, st="in", w=90 * percentage)
             with pm.frameLayout(collapsable=True, l='Create Path', mh=3):
-                with pm.columnLayout('Path', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
-                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 25 * percentage), cl2=('right', 'left'),
+                with pm.columnLayout('CreatePath', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
                                       columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                         pm.text('Path Size:')
                         pm.intField('Path_Size', value=80, minValue=10)
@@ -472,14 +475,47 @@ def show_ui():
                                   c=partial(lr_create_path))
                         pm.button('Delete_Path', l="Del", bgc=(0.5, 0, 0),
                                   c=partial(lr_delete_path))
+            with pm.frameLayout(collapsable=True, l='Attach Path', mh=3):
+                with pm.columnLayout('AttachPath', w=layout * 1.04, co=('both', 1 * percentage), adj=1):
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                        pm.text('Start Frame:')
+                        pm.intField('Start_Frame', value=0, minValue=0)
+
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                        pm.text('End Frame:')
+                        pm.intField('End_Frame', value=500, minValue=0)
+
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                        pm.text('Speed:')
+                        pm.floatField('Speed', value=1.0, minValue=0.1, pre=2)
+
+                    with pm.rowLayout(nc=2, cw2=(40 * percentage, 40 * percentage), cl2=('right', 'left'),
+                                      columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                        pm.text('')
+                        pm.button('Reset_Value', l="Reset Value",
+                                  c=partial(lr_reset_value))
+                    # pm.separator(h=8, st="in", w=90 * percentage)
 
                     with pm.rowLayout(nc=2, cw2=(85 * percentage, 15 * percentage), cl2=('right','right'),
                                       columnAttach=[(1, 'both', 0),(2, 'both', 0)],
                                       rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
                         pm.button('Attach_To_Path', l="Attach To Path",
                                   c=partial(lr_attach_to_path))
-                        pm.button('Reset', l="Res", bgc=(0, 0.5, 0),
-                                  c=partial(lr_delete_rig))
+                        pm.button('Reset', l="Res", bgc=(0.5, 0, 0),
+                                  c=partial(lr_reset_attach))
+
+                    pm.separator(h=8, st="in", w=90 * percentage)
+
+                    with pm.rowLayout(nc=2, cw2=(50 * percentage, 50 * percentage), cl2=('right','right'),
+                                      columnAttach=[(1, 'both', 0),(2, 'both', 0)],
+                                      rowAttach=[(1, 'top', 4),(2, 'top', 4) ]):
+                        pm.button('Load_Skin', l="Load Skin Weight",
+                                  c=partial(lr_load_skin))
+                        pm.button('Load_Ctrl', l="Load Ctrl Shape",
+                                  c=partial(lr_load_ctrl))
                     pm.separator(h=8, st="in", w=90 * percentage)
 
 
@@ -560,6 +596,10 @@ class Lr_RigUI():
         self.prefix_name = pm.textFieldGrp( "Prefix_Name", query=True, text=True )
         self.body_skeleton = pm.intField("Body_Skeleton", query=True, value=True)
         self.path_size = pm.intField("Path_Size", query=True, value=True)
+        self.start_frame = pm.intField('Start_Frame', query=True, value=True)
+        self.end_frame = pm.intField('End_Frame', query=True, value=True)
+        self.speed = pm.floatField('Speed', query=True, value=True)
+
         # self.tip_position = pm.radioCollection('Tip_Position', query=True, select=True)
 
         self.rig_direction = lr_create_path_action_translate_radio_button()
@@ -577,9 +617,17 @@ class Lr_RigUI():
         self.path_size = path_size
         pm.intField( "Path_Size", edit=True, value=path_size )
 
-    # def set_tip_position(self, ad_action_position_tip_radio_button):
-    #     self.tip_position = ad_action_position_tip_radio_button
-    #     self.tip_position = pm.radioCollection('Tip_Position', query=True, select=ad_action_position_tip_radio_button())
+    def set_start_frame(self, start_frame):
+        self.start_frame = start_frame
+        pm.intField( "Start_Frame", edit=True, value=start_frame )
+
+    def set_end_frame(self, end_frame):
+        self.end_frame = end_frame
+        pm.intField( "Start_Frame", edit=True, value=end_frame )
+
+    def set_speed(self, speed):
+        self.speed = speed
+        pm.floatField( "Speed", edit=True, value=speed )
 
     def set_rig_direction(self, rig_direction):
         self.rig_direction = rig_direction
@@ -752,7 +800,7 @@ def lr_delete_template(*args):
 def lr_create_rig(*args):
     RigUI = Lr_RigUI()
     if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
-        om.MGlobal.displayError('Rig already exists. please delete the previous rig first')
+        om.MGlobal.displayError('Rig %s already exists. please delete the previous rig first' % RigUI.prefix_name)
     else:
         tmp_grp = 'tmp_grp'
         if mc.objExists(tmp_grp):
@@ -760,7 +808,8 @@ def lr_create_rig(*args):
             MainRig = Lr_GeneralBase(prefix=RigUI.prefix_name.title())
             # base to tip
             body = lr_create_rig_base_tip_final(prefix=RigUI.prefix_name, skeleton_number=RigUI.body_skeleton,
-                                                anim_grp=MainRig.anim_grp, curve_grp=MainRig.curve_grp)
+                                                anim_grp=MainRig.anim_grp, curve_grp=MainRig.curve_grp,
+                                                still_rig_group=MainRig.still_grp)
 
             # head part
             head = lr_create_rig_head(prefix=RigUI.prefix_name)
@@ -786,6 +835,8 @@ def lr_create_rig(*args):
             mc.parent(body['hdl_curve'], MainRig.curve_grp)
             mc.parent(body['spline_hdl'], MainRig.ik_handle_grp)
 
+            mc.hide(MainRig.curve_grp)
+
         else:
             om.MGlobal.displayError('before create rig %s, please create template joint first.' % RigUI.prefix_name)
 
@@ -802,33 +853,112 @@ def lr_delete_rig(*args):
 
 def lr_create_path(*args):
     RigUI = Lr_RigUI()
-    lr_create_path_setup(parallel_axis=RigUI.rig_direction, prefix=RigUI.prefix_name, tip_pos=RigUI.tip_position,
-                         path_size=RigUI.path_size, prefix_rig_name=RigUI.prefix_name.title())
+    if mc.objExists('Rig%s_Grp' % (RigUI.prefix_name.title())):
+        if mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
+            om.MGlobal.displayError('Path %s already exists. please delete the previous setup first' % RigUI.prefix_name)
+        else:
+            world_rig_grp = 'World%s_Grp' % (RigUI.prefix_name.title())
+            world_rig_ctrl = 'World%s_Ctrl' % (RigUI.prefix_name.title())
+            lr_create_path_setup(parallel_axis=RigUI.rig_direction, prefix=RigUI.prefix_name, tip_pos=RigUI.tip_position,
+                             path_size=RigUI.path_size, prefix_rig_name=RigUI.prefix_name.title(), world_rig_group=world_rig_grp,
+                                 world_rig_ctrl=world_rig_ctrl)
+    else:
+        om.MGlobal.displayError('There is no rig %s in the scene, please create rig first before create path' % RigUI.prefix_name)
 
 def lr_delete_path(*args):
     RigUI = Lr_RigUI()
 
     if mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
         mc.delete('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix))
+
     else:
         om.MGlobal.displayError('There is no path %s setup in the scene' % RigUI.prefix_name)
 
 def lr_attach_to_path(*args):
     RigUI = Lr_RigUI()
+    world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
     if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()) and mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
-        # query curve
-        curve_grp = 'Curve%s_Grp' % RigUI.prefix_name.title()
-        attr_curve_grp = mc.listAttr(curve_grp, ud=True)[0]
-        curve = mc.listConnections(curve_grp + '.' + attr_curve_grp, d=1)[0]
+        if mc.objExists(world_up_loc):
+            om.MGlobal.displayError('Path %s already exists. please delete the previous setup first' % RigUI.prefix_name)
+        else:
+            # query curve
+            locator_grp = 'Locator%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
+            still_rig_group = 'Still%s_Grp' % (RigUI.prefix_name.title())
+            still_path_group = 'Still%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
 
-        curve_attach_grp = 'Curve%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
-        attr_curve_path_grp = mc.listAttr(curve_attach_grp, ud=True)[0]
-        curve_attach = mc.listConnections(curve_attach_grp + '.' + attr_curve_path_grp, d=1)[0]
+            curve_grp = 'Curve%s_Grp' % RigUI.prefix_name.title()
+            attr_curve_grp = mc.listAttr(curve_grp, ud=True)[0]
+            curve = mc.listConnections(curve_grp + '.' + attr_curve_grp, d=1)[0]
 
-        lr_path_line(curve_attach=curve_attach, curve=curve, fa=RigUI.rig_direction, prefix=RigUI.prefix_name,
-                     path_size=RigUI.path_size, prefix_rig_name=RigUI.prefix_name.title())
+            curve_attach_grp = 'Curve%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
+            attr_curve_path_grp = mc.listAttr(curve_attach_grp, ud=True)[0]
+            curve_attach = mc.listConnections(curve_attach_grp + '.' + attr_curve_path_grp, d=1)[0]
+
+            lr_path_line(curve_attach=curve_attach, curve=curve, prefix=RigUI.prefix_name,
+                         path_size=RigUI.path_size, prefix_rig_name=RigUI.prefix_name.title(), rig_direction=RigUI.rig_direction,
+                         start_frame=RigUI.start_frame, end_frame=RigUI.end_frame, locator_group=locator_grp,
+                         still_rig_group=still_rig_group, still_path_group=still_path_group)
     else:
         om.MGlobal.displayError('Please create rig and create path %s first' % RigUI.prefix_name)
+
+def lr_reset_attach(*args):
+    RigUI = Lr_RigUI()
+    world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
+    if mc.objExists(world_up_loc):
+        world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
+
+        attr_locator = mc.listAttr(world_up_loc, ud=True)
+
+        for mpt in attr_locator:
+            object_mpt = mc.listConnections(world_up_loc + '.' + mpt, d=1)[0]
+            print object_mpt
+            mc.delete(object_mpt)
+
+        mc.delete(world_up_loc)
+
+        still_path_group = 'Still%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
+        attr = mc.listAttr(still_path_group, ud=True)
+
+        # if attr:
+        for att in attr:
+            object_attr = mc.listConnections(still_path_group + '.' + att, d=1)[0]
+            mc.delete(object_attr)
+
+    else:
+        om.MGlobal.displayError('There is no attach path %s setup' % RigUI.prefix_name)
+
+    still_rig_group = 'Still%s_Grp' % (RigUI.prefix_name.title())
+    attr_rig_group = mc.listAttr(still_rig_group, ud=True)
+    anim_grp = 'anim%s_grp' % (RigUI.prefix_name.title())
+    attr_anim = mc.listAttr(anim_grp, ud=True)
+
+    for rig, anim in zip (attr_rig_group, attr_anim):
+        grp_path_attach = mc.listConnections(still_rig_group + '.' + rig, d=1)[0]
+        grp_anim = mc.listConnections(anim_grp + '.' + anim, d=1)[0]
+        mc.delete(mc.parentConstraint(grp_path_attach, grp_anim))
+
+def lr_reset_value(*args):
+    RigUI = Lr_RigUI()
+    world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
+    if mc.objExists(world_up_loc):
+        still_path_group = 'Still%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)
+        attr = mc.listAttr(still_path_group, ud=True)
+        for att in attr:
+            object_attr = mc.listConnections(still_path_group + '.' + att, d=1)[0]
+            nodes = mc.keyframe(object_attr, query=True, name=True)[0]
+            if RigUI.start_frame >= RigUI.end_frame:
+                om.MGlobal.displayError('Value start frame must be lower than end frame.')
+            else:
+                pm.keyframe(nodes, option='over', index=0, absolute=True, timeChange=RigUI.start_frame)
+                pm.keyframe(nodes, option='over', index=1, absolute=True, timeChange=RigUI.end_frame/RigUI.speed)
+    else:
+        om.MGlobal.displayError('There is no attach path %s setup' % RigUI.prefix_name)
+
+def lr_load_skin(*args):
+    lr_readSelectedWeight(weightFolderPath='')
+
+def lr_load_ctrl(*args):
+    lr_readAllCtrl(search='', replace='')
 
 #**********************************************************************************************************************#
 #                                             CREATE PATH FUNCTION                                                     #
@@ -843,11 +973,11 @@ def lr_create_path_action_translate_radio_button(*args):
     axis_translate=[]
     # query object with value on shape selector status
     if on_selector == 1:
-        axis_translate = 'translateX'
+        axis_translate = 'x'
     elif on_selector == 2:
-        axis_translate = 'translateY'
+        axis_translate = 'y'
     elif on_selector == 3:
-        axis_translate = 'translateZ'
+        axis_translate = 'z'
     else:
         pass
     # value_translate = pm.getAttr('%s.%s' % (object, axis_translate))
@@ -868,7 +998,7 @@ def lr_create_path_action_pos_radio_button(*args):
         pass
     return side
 
-def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_name):
+def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_name, world_rig_group, world_rig_ctrl):
     # Check joint tmp
     if mc.objExists('tmp_grp'):
         list_tmp_jnt = lr_create_rig_sorted_joint_tmp()
@@ -894,9 +1024,9 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             else:
                 om.MGlobal.displayError('The string %s in tipPos argument is not found. Fill with + or -' % tip_pos)
 
-            tmp_plane_dic = {'translateX': [(0, 1, 0), size * scale, (1.0 / size), size, 1],
-                             'translateY': [(1, 0, 0), 1 * scale, size, 1, size/4],
-                             'translateZ': [(0, 1, 0), 1 * scale, size, 1, size/4]}
+            tmp_plane_dic = {'x': [(0, 1, 0), size * scale, (1.0 / size), size, 1],
+                             'y': [(1, 0, 0), 1 * scale, size, 1, size/4],
+                             'z': [(0, 1, 0), 1 * scale, size, 1, size/4]}
 
             # Create a NURBS-plane to use as a module
             tmp_plane = mc.nurbsPlane(axis=tmp_plane_dic[parallel_axis][0], width=tmp_plane_dic[parallel_axis][1],
@@ -925,19 +1055,19 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             grp_joint_orient = mc.group(joint_path_base[0], joint_path_tip[0], curve['hdl_curve'])
 
             # Set the rotation group joints
-            if parallel_axis == 'translateZ':
+            if parallel_axis == 'z':
                 mc.setAttr((grp_joint_orient + '.rotate'), 0, -90, 0)
-            if parallel_axis == 'translateY':
+
+            if parallel_axis == 'y':
                 mc.setAttr((grp_joint_orient + '.rotate'), 0, 0, 90)
 
-            mc.setAttr(tmp_plane + '.%s' % parallel_axis, abs(base_point))
-            mc.setAttr(grp_joint_orient + '.%s' % parallel_axis, abs(base_point))
+            mc.setAttr(tmp_plane + '.translate%s' % parallel_axis.title(), abs(base_point))
+            mc.setAttr(grp_joint_orient + '.translate%s' % parallel_axis.title(), abs(base_point))
 
             # Create the NURBS-planes to use in the setup
             # geo_main_plane = mc.duplicate(tmp_plane, name=(prefix + 'Main_geo'))
             geo_Fk_plane = mc.duplicate(tmp_plane, name=(prefix + 'FkCurve' + '_geo'))
             geo_Ik_plane = mc.duplicate(tmp_plane, name=(prefix + 'IkCurve' + '_geo'))
-
 
             # Unparent from the group
             mc.parent(joint_path_base, joint_path_tip, curve['hdl_curve'], w=1)
@@ -949,7 +1079,6 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             # Create path joint
             path_connection = lr_create_path_joint(joint_path_base=joint_path_base, joint_path_tip=joint_path_tip,
                                                    prefix=prefix, skeleton=skeleton, add_prefix=add_prefix, anim_grp=Main_Controller.anim_grp)
-
 
             # Freezing rotation
             mc.makeIdentity(joint_path_base, apply=True, t=1, r=1, s=1, n=0, pn=1)
@@ -964,7 +1093,7 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
 
             for fol_s, group_ik_joint in zip(follicle_s['follicle'], path_connection[1]):
                 lr_scale_constraint(Main_Controller.anim_grp, fol_s)
-                mc.parent(fol_s, Main_Controller.locator_grp)
+                mc.parent(fol_s, Main_Controller.cluster_grp)
 
                 # Listing the shape of follicles
                 follicle_listRelatives = mc.listRelatives(fol_s, s=1)[0]
@@ -1002,7 +1131,7 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             mc.setAttr(curve_isoparm+'.minValue', 0)
             mc.setAttr(curve_isoparm+'.maxValue', 16)
 
-            if parallel_axis == 'translateZ':
+            if parallel_axis == 'z':
                 mc.setAttr(curve_isoparm + '.isoparmDirection', 1)
             else:
                 mc.setAttr(curve_isoparm + '.isoparmDirection', 0)
@@ -1018,8 +1147,19 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             mc.setAttr(list_relatives_curve+'.overrideEnabled', 1)
             mc.setAttr(list_relatives_curve+'.overrideDisplayType', 2)
 
+            # parent main controller
+            mc.parent(Main_Controller.root_grp, world_rig_group)
+
+            # constraint from main rig
+            lr_parent_constraint(world_rig_ctrl, Main_Controller.root_grp)
+            lr_scale_constraint(world_rig_ctrl, Main_Controller.root_grp)
+
+            # set inherit transform utils grp
+            mc.setAttr(Main_Controller.util_grp+'.inheritsTransform', 0)
+
             # Delete the module surface and group rotation driver
-            mc.delete(create_joint, tmp_plane, grp_joint_orient, joint_path_tip, joint_path_base, curve['list_jointIk'][0])
+            mc.delete(create_joint, tmp_plane, grp_joint_orient, joint_path_tip, joint_path_base, curve['list_jointIk'][0],
+                      Main_Controller.geo_grp)
 
     else:
         om.MGlobal.displayError('Please create template joint before create path.' )
@@ -1056,12 +1196,13 @@ def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_
 #**********************************************************************************************************************#
 #                                        ATTACH TO PATH FUNCTION                                                       #
 #**********************************************************************************************************************#
-def lr_path_line(curve_attach, curve, fa, prefix, path_size, prefix_rig_name):
+def lr_path_line(curve_attach, curve, prefix, path_size, prefix_rig_name, rig_direction, start_frame, end_frame,
+                 locator_group, still_rig_group, still_path_group):
     lr_load_matrix_quad_plugin()
 
     # query bind and group bind
     anim_grp = 'anim%s_grp' % (prefix_rig_name)
-    attach_prefix= 'Attach'
+    attach_prefix= 'Attach_loc'
     attr = mc.listAttr(anim_grp, ud=True)
     group_joint = []
     bind_joint = []
@@ -1075,10 +1216,88 @@ def lr_path_line(curve_attach, curve, fa, prefix, path_size, prefix_rig_name):
         bind_joint.append(bind)
 
     # world locator
-    world_up_loc = mc.spaceLocator(n=prefix+add_prefix+attach_prefix, p=(0, path_size, 0))
+    world_up_loc = mc.spaceLocator(n=prefix+add_prefix+attach_prefix)
+    mc.setAttr(world_up_loc[0]+'.translateY', path_size)
     mc.hide(world_up_loc)
+    mc.parent(world_up_loc[0], locator_group)
 
-    lr_motion_path(curve_attach=curve_attach, curve=curve, bind_joint=bind_joint, group_joint=group_joint, world_up_loc='', fa=fa)
+    lr_motion_path(curve_attach=curve_attach, curve=curve, bind_joint=bind_joint, group_joint=group_joint, world_up_loc=world_up_loc,
+                   rig_direction=rig_direction, start_frame=start_frame, end_frame=end_frame,
+                still_path_group=still_path_group)
+
+def lr_motion_path(curve_attach, curve, bind_joint, group_joint, world_up_loc, rig_direction, start_frame, end_frame,
+                   still_path_group):
+    arc_length_attach = mc.arclen(curve_attach)
+    arc_length =mc.arclen(curve)
+    value_length = arc_length_attach / arc_length
+
+    motion_paths =[]
+    all_uValue =[]
+    range_value = (1.0/len(bind_joint))
+
+    # create motion path node
+    for number, (group, joint) in enumerate (zip (group_joint, bind_joint)):
+        # motion path
+        uValue = range_value * number
+        motion_path = pm.pathAnimation(group, fractionMode=True, fa='z', ua='y', wut='objectrotation',
+                                       wuo=world_up_loc[0], c=curve_attach,
+                                       n=lr_prefix_name(joint) + '_mpt')
+        mc.cutKey(motion_path + '.u', time=())
+        if rig_direction == 'z':
+            mc.setAttr(motion_path+'.inverseFront', 1)
+        else:
+            mc.setAttr(motion_path+'.inverseFront', 0)
+
+        # add message path animation
+        lr_add_message(object_origin=motion_path, object_target=world_up_loc[0], ln=motion_path+'_msg')
+
+        all_uValue.append(uValue)
+        motion_paths.append(motion_path)
+
+    # attaching node to object
+    all_uValue = sorted(all_uValue, reverse=True)
+    value_0_divide = all_uValue[0]/value_length
+    value_0_z = (value_0_divide * -1) + 1
+    value_0_x = 1- value_0_divide
+
+    for i, ctrls, path_uvalue, in zip(motion_paths, group_joint, all_uValue):
+        value_divide = (path_uvalue/value_length)
+
+        key_transform = mc.createNode('transform', n=lr_prefix_name(i) + '_key')
+        attr = lr_add_attribute(objects=[key_transform], long_name=['pathUValue'], at="float", keyable=True)
+        lr_lock_hide_attr(lock_channel=['t','r','s','v'], ctrl=key_transform)
+        lr_add_message(object_origin=key_transform, object_target=still_path_group, ln=key_transform + '_msg')
+
+        if rig_direction == 'z':
+            value = (value_divide * -1) + 1
+            mc.setKeyframe(key_transform, t=[start_frame], at=attr, v=value)
+            mc.setKeyframe(key_transform, t=[end_frame], at=attr, v=value-value_0_z)
+
+            mc.keyTangent(key_transform + '_%s' % attr, edit=True, inTangentType='linear', outTangentType='linear')
+            mc.setAttr(key_transform + '_%s' % attr + '.preInfinity', 1)
+            mc.setAttr(key_transform + '_%s' % attr + '.postInfinity', 1)
+
+        else:
+            mc.setKeyframe(key_transform, t=[start_frame], at=attr, v=value_divide)
+            mc.setKeyframe(key_transform, t=[end_frame], at=attr, v=value_divide+value_0_x)
+
+            mc.keyTangent(key_transform + '_%s' % attr, edit=True, inTangentType='linear', outTangentType='linear')
+
+            mc.setAttr(key_transform + '_%s' % attr + '.preInfinity', 1)
+            mc.setAttr(key_transform + '_%s' % attr + '.postInfinity', 1)
+
+
+        mc.setDrivenKeyframe(i + '.u', cd=key_transform + '.%s' % attr, dv=0, v=0)
+        mc.setDrivenKeyframe(i + '.u', cd=key_transform + '.%s' % attr, dv=1, v=1)
+
+        mc.keyTangent(i + '_uValue', edit=True, inTangentType='linear', outTangentType='linear')
+
+        mc.setAttr(i + '_uValue' + '.preInfinity', 1)
+        mc.setAttr(i + '_uValue' + '.postInfinity', 1)
+
+        mc.parent(key_transform, still_path_group)
+
+    return motion_paths
 
 #**********************************************************************************************************************#
 #                                               CREATE RIG FUNCTION                                                    #
@@ -1171,7 +1390,7 @@ def lr_create_rig_head_area(position_sorted, joint_name, color, shape, size):
             'mainGrp': controller.parent_control[0],
             'joint':joint}
 
-def lr_create_rig_base_tip_final(prefix, skeleton_number, anim_grp, curve_grp):
+def lr_create_rig_base_tip_final(prefix, skeleton_number, anim_grp, curve_grp, still_rig_group):
     list_tmp_jnt = lr_create_rig_sorted_joint_tmp()
 
     bind_joint = lr_create_rig_base_tip_joint_bind(base=list_tmp_jnt[0], tip=list_tmp_jnt[1], prefix=prefix + 'Body',
@@ -1181,6 +1400,13 @@ def lr_create_rig_base_tip_final(prefix, skeleton_number, anim_grp, curve_grp):
     # add message
     lr_add_message(object_origin=spline_jointFk['hdl_curve'], object_target=curve_grp,
                    ln=spline_jointFk['hdl_curve'] + '_msg')
+
+    # create reference position
+    for joint in bind_joint[0]:
+        reference_position = mc.createNode('transform', n=lr_prefix_name(joint) + '_pathRef')
+        mc.delete(mc.parentConstraint(joint, reference_position))
+        lr_add_message(object_origin=reference_position, object_target=still_rig_group, ln=reference_position + '_msg')
+        mc.parent(reference_position, still_rig_group)
 
     # skinning the joint to the bind curve
     mc.skinCluster(bind_joint[0], spline_jointFk['hdl_curve'],
@@ -1237,8 +1463,11 @@ def lr_create_rig_base_tip_jointFk_spline(base, tip, prefix, skeleton_number, su
 #                                                   GENERAL FUNCTION                                                   #
 #**********************************************************************************************************************#
 def lr_add_message(object_origin, object_target, ln=''):
-    mc.addAttr(object_target, ln=ln, at='message')
-    mc.connectAttr(object_origin + '.message', '%s.%s' % (object_target, ln))
+    if mc.objExists(object_target+'.%s' % ln):
+        mc.connectAttr(object_origin + '.message', '%s.%s' % (object_target, ln))
+    else:
+        mc.addAttr(object_target, ln=ln, at='message')
+        mc.connectAttr(object_origin + '.message', '%s.%s' % (object_target, ln))
 
 def lr_skin_matrix_list_from_joint(obj):
     for item in lr_joint_destination_matrix(obj):
@@ -1381,6 +1610,11 @@ def lr_base_tip_jointFk_spline(base, tip, prefix, skeleton_number, spline_handle
                     kep=1, kt=0, s=(skeleton_number / 2) - 1, d=3, tol=0.01)
 
     hdl_curve = mc.rename(curve_ik_spline_detail, '%s_crv' % (prefix + 'Fk'))
+
+    # # reverse direction
+    # if reverse:
+    #     mc.reverseCurve(hdl_curve, ch=True, rpo=True)
+
     if spline_handle:
         spline_hdl = mc.ikHandle(sj=list_jointIk[0], ee=list_jointIk[-1],
                                 sol='ikSplineSolver',
@@ -1627,183 +1861,415 @@ def lr_add_attribute(objects=[], long_name=[''], nice_name='', separator=False, 
                     (obj + '.' + long_name[x]), k=keyable, e=1, cb=channel_box)
     return long_name[0]
 
-def lr_motion_path(curve_attach='', curve='', bind_joint=[''], group_joint=[''], world_up_loc='', fa='z', ua='y'):
-    arc_length_attach = mc.arclen(curve_attach)
-    arc_length =mc.arclen(curve)
-    value_length = arc_length_attach / arc_length
-    # print arc_length_attach
-    number_of_joint = len(bind_joint)
-    position = (value_length/(number_of_joint-1))
-    motion_paths =[]
-    print group_joint
-    print bind_joint
-    for number, (group, joint) in enumerate (zip (group_joint, bind_joint)):
-        print group
-        print joint
-        motion_path = mc.pathAnimation(group, fractionMode=True, fa=fa, ua=ua, wut='objectrotation',
-                                       wuo=world_up_loc, c=curve_attach,
-                                       n=lr_prefix_name(joint) + '_mpt')
-        ranges = position * number
-        mc.cutKey(motion_path + '.u', time=())
-        mc.setAttr(motion_path + '.uValue', ranges)
-        motion_paths.append(motion_path)
 
-    return motion_paths
+# class Lr_MotionPaths():
+#     def __init__(self, curve='', world_up_loc='', set_value_length =1, controller=False):
+#         # load Plug-ins
+#         lr_load_matrix_quad_plugin()
+#
+#         all_grp = mc.group(empty=True, n=lr_prefix_name(curve) + 'MotionLoop' + '_grp')
+#         setup_grp = mc.group(empty=True, n=lr_prefix_name(curve) + 'Setup' + '_grp')
+#         grp_jnt = mc.group(empty=True, n=lr_prefix_name(curve) + 'Joints' + '_grp')
+#         grp_crv = mc.group(empty=True, n=lr_prefix_name(curve) + 'Crv' + '_grp')
+#
+#         create_ik = lr_joint_on_curve(curve=curve, world_up_loc=world_up_loc, delete_group=False,
+#                                       ctrl=controller)
+#         arc_length = mc.arclen(curve)
+#
+#         value_length = arc_length/set_value_length
+#
+#
+#         ctrl = Lr_Control(match_obj_first_position=create_ik['joints'][0], prefix=lr_prefix_name(curve),
+#                           shape=STAR,
+#                           groups_ctrl=['Zro'], ctrl_size=10.0,
+#                           ctrl_color='blue', lock_channels=['r', 's', 'v'])
+#
+#         attribute_speed = lr_add_attribute(objects=[ctrl.control], long_name=['speed'], min=0, dv=0, max=50, at="float",
+#                                            keyable=True)
+#
+#         lr_change_position(ctrl.control, 'xy')
+#
+#         for i, ctrls in zip(create_ik['motionPath'], create_ik['ctrl']):
+#
+#             motion_path_uvalue = mc.getAttr(i + '.u')
+#
+#             mult_timing = mc.shadingNode('multDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'TimeMult' + '_mdl')
+#             mc.connectAttr(ctrl.control + '.%s' % attribute_speed, mult_timing + '.input1')
+#             mc.connectAttr('time1.outTime', mult_timing + '.input2')
+#
+#             add_speed = mc.shadingNode('addDoubleLinear', asUtility=1, n=lr_prefix_name(i) + 'SpeedAdd' + '_adl')
+#             mc.setAttr(add_speed + '.input2', (((motion_path_uvalue/value_length) * 1000)))
+#
+#             mult_offset = mc.shadingNode('multiplyDivide', asUtility=1, n=lr_prefix_name(i) + 'SpeedOffset' + '_mdn')
+#             mc.setAttr(mult_offset + '.operation', 2)
+#             mc.setAttr(mult_offset + '.input2X', 1000)
+#             mc.connectAttr(add_speed + '.output', mult_offset + '.input1X')
+#
+#             condition_speed = mc.shadingNode('condition', asUtility=1, n=lr_prefix_name(i) + 'Speed' + '_cnd')
+#             mc.setAttr(condition_speed + '.operation', 2)
+#             mc.connectAttr(mult_timing + '.output', condition_speed + '.firstTerm')
+#
+#             add_value = mc.shadingNode('plusMinusAverage', asUtility=1, n=lr_prefix_name(i) + 'Speed' + '_pma')
+#             mc.connectAttr(mult_offset + '.outputX', add_value + '.input1D[0]')
+#             mc.setAttr(add_value + '.input1D[1]', 1)
+#
+#             mc.connectAttr(mult_offset + '.outputX', condition_speed + '.colorIfTrueR')
+#             mc.connectAttr(add_value + '.output1D', condition_speed + '.colorIfFalseR')
+#
+#             mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=0, v=0)
+#             mc.setDrivenKeyframe(i + '.u', cd=condition_speed + '.outColorR', dv=1, v=1)
+#
+#             mc.keyTangent(i + '_uValue', edit=True, inTangentType='linear', outTangentType='linear')
+#
+#             mc.setAttr(i + '_uValue' + '.preInfinity', 3)
+#             mc.setAttr(i + '_uValue' + '.postInfinity', 3)
+#
+#             if controller:
+#                 pos_offset_attr = lr_add_attribute(objects=[ctrls], long_name=['posOffset'], dv=0, min=0, at="float",
+#                                                    keyable=True)
+#
+#                 obj_offset = mc.shadingNode('plusMinusAverage', asUtility=1, n=lr_prefix_name(i) + 'ObjSpeed' + '_pma')
+#                 mc.connectAttr(mult_timing + '.output', obj_offset + '.input1D[0]')
+#                 mc.connectAttr(obj_offset + '.output1D', add_speed + '.input1')
+#
+#                 obj_condition = mc.shadingNode('condition', asUtility=1, n=lr_prefix_name(i) + 'ObjSpeed' + '_cnd')
+#                 mc.setAttr(obj_condition + '.operation', 4)
+#                 mc.connectAttr(mult_timing + '.output', obj_condition + '.firstTerm')
+#
+#                 mc.setDrivenKeyframe(obj_condition + '.colorIfTrueR', cd=ctrls + '.%s' % pos_offset_attr, dv=0, v=0)
+#                 mc.setDrivenKeyframe(obj_condition + '.colorIfTrueR', cd=ctrls + '.%s' % pos_offset_attr, dv=1, v=-1)
+#
+#                 mc.keyTangent(obj_condition + '_colorIfTrueR', edit=True, inTangentType='spline', outTangentType='spline')
+#
+#                 mc.setAttr(obj_condition + '_colorIfTrueR' + '.preInfinity', 1)
+#                 mc.setAttr(obj_condition + '_colorIfTrueR' + '.postInfinity', 1)
+#
+#                 mc.setDrivenKeyframe(obj_condition + '.colorIfFalseR', cd=ctrls + '.%s' % pos_offset_attr, dv=0, v=0)
+#                 mc.setDrivenKeyframe(obj_condition + '.colorIfFalseR', cd=ctrls + '.%s' % pos_offset_attr, dv=1, v=1)
+#
+#                 mc.keyTangent(obj_condition + '_colorIfFalseR', edit=True, inTangentType='spline', outTangentType='spline')
+#
+#                 mc.setAttr(obj_condition + '_colorIfFalseR' + '.preInfinity', 1)
+#                 mc.setAttr(obj_condition + '_colorIfFalseR' + '.postInfinity', 1)
+#
+#                 mc.connectAttr(obj_condition + '.outColorR', obj_offset + '.input1D[1]')
+#
+#             else:
+#                 mc.connectAttr(mult_timing + '.output', add_speed + '.input1')
+#
+#             mc.setAttr(i + '.u', lock=True)
+#
+#         decompose = mc.shadingNode('decomposeMatrix', asUtility=1, n=lr_prefix_name(curve) + 'Scale' + 'dmt')
+#         mc.connectAttr(grp_crv + '.worldMatrix[0]', decompose + '.inputMatrix')
+#
+#         for i in create_ik['joints']:
+#             mc.connectAttr(decompose + '.outputScale', i + '.scale')
+#             lr_lock_attr(['t', 'r', 's'], i)
+#
+#         mc.parent(create_ik['joints'], grp_jnt)
+#         # mc.parent(createIk['wUpLocGrp'], grpJnt)
+#
+#         mc.parent(curve, grp_crv)
+#
+#         mc.parent(grp_jnt, grp_crv, setup_grp)
+#         mc.parent(ctrl.parent_control[0], setup_grp, all_grp)
+#
+#         # mc.setAttr(createIk['wUpLoc']+'.visibility', 0)
+#         lr_lock_attr(['t', 'r', 's'], curve)
+#         lr_lock_attr(['t', 'r', 's'], grp_jnt)
+#         lr_lock_attr(['t', 'r', 's'], setup_grp)
+#
+#         mc.select(cl=1)
 
-def lr_joint_on_curve(curve='', world_up_loc='', spline_ik=None, delete_group=True, ctrl=False):
-    newJnt = lr_create_joint_lid(curve)
+# def lr_joint_on_curve(curve='', world_up_loc='', spline_ik=None, delete_group=True, ctrl=False):
+#     newJnt = lr_create_joint_lid(curve)
+#
+#     num = (1.0 / (int(newJnt[3]) - 1))
+#
+#     transform = []
+#     controls = []
+#     motion_paths = []
+#     joints = []
+#     ikHdl = None
+#
+#     for n, i in enumerate(newJnt[0]):
+#         ranges = num * n
+#
+#         if ctrl:
+#             new_transform = Lr_Control(match_obj_first_position=i, prefix=lr_prefix_name(i) + 'Jnt', shape=CIRCLE,
+#                                        groups_ctrl=['Zro'], ctrl_size=2.0,
+#                                        ctrl_color='blue', lock_channels=['r', 's', 'v'],
+#                                        connection=['parent'])
+#             motion_path = mc.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
+#                                            wut='objectrotation',
+#                                            wuo=world_up_loc,
+#                                            c=curve,
+#                                            n=lr_prefix_name(i) + '_mpt')
+#
+#             transform.append(new_transform.parent_control[0])
+#             controls.append(new_transform.control)
+#             new_transform = new_transform.control
+#
+#         else:
+#             new_transform = mc.createNode('transform', n=lr_prefix_name(i) + 'Jnt_grp')
+#             mc.parent(i, new_transform)
+#             motion_path = mc.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
+#                                            wut='objectrotation',
+#                                            wuo=world_up_loc,
+#                                            c=curve,
+#                                            n=lr_prefix_name(i) + '_mpt')
+#             transform.append(new_transform)
+#             controls.append(newJnt[0])
+#
+#         mc.cutKey(motion_path + '.u', time=())
+#         mc.setAttr(motion_path + '.u', ranges)
+#         motion_paths.append(motion_path)
+#
+#         mc.setAttr(i + '.translate', 0, 0, 0, type='double3')
+#         mc.setAttr(i + '.rotate', 0, 0, 0, type='double3')
+#
+#         joints.append(i)
+#
+#         if delete_group:
+#             mc.parent(joints[n], w=True)
+#             mc.delete(new_transform + '.tx', icn=1)
+#             mc.delete(new_transform + '.ty', icn=1)
+#             mc.delete(new_transform + '.tz', icn=1)
+#             mc.delete(new_transform + '.rx', icn=1)
+#             mc.delete(new_transform + '.ry', icn=1)
+#             mc.delete(new_transform + '.rz', icn=1)
+#             mc.xform(new_transform, ws=True, ro=(0, 0, 0))
+#             mc.delete(motion_path)
+#             mc.delete(new_transform)
+#
+#             if n > 0:
+#                 mc.parent(joints[n], joints[n - 1])
+#
+#             mc.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
+#
+#     if spline_ik:
+#         if not delete_group:
+#             mc.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
+#         else:
+#             ikHdl = mc.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
+#                                 n=lr_prefix_name(curve) + '_ikh')
+#
+#         return {'joints': transform,
+#                 'motionPath': motion_paths,
+#                 'ctrl': controls,
+#                 'ikHdl': ikHdl,
+#                 'curve': curve}
+#
+#
+#     return {'joints': transform,
+#             'motionPath': motion_paths,
+#             'ctrl': controls,
+#             'ikHdl': ikHdl,
+#             'wUpLoc': newJnt[1],
+#             'curve': curve}
 
-    num = (1.0 / (int(newJnt[3]) - 1))
+# def lr_create_joint_lid(crv):
+#     all_joint = []
+#     all_locator = []
+#     ranges = []
+#     for i, v in enumerate(mc.ls('%s.cv[0:*]' % crv, fl=True)):
+#         # create joint
+#         mc.select(cl=1)
+#         joint = mc.joint(n='%s%02d%s' % (lr_prefix_name(crv), (i + 1), '_jnt'), rad=0.1)
+#         pos = mc.xform(v, q=1, ws=1, t=1)
+#         mc.xform(joint, ws=1, t=pos)
+#         all_joint.append(joint)
+#
+#         ranges.append(i)
+#
+#     length = len(ranges)
+#     return all_joint, all_locator, ranges, length
 
-    transform = []
-    controls = []
-    motion_paths = []
-    joints = []
-    ikHdl = None
+# def lr_change_position(shape, destination):
+#     points = mc.ls('%s.cv[0:*]' % shape, fl=True)
+#
+#     for i in points:
+#         xforms = mc.xform(i, q=1, os=1, t=1)
+#         forms_x = xforms[0]
+#         forms_y = xforms[1]
+#         forms_z = xforms[2]
+#         rev_forms_x = xforms[0] * -1
+#         rev_forms_y = xforms[1] * -1
+#         rev_forms_z = xforms[2] * -1
+#
+#         if destination == '-':
+#             move = mc.setAttr(i + '.xValue', rev_forms_x)
+#             move = mc.setAttr(i + '.yValue', rev_forms_y)
+#             move = mc.setAttr(i + '.zValue', rev_forms_z)
+#
+#         elif destination == 'xy' or destination == 'yx':
+#             move = mc.setAttr(i + '.xValue', forms_y)
+#             move = mc.setAttr(i + '.yValue', forms_x)
+#             move = mc.setAttr(i + '.zValue', forms_z)
+#
+#         elif destination == 'xz' or destination == 'zx':
+#             move = mc.setAttr(i + '.xValue', forms_z)
+#             move = mc.setAttr(i + '.yValue', forms_y)
+#             move = mc.setAttr(i + '.zValue', forms_x)
+#
+#         elif destination == 'yz' or destination == 'zy':
+#             move = mc.setAttr(i + '.xValue', forms_x)
+#             move = mc.setAttr(i + '.yValue', forms_z)
+#             move = mc.setAttr(i + '.zValue', forms_y)
+#
+#         else:
+#             mc.error('please check your dest parameter name!')
 
-    for n, i in enumerate(newJnt[0]):
-        ranges = num * n
+# def lr_lock_attr(lock_channel, ctrl):
+#     attrLockList = []
+#     for lc in lock_channel:
+#         if lc in ['t', 'r', 's']:
+#             for axis in ['x', 'y', 'z']:
+#                 at = lc + axis
+#                 attrLockList.append(at)
+#         else:
+#             attrLockList.append(lc)
+#
+#     for at in attrLockList:
+#         mc.setAttr(ctrl + '.' + at, l=1)
+#
+#     return attrLockList
 
-        print num
-        print n
-        print ranges
+#**********************************************************************************************************************#
+#                                                   SKIN CTRL FUNCTION                                                 #
+#**********************************************************************************************************************#
+def lr_readSelectedWeight(weightFolderPath=''):
+    # Import skin weight values into selected geometries
+    # sels = mc.ls(sl=True)
+    sels = [u'SNAKE_Viper_Body_A_Mesh', u'SNAKE_Viper_Head_A_Mesh', u'SNAKE_Viper_Eye_A_Mesh']
+    for sel in sels:
 
-        if ctrl:
-            new_transform = Lr_Control(match_obj_first_position=i, prefix=lr_prefix_name(i) + 'Jnt', shape=CIRCLE,
-                                       groups_ctrl=['Zro'], ctrl_size=2.0,
-                                       ctrl_color='blue', lock_channels=['r', 's', 'v'],
-                                       connection=['parent'])
-            motion_path = mc.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
-                                           wut='objectrotation',
-                                           wuo=world_up_loc,
-                                           c=curve,
-                                           n=lr_prefix_name(i) + '_mpt')
-
-            transform.append(new_transform.parent_control[0])
-            controls.append(new_transform.control)
-            new_transform = new_transform.control
-
+        if not weightFolderPath:
+            dataFld = lr_getDataFld()
         else:
-            new_transform = mc.createNode('transform', n=lr_prefix_name(i) + 'Jnt_grp')
-            mc.parent(i, new_transform)
-            motion_path = mc.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
-                                           wut='objectrotation',
-                                           wuo=world_up_loc,
-                                           c=curve,
-                                           n=lr_prefix_name(i) + '_mpt')
-            transform.append(new_transform)
-            controls.append(newJnt[0])
+            dataFld = os.path.normpath(weightFolderPath)
+        fn = '%sWeight.txt' % sel
 
-        mc.cutKey(motion_path + '.u', time=())
-        mc.setAttr(motion_path + '.u', ranges)
-        motion_paths.append(motion_path)
+        try:
+            print('Importing %s.' % sel)
+            lr_readWeight(sel, os.path.join(dataFld, fn))
+            print('Importing %s done.' % fn)
+        except Exception as e:
+            print('Cannot find weight file for %s' % sel)
+            print(e)
 
-        mc.setAttr(i + '.translate', 0, 0, 0, type='double3')
-        mc.setAttr(i + '.rotate', 0, 0, 0, type='double3')
+    mc.select(sels)
+    mc.confirmDialog(title='Progress', message='Importing weight is done.')
 
-        joints.append(i)
+def lr_getDataFld():
+    # wfn = mc.file( q = True , sn = True )
+    wfn = pm.sceneName()
+    tmpAry = wfn.split('/')
+    tmpAry[-2] = 'data'
 
-        if delete_group:
-            mc.parent(joints[n], w=True)
-            mc.delete(new_transform + '.tx', icn=1)
-            mc.delete(new_transform + '.ty', icn=1)
-            mc.delete(new_transform + '.tz', icn=1)
-            mc.delete(new_transform + '.rx', icn=1)
-            mc.delete(new_transform + '.ry', icn=1)
-            mc.delete(new_transform + '.rz', icn=1)
-            mc.xform(new_transform, ws=True, ro=(0, 0, 0))
-            mc.delete(motion_path)
-            mc.delete(new_transform)
+    dataFld = '/'.join(tmpAry[0:-1])
 
-            if n > 0:
-                mc.parent(joints[n], joints[n - 1])
+    if not os.path.isdir(dataFld):
+        os.mkdir(dataFld)
 
-            mc.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
+    return dataFld
 
-    if spline_ik:
-        if not delete_group:
-            mc.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
+def lr_readWeight(geo='', fn=''):
+    print('Loading %s' % fn)
+    fid = open(fn, 'r')
+    wDct = pickle.load(fid)
+    fid.close()
+
+    infs = wDct['influences']
+
+    for inf in infs:
+        if not mc.objExists(inf):
+            print('Scene has no %s ' % inf)
+
+    oSkn = mm.eval('findRelatedSkinCluster "%s"' % geo)
+    if oSkn:
+        mc.skinCluster(oSkn, e=True, ub=True)
+
+    tmpSkn = mc.skinCluster(infs[0], geo, tsb=True)[0]
+
+    for inf in infs[1:]:
+        infTyp = mc.objectType(inf)
+        if infTyp == 'joint':
+            mc.skinCluster(tmpSkn, e=True, ai=inf, lw=True)
+        elif infTyp == 'transform':
+            baseInf = mc.duplicate(inf)[0]
+            mc.setAttr('%s.v' % baseInf, 0)
+            baseInf = mc.rename(baseInf, '%sBase' % baseInf)
+            shp = mc.listRelatives(baseInf, s=True, f=True, ni=True)[0]
+            mc.skinCluster(tmpSkn, e=True, lw=True, ug=True, dr=4, ps=0, ns=10, wt=0,
+                           ai=inf, bsh=shp)
+
+    skn = mc.rename(tmpSkn, wDct['name'])
+    mc.setAttr('%s.skinningMethod' % skn, wDct['skinningMethod'])
+    mc.setAttr('%s.useComponents' % skn, wDct['useComponents'])
+
+    sknSet = mc.listConnections('%s.message' % skn, d=True, s=False)[0]
+    mc.rename(sknSet, wDct['set'])
+
+    for inf in infs:
+        mc.setAttr('%s.liw' % inf, False)
+
+    mc.setAttr('%s.normalizeWeights' % skn, False)
+    mc.skinPercent(skn, geo, nrm=False, prw=100)
+    mc.setAttr('%s.normalizeWeights' % skn, True)
+
+    vtxNo = mc.polyEvaluate(geo, v=True)
+
+    for ix in xrange(vtxNo):
+        for iy in xrange(len(infs)):
+            wVal = wDct[ix][iy]
+            if wVal:
+                wlAttr = '%s.weightList[%s].weights[%s]' % (skn, ix, iy)
+                mc.setAttr(wlAttr, wVal)
+
+        # Percent calculation
+        if ix == (vtxNo - 1):
+            print('100%% done.')
         else:
-            ikHdl = mc.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
-                                n=lr_prefix_name(curve) + '_ikh')
+            prePrcnt = 0
+            if ix > 0:
+                prePrcnt = int((float(ix - 1) / vtxNo) * 100.00)
 
-        return {'joints': transform,
-                'motionPath': motion_paths,
-                'ctrl': controls,
-                'ikHdl': ikHdl,
-                'curve': curve}
+            prcnt = int((float(ix) / vtxNo) * 100.00)
 
+            if not prcnt == prePrcnt:
+                print('%s%% done.' % str(prcnt))
 
-    return {'joints': transform,
-            'motionPath': motion_paths,
-            'ctrl': controls,
-            'ikHdl': ikHdl,
-            'wUpLoc': newJnt[1],
-            'curve': curve}
+def lr_readAllCtrl(search='', replace=''):
+    dataFld = lr_getDataFld()
 
-def lr_create_joint_lid(crv):
-    all_joint = []
-    all_locator = []
-    ranges = []
-    for i, v in enumerate(mc.ls('%s.cv[0:*]' % crv, fl=True)):
-        # create joint
-        mc.select(cl=1)
-        joint = mc.joint(n='%s%02d%s' % (lr_prefix_name(crv), (i + 1), '_jnt'), rad=0.1)
-        pos = mc.xform(v, q=1, ws=1, t=1)
-        mc.xform(joint, ws=1, t=pos)
-        all_joint.append(joint)
+    if not os.path.isdir(dataFld):
+        os.mkdir(dataFld)
 
-        ranges.append(i)
+    ctrls = mc.ls("*trl")
+    fn = '%s/ctrlShape.txt' % dataFld
+    print(fn)
+    lr_readCtrlShape(ctrls, fn, search=search, replace=replace)
 
-    length = len(ranges)
-    return all_joint, all_locator, ranges, length
+    print('Importing all control shape is done.')
 
-def lr_change_position(shape, destination):
-    points = mc.ls('%s.cv[0:*]' % shape, fl=True)
+def lr_readCtrlShape(ctrls=[], fn='', search='', replace=''):
+    print(fn)
+    fid = open(fn, 'r')
+    ctrlDct = pickle.load(fid)
+    fid.close()
 
-    for i in points:
-        xforms = mc.xform(i, q=1, os=1, t=1)
-        forms_x = xforms[0]
-        forms_y = xforms[1]
-        forms_z = xforms[2]
-        rev_forms_x = xforms[0] * -1
-        rev_forms_y = xforms[1] * -1
-        rev_forms_z = xforms[2] * -1
-
-        if destination == '-':
-            move = mc.setAttr(i + '.xValue', rev_forms_x)
-            move = mc.setAttr(i + '.yValue', rev_forms_y)
-            move = mc.setAttr(i + '.zValue', rev_forms_z)
-
-        elif destination == 'xy' or destination == 'yx':
-            move = mc.setAttr(i + '.xValue', forms_y)
-            move = mc.setAttr(i + '.yValue', forms_x)
-            move = mc.setAttr(i + '.zValue', forms_z)
-
-        elif destination == 'xz' or destination == 'zx':
-            move = mc.setAttr(i + '.xValue', forms_z)
-            move = mc.setAttr(i + '.yValue', forms_y)
-            move = mc.setAttr(i + '.zValue', forms_x)
-
-        elif destination == 'yz' or destination == 'zy':
-            move = mc.setAttr(i + '.xValue', forms_x)
-            move = mc.setAttr(i + '.yValue', forms_z)
-            move = mc.setAttr(i + '.zValue', forms_y)
-
+    for key in ctrlDct.keys():
+        # print key
+        if search:
+            currVtx = key.replace(search, replace)
         else:
-            mc.error('please check your dest parameter name!')
+            currVtx = key
 
-def lr_lock_attr(lock_channel, ctrl):
-    attrLockList = []
-    for lc in lock_channel:
-        if lc in ['t', 'r', 's']:
-            for axis in ['x', 'y', 'z']:
-                at = lc + axis
-                attrLockList.append(at)
+        if '.' in currVtx:
+            if mc.objExists(currVtx):
+                mc.xform(currVtx, os=True, t=ctrlDct[currVtx])
         else:
-            attrLockList.append(lc)
-
-    for at in attrLockList:
-        mc.setAttr(ctrl + '.' + at, l=1)
-
-    return attrLockList
+            if mc.objExists(currVtx):
+                mc.setAttr('%s.overrideEnabled' % currVtx, 1)
+                mc.setAttr('%s.overrideColor' % currVtx, ctrlDct[currVtx])
