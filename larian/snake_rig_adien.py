@@ -535,7 +535,7 @@ def show_ui():
                                       rowAttach=[(1, 'top', 4), (2, 'top', 4)]):
                         pm.button('Attach_To_Path', l="Attach To Path",
                                   c=partial(lr_attach_to_path))
-                        pm.button('Reset', l="Res", bgc=(0.5, 0, 0),
+                        pm.button('Reset', l="Rmv", bgc=(0.5, 0, 0),
                                   c=partial(lr_reset_attach))
 
     pm.showWindow()
