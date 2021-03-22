@@ -1,6 +1,6 @@
 """
 DESCRIPTION:
-    Snake rigging ccripting test for Technical Animator position at Larian Studios Kuala Lumpur
+    Snake rigging scripting test for Technical Animator position at Larian Studios Kuala Lumpur
 
 USAGE:
     Please see README.pdf file
