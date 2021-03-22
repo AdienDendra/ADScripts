@@ -1,3 +1,18 @@
+"""
+DESCRIPTION:
+    Snake rigging ccripting test for Technical Animator position at Larian Studios Kuala Lumpur
+
+USAGE:
+    Please see README.pdf file
+
+AUTHOR:
+    Adien Dendra
+
+CONTACT:
+    adien.dendra@gmail.com
+
+"""
+
 import os
 import pickle
 import re
