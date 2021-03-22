@@ -730,7 +730,7 @@ class Lr_GeneralBase:
     # top structure
     def __init__(self,
                  lockChannels=['t', 'r', 's'], prefix='', color_world='darkGreen',
-                 color_place='yellow',
+                 color_place='yellow', lock_channel_ctrl=['v'],
                  scale=1.0
                  ):
         """
@@ -746,7 +746,7 @@ class Lr_GeneralBase:
             groups_ctrl=['Zro'],
             ctrl_size=scale * 5,
             ctrl_color=color_world,
-            lock_channels=['v'],
+            lock_channels=lock_channel_ctrl,
             shape=CIRCLE,
         )
 
@@ -757,7 +757,7 @@ class Lr_GeneralBase:
             groups_ctrl=['Zro'],
             ctrl_size=scale * 5,
             ctrl_color=color_place,
-            lock_channels=['v'],
+            lock_channels=lock_channel_ctrl,
             shape=WORLD,
         )
 
@@ -1074,7 +1074,7 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             om.MGlobal.displayError('Path already exists. Please delete the previous path first.')
         else:
             Main_Controller = Lr_GeneralBase(prefix=prefix_rig_name.title() + add_prefix, scale=8, color_world='red',
-                                             color_place='blue')
+                                             color_place='blue', lock_channel_ctrl=['s','v'])
 
             skeleton = path_size
             size = float(skeleton)
@@ -1222,8 +1222,8 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             mc.parent(Main_Controller.root_grp, world_rig_group)
 
             # constraint from main rig
-            lr_parent_constraint(world_rig_ctrl, Main_Controller.root_grp)
-            lr_scale_constraint(world_rig_ctrl, Main_Controller.root_grp)
+            # lr_parent_constraint(world_rig_ctrl, Main_Controller.root_grp)
+            # lr_scale_constraint(world_rig_ctrl, Main_Controller.root_grp)
 
             # set inherit transform utils grp
             mc.setAttr(Main_Controller.util_grp + '.inheritsTransform', 0)
@@ -1259,7 +1259,7 @@ def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_
         controller = Lr_Control(match_obj_first_position=item,
                                 prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
                                 ctrl_color='lightPink', ctrl_size=skeleton / 4,
-                                lock_channels=['v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
+                                lock_channels=['s','v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
         ctrl.append(controller.control)
         mainGroup.append(controller.parent_control[0])
 
