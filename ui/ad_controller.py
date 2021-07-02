@@ -770,10 +770,12 @@ def ad_select_all_ad_controller_button(*args):
 
 def ad_reset_color_button(*args):
     al.ad_lib_ctrl_color_list(0)
+    pm.select(cl=True)
 
 
 def ad_replace_color_button(*args):
     al.ad_lib_ctrl_color_list(ad_set_color())
+    pm.select(cl=True)
 
 
 def ad_set_color(*args):
