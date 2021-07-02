@@ -6,6 +6,7 @@ import maya.OpenMaya as om
 import pymel.core as pm
 
 import ad_controller_lib as al
+import ad_controller_shp as ac
 
 reload(al)
 
@@ -29,13 +30,14 @@ def ad_show_ui():
                 with pm.columnLayout('Create_Controller_Column', w=layout, co=('both', 1 * percentage), adj=1):
                     # ADDITIONAL
                     with pm.frameLayout(collapsable=True, l='Naming', mh=1):
-                        with pm.rowColumnLayout(nc=8, rowAttach=(2,'top', 0), cs=[(3, 1 * percentage), (5, 1 * percentage),
-                                                                                  (7, 1 * percentage)],
+                        with pm.rowColumnLayout(nc=8, rowAttach=(2, 'top', 0),
+                                                cs=[(3, 1 * percentage), (5, 1 * percentage),
+                                                    (7, 1 * percentage)],
                                                 cw=[(1, 12 * percentage), (2, 7 * percentage), (3, 13 * percentage),
                                                     (4, 20 * percentage), (5, 15 * percentage), (6, 9.5 * percentage),
-                                                    (8, 8* percentage)]):
+                                                    (8, 8 * percentage)]):
                             pm.checkBox('Prefix_1', label='Prfx 1:', cc=partial(ad_enabling_disabling_ui,
-                                                                                  ['Prefix_1_Text'], 'L_'), value=False)
+                                                                                ['Prefix_1_Text'], 'L_'), value=False)
                             al.ad_lib_defining_object_text_field(define_object='Prefix_1_Text', tx='L_', enable=False)
 
                             pm.checkBox('Name_CheckBox', label='Name:', cc=partial(ad_enabling_disabling_ui,
@@ -65,8 +67,9 @@ def ad_show_ui():
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
                             pm.text('')
-                            pm.button("List_Connection", l="List Connection", c='')
-                            pm.button('Create_Connection', l="Create Connection", c=partial(ad_create_connection_button))
+                            pm.button("List_Connection", l="List Connection", c=partial(ad_create_list_connection_button))
+                            pm.button('Create_Connection', l="Create Connection",
+                                      c=partial(ad_create_connection_button))
 
                     # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Color', mh=1):
@@ -111,7 +114,7 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0.5 * percentage),
                                                         (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
-                            pm.floatSlider('Controller_Resize', min=-1.0, value=0.0, max=1.0, step=0.001,
+                            pm.floatSlider('Controller_Resize', min=-1.0, value=0.0, max=1.0, step=0.0001,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset))
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
@@ -136,9 +139,9 @@ def ad_show_ui():
                             pm.text('')
                             with pm.rowColumnLayout(nc=9,
                                                     cs=[(2, 0.25 * percentage), (3, 0.25 * percentage),
-                                                              (4, 0.25 * percentage), (5, 0.25 * percentage),
-                                                              (6, 0.25 * percentage), (7, 0.25 * percentage),
-                                                              (8, 0.25 * percentage)]
+                                                        (4, 0.25 * percentage), (5, 0.25 * percentage),
+                                                        (6, 0.25 * percentage), (7, 0.25 * percentage),
+                                                        (8, 0.25 * percentage)]
                                                     ):
                                 icon_radio_control = pm.iconTextRadioCollection()
                                 circle = pm.iconTextRadioButton(st='iconOnly', image='ad_icons/circle.png',
@@ -189,28 +192,41 @@ def ad_show_ui():
                     with pm.frameLayout(collapsable=True, l='Additional', mh=1):
                         with pm.columnLayout():
                             with pm.rowLayout(nc=2, cw2=(17.5 * percentage, 50 * percentage), cl2=('right', 'left'),
-                                              columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                                              columnAttach=[(1, 'both', 0.5 * percentage),
+                                                            (2, 'both', 0.5 * percentage)]):
                                 pm.text('')
                                 with pm.columnLayout():
                                     with pm.rowColumnLayout(nc=2):
                                         pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
-                                                    cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'], 'Child'),
+                                                    cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'],
+                                                               'Child'),
                                                     value=False)
                                         pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
                                     with pm.rowColumnLayout():
                                         pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility',
                                                     value=False)
-                                        pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False, enable=False)
-
+                                        pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False,
+                                                    enable=False)
 
                     # pm.separator(h=15, st="in", w=90 * percentage)
-                    with pm.frameLayout(collapsable=True, l='Run', mh=1):
+                    with pm.frameLayout(collapsable=True, l='Run', mh=3):
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text(label='')
-                            pm.button('Create_Controller', l="Create Controller With All Defined Above", bgc=(0, 0.5, 0),
+                            pm.button('Create_Controller', l="Create Controller With All Defined Above!",
+                                      bgc=(0, 0.5, 0),
                                       c=partial(ad_create_controller_button))
-
+                pm.separator(h=10, st="in", w=layout)
+                with pm.rowLayout(nc=3, cw3=(38 * percentage, 36 * percentage, 24 * percentage),
+                                  cl3=('left', 'center', 'right'),
+                                  columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
+                                                (3, 'both', 2 * percentage)]):
+                    pm.text(l='Adien Dendra | 07/2021', al='left')
+                    pm.text(
+                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        hl=True,
+                        al='center')
+                    pm.text(l='Version 1.0', al='right')
             with pm.scrollLayout('Controller Utilities', p='tab'):
                 with pm.columnLayout('Controller_Utilities_Column', w=layout, co=('both', 1 * percentage), adj=1):
                     # pm.separator(h=5, st="in", w=90 * percentage)
@@ -230,8 +246,9 @@ def ad_show_ui():
                         with pm.rowLayout(nc=2, cw2=(18 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('Rotate:')
-                            with pm.rowLayout(nc=4, cw4=(10 * percentage, 21.5 * percentage, 21.5 * percentage, 21.5 * percentage),
-                                              cl4=('center', 'center', 'center','center'),
+                            with pm.rowLayout(nc=4, cw4=(
+                            10 * percentage, 21.5 * percentage, 21.5 * percentage, 21.5 * percentage),
+                                              cl4=('center', 'center', 'center', 'center'),
                                               columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                             (3, 'both', 0 * percentage), (4, 'both', 0 * percentage)]):
                                 pm.intField('Degree_Rotate', value=90)
@@ -269,7 +286,17 @@ def ad_show_ui():
                             pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
                             pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
                             pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
-
+                pm.separator(h=10, st="in", w=layout)
+                with pm.rowLayout(nc=3, cw3=(38 * percentage, 36 * percentage, 24 * percentage),
+                                  cl3=('left', 'center', 'right'),
+                                  columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
+                                                (3, 'both', 2 * percentage)]):
+                    pm.text(l='Adien Dendra | 07/2021', al='left')
+                    pm.text(
+                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        hl=True,
+                        al='center')
+                    pm.text(l='Version 1.0', al='right')
     pm.showWindow()
 
 
@@ -291,7 +318,8 @@ def ad_create_controller_button(*args):
                                                 manipulated_position=manipulated_position,
                                                 manipulated_rotation=manipulated_rotation)
         # add child controller
-        add_child_ctrl = ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
+        add_child_ctrl = ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0],
+                                       main_name=controller_shape_prefix_suffix[1])
 
         # if component mode
         get_objects = []
@@ -321,20 +349,20 @@ def ad_create_controller_button(*args):
         # object mode
         else:
             if add_child_ctrl:
-                for target, child_ctrl in zip (select, add_child_ctrl):
+                for target, child_ctrl in zip(select, add_child_ctrl):
                     # add connection
                     connection = ad_connection(ctrl=child_ctrl, target=target)
                     # add pivot controller
                     if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                         al.ad_lib_pivot_controller(controller=child_ctrl, parent_constraint_node=connection[0],
-                                                   suffix='_'+ad_suffix_main())
+                                                   suffix='_' + ad_suffix_main())
             else:
                 for ctrl, target, in zip(controller_shape_prefix_suffix[0], select):
                     connection = ad_connection(ctrl=ctrl, target=target)
                     # add pivot controller
                     if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                         al.ad_lib_pivot_controller(controller=ctrl, parent_constraint_node=connection[0],
-                                                   suffix='_'+ad_suffix_main())
+                                                   suffix='_' + ad_suffix_main())
 
                     # add visibility to target
                     ad_visibility_target(object=ctrl, target=target)
@@ -361,7 +389,6 @@ def ad_create_controller_button(*args):
     ad_hide_and_lock(controller_shape_prefix_suffix[0], value=True)
 
 
-
 def ad_create_group_button(*args):
     select = pm.ls(sl=1)
     # grouping controller
@@ -377,12 +404,14 @@ def ad_create_group_button(*args):
     else:
         pass
 
+
 def ad_visibility_target(object, target):
     check_box = pm.checkBox('Target_Visibility', q=True, value=True)
     if check_box:
         al.ad_lib_display(object=object, target=target)
     else:
         pass
+
 
 def ad_get_number_main_name(main_name):
     try:
@@ -418,10 +447,11 @@ def ad_main_ctrl_grouping(controller, main_name, prefix_2):
 def ad_suffix_main():
     suffix = pm.textField('Suffix_Main', q=True, tx=True)
     if suffix:
-        add_space =suffix.lower()
+        add_space = suffix.lower()
         return add_space
     else:
         om.MGlobal_displayError('suffix cannot be empty!')
+
 
 def ad_child_ctrl(main_controller, main_name):
     controller_childs = []
@@ -435,10 +465,11 @@ def ad_child_ctrl(main_controller, main_name):
             controller_shape = ad_controller_shape(size_ctrl=0.8)
             controller_child = pm.rename(controller_shape,
                                          ad_main_name[1] + query_name.title() + ad_main_name[0] + al.ad_lib_prefix(
-                                             'Prefix_2_Text') + '_'+ ad_suffix_main())
+                                             'Prefix_2_Text') + '_' + ad_suffix_main())
             al.ad_lib_xform_position_rotation(origin=controller, target=controller_child)
             pm.parent(controller_child, controller)
-            al.ad_lib_display(object=object_main_shape, target=controller_child, long_name=query_name + 'Ctrl', default_vis=0,
+            al.ad_lib_display(object=object_main_shape, target=controller_child, long_name=query_name + 'Ctrl',
+                              default_vis=0,
                               k=False, cb=True)
             controller_childs.append(controller_child)
     else:
@@ -447,36 +478,44 @@ def ad_child_ctrl(main_controller, main_name):
     al.ad_lib_ctrl_color(ctrl=controller_childs, color=16)
 
     return controller_childs
+def ad_create_list_connection_button(*args):
+    list_object = pm.ls(sl=1)
+    if list_object:
+        al.ad_list_connections_object(list_object)
+    else:
+        om.MGlobal_displayError('Select minimum one object which has connection!')
 
 def ad_create_connection_button(*args):
     list_controller = pm.ls(sl=1)
     if len(list_controller) < 2:
-        om.MGlobal_displayError('Select minimum two objects')
+        om.MGlobal_displayError('Select minimum two objects!')
     else:
         instance_controller = list_controller.pop(0)
         for item in list_controller:
             ad_connection(ctrl=instance_controller, target=item)
 
+
 def ad_connection(ctrl, target):
-    connection =[]
+    connection = []
     if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
         connection = al.ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
     if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
         connection = al.ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
     if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
-        connection =al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
+        connection = al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
     if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
-        connection =al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
+        connection = al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
     if ad_query_lock_unlock_hide_unhide_channel('Parent'):
-        connection =pm.parent(target, ctrl)
+        connection = pm.parent(target, ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
-        connection =pm.connectAttr(ctrl+'.translate',  target+'.translate')
+        connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
     if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
-        connection =pm.connectAttr(ctrl+'.rotate',  target+'.rotate')
+        connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
     if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
-        connection = pm.connectAttr(ctrl+'.scale',  target+'.scale')
+        connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
 
     return connection
+
 
 def ad_main_ctrl_prefix_suffix_selection(selection):
     controller_shape_prefix_suffix_app = []
@@ -495,7 +534,8 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
         if pm.textField('Name_Text', q=True, enable=True):
             main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name + suffix)
             controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                       al.ad_lib_prefix('Prefix_1_Text') + query_name + al.ad_lib_prefix(
+                                                       al.ad_lib_prefix(
+                                                           'Prefix_1_Text') + query_name + al.ad_lib_prefix(
                                                            'Prefix_2_Text') + suffix)
             controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
@@ -503,7 +543,8 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
         else:
             main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name_object + suffix)
             controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                       al.ad_lib_prefix('Prefix_1_Text') + query_name_object + al.ad_lib_prefix(
+                                                       al.ad_lib_prefix(
+                                                           'Prefix_1_Text') + query_name_object + al.ad_lib_prefix(
                                                            'Prefix_2_Text') + suffix)
             controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
@@ -538,7 +579,7 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
                 pm.select(cl=1)
-    print controller_shape_prefix_suffix_app, main_name_for_grp
+    # print controller_shape_prefix_suffix_app, main_name_for_grp
     return controller_shape_prefix_suffix_app, main_name_for_grp
 
 
@@ -565,7 +606,8 @@ def ad_main_ctrl_prefix_suffix():
         controller_shape = ad_controller_shape(size_ctrl=1.0)
         main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + controller_shape + suffix)
         controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                   al.ad_lib_prefix('Prefix_1_Text') + controller_shape + al.ad_lib_prefix(
+                                                   al.ad_lib_prefix(
+                                                       'Prefix_1_Text') + controller_shape + al.ad_lib_prefix(
                                                        'Prefix_2_Text') + suffix)
         controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
         pm.select(cl=1)
@@ -742,101 +784,101 @@ def ad_set_color(*args):
 def ad_controller_shape(size_ctrl, *args):
     control_shape = []
     if on_selector == 1:
-        control_shape = al.ad_lib_ctrl_shape(al.CIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 2:
-        control_shape = al.ad_lib_ctrl_shape(al.LOCATOR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.LOCATOR, size_ctrl=size_ctrl)
     elif on_selector == 3:
-        control_shape = al.ad_lib_ctrl_shape(al.CUBE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CUBE, size_ctrl=size_ctrl)
     elif on_selector == 4:
-        control_shape = al.ad_lib_ctrl_shape(al.CIRCLEHALF, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEHALF, size_ctrl=size_ctrl)
     elif on_selector == 5:
-        control_shape = al.ad_lib_ctrl_shape(al.SQUARE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.SQUARE, size_ctrl=size_ctrl)
     elif on_selector == 6:
-        control_shape = al.ad_lib_ctrl_shape(al.JOINT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.JOINT, size_ctrl=size_ctrl)
     elif on_selector == 7:
-        control_shape = al.ad_lib_ctrl_shape(al.CAPSULE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULE, size_ctrl=size_ctrl)
     elif on_selector == 8:
-        control_shape = al.ad_lib_ctrl_shape(al.STICKCIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICKCIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 9:
-        control_shape = al.ad_lib_ctrl_shape(al.CIRCLEPLUSHALF, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSHALF, size_ctrl=size_ctrl)
     elif on_selector == 10:
-        control_shape = al.ad_lib_ctrl_shape(al.CIRCLEPLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUS, size_ctrl=size_ctrl)
     elif on_selector == 11:
-        control_shape = al.ad_lib_ctrl_shape(al.STICK2CIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICK2CIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 12:
-        control_shape = al.ad_lib_ctrl_shape(al.STICKSQUARE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICKSQUARE, size_ctrl=size_ctrl)
     elif on_selector == 13:
-        control_shape = al.ad_lib_ctrl_shape(al.STICK2SQUARE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICK2SQUARE, size_ctrl=size_ctrl)
     elif on_selector == 14:
-        control_shape = al.ad_lib_ctrl_shape(al.STICKSTAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICKSTAR, size_ctrl=size_ctrl)
     elif on_selector == 15:
-        control_shape = al.ad_lib_ctrl_shape(al.CIRCLEPLUSARROW, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSARROW, size_ctrl=size_ctrl)
     elif on_selector == 16:
-        control_shape = al.ad_lib_ctrl_shape(al.RECTANGLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.RECTANGLE, size_ctrl=size_ctrl)
     elif on_selector == 17:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW, size_ctrl=size_ctrl)
     elif on_selector == 18:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW3DFLAT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DFLAT, size_ctrl=size_ctrl)
     elif on_selector == 19:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 20:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW2STRAIGHT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2STRAIGHT, size_ctrl=size_ctrl)
     elif on_selector == 21:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW2FLAT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLAT, size_ctrl=size_ctrl)
     elif on_selector == 22:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROWHEAD, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROWHEAD, size_ctrl=size_ctrl)
     elif on_selector == 23:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW90DEG, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW90DEG, size_ctrl=size_ctrl)
     elif on_selector == 24:
-        control_shape = al.ad_lib_ctrl_shape(al.SQUAREPLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.SQUAREPLUS, size_ctrl=size_ctrl)
     elif on_selector == 25:
-        control_shape = al.ad_lib_ctrl_shape(al.JOINTPLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.JOINTPLUS, size_ctrl=size_ctrl)
     elif on_selector == 26:
-        control_shape = al.ad_lib_ctrl_shape(al.HAND, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.HAND, size_ctrl=size_ctrl)
     elif on_selector == 27:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROWCIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROWCIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 28:
-        control_shape = al.ad_lib_ctrl_shape(al.PLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PLUS, size_ctrl=size_ctrl)
     elif on_selector == 29:
-        control_shape = al.ad_lib_ctrl_shape(al.PIVOT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PIVOT, size_ctrl=size_ctrl)
     elif on_selector == 30:
-        control_shape = al.ad_lib_ctrl_shape(al.KEYS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.KEYS, size_ctrl=size_ctrl)
     elif on_selector == 31:
-        control_shape = al.ad_lib_ctrl_shape(al.PYRAMIDCIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMIDCIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 32:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW4CIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4CIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 33:
-        control_shape = al.ad_lib_ctrl_shape(al.EYES, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.EYES, size_ctrl=size_ctrl)
     elif on_selector == 34:
-        control_shape = al.ad_lib_ctrl_shape(al.FOOTSTEP, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.FOOTSTEP, size_ctrl=size_ctrl)
     elif on_selector == 35:
-        control_shape = al.ad_lib_ctrl_shape(al.HALF3DCIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.HALF3DCIRCLE, size_ctrl=size_ctrl)
     elif on_selector == 36:
-        control_shape = al.ad_lib_ctrl_shape(al.CAPSULECURVE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULECURVE, size_ctrl=size_ctrl)
     elif on_selector == 37:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW4STRAIGHT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4STRAIGHT, size_ctrl=size_ctrl)
     elif on_selector == 38:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW3D, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3D, size_ctrl=size_ctrl)
     elif on_selector == 39:
-        control_shape = al.ad_lib_ctrl_shape(al.PYRAMID, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMID, size_ctrl=size_ctrl)
     elif on_selector == 40:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW3DCIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DCIRCULAR, size_ctrl=size_ctrl)
     elif on_selector == 41:
-        control_shape = al.ad_lib_ctrl_shape(al.CYLINDER, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CYLINDER, size_ctrl=size_ctrl)
     elif on_selector == 42:
-        control_shape = al.ad_lib_ctrl_shape(al.ARROW2FLATHALF, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLATHALF, size_ctrl=size_ctrl)
     elif on_selector == 43:
-        control_shape = al.ad_lib_ctrl_shape(al.FLAG, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.FLAG, size_ctrl=size_ctrl)
     elif on_selector == 44:
-        control_shape = al.ad_lib_ctrl_shape(al.WORLD, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.WORLD, size_ctrl=size_ctrl)
     elif on_selector == 45:
-        control_shape = al.ad_lib_ctrl_shape(al.SETUP, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.SETUP, size_ctrl=size_ctrl)
     elif on_selector == 46:
-        control_shape = al.ad_lib_ctrl_shape(al.STAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STAR, size_ctrl=size_ctrl)
     elif on_selector == 47:
-        control_shape = al.ad_lib_ctrl_shape(al.DIAMOND, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.DIAMOND, size_ctrl=size_ctrl)
     elif on_selector == 48:
-        control_shape = al.ad_lib_ctrl_shape(al.STARSQUEEZE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STARSQUEEZE, size_ctrl=size_ctrl)
     else:
         pass
     return control_shape
@@ -1019,7 +1061,7 @@ def ad_adding_object_sel_to_textfield(text_input, *args):
 #                 global previous_value
 #                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
 #                 deltaValue = (currentValue - previous_value)
-#                 al.ad_scaling_controller(deltaValue, shape_node)
+#                 al.ad_lib_scaling_controller(deltaValue, shape_node)
 #                 # self.prevValue = value
 #                 previous_value = currentValue
 #             else:
@@ -1045,6 +1087,25 @@ def ad_controller_resize_slider(*args):
             else:
                 pass
 
+
+# def ad_controller_resize_slider(*args):
+#     selection = pm.ls(selection=True)
+#     if not selection:
+#         om.MGlobal.displayWarning("No objects selected")
+#     else:
+#         for item in selection:
+#             shape_node = pm.listRelatives(item, s=True)[0]
+#             if pm.objectType(shape_node) == 'nurbsCurve':
+#                 global previous_value
+#                 current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
+#                 delta_value = (current_value - previous_value)
+#                 # deltaValue = (previous_value/currentValue)
+#                 new_value = delta_value
+#                 al.ad_lib_scaling_controller(new_value, item)
+#                 # self.prevValue = value
+#                 previous_value = current_value
+#             else:
+#                 pass
 
 def ad_controller_resize_reset(*args):
     pm.floatSlider('Controller_Resize', edit=True, v=0.0)
@@ -1167,18 +1228,21 @@ def ad_checkbox_uncheck_all_channel(*args):
 
 def ad_channelbox_constraint_connection(*args):
     pm.columnLayout()
-    pm.checkBox('Point_Cons', label='Point Constraint', value=False, cc=partial(ad_connection_uncheck_translate_rotate_constraint,
-                                                                                ['Parent_Cons', 'Direct_Trans',
-                                                                                 'Parent'], ['Add_Pivot_Ctrl'], 'Point_Cons'))
-    pm.checkBox('Orient_Cons', label='Orient Constraint', value=False, cc=partial(ad_connection_uncheck_translate_rotate_constraint,
-                                                                                  ['Parent_Cons', 'Direct_Rot',
-                                                                                   'Parent'], ['Add_Pivot_Ctrl'], 'Orient_Cons'))
+    pm.checkBox('Point_Cons', label='Point Constraint', value=False,
+                cc=partial(ad_connection_uncheck_translate_rotate_constraint,
+                           ['Parent_Cons', 'Direct_Trans',
+                            'Parent'], ['Add_Pivot_Ctrl'], 'Point_Cons'))
+    pm.checkBox('Orient_Cons', label='Orient Constraint', value=False,
+                cc=partial(ad_connection_uncheck_translate_rotate_constraint,
+                           ['Parent_Cons', 'Direct_Rot',
+                            'Parent'], ['Add_Pivot_Ctrl'], 'Orient_Cons'))
     pm.checkBox('Scale_Cons', label='Scale Constraint', value=False, cc=partial(ad_connection_uncheck_scale_constraint,
                                                                                 ['Direct_Scl', 'Parent'], 'Scale_Cons'))
-    pm.checkBox('Parent_Cons', label='Parent Constraint', value=False, cc=partial(ad_connection_uncheck_parent_constraint,
-                                                                                  ['Point_Cons', 'Orient_Cons',
-                                                                                   'Direct_Trans', 'Direct_Rot',
-                                                                                   'Parent'],['Add_Pivot_Ctrl'], 'Parent_Cons'))
+    pm.checkBox('Parent_Cons', label='Parent Constraint', value=False,
+                cc=partial(ad_connection_uncheck_parent_constraint,
+                           ['Point_Cons', 'Orient_Cons',
+                            'Direct_Trans', 'Direct_Rot',
+                            'Parent'], ['Add_Pivot_Ctrl'], 'Parent_Cons'))
     pm.setParent(u=True)
 
 
@@ -1186,13 +1250,15 @@ def ad_channelbox_direct_connection(*args):
     pm.columnLayout()
     pm.checkBox('Direct_Trans', label='Direct Connect Translate', value=False,
                 cc=partial(ad_connection_uncheck_translate_rotate_constraint,
-                           ['Parent_Cons', 'Point_Cons', 'Parent'], ['Add_Pivot_Ctrl'],'Direct_Trans'))
-    pm.checkBox('Direct_Rot', label='Direct Connect Rotate', value=False, cc=partial(ad_connection_uncheck_translate_rotate_constraint,
-                                                                                     ['Parent_Cons', 'Orient_Cons',
-                                                                                      'Parent'], ['Add_Pivot_Ctrl'],'Direct_Rot'))
-    pm.checkBox('Direct_Scl', label='Direct Connect Scale', value=False, cc=partial(ad_connection_uncheck_scale_constraint,
-                                                                                    ['Scale_Cons', 'Parent'],
-                                                                                    'Direct_Scl'))
+                           ['Parent_Cons', 'Point_Cons', 'Parent'], ['Add_Pivot_Ctrl'], 'Direct_Trans'))
+    pm.checkBox('Direct_Rot', label='Direct Connect Rotate', value=False,
+                cc=partial(ad_connection_uncheck_translate_rotate_constraint,
+                           ['Parent_Cons', 'Orient_Cons',
+                            'Parent'], ['Add_Pivot_Ctrl'], 'Direct_Rot'))
+    pm.checkBox('Direct_Scl', label='Direct Connect Scale', value=False,
+                cc=partial(ad_connection_uncheck_scale_constraint,
+                           ['Scale_Cons', 'Parent'],
+                           'Direct_Scl'))
     pm.checkBox('Parent', label='Parent', value=False, cc=partial(ad_connection_uncheck_translate_rotate_constraint,
                                                                   ['Point_Cons', 'Orient_Cons', 'Direct_Trans',
                                                                    'Direct_Rot', 'Parent_Cons',
@@ -1207,14 +1273,16 @@ def ad_connection_uncheck_translate_rotate_constraint(target, pivot, object, val
         if checkbox_obj == 1:
             pm.checkBox(item, e=True, value=False)
     for pvt in pivot:
-            pm.checkBox(pvt, edit=True, enable=False)
-            pm.checkBox(pvt, edit=True, value=False)
+        pm.checkBox(pvt, edit=True, enable=False)
+        pm.checkBox(pvt, edit=True, value=False)
+
 
 def ad_connection_uncheck_scale_constraint(target, object, value, *args):
     checkbox_obj = pm.checkBox(object, q=True, value=value)
     for item in target:
         if checkbox_obj == 1:
             pm.checkBox(item, e=True, value=False)
+
 
 def ad_connection_uncheck_parent_constraint(target, pivot, object, value, *args):
     checkbox_obj = pm.checkBox(object, q=True, value=value)
@@ -1225,9 +1293,3 @@ def ad_connection_uncheck_parent_constraint(target, pivot, object, value, *args)
         pm.checkBox(pvt, edit=True, enable=value)
         if checkbox_obj == 0:
             pm.checkBox(pvt, e=True, value=False)
-
-
-
-
-
-
