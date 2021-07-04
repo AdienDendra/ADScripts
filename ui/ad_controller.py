@@ -483,7 +483,7 @@ def ad_create_list_connection_button(*args):
     if list_object:
         al.ad_list_connections_object(list_object)
     else:
-        om.MGlobal_displayError('Select minimum one object which has connection!')
+        om.MGlobal_displayError('Select the minimum one object which has a connection!')
 
 def ad_create_connection_button(*args):
     list_controller = pm.ls(sl=1)
@@ -1076,18 +1076,21 @@ def ad_controller_resize_slider(*args):
         om.MGlobal.displayWarning("No objects selected")
     else:
         for item in selection:
-            shape_node = pm.listRelatives(item, s=True)[0]
-            if pm.objectType(shape_node) == 'nurbsCurve':
-                # global previous_value
-                current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
-                # delta_value = (current_value - previous_value)
-                # deltaValue = (previous_value/currentValue)
-                # new_value = deltaValue
-                al.ad_lib_scaling_controller(current_value, item)
-                # self.prevValue = value
-                # previous_value = current_value
-            else:
-                pass
+            try:
+                shape_node = pm.listRelatives(item, s=True)[0]
+                if pm.objectType(shape_node) == 'nurbsCurve':
+                    # global previous_value
+                    current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
+                    # delta_value = (current_value - previous_value)
+                    # deltaValue = (previous_value/currentValue)
+                    # new_value = deltaValue
+                    al.ad_lib_scaling_controller(current_value, item)
+                    # self.prevValue = value
+                    # previous_value = current_value
+                else:
+                    om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
+            except:
+                om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
 
 
 # def ad_controller_resize_slider(*args):

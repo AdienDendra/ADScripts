@@ -1,5 +1,6 @@
 import maya.OpenMaya as om
 import pymel.core as pm
+
 import ad_controller_shp as ac
 
 
@@ -20,51 +21,71 @@ import ad_controller_shp as ac
 def ad_list_connections_object(object):
     # list connection
     if len(object) > 1:
-        om.MGlobal.displayError('Please select one object!')
+        om.MGlobal.displayError('Objects selected are multiple. Select a single object only!')
     else:
-        pass
+        select = []
+        for item in object:
+            source = pm.listConnections(object, p=True, d=False, s=True, c=True)
+            if source:
+                for node_source in source:
+                    # print node_source
+                    connection_source_object = node_source[1].split('.')[0]
+                    connection_source_transform = node_source[1].split('.')[1]
+                    node_source_type = pm.nodeType(connection_source_object)
 
-    select=[]
-    for item in object:
-        source = pm.listConnections(object, p=True, d=False, s=True, c=True)
-        if source:
-            for node_source in source:
-                connection_source_object = node_source[1].split('.')[0]
-                connection_source_transform = node_source[1].split('.')[1]
-                node_source_type = pm.nodeType(connection_source_object)
+                    connection_destination_object = node_source[0].split('.')[0]
+                    connection_destination_transform = node_source[0].split('.')[1]
 
-                connection_destination_object = node_source[0].split('.')[0]
-                connection_destination_transform = node_source[0].split('.')[1]
+                    if node_source_type == 'parentConstraint':
+                        object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix',
+                                                           d=0, s=1)
+                        om.MGlobal.displayInfo("------ >>> %s %s is connected to Parent Constraint from %s %s!" %
+                                               (item, connection_destination_transform, object_select[0],
+                                                connection_source_transform[10:]))
+                    elif node_source_type == 'pointConstraint':
+                        object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix',
+                                                           d=0, s=1)
+                        om.MGlobal.displayInfo("------ >>> %s %s is connected to Point Constraint from %s %s!" %
+                                               (item, connection_destination_transform, object_select[0],
+                                                connection_source_transform[10:]))
+                    elif node_source_type == 'orientConstraint':
+                        object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix',
+                                                           d=0, s=1)
+                        om.MGlobal.displayInfo("------ >>> %s %s is connected to Orient Constraint from %s %s!" %
+                                               (item, connection_destination_transform, object_select[0],
+                                                connection_source_transform[10:]))
+                    elif node_source_type == 'scaleConstraint':
+                        object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix',
+                                                           d=0, s=1)
+                        om.MGlobal.displayInfo("------ >>> %s %s is connected to Scale Constraint from %s %s!" %
+                                               (item, connection_destination_transform, object_select[0],
+                                                connection_source_transform[10:]))
+                    elif node_source_type == 'aimConstraint':
+                        object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix',
+                                                           d=0, s=1)
+                        om.MGlobal.displayInfo("------ >>> %s %s is connected to Aim Constraint from %s %s!" %
+                                               (item, connection_destination_transform, object_select[0],
+                                                connection_source_transform[10:]))
+                    elif node_source_type == 'transform':
+                        object_select = connection_source_object
+                        om.MGlobal.displayInfo("------ >>> %s %s is connected to Direct Connection from %s %s!" % (
+                            connection_destination_object,
+                            connection_destination_transform,
+                            connection_source_object,
+                            connection_source_transform))
+                    else:
+                        object_select = om.MGlobal.displayWarning(
+                            "Skip the target! The object %s %s doesn't have any constraint or direct connection! "
+                            "It's connected with another node. " %
+                            (connection_destination_object, connection_destination_transform))
 
-                if node_source_type == 'parentConstraint':
-                    object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix', d=0, s=1)
-                    om.MGlobal.displayInfo( "------ >>> %s attribute has parent constraint connection from '%s'!" % (item, source[0]))
-                elif node_source_type == 'pointConstraint':
-                    object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix', d=0, s=1)
-                    om.MGlobal.displayInfo( "------ >>> %s attribute has point constraint connection from '%s'!" % (item, source[0]))
-                elif node_source_type == 'orientConstraint':
-                    object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix', d=0, s=1)
-                    om.MGlobal.displayInfo( "------ >>> %s attribute has orient constraint connection from '%s'!" % (item, source[0]))
-                elif node_source_type == 'scaleConstraint':
-                    object_select = pm.listConnections(connection_source_object + '.target[0].targetParentMatrix', d=0, s=1)
-                    om.MGlobal.displayInfo( "------ >>> %s attribute has scale constraint connection from '%s'!" % (item, source[0]))
-                elif node_source_type == 'transform':
-                    object_select = connection_source_object
-                    om.MGlobal.displayInfo( "------ >>> %s %s attribute has connection from '%s' %s object!" % (
-                    connection_destination_object,
-                    connection_destination_transform,
-                    connection_source_object,
-                    connection_source_transform))
-                else:
-                    object_select = om.MGlobal.displayWarning( 'The object connection is not constraint or direct connection!')
-
-                select.append(object_select)
-            try:
-                pm.select(select)
-            except:
-                pass
-        else:
-            om.MGlobal.displayWarning('There is no connection to the transform object selected!')
+                    select.append(object_select)
+                try:
+                    pm.select(select)
+                except:
+                    pass
+            else:
+                om.MGlobal.displayWarning('There is no connection to the transform object selected!')
 
 
 def ad_lib_pivot_controller(controller, parent_constraint_node, suffix):
