@@ -67,7 +67,8 @@ def ad_show_ui():
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
                             pm.text('')
-                            pm.button("List_Connection", l="List Connection", c=partial(ad_create_list_connection_button))
+                            pm.button("List_Connection", l="List Connection",
+                                      c=partial(ad_create_list_connection_button))
                             pm.button('Create_Connection', l="Create Connection",
                                       c=partial(ad_create_connection_button))
 
@@ -230,31 +231,21 @@ def ad_show_ui():
             with pm.scrollLayout('Controller Utilities', p='tab'):
                 with pm.columnLayout('Controller_Utilities_Column', w=layout, co=('both', 1 * percentage), adj=1):
                     # pm.separator(h=5, st="in", w=90 * percentage)
-                    with pm.frameLayout(collapsable=True, l='Save/Load', mh=1):
-                        with pm.columnLayout():
-                            with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
-                                              columnAttach=[(1, 'both', 0.25 * percentage), ], ):
-                                pm.button('Select_All_AD_Controller', l="Select All AD Controller",
-                                          c=partial(ad_select_all_ad_controller_button), bgc=(0.0, 0.5, 0.0))
 
-                            with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage), cl2=('right', 'right'),
-                                              columnAttach=[(1, 'both', 0.15 * percentage),
-                                                            (2, 'both', 0.15 * percentage)]):
-                                pm.button("Save", l="Save", c='', bgc=(0.5, 0.0, 0.0))
-                                pm.button('Load', l="Load", c='', bgc=(0.0, 0.0, 0.5))
                     with pm.frameLayout(collapsable=True, l='Rotate', mh=1):
                         with pm.rowLayout(nc=2, cw2=(18 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('Rotate:')
                             with pm.rowLayout(nc=4, cw4=(
-                            10 * percentage, 21.5 * percentage, 21.5 * percentage, 21.5 * percentage),
+                                    10 * percentage, 21.5 * percentage, 21.5 * percentage, 21.5 * percentage),
                                               cl4=('center', 'center', 'center', 'center'),
                                               columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                             (3, 'both', 0 * percentage), (4, 'both', 0 * percentage)]):
-                                pm.intField('Degree_Rotate', value=90)
-                                pm.button("Rotate_X", l="X", c='', bgc=(0.5, 0, 0))
-                                pm.button("Rotate_Y", l="Y", c='', bgc=(0, 0.5, 0))
-                                pm.button('Rotate_Z', l="Z", c='', bgc=(0, 0, 0.5))
+                                pm.intField('Degree_Rotate', value=90, min=-360, max=360)
+
+                                pm.button("Rotate_X", l="X", c=partial(ad_rotation_x_button), bgc=(0.5, 0, 0))
+                                pm.button("Rotate_Y", l="Y", c=partial(ad_rotation_y_button), bgc=(0, 0.5, 0))
+                                pm.button('Rotate_Z', l="Z", c=partial(ad_rotation_z_button), bgc=(0, 0, 0.5))
                         # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Mirror', mh=1):
                         with pm.rowColumnLayout(nc=3,
@@ -271,21 +262,47 @@ def ad_show_ui():
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)], tx='L_',
-                                                  bc=partial(ad_adding_object_sel_to_textfield, 'From_Prefix'))
+                                                  bc=partial(ad_adding_object_sel_to_textfield_mirror, 'From_Prefix'))
                             pm.text(label='>>>')
                             pm.textFieldButtonGrp('To_Prefix', label='', cal=(1, "right"),
                                                   cw3=(10 * percentage, 13 * percentage, 7 * percentage),
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)], bl="<<", tx='R_',
-                                                  bc=partial(ad_adding_object_sel_to_textfield, 'To_Prefix'))
+                                                  bc=partial(ad_adding_object_sel_to_textfield_mirror, 'To_Prefix'))
                         with pm.rowLayout(nc=3, cw3=(31.6 * percentage, 31.6 * percentage, 31.6 * percentage),
                                           cl3=('center', 'center', 'center'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                         (3, 'both', 0 * percentage)]):
-                            pm.button("Mirror_X", l="X", c='', bgc=(0.5, 0, 0))
-                            pm.button("Mirror_Y", l="Y", c='', bgc=(0, 0.5, 0))
-                            pm.button('Mirror_Z', l="Z", c='', bgc=(0, 0, 0.5))
+                            pm.button("Mirror_X", l="X",
+                                      c=partial(ad_mirror_button, 'x', al.ad_matrix_rotation_x(180.0)), bgc=(0.5, 0, 0))
+                            pm.button("Mirror_Y", l="Y",
+                                      c=partial(ad_mirror_button, 'y', al.ad_matrix_rotation_y(180.0)), bgc=(0, 0.5, 0))
+                            pm.button('Mirror_Z', l="Z",
+                                      c=partial(ad_mirror_button, 'z', al.ad_matrix_rotation_z(180.0)), bgc=(0, 0, 0.5))
+
+                    with pm.frameLayout(collapsable=True, l='Save/Load', mh=1):
+                        with pm.columnLayout():
+                            with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
+                                              columnAttach=[(1, 'both', 0.25 * percentage), ], ):
+
+                                pm.textFieldButtonGrp('File_Location', label='File Location:', cal=(1, "right"),
+                                                      cw3=(18 * percentage, 68 * percentage, 10 * percentage),
+                                                      cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
+                                                      bl="Set",
+                                                      bc=partial(ad_path_folder_textfield, 'File_Location'))
+
+                            with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
+                                                  columnAttach=[(1, 'both', 0.25 * percentage), ], ):
+                                pm.button('Select_All_AD_Controller', l="Select All AD Controller",
+                                          c=partial(ad_select_all_ad_controller_button), bgc=(0.0, 0.5, 0.0))
+
+                            with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage), cl2=('right', 'right'),
+                                              columnAttach=[(1, 'both', 0.15 * percentage),
+                                                            (2, 'both', 0.15 * percentage)]):
+                                pm.button("Save", l="Save", c=partial(ad_save_file_xml), bgc=(0.5, 0.0, 0.0))
+                                pm.button('Load', l="Load", c='', bgc=(0.0, 0.0, 0.5))
+
                 pm.separator(h=10, st="in", w=layout)
                 with pm.rowLayout(nc=3, cw3=(38 * percentage, 36 * percentage, 24 * percentage),
                                   cl3=('left', 'center', 'right'),
@@ -300,6 +317,134 @@ def ad_show_ui():
     pm.showWindow()
 
 
+########################################################################################################################
+#                                           CONTROLLER UTILITIES TAB FUNCTION
+########################################################################################################################
+# def importImage( fileName, fileType):
+#    pm.saveFile()
+#    return 1
+
+
+def ad_set_dialog_button(*args):
+    filePath = pm.fileDialog2(dialogStyle=1, fileMode=3, caption='Set Folder Location')
+
+    # Check Path
+    if not filePath: return
+    filePath = filePath[0]
+
+    # Return Result
+    return filePath
+
+def ad_path_folder_textfield(text_input, *args):
+    pm.textFieldButtonGrp(text_input, e=True, tx=ad_set_dialog_button())
+
+def ad_save_file_xml(*args):
+    file_location = pm.textFieldButtonGrp('File_Location', q=True, tx=True)
+    scene_name = pm.sceneName().split('/')[-1]
+    splitting_with_ext = scene_name.split('.')
+    # xml_extension= scene_name.replace(splitting_with_ext[-1], 'xml')
+    # print xml_extension
+
+    if file_location:
+        al.ad_save_xml_file(file_location, splitting_with_ext[0])
+    else:
+        om.MGlobal.displayError('The file location path must be exists!')
+
+
+# # Recommended way:
+# def ad_set_dialog_save(*args):
+#     filename = pm.fileDialog2(fileMode=2, caption="Save XML")
+#     cmds.file(filename[0], i=True)
+#
+# def ad_set_dialog_saves(*args):
+#     dialog = "All Files (*.*)"
+#     pm.fileBrowserDialog(fileFilter=dialog, dialogStyle=1)
+#
+# # def ad_set_dialog(*args):
+# #     dialog = "All Files (*.*)"
+# #     pm.fileDialog2(fileMode=4, fileFilter=dialog, dialogStyle=1)
+
+def ad_from_prefix_text():
+    text_field = pm.textFieldButtonGrp('From_Prefix', q=True, tx=True)
+    return text_field
+
+
+def ad_to_prefix_text():
+    text_field = pm.textFieldButtonGrp('To_Prefix', q=True, tx=True)
+    return text_field
+
+
+def ad_mirror_button(key_position, matrix_rotation, *args):
+    selection = pm.ls(selection=True)
+    if not selection:
+        om.MGlobal.displayWarning("No objects selected")
+    else:
+        for item in selection:
+            item_string = str(item)
+            prefix_text_from_string = str(ad_from_prefix_text())
+            prefix_text_to_string = str(ad_to_prefix_text())
+
+            shape_node = pm.listRelatives(item, s=True)[0]
+            if pm.objectType(shape_node) == 'nurbsCurve':
+                if prefix_text_from_string in item_string:
+                    replacing = item_string.replace(prefix_text_from_string, prefix_text_to_string)
+                    if pm.objExists(replacing):
+                        al.ad_mirror_lib(object_origin=item, object_target=replacing,
+                                         key_position=key_position, matrix_rotations=matrix_rotation)
+                    else:
+                        om.MGlobal.displayWarning(
+                            "Skip the mirroring '%s'! There is no target curve object '%s' is the scene!" % (
+                            item_string, replacing))
+                else:
+                    om.MGlobal.displayWarning("Skip the mirroring '%s'! It doesn't have prefix '%s' name" % (
+                    item_string, prefix_text_from_string))
+
+            else:
+                om.MGlobal.displayWarning("Skip the mirroring '%s'! The object type is not curve." % item_string)
+
+def ad_rotation_x_button(*args):
+    ad_rotate_controller(al.ad_matrix_rotation_x(ad_degree_rotation_int_field()))
+
+def ad_rotation_y_button(*args):
+    ad_rotate_controller(al.ad_matrix_rotation_y(ad_degree_rotation_int_field()))
+
+def ad_rotation_z_button(*args):
+    ad_rotate_controller(al.ad_matrix_rotation_z(ad_degree_rotation_int_field()))
+
+def ad_degree_rotation_int_field():
+    value = pm.intField('Degree_Rotate', q=True, value=True)
+    return value
+
+def ad_rotate_controller(matrix_rotations):
+    selection = pm.ls(selection=True)
+    if not selection:
+        om.MGlobal.displayWarning("No objects selected")
+    else:
+        for item in selection:
+            try:
+                shape_node = pm.listRelatives(item, s=True)[0]
+                if pm.objectType(shape_node) == 'nurbsCurve':
+                    al.ad_rotation_object(object=item,
+                                          matrix_rotation_position=matrix_rotations)
+                else:
+                    om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
+            except:
+                om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
+
+
+def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
+    # elect and add object
+    select = pm.ls(sl=True, l=True, tr=True)
+    if len(select) == 1:
+        object_selection = select[0]
+        pm.textFieldButtonGrp(text_input, e=True, tx=object_selection, bl="<<")
+    else:
+        pm.error("please select one object or one prefix!")
+
+
+########################################################################################################################
+#                                           CREATE CONTROLLER TAB FUNCTION
+########################################################################################################################
 def ad_create_controller_button(*args):
     select = pm.ls(sl=1)
 
@@ -387,6 +532,8 @@ def ad_create_controller_button(*args):
 
     # controller hide and unlock
     ad_hide_and_lock(controller_shape_prefix_suffix[0], value=True)
+
+    pm.select(cl=1)
 
 
 def ad_create_group_button(*args):
@@ -478,12 +625,15 @@ def ad_child_ctrl(main_controller, main_name):
     al.ad_lib_ctrl_color(ctrl=controller_childs, color=16)
 
     return controller_childs
+
+
 def ad_create_list_connection_button(*args):
     list_object = pm.ls(sl=1)
     if list_object:
         al.ad_list_connections_object(list_object)
     else:
         om.MGlobal_displayError('Select the minimum one object which has a connection!')
+
 
 def ad_create_connection_button(*args):
     list_controller = pm.ls(sl=1)
@@ -1040,16 +1190,6 @@ def ad_tagging_untagging_button(tagging, *args):
                     al.ad_lib_untagging(item)
             else:
                 pass
-
-
-def ad_adding_object_sel_to_textfield(text_input, *args):
-    # elect and add object
-    select = pm.ls(sl=True, l=True, tr=True)
-    if len(select) == 1:
-        object_selection = select[0]
-        pm.textFieldButtonGrp(text_input, e=True, tx=object_selection, bl="<<")
-    else:
-        pm.error("please select one object!")
 
 
 # def ad_controller_resize_slider(*args):

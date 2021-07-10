@@ -2,7 +2,144 @@ import maya.OpenMaya as om
 import pymel.core as pm
 
 import ad_controller_shp as ac
+from xml.dom.minidom import Document
 
+
+def ad_save_xml_file(path, file_name):
+    doc = Document()
+
+    root_node = doc.createElement("nurbs_curve_ADController")
+    doc.appendChild(root_node)
+
+    # Selection:
+    selection = pm.ls(type="nurbsCurve", v=True)
+
+    # instance_query_shapes = pm.listRelatives(selection, s=1)
+    # if not pm.objectType(target_shapes[0]) == 'nurbsCurve':
+
+    for item in selection:
+        # create object element
+        object = item.getParent()
+        object_node = doc.createElement("object")
+        root_node.appendChild(object_node)
+
+        #object_translation = pm.xform(object, query=True, worldSpace=True, rotatePivot=True)
+
+        query_vector_cv = ad_lib_query_vector_cv(object)
+
+        # set attributes
+
+        object_node.setAttribute("name", str(object))
+        object_node.setAttribute("cv", str(query_vector_cv[0]))
+        object_node.setAttribute("vector", str(query_vector_cv[1]))
+
+        # object_node.setAttribute("translateY", str(object_translation[1]))
+        # object_node.setAttribute("translateZ", str(object_translation[2]))
+
+    xml_file = open("%s/%s_ADCtrl.xml" % (path, file_name), "w")
+    xml_file.write(doc.toprettyxml())
+    xml_file.close()
+
+    print
+    print doc.toprettyxml()
+
+def ad_lib_query_vector_cv(ctrl_shape):
+    object_curve = pm.PyNode(ctrl_shape)
+    position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+    vector_optimums=[]
+    cvs = []
+    for cv in object_curve.getShape().cv:
+        position_os = pm.xform(cv, q=True, os=True, t=True)
+        vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
+        vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+        #vector_multiply = vector_os * (current_value * 0.2)
+        vector_optimum = vector_os + vector_ws
+        cvs.append(cv)
+        vector_optimums.append(vector_optimum)
+
+    # print cvs
+    # print vector_optimums
+    return cvs, vector_optimums
+
+# def ad_get_data_field():
+#     # wfn = mc.file( q = True , sn = True )
+#     dialog = "text *.txt*"
+#     pm.fileDialog2(fileFilter=dialog, dialogStyle=1)
+#
+#     # daftarFile = os.listdir('./file_txt')
+#     # with open("Daftar_Email.txt", 'w') as fileEmail:
+#     #     fileEmail.close()
+#     #
+#     #     for filename in daftarFile:
+#     #         filepath = "./file_txt/{}".format(filename)
+#     #         if sys.version[0] == '2':
+#     #             text = open(filepath, 'rb').read().strip('\n').split()
+#     #         else:
+#     #             text = open(filepath, 'r', encoding='utf8', errors='ignore').read().strip('\n').split()
+#     #         indexAdd = text.index("Address:")
+#     #         email = text[indexAdd + 1]
+#     #         fileEmail.write(email + "\n")
+#     #         print(email)
+#     #     fileEmail.close()
+#
+#     #
+#     # wfn = pm.sceneName()
+#     # tmpAry = wfn.split('/')
+#     # tmpAry[-2] = 'data'
+#     #
+#     # dataFld = '/'.join(tmpAry[0:-1])
+#     #
+#     # if not os.path.isdir(dataFld):
+#     #     os.mkdir(dataFld)
+#     #
+#     #return dataFld
+# def test():
+#     pass
+#
+# def ad_export_ctrl():
+#     select_object = pm.ls(sl=True)
+#
+#     dialog = "Text *.txt*"
+#     name = pm.fileDialog2(fileFilter=dialog, dialogStyle=1)
+#     print name
+#     # pm.saveFile(rename=name)
+#     # pm.saveFile(save=True, type='.txt')
+#     # dataFld = ad_get_data_field()
+#
+#     # if not os.path.isdir(dataFld):
+#     #     os.mkdir(dataFld)
+#     for item in select_object:
+#
+#         # ctrls = pm.ls("*trl")
+#         fn = '%s/ctrlShape' % name
+#         ad_export_ctrl_shape(item, fn)
+#
+#     print('Exporting all control shape is done.')
+#
+# def ad_export_ctrl_shape(ctrls=[], fn=''):
+#     fid = open(fn, 'w')
+#
+#     ctrlDct = {}
+#
+#     for ctrl in ctrls:
+#
+#         shapes = pm.listRelatives(ctrl, s=True)
+#
+#         if type(shapes) == type([]) and pm.nodeType(shapes[0]) == 'nurbsCurve':
+#
+#             cv = pm.getAttr('%s.spans' % shapes[0]) + pm.getAttr('%s.degree' % shapes[0])
+#
+#             for ix in range(0, cv):
+#                 cvName = '%s.cv[%s]' % (shapes[0], str(ix))
+#                 ctrlDct[cvName] = pm.xform(cvName, q=True, os=True, t=True)
+#
+#             # Write color property
+#             if pm.getAttr('%s.overrideEnabled' % shapes[0]):
+#                 colVal = pm.getAttr('%s.overrideColor' % shapes[0])
+#                 ctrlDct[shapes[0]] = colVal
+#
+#     pickle.dump(ctrlDct, fid)
+#     fid.close()
 
 # def ad_scaling_controller(size_obj, ctrl_shape):
 #     # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
@@ -17,6 +154,94 @@ import ad_controller_shp as ac
 #     for i in obj:
 #         objs = i.split('.')[0]
 #         return objs
+
+# def ad_mirror_(object_origin, object_target, matrix_rotations):
+#     mirror = ad_mirror(object_origin, object_target)
+#     for vector_final, vector_position_origin, vtx_target in zip (mirror['vector_final'], mirror['vector_position_origin'], mirror['vtx_target']):
+#         matrix_rotation = (matrix_rotations * vector_final) - vector_position_origin
+#         pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx_target)
+# def ad_vector_position_origin(value_x, value_y, value_z):
+#     vector_position_origin =  pm.dt.Vector(value_x, value_y, value_z)
+#     return vector_position_origin
+
+def ad_mirror_lib(object_origin, object_target, key_position, matrix_rotations):
+    object_curve_origin = pm.PyNode(object_origin)
+    object_curve_target = pm.PyNode(object_target)
+
+    # position_origin = pm.xform(object_curve_origin, q=True, ws=True, t=True)
+
+    if len(object_curve_origin.getShape().cv) == len(object_curve_target.getShape().cv):
+        for vtx_origin, vtx_target in zip(object_curve_origin.getShape().cv, object_curve_target.getShape().cv):
+            position_ws = pm.xform(vtx_origin, q=True, ws=True, t=True)
+            vector_position_origin = ad_vector_pos_origin(object_curve_origin)[key_position]
+            vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+            vector_final = (vector_position_origin - vector_ws)
+            matrix_rotation = (matrix_rotations * vector_final) - vector_position_origin
+
+            pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx_target)
+
+    else:
+        om.MGlobal.displayWarning("Skip the mirroring '%s'! The object target '%s' is not same number of cv's." % (
+            object_curve_origin, object_curve_target))
+
+
+def ad_vector_pos_origin(object_curve_origin):
+    position_origin = pm.xform(object_curve_origin, q=True, ws=True, t=True)
+    vector_position_origin_x = pm.dt.Vector(position_origin[0], 0.0, 0.0)
+    vector_position_origin_y = pm.dt.Vector(0.0, position_origin[1], 0.0)
+    vector_position_origin_z = pm.dt.Vector(0.0, 0.0, position_origin[2])
+
+    return {'x': vector_position_origin_x,
+            'y': vector_position_origin_y,
+            'z': vector_position_origin_z}
+
+
+def ad_matrix_rotation_x(value):
+    value_float = float(value)
+    matrix = pm.dt.Matrix([1.0, 0.0, 0.0, 0.0,
+                           0.0, pm.dt.cos(pm.dt.radians(value_float)), -1 * (pm.dt.sin(pm.dt.radians(value_float))),
+                           0.0,
+                           0.0, pm.dt.sin(pm.dt.radians(value_float)), pm.dt.cos(pm.dt.radians(value_float)), 0.0,
+                           0.0, 0.0, 0.0, 1.0])
+    return matrix
+
+
+def ad_matrix_rotation_y(value):
+    value_float = float(value)
+    matrix = pm.dt.Matrix([pm.dt.cos(pm.dt.radians(value_float)), 0.0, pm.dt.sin(pm.dt.radians(value_float)), 0.0,
+                           0.0, 1.0, 0.0, 0.0,
+                           -1 * (pm.dt.sin(pm.dt.radians(value_float))), 0.0, pm.dt.cos(pm.dt.radians(value_float)),
+                           0.0,
+                           0.0, 0.0, 0.0, 1.0])
+    return matrix
+
+
+def ad_matrix_rotation_z(value):
+    value_float = float(value)
+    matrix = pm.dt.Matrix(
+        [pm.dt.cos(pm.dt.radians(value_float)), -1 * (pm.dt.sin(pm.dt.radians(value_float))), 0.0, 0.0,
+         pm.dt.sin(pm.dt.radians(value_float)), pm.dt.cos(pm.dt.radians(value_float)), 0.0, 0.0,
+         0.0, 0.0, 1.0, 0.0,
+         0.0, 0.0, 0.0, 1.0])
+    return matrix
+
+
+def ad_rotation_object(object, matrix_rotation_position):
+    object_curve = pm.PyNode(object)
+
+    position = pm.xform(object_curve, q=True, ws=True, t=True)
+
+    for vtx in object_curve.getShape().cv:
+        position_ws = pm.xform(vtx, q=True, ws=True, t=True)
+        vector_position = pm.dt.Vector(position[0], position[1], position[2])
+
+        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+        vector_final = (vector_position - vector_ws)
+
+        matrix_rotation = (matrix_rotation_position * vector_final) + vector_position
+
+        pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+
 
 def ad_list_connections_object(object):
     # list connection
@@ -402,69 +627,18 @@ def ad_lib_replacing_color(source, target):
 #     pm.xform(ctrl_shape, ws=True, m=hat_spot_mtx)
 
 def ad_lib_scaling_controller(current_value, ctrl_shape):
-    present = pm.PyNode(ctrl_shape)
-    for cv in present.getShape().cv:
+    object_curve = pm.PyNode(ctrl_shape)
+    position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+
+    for cv in object_curve.getShape().cv:
         position_os = pm.xform(cv, q=True, os=True, t=True)
-
+        vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
         vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
-        vector_optimum = vector_os * (current_value * 0.2)
-        vector_optimum = vector_os + vector_optimum
+        vector_multiply = vector_os * (current_value * 0.2)
+        vector_optimum = vector_os + vector_multiply + vector_ws
 
-        # vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-        #
-        # sub_vector = vector_ws - vector_os
-        # vector_optimum = ((vector_os * (current_value * 1)) + sub_vector)
+        pm.move((vector_optimum[0]), (vector_optimum[1]), (vector_optimum[2]), cv)
 
-        # def ad_scaling_controller(size_obj, ctrl_shape):
-        # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
-        #     points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-        #     for point in points:
-        # position = pm.pointPosition(cv, l=True)
-        #
-        pm.setAttr('%s.xValue' % cv, vector_optimum[0])
-        pm.setAttr('%s.yValue' % cv, vector_optimum[1])
-        pm.setAttr('%s.zValue' % cv, vector_optimum[2])
-
-        # pm.move(vector_os[0] + vector_optimum[0],
-        #         vector_os[1] + vector_optimum[1],
-        #         vector_os[2] + vector_optimum[2],
-        #         cv)
-
-
-# import pymel.core as pm
-# class Test(object):
-#     def __init__(self):
-#         self.WINDOW_NAME = 'test'
-#         self.prevValue = 0
-#     def UI(self):
-#         with pm.window(self.WINDOW_NAME, widthHeight=(200, 200))  as self.mainWindow:
-#             with pm.rowColumnLayout(nc=1):
-#                 self.slider = pm.floatSlider( w=500,min=-10, max=10, value=0, step=0.0001, changeCommand=pm.Callback(self.action) , dragCommand=pm.Callback(self.dragSlider))
-#     def action(self):
-#         print('action')
-#         pm.floatSlider(self.slider, edit=True, v=0)
-#         self.prevValue = 0
-#     def dragSlider(self):
-#         value = pm.floatSlider(self.slider, q=True, v=True)
-#         deltaValue = (value - self.prevValue)
-#         self.scaleAction( deltaValue )
-#         self.prevValue = value
-#     def scaleAction(self, deltaValue):
-#         objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
-#         for obj in objList:
-#             currentScale = obj.scaleX.get()
-#             obj.scale.set([currentScale+deltaValue, currentScale+deltaValue,currentScale+deltaValue])
-#             pm.makeIdentity(apply=True, s=1, n=0)
-# main = Test()
-# main.UI()
-
-#
-# def ad_scale_controller(delta_value):
-#     objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
-#     for obj in objList:
-#         currentScale = obj.scaleX.get()
-#         obj.scale.set([currentScale+delta_value, currentScale+delta_value, currentScale+delta_value])
-#         pm.makeIdentity(apply=True, s=1, n=0)
 
 def ad_lib_attr_value(channel):
     attr_lock_list = []
