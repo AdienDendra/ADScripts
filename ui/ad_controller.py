@@ -1,4 +1,5 @@
 import re
+import os
 from functools import partial
 from string import digits
 
@@ -290,7 +291,7 @@ def ad_show_ui():
                                                       cw3=(18 * percentage, 68 * percentage, 10 * percentage),
                                                       cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
                                                       bl="Set",
-                                                      bc=partial(ad_path_folder_textfield, 'File_Location'))
+                                                      bc=partial(ad_path_folder_textfield_button, 'File_Location'))
 
                             with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
                                                   columnAttach=[(1, 'both', 0.25 * percentage), ], ):
@@ -300,8 +301,8 @@ def ad_show_ui():
                             with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage), cl2=('right', 'right'),
                                               columnAttach=[(1, 'both', 0.15 * percentage),
                                                             (2, 'both', 0.15 * percentage)]):
-                                pm.button("Save", l="Save", c=partial(ad_save_file_xml), bgc=(0.5, 0.0, 0.0))
-                                pm.button('Load', l="Load", c='', bgc=(0.0, 0.0, 0.5))
+                                pm.button("Save", l="Save", c=partial(ad_save_ctrl_button), bgc=(0.5, 0.0, 0.0))
+                                pm.button('Load', l="Load", c=partial(ad_load_dialog), bgc=(0.0, 0.0, 0.5))
 
                 pm.separator(h=10, st="in", w=layout)
                 with pm.rowLayout(nc=3, cw3=(38 * percentage, 36 * percentage, 24 * percentage),
@@ -317,6 +318,7 @@ def ad_show_ui():
     pm.showWindow()
 
 
+
 ########################################################################################################################
 #                                           CONTROLLER UTILITIES TAB FUNCTION
 ########################################################################################################################
@@ -324,8 +326,19 @@ def ad_show_ui():
 #    pm.saveFile()
 #    return 1
 
+def ad_load_dialog(*args):
+    load = pm.fileDialog2(fileMode=1, fileFilter='*.txt', okc='Select File', dialogStyle=2,
+                          cap='Load Shape Controller')
 
-def ad_set_dialog_button(*args):
+    if load:
+        #print load[0]
+        al.ad_import_ctrl_bin(str(load[0]))
+        # al.ad_load_controller(str(load[0]))
+        #return load[0]
+    else:
+        pass
+
+def ad_set_dialog(*args):
     filePath = pm.fileDialog2(dialogStyle=1, fileMode=3, caption='Set Folder Location')
 
     # Check Path
@@ -335,10 +348,13 @@ def ad_set_dialog_button(*args):
     # Return Result
     return filePath
 
-def ad_path_folder_textfield(text_input, *args):
-    pm.textFieldButtonGrp(text_input, e=True, tx=ad_set_dialog_button())
+def ad_path_folder_load_button(text_input, *args):
+    pm.button(text_input, e=True, tx=ad_set_dialog())
 
-def ad_save_file_xml(*args):
+def ad_path_folder_textfield_button(text_input, *args):
+    pm.textFieldButtonGrp(text_input, e=True, tx=ad_set_dialog())
+
+def ad_save_ctrl_button(*args):
     file_location = pm.textFieldButtonGrp('File_Location', q=True, tx=True)
     scene_name = pm.sceneName().split('/')[-1]
     splitting_with_ext = scene_name.split('.')
@@ -346,9 +362,13 @@ def ad_save_file_xml(*args):
     # print xml_extension
 
     if file_location:
-        al.ad_save_xml_file(file_location, splitting_with_ext[0])
+        path_exist = os.path.isdir(file_location)
+        if path_exist:
+            al.ad_export_ctrl_bin(file_location, splitting_with_ext[0])
+        else:
+            om.MGlobal.displayError("Wrong '%s' path!" % file_location)
     else:
-        om.MGlobal.displayError('The file location path must be exists!')
+        om.MGlobal.displayError('The directory path must be exists!')
 
 
 # # Recommended way:

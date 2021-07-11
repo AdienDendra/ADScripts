@@ -1,53 +1,233 @@
 import maya.OpenMaya as om
+from xml.dom.minidom import Document
+from xml.dom.minidom import parse
+import pickle
+
 import pymel.core as pm
 
 import ad_controller_shp as ac
-from xml.dom.minidom import Document
 
-
-def ad_save_xml_file(path, file_name):
-    doc = Document()
-
-    root_node = doc.createElement("nurbs_curve_ADController")
-    doc.appendChild(root_node)
-
-    # Selection:
-    selection = pm.ls(type="nurbsCurve", v=True)
+def ad_export_ctrl_bin(path, file_name):
+    file = open("%s/%s_ADCtrl.txt" % (path, file_name), "wb")
+    selection = pm.ls(type="nurbsCurve")
 
     # instance_query_shapes = pm.listRelatives(selection, s=1)
     # if not pm.objectType(target_shapes[0]) == 'nurbsCurve':
-
+    data ={}
+    objects =[]
+    color =[]
+    cv=[]
+    vector=[]
     for item in selection:
+        print item
         # create object element
         object = item.getParent()
-        object_node = doc.createElement("object")
-        root_node.appendChild(object_node)
+        serial_data = ad_lib_query_controller(object)
+        # 'curve' : dfa, fddasf, dfada
 
-        #object_translation = pm.xform(object, query=True, worldSpace=True, rotatePivot=True)
+        # data.update(serial_data)
+        # objects.append(object)
+        # color.append(serial_data['color'])
+        # cv.append(serial_data['cv'])
+        # vector.append(serial_data['vector'])
 
-        query_vector_cv = ad_lib_query_vector_cv(object)
+        data['curve_%s' % object] = object
+        data['shape_%s' % object] = item
+        data['color_%s' % object] = serial_data['color']
+        data['cv_%s' % object] = serial_data['cv']
+        data['vector_%s' % object] = serial_data['vector']
 
-        # set attributes
+    # data ={'object' : objects,
+    #        'color': color,
+    #        'cv': cv,
+    #        'vector': vector}
+    print data
+    pickle.dump(data, file)
+    file.close()
 
-        object_node.setAttribute("name", str(object))
-        object_node.setAttribute("cv", str(query_vector_cv[0]))
-        object_node.setAttribute("vector", str(query_vector_cv[1]))
+def ad_import_ctrl_bin(path):
+    file = open(path, "rb")
+    load_file = pickle.load(file)
+    file.close()
 
-        # object_node.setAttribute("translateY", str(object_translation[1]))
-        # object_node.setAttribute("translateZ", str(object_translation[2]))
+    print load_file
+    # selection = pm.ls(sl=1)
+    # all_curves = pm.ls(type="nurbsCurve")
+    #
+    # if selection:
+    #     for item in selection:
+    #         print item
+    #         # if load_file['curve_%s' % item] == item:
+    #         #     curve_shape = load_file['shape_%s' % item]
+    #         #     color = load_file['color_%s' % item]
+    #         #     pm.setAttr(curve_shape+'.overrideEnabled', 1)
+    #         #     pm.setAttr(curve_shape+'.overrideColor', color[0])
+    #         # else:
+    #         #     om.MGlobal.displayWarning('Load file %s skipped! Due to name issue.' % item )
+    #
+    #         # print item
+    #         # print load_file['curve_%s' % item]
+    # else:
+    #     for item in all_curves:
+    #         print item
 
-    xml_file = open("%s/%s_ADCtrl.xml" % (path, file_name), "w")
-    xml_file.write(doc.toprettyxml())
-    xml_file.close()
 
-    print
-    print doc.toprettyxml()
+# def ad_save_xml_file(path, file_name):
+#     doc = Document()
+#
+#     root_node = doc.createElement("nurbs_curve_ADController")
+#     doc.appendChild(root_node)
+#
+#     # Selection:
+#     selection = pm.ls(type="nurbsCurve", v=True)
+#
+#     # instance_query_shapes = pm.listRelatives(selection, s=1)
+#     # if not pm.objectType(target_shapes[0]) == 'nurbsCurve':
+#
+#     for item in selection:
+#         # create object element
+#         object = item.getParent()
+#         object_node = doc.createElement("object")
+#         root_node.appendChild(object_node)
+#
+#         #object_translation = pm.xform(object, query=True, worldSpace=True, rotatePivot=True)
+#
+#         query_vector_cv = ad_lib_query_vector_cv(object)
+#
+#         # set attributes
+#
+#         object_node.setAttribute("name", str(object))
+#         object_node.setAttribute("cv", str(query_vector_cv[0]))
+#         object_node.setAttribute("vector", str(query_vector_cv[1]))
+#
+#         # object_node.setAttribute("translateY", str(object_translation[1]))
+#         # object_node.setAttribute("translateZ", str(object_translation[2]))
+#
+#     xml_file = open("%s/%s_ADCtrl.xml" % (path, file_name), "w")
+#     xml_file.write(doc.toprettyxml())
+#     xml_file.close()
+#
+#     print
+#     print doc.toprettyxml()
+#
+def ad_load_xml_file(path):
+    dom = parse(path)
+    # dom = parse("C:/Temp/test.xml")
 
-def ad_lib_query_vector_cv(ctrl_shape):
+    # visit every object node
+    names, cvs, vectors = [],[],[]
+    for node in dom.getElementsByTagName('object'):
+
+        # # method 1: using keys
+        # attrs = node.attributes.keys()
+        # for a in attrs:
+        #     pair = node.attributes[a]
+        #     print (str(pair.name) + " = " + str(pair.value))
+        # print
+
+        # method 2: by attribute name
+
+        name =  node.getAttribute("name")
+        cv =  node.getAttribute("cv")
+        vector = node.getAttribute("vector")
+        # print name
+        # print cv
+        # print vector
+
+
+
+        # print str(node.getAttribute("translateZ"))
+        names.append(name)
+        cvs.append(cv)
+        vectors.append(vector)
+
+    return {'name': names,
+            'cv': cvs,
+            'vector': vectors}
+
+def ad_load_controller(path):
+    names = ad_load_xml_file(path)['name']
+    cvs = ad_load_xml_file(path)['cv']
+    vectors = ad_load_xml_file(path)['vector']
+
+    # print name
+    # print cv
+    # print vectors
+    new_list = map(str, cvs)
+    print new_list
+    print(type(new_list))
+
+    # for cv in cvs:
+    #     print eval(cv)
+    # x = [cv.encode('UTF8') for cv in cvs]
+    # print x
+    # print(type(x))
+
+    # for cv in list(cvs):
+
+        # for cnv in list(cv):
+        #     print cnv
+
+    # for name, cv, vector in zip (names, cvs, vectors):
+    #     print name
+    #     print cv
+    #     print vector
+    #     for cvvf in cv:
+    #         print cvvf
+    #     # for c, vec in zip(cv, vector):
+    #     #     print c
+    #     #     print vec
+    #         #pm.move((vec[0]), (vec[1]), (vec[2]), c)
+    #
+    #     #load_vector = ad_lib_load_vector_cv(name, cv, vector)
+
+    #print load_vector
+
+# def ad_lib_load_vector_cv(ctrl_shape, cvs, vector_position):
+#     object_curve = pm.PyNode(ctrl_shape)
+#     # for cv in vector_position:
+#     #     print cv
+#
+#         # for c, vec in zip(cv, vector_pos):
+#         #     print c
+#         #     print vec
+#
+#             #pm.move(float(vec[0]), float(vec[1]), float(vec[2]), c)
+#     #
+#     # pm.setAttr(cv)
+#     # for cv in object_curve.getShape().cv:
+#     #     vector = pm.dt.Vector(vector_position)
+#     #     # position_ws = pm.xform(cv, q=True, ws=True, t=True)
+#     #     # position_os = pm.xform(cv, q=True, os=True, t=True)
+#     #     #
+#     #     # vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+#     #     # vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+#     #     #
+#     #     # final_position = vector_ws + (vector_os * value)
+#     #
+#     #     print pm.move((vector[0]), (vector[1]), (vector[2]), cv)
+#     # object_curve = pm.PyNode(ctrl_shape)
+#     # position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+#     # vector_optimums = []
+#     # cvs = []
+#     # for cv in object_curve.getShape().cv:
+#     #     position_os = pm.xform(cv, q=True, os=True, t=True)
+#     #     vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
+#     #     vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+#     #     # vector_multiply = vector_os * (current_value * 0.2)
+#     #     vector_optimum = vector_os + vector_ws
+#     #     cvs.append(cv)
+#     #     vector_optimums.append(vector_optimum)
+#     #
+#     # # print cvs
+#     # # print vector_optimums
+#     # return cvs, vector_optimums
+
+def ad_lib_query_controller(ctrl_shape):
     object_curve = pm.PyNode(ctrl_shape)
     position_object = pm.xform(object_curve, q=True, ws=True, t=True)
-    vector_optimums=[]
-    cvs = []
+
+    vector_optimums, cvs,color =[], [],[]
     for cv in object_curve.getShape().cv:
         position_os = pm.xform(cv, q=True, os=True, t=True)
         vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
@@ -57,112 +237,26 @@ def ad_lib_query_vector_cv(ctrl_shape):
         cvs.append(cv)
         vector_optimums.append(vector_optimum)
 
+    if pm.getAttr('%s.overrideEnabled' % ctrl_shape.getShape()):
+        color_number = pm.getAttr('%s.overrideColor' % ctrl_shape.getShape())
+        color.append(color_number)
+
     # print cvs
     # print vector_optimums
-    return cvs, vector_optimums
+    return {'cv' : cvs,
+            'vector' : vector_optimums,
+            'color': color}
 
-# def ad_get_data_field():
-#     # wfn = mc.file( q = True , sn = True )
-#     dialog = "text *.txt*"
-#     pm.fileDialog2(fileFilter=dialog, dialogStyle=1)
-#
-#     # daftarFile = os.listdir('./file_txt')
-#     # with open("Daftar_Email.txt", 'w') as fileEmail:
-#     #     fileEmail.close()
-#     #
-#     #     for filename in daftarFile:
-#     #         filepath = "./file_txt/{}".format(filename)
-#     #         if sys.version[0] == '2':
-#     #             text = open(filepath, 'rb').read().strip('\n').split()
-#     #         else:
-#     #             text = open(filepath, 'r', encoding='utf8', errors='ignore').read().strip('\n').split()
-#     #         indexAdd = text.index("Address:")
-#     #         email = text[indexAdd + 1]
-#     #         fileEmail.write(email + "\n")
-#     #         print(email)
-#     #     fileEmail.close()
-#
-#     #
-#     # wfn = pm.sceneName()
-#     # tmpAry = wfn.split('/')
-#     # tmpAry[-2] = 'data'
-#     #
-#     # dataFld = '/'.join(tmpAry[0:-1])
-#     #
-#     # if not os.path.isdir(dataFld):
-#     #     os.mkdir(dataFld)
-#     #
-#     #return dataFld
-# def test():
-#     pass
-#
-# def ad_export_ctrl():
-#     select_object = pm.ls(sl=True)
-#
-#     dialog = "Text *.txt*"
-#     name = pm.fileDialog2(fileFilter=dialog, dialogStyle=1)
-#     print name
-#     # pm.saveFile(rename=name)
-#     # pm.saveFile(save=True, type='.txt')
-#     # dataFld = ad_get_data_field()
-#
-#     # if not os.path.isdir(dataFld):
-#     #     os.mkdir(dataFld)
-#     for item in select_object:
-#
-#         # ctrls = pm.ls("*trl")
-#         fn = '%s/ctrlShape' % name
-#         ad_export_ctrl_shape(item, fn)
-#
-#     print('Exporting all control shape is done.')
-#
-# def ad_export_ctrl_shape(ctrls=[], fn=''):
-#     fid = open(fn, 'w')
-#
-#     ctrlDct = {}
-#
-#     for ctrl in ctrls:
-#
-#         shapes = pm.listRelatives(ctrl, s=True)
-#
-#         if type(shapes) == type([]) and pm.nodeType(shapes[0]) == 'nurbsCurve':
-#
-#             cv = pm.getAttr('%s.spans' % shapes[0]) + pm.getAttr('%s.degree' % shapes[0])
-#
-#             for ix in range(0, cv):
-#                 cvName = '%s.cv[%s]' % (shapes[0], str(ix))
-#                 ctrlDct[cvName] = pm.xform(cvName, q=True, os=True, t=True)
-#
-#             # Write color property
-#             if pm.getAttr('%s.overrideEnabled' % shapes[0]):
-#                 colVal = pm.getAttr('%s.overrideColor' % shapes[0])
-#                 ctrlDct[shapes[0]] = colVal
-#
-#     pickle.dump(ctrlDct, fid)
-#     fid.close()
 
-# def ad_scaling_controller(size_obj, ctrl_shape):
-#     # shape_node = pm.listRelatives(ctrl_shape, s=True)[0]
-#     points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-#     for point in points:
-#         position = pm.pointPosition(point, l=True)
+# def ad_lib_query_vector(ctrl_shape):
+#     x = ad_lib_query_controller(ctrl_shape)
+#     z=[]
+#     for item in x[0]:
+#         item = item
+#         z.append(item)
 #
-#         pm.setAttr('%s.xValue' % point, position[0]*size_obj )
-#         pm.setAttr('%s.yValue' % point, position[1]*size_obj )
-#         pm.setAttr('%s.zValue' % point, position[2]*size_obj )
-# def ad_name_query_shape(obj):
-#     for i in obj:
-#         objs = i.split('.')[0]
-#         return objs
+#     print z
 
-# def ad_mirror_(object_origin, object_target, matrix_rotations):
-#     mirror = ad_mirror(object_origin, object_target)
-#     for vector_final, vector_position_origin, vtx_target in zip (mirror['vector_final'], mirror['vector_position_origin'], mirror['vtx_target']):
-#         matrix_rotation = (matrix_rotations * vector_final) - vector_position_origin
-#         pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx_target)
-# def ad_vector_position_origin(value_x, value_y, value_z):
-#     vector_position_origin =  pm.dt.Vector(value_x, value_y, value_z)
-#     return vector_position_origin
 
 def ad_mirror_lib(object_origin, object_target, key_position, matrix_rotations):
     object_curve_origin = pm.PyNode(object_origin)
@@ -629,15 +723,56 @@ def ad_lib_replacing_color(source, target):
 def ad_lib_scaling_controller(current_value, ctrl_shape):
     object_curve = pm.PyNode(ctrl_shape)
     position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+    # rotation_object = pm.xform(object_curve, q=True, ws=True, ro=True)
+    # print rotation_object
+    #rotation = object_curve.getRotation()
+    # print rotation_x
+    # rotate_matrix_x_0 = ad_matrix_rotation_x(rotation_x[0])
+    # rotate_matrix_y_0 = ad_matrix_rotation_x(rotation_x[0])
+    # rotate_matrix_z_0 = ad_matrix_rotation_x(rotation_x[0])
 
     for cv in object_curve.getShape().cv:
+        position_ws = pm.xform(cv, q=True, ws=True, t=True)
         position_os = pm.xform(cv, q=True, os=True, t=True)
-        vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
+        #vector_position_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
+        # vector_ro = pm.dt.Vector(rotation_object[0], rotation_object[1], rotation_object[2])
+        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
-        vector_multiply = vector_os * (current_value * 0.2)
-        vector_optimum = vector_os + vector_multiply + vector_ws
+        # print 'vector pos:', vector_position_ws
+        # print 'vector ws:', vector_ws
+        # print 'vector os:', vector_os
+        # vex = vector_ws - vector_os
+        # print 'vector os-ws:', vex
+        final_position = vector_ws + (vector_os * (current_value * 0.2))
+        # add = vector_position_ws - (vex)
+        # print 'vector pos -(os-ws):', add
+        # vexcv = vector_ws + add
 
-        pm.move((vector_optimum[0]), (vector_optimum[1]), (vector_optimum[2]), cv)
+        # print 'vector ws -(os-ws):', add
+        # print 'vector multiply:', vector_multiply
+        # vector_optimum = vector_os + vector_multiply + vector_position_ws
+        # vector_optimum = vector_ws + vector_multiply)
+        # print 'vector vec ws + vec os*(current value*0.2):', vector_optimum
+        # pm.move((vector_optimum[0]), (vector_optimum[1]), (vector_optimum[2]), cv)
+
+    # pm.setAttr('%s.xValue' % cv, vector_multiply[0])
+        # pm.setAttr('%s.yValue' % cv, vector_multiply[1])
+        # pm.setAttr('%s.zValue' % cv, vector_multiply[2])
+
+        #pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
+
+def scaling_object(value, object):
+    object_curve = pm.PyNode(object)
+    for cv in object_curve.getShape().cv:
+        position_ws = pm.xform(cv, q=True, ws=True, t=True)
+        position_os = pm.xform(cv, q=True, os=True, t=True)
+
+        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+        vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+
+        final_position = vector_ws + (vector_os * value)
+
+        pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
 
 
 def ad_lib_attr_value(channel):
