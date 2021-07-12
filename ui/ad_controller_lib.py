@@ -1,75 +1,77 @@
 import maya.OpenMaya as om
+import pymel.core as pm
+import ad_controller_shp as ac
+import json
+from collections import OrderedDict
+
 from xml.dom.minidom import Document
 from xml.dom.minidom import parse
 import pickle
 
-import pymel.core as pm
 
-import ad_controller_shp as ac
-
-def ad_export_ctrl_bin(path, file_name):
-    file = open("%s/%s_ADCtrl.txt" % (path, file_name), "wb")
-    selection = pm.ls(type="nurbsCurve")
-
-    # instance_query_shapes = pm.listRelatives(selection, s=1)
-    # if not pm.objectType(target_shapes[0]) == 'nurbsCurve':
-    data ={}
-    objects =[]
-    color =[]
-    cv=[]
-    vector=[]
-    for item in selection:
-        print item
-        # create object element
-        object = item.getParent()
-        serial_data = ad_lib_query_controller(object)
-        # 'curve' : dfa, fddasf, dfada
-
-        # data.update(serial_data)
-        # objects.append(object)
-        # color.append(serial_data['color'])
-        # cv.append(serial_data['cv'])
-        # vector.append(serial_data['vector'])
-
-        data['curve_%s' % object] = object
-        data['shape_%s' % object] = item
-        data['color_%s' % object] = serial_data['color']
-        data['cv_%s' % object] = serial_data['cv']
-        data['vector_%s' % object] = serial_data['vector']
-
-    # data ={'object' : objects,
-    #        'color': color,
-    #        'cv': cv,
-    #        'vector': vector}
-    print data
-    pickle.dump(data, file)
-    file.close()
-
-def ad_import_ctrl_bin(path):
-    file = open(path, "rb")
-    load_file = pickle.load(file)
-    file.close()
-
-    print load_file
-    # selection = pm.ls(sl=1)
-    # all_curves = pm.ls(type="nurbsCurve")
-    #
-    # if selection:
-    #     for item in selection:
-    #         print item
-    #         # if load_file['curve_%s' % item] == item:
-    #         #     curve_shape = load_file['shape_%s' % item]
-    #         #     color = load_file['color_%s' % item]
-    #         #     pm.setAttr(curve_shape+'.overrideEnabled', 1)
-    #         #     pm.setAttr(curve_shape+'.overrideColor', color[0])
-    #         # else:
-    #         #     om.MGlobal.displayWarning('Load file %s skipped! Due to name issue.' % item )
-    #
-    #         # print item
-    #         # print load_file['curve_%s' % item]
-    # else:
-    #     for item in all_curves:
-    #         print item
+# def ad_export_ctrl_bin(path, file_name):
+#     file = open("%s/%s_ADCtrl.txt" % (path, file_name), "wb")
+#     selection = pm.ls(type="nurbsCurve")
+#
+#     # instance_query_shapes = pm.listRelatives(selection, s=1)
+#     # if not pm.objectType(target_shapes[0]) == 'nurbsCurve':
+#     data ={}
+#     objects =[]
+#     color =[]
+#     cv=[]
+#     vector=[]
+#     for item in selection:
+#         print item
+#         # create object element
+#         object = item.getParent()
+#         serial_data = ad_lib_query_controller(object)
+#         # 'curve' : dfa, fddasf, dfada
+#
+#         # data.update(serial_data)
+#         # objects.append(object)
+#         # color.append(serial_data['color'])
+#         # cv.append(serial_data['cv'])
+#         # vector.append(serial_data['vector'])
+#
+#         data['curve_%s' % object] = object
+#         data['shape_%s' % object] = item
+#         data['color_%s' % object] = serial_data['color']
+#         data['cv_%s' % object] = serial_data['cv']
+#         data['vector_%s' % object] = serial_data['vector']
+#
+#     # data ={'object' : objects,
+#     #        'color': color,
+#     #        'cv': cv,
+#     #        'vector': vector}
+#     print data
+#     pickle.dump(data, file)
+#     file.close()
+#
+# def ad_import_ctrl_bin(path):
+#     file = open(path, "rb")
+#     load_file = pickle.load(file)
+#     file.close()
+#
+#     print load_file
+#     # selection = pm.ls(sl=1)
+#     # all_curves = pm.ls(type="nurbsCurve")
+#     #
+#     # if selection:
+#     #     for item in selection:
+#     #         print item
+#     #         # if load_file['curve_%s' % item] == item:
+#     #         #     curve_shape = load_file['shape_%s' % item]
+#     #         #     color = load_file['color_%s' % item]
+#     #         #     pm.setAttr(curve_shape+'.overrideEnabled', 1)
+#     #         #     pm.setAttr(curve_shape+'.overrideColor', color[0])
+#     #         # else:
+#     #         #     om.MGlobal.displayWarning('Load file %s skipped! Due to name issue.' % item )
+#     #
+#     #         # print item
+#     #         # print load_file['curve_%s' % item]
+#     # else:
+#     #     for item in all_curves:
+#     #         print item
 
 
 # def ad_save_xml_file(path, file_name):
@@ -110,78 +112,78 @@ def ad_import_ctrl_bin(path):
 #     print
 #     print doc.toprettyxml()
 #
-def ad_load_xml_file(path):
-    dom = parse(path)
-    # dom = parse("C:/Temp/test.xml")
+# def ad_load_xml_file(path):
+#     dom = parse(path)
+#     # dom = parse("C:/Temp/test.xml")
+#
+#     # visit every object node
+#     names, cvs, vectors = [],[],[]
+#     for node in dom.getElementsByTagName('object'):
+#
+#         # # method 1: using keys
+#         # attrs = node.attributes.keys()
+#         # for a in attrs:
+#         #     pair = node.attributes[a]
+#         #     print (str(pair.name) + " = " + str(pair.value))
+#         # print
+#
+#         # method 2: by attribute name
+#
+#         name =  node.getAttribute("name")
+#         cv =  node.getAttribute("cv")
+#         vector = node.getAttribute("vector")
+#         # print name
+#         # print cv
+#         # print vector
+#
+#
+#
+#         # print str(node.getAttribute("translateZ"))
+#         names.append(name)
+#         cvs.append(cv)
+#         vectors.append(vector)
+#
+#     return {'name': names,
+#             'cv': cvs,
+#             'vector': vectors}
 
-    # visit every object node
-    names, cvs, vectors = [],[],[]
-    for node in dom.getElementsByTagName('object'):
-
-        # # method 1: using keys
-        # attrs = node.attributes.keys()
-        # for a in attrs:
-        #     pair = node.attributes[a]
-        #     print (str(pair.name) + " = " + str(pair.value))
-        # print
-
-        # method 2: by attribute name
-
-        name =  node.getAttribute("name")
-        cv =  node.getAttribute("cv")
-        vector = node.getAttribute("vector")
-        # print name
-        # print cv
-        # print vector
-
-
-
-        # print str(node.getAttribute("translateZ"))
-        names.append(name)
-        cvs.append(cv)
-        vectors.append(vector)
-
-    return {'name': names,
-            'cv': cvs,
-            'vector': vectors}
-
-def ad_load_controller(path):
-    names = ad_load_xml_file(path)['name']
-    cvs = ad_load_xml_file(path)['cv']
-    vectors = ad_load_xml_file(path)['vector']
-
-    # print name
-    # print cv
-    # print vectors
-    new_list = map(str, cvs)
-    print new_list
-    print(type(new_list))
-
-    # for cv in cvs:
-    #     print eval(cv)
-    # x = [cv.encode('UTF8') for cv in cvs]
-    # print x
-    # print(type(x))
-
-    # for cv in list(cvs):
-
-        # for cnv in list(cv):
-        #     print cnv
-
-    # for name, cv, vector in zip (names, cvs, vectors):
-    #     print name
-    #     print cv
-    #     print vector
-    #     for cvvf in cv:
-    #         print cvvf
-    #     # for c, vec in zip(cv, vector):
-    #     #     print c
-    #     #     print vec
-    #         #pm.move((vec[0]), (vec[1]), (vec[2]), c)
-    #
-    #     #load_vector = ad_lib_load_vector_cv(name, cv, vector)
-
-    #print load_vector
+# def ad_load_controller(path):
+#     names = ad_load_xml_file(path)['name']
+#     cvs = ad_load_xml_file(path)['cv']
+#     vectors = ad_load_xml_file(path)['vector']
+#
+#     # print name
+#     # print cv
+#     # print vectors
+#     new_list = map(str, cvs)
+#     print new_list
+#     print(type(new_list))
+#
+#     # for cv in cvs:
+#     #     print eval(cv)
+#     # x = [cv.encode('UTF8') for cv in cvs]
+#     # print x
+#     # print(type(x))
+#
+#     # for cv in list(cvs):
+#
+#         # for cnv in list(cv):
+#         #     print cnv
+#
+#     # for name, cv, vector in zip (names, cvs, vectors):
+#     #     print name
+#     #     print cv
+#     #     print vector
+#     #     for cvvf in cv:
+#     #         print cvvf
+#     #     # for c, vec in zip(cv, vector):
+#     #     #     print c
+#     #     #     print vec
+#     #         #pm.move((vec[0]), (vec[1]), (vec[2]), c)
+#     #
+#     #     #load_vector = ad_lib_load_vector_cv(name, cv, vector)
+#
+#     #print load_vector
 
 # def ad_lib_load_vector_cv(ctrl_shape, cvs, vector_position):
 #     object_curve = pm.PyNode(ctrl_shape)
@@ -223,29 +225,180 @@ def ad_load_controller(path):
 #     # # print vector_optimums
 #     # return cvs, vector_optimums
 
-def ad_lib_query_controller(ctrl_shape):
-    object_curve = pm.PyNode(ctrl_shape)
-    position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+def ad_lib_save_json_controller(file_name):
+    # list = pm.ls(type='nurbsCurve')
+    shape_dict = OrderedDict()
+    selection = pm.ls(sl=1)
+    list = []
+    if selection:
+        for item in selection:
+            try:
+                object= pm.objectType(item.getShape())
+            except Exception:
+                om.MGlobal.displayWarning("Object '%s' is skipped! Due to the types is not nurbsCurve." % (item))
+            else:
+                if object == 'nurbsCurve':
+                    list.append(item.getShape())
+    else:
+        list = pm.ls(type='nurbsCurve')
+    for item in list:
+        item_parent = item.getParent()
+        object_curve = pm.PyNode(item_parent)
+        cvs, xvalue, yvalue, zvalue, color =[], [], [], [], []
+        for cv in object_curve.getShape().cv:
+            x = pm.getAttr(cv + '.xValue')
+            y = pm.getAttr(cv + '.yValue')
+            z = pm.getAttr(cv + '.zValue')
+            xvalue.append(x)
+            yvalue.append(y)
+            zvalue.append(z)
+            cv = cv.split('.')[-1]
+            cvs.append(cv)
+        if pm.getAttr('%s.overrideEnabled' % item):
+            color_number = pm.getAttr('%s.overrideColor' % item)
+            color.append(color_number)
+        shape_dict[item_parent.nodeName()] = {'cv': cvs, 'xValue': xvalue, 'yValue': yvalue, 'zValue': zvalue, 'overrideColor':color}
 
-    vector_optimums, cvs,color =[], [],[]
-    for cv in object_curve.getShape().cv:
-        position_os = pm.xform(cv, q=True, os=True, t=True)
-        vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
-        vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
-        #vector_multiply = vector_os * (current_value * 0.2)
-        vector_optimum = vector_os + vector_ws
-        cvs.append(cv)
-        vector_optimums.append(vector_optimum)
+        #print(json.dumps(shapeDict, indent=4))
+    file = open("%s" % (file_name), "w")
+    json.dump(shape_dict, file, indent=4)
 
-    if pm.getAttr('%s.overrideEnabled' % ctrl_shape.getShape()):
-        color_number = pm.getAttr('%s.overrideColor' % ctrl_shape.getShape())
-        color.append(color_number)
 
-    # print cvs
-    # print vector_optimums
-    return {'cv' : cvs,
-            'vector' : vector_optimums,
-            'color': color}
+def ad_lib_load_json_controller(file_name):
+    file = open("%s" % (file_name))
+    shape_dict = json.load(file)
+    keys = shape_dict.keys()
+    select = pm.ls(sl=1)
+    scene = pm.ls(type='nurbsCurve')
+    list = []
+    if select:
+        for item in select:
+            if item in keys:
+                list.append(item)
+            else:
+                om.MGlobal.displayWarning(
+                    "Object '%s' is skipped! Due to there is no saving curve in library." % (item))
+    else:
+        for item in scene:
+            item = item.getParent()
+            if item in keys:
+                list.append(item)
+            else:
+                om.MGlobal.displayWarning(
+                    "Object '%s' is skipped! Due to there is no saving curve in library." % (item))
+
+    for name in list:
+        name = name.nodeName()
+        value = shape_dict.get(name)
+        name = pm.PyNode(name)
+        shape_name = name.getShape()
+        for cv, x, y, z in zip(value['cv'], value['xValue'], value['yValue'],
+                               value['zValue']):
+            pm.setAttr('%s.%s.xValue' % (shape_name, cv), x)
+            pm.setAttr('%s.%s.yValue' % (shape_name, cv), y)
+            pm.setAttr('%s.%s.zValue' % (shape_name, cv), z)
+
+        for color in value['overrideColor']:
+            pm.setAttr('%s.overrideColor' % shape_name, color)
+
+# def ad_load_json_controller(file_name):
+#     file = open("%s" % (file_name))
+#     shape_dict = json.load(file)
+#     keys = shape_dict.keys()
+#     select = pm.ls(sl=1)
+#     list = []
+#     if select:
+#         for item in select:
+#             if item in keys:
+#                 list.append(item)
+#             else:
+#                 om.MGlobal.displayWarning(
+#                     "Object '%s' is skipped! Due to there is no saving curve in library." % (item))
+#
+#     for name in list:
+#         name = name.nodeName()
+#         value = shape_dict.get(name)
+#         name = pm.PyNode(name)
+#         shape_name = name.getShape()
+#         for cv, x, y, z in zip(value['cv'], value['xValue'], value['yValue'],
+#                                value['zValue']):
+#             pm.setAttr('%s.%s.xValue' % (shape_name, cv), x)
+#             pm.setAttr('%s.%s.yValue' % (shape_name, cv), y)
+#             pm.setAttr('%s.%s.zValue' % (shape_name, cv), z)
+#
+#         for color in value['overrideColor']:
+#             pm.setAttr('%s.overrideColor' % shape_name, color)
+
+# def ad_save_x_json_controller(file_name):
+#     list = pm.ls(type='nurbsCurve')
+#     shape_dict = OrderedDict()
+#     for item in list:
+#         item_parent = item.getParent()
+#         object_curve = pm.PyNode(item_parent)
+#         # cvs, xvalue, yvalue, zvalue, color =[], [], [], [], []
+#
+#         if pm.getAttr('%s.overrideEnabled' % item):
+#             color_number = pm.getAttr('%s.overrideColor' % item)
+#             # color.append(color_number)
+#             shape_dict[item.nodeName()] = {'overrideColor': color_number}
+#
+#         for cv in object_curve.getShape().cv:
+#             x = pm.getAttr(cv + '.xValue')
+#             y = pm.getAttr(cv + '.yValue')
+#             z = pm.getAttr(cv + '.zValue')
+#             # xvalue.append(x)
+#             # yvalue.append(y)
+#             # zvalue.append(z)
+#             # cv = cv.split('.')[-1]
+#             # cvs.append(cv)
+#             cv = str(cv)
+#             shape_dict[cv] = {'xValue': x, 'yValue': y, 'zValue': z}
+#
+#         #print(json.dumps(shapeDict, indent=4))
+#     file = open("%s" % (file_name), "w")
+#     json.dump(shape_dict, file, indent=4)
+
+# def ad_loadc_json_controller(file_name):
+#     file = open("%s" % (file_name))
+#     shape_dict = json.load(file)
+#     for name, value in shape_dict.iteritems():
+#         name = pm.PyNode(name)
+#         shape_name = name.getShape()
+#         # pm.setAttr(shape_name+'.xValue',
+#         print name, value
+#         for color, cv, x, y, z in zip(value['cv'], value['overrideColor'], value['xValue'], value['yValue'],
+#                                       value['zValue']):
+#             pm.setAttr(shape_name + '.{0}.xValue'.format(cv), x)
+#             pm.setAttr(shape_name + '.{0}.yValue'.format(cv), y)
+#             pm.setAttr(shape_name + '.{0}.zValue'.format(cv), z)
+
+        #print(json.dumps(shapeDict, indent=4))
+    # file = open("%s" % (file_name), "w")
+    # json.dump(shapeDict, file, indent=4)
+
+# def ad_lib_query_controller(ctrl_shape):
+#     object_curve = pm.PyNode(ctrl_shape)
+#     position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+#
+#     vector_optimums, cvs,color =[], [],[]
+#     for cv in object_curve.getShape().cv:
+#         position_os = pm.xform(cv, q=True, os=True, t=True)
+#         vector_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
+#         vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+#         #vector_multiply = vector_os * (current_value * 0.2)
+#         vector_optimum = vector_os + vector_ws
+#         cvs.append(cv)
+#         vector_optimums.append(vector_optimum)
+#
+#     if pm.getAttr('%s.overrideEnabled' % ctrl_shape.getShape()):
+#         color_number = pm.getAttr('%s.overrideColor' % ctrl_shape.getShape())
+#         color.append(color_number)
+#
+#     # print cvs
+#     # print vector_optimums
+#     return {'cv' : cvs,
+#             'vector' : vector_optimums,
+#             'color': color}
 
 
 # def ad_lib_query_vector(ctrl_shape):
@@ -258,7 +411,7 @@ def ad_lib_query_controller(ctrl_shape):
 #     print z
 
 
-def ad_mirror_lib(object_origin, object_target, key_position, matrix_rotations):
+def ad_lib_mirror_controller(object_origin, object_target, key_position, matrix_rotations):
     object_curve_origin = pm.PyNode(object_origin)
     object_curve_target = pm.PyNode(object_target)
 
@@ -267,7 +420,7 @@ def ad_mirror_lib(object_origin, object_target, key_position, matrix_rotations):
     if len(object_curve_origin.getShape().cv) == len(object_curve_target.getShape().cv):
         for vtx_origin, vtx_target in zip(object_curve_origin.getShape().cv, object_curve_target.getShape().cv):
             position_ws = pm.xform(vtx_origin, q=True, ws=True, t=True)
-            vector_position_origin = ad_vector_pos_origin(object_curve_origin)[key_position]
+            vector_position_origin = ad_lib_vector_pos_origin(object_curve_origin)[key_position]
             vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
             vector_final = (vector_position_origin - vector_ws)
             matrix_rotation = (matrix_rotations * vector_final) - vector_position_origin
@@ -279,7 +432,7 @@ def ad_mirror_lib(object_origin, object_target, key_position, matrix_rotations):
             object_curve_origin, object_curve_target))
 
 
-def ad_vector_pos_origin(object_curve_origin):
+def ad_lib_vector_pos_origin(object_curve_origin):
     position_origin = pm.xform(object_curve_origin, q=True, ws=True, t=True)
     vector_position_origin_x = pm.dt.Vector(position_origin[0], 0.0, 0.0)
     vector_position_origin_y = pm.dt.Vector(0.0, position_origin[1], 0.0)
@@ -290,7 +443,7 @@ def ad_vector_pos_origin(object_curve_origin):
             'z': vector_position_origin_z}
 
 
-def ad_matrix_rotation_x(value):
+def ad_lib_matrix_rotation_x(value):
     value_float = float(value)
     matrix = pm.dt.Matrix([1.0, 0.0, 0.0, 0.0,
                            0.0, pm.dt.cos(pm.dt.radians(value_float)), -1 * (pm.dt.sin(pm.dt.radians(value_float))),
@@ -300,7 +453,7 @@ def ad_matrix_rotation_x(value):
     return matrix
 
 
-def ad_matrix_rotation_y(value):
+def ad_lib_matrix_rotation_y(value):
     value_float = float(value)
     matrix = pm.dt.Matrix([pm.dt.cos(pm.dt.radians(value_float)), 0.0, pm.dt.sin(pm.dt.radians(value_float)), 0.0,
                            0.0, 1.0, 0.0, 0.0,
@@ -310,7 +463,7 @@ def ad_matrix_rotation_y(value):
     return matrix
 
 
-def ad_matrix_rotation_z(value):
+def ad_lib_matrix_rotation_z(value):
     value_float = float(value)
     matrix = pm.dt.Matrix(
         [pm.dt.cos(pm.dt.radians(value_float)), -1 * (pm.dt.sin(pm.dt.radians(value_float))), 0.0, 0.0,

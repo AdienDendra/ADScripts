@@ -1,5 +1,4 @@
 import re
-import os
 from functools import partial
 from string import digits
 
@@ -26,7 +25,7 @@ def ad_show_ui():
         if pm.window(shape_controller, exists=True):
             pm.deleteUI(shape_controller)
     with pm.window(adien_controller, title='AD Controller', width=layout, height=200):
-        with pm.tabLayout('tab', width=layout * 1.01, height=200):
+        with pm.tabLayout('tab', width=layout * 1.026, height=200):
             with pm.scrollLayout('Create Controller', p='tab'):
                 with pm.columnLayout('Create_Controller_Column', w=layout, co=('both', 1 * percentage), adj=1):
                     # ADDITIONAL
@@ -276,23 +275,14 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                         (3, 'both', 0 * percentage)]):
                             pm.button("Mirror_X", l="X",
-                                      c=partial(ad_mirror_button, 'x', al.ad_matrix_rotation_x(180.0)), bgc=(0.5, 0, 0))
+                                      c=partial(ad_mirror_button, 'x', al.ad_lib_matrix_rotation_x(180.0)), bgc=(0.5, 0, 0))
                             pm.button("Mirror_Y", l="Y",
-                                      c=partial(ad_mirror_button, 'y', al.ad_matrix_rotation_y(180.0)), bgc=(0, 0.5, 0))
+                                      c=partial(ad_mirror_button, 'y', al.ad_lib_matrix_rotation_y(180.0)), bgc=(0, 0.5, 0))
                             pm.button('Mirror_Z', l="Z",
-                                      c=partial(ad_mirror_button, 'z', al.ad_matrix_rotation_z(180.0)), bgc=(0, 0, 0.5))
+                                      c=partial(ad_mirror_button, 'z', al.ad_lib_matrix_rotation_z(180.0)), bgc=(0, 0, 0.5))
 
                     with pm.frameLayout(collapsable=True, l='Save/Load', mh=1):
                         with pm.columnLayout():
-                            with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
-                                              columnAttach=[(1, 'both', 0.25 * percentage), ], ):
-
-                                pm.textFieldButtonGrp('File_Location', label='File Location:', cal=(1, "right"),
-                                                      cw3=(18 * percentage, 68 * percentage, 10 * percentage),
-                                                      cat=[(1, 'right', 2), (2, 'both', 2), (3, 'left', 2)],
-                                                      bl="Set",
-                                                      bc=partial(ad_path_folder_textfield_button, 'File_Location'))
-
                             with pm.rowLayout(nc=1, cw=(1, 95 * percentage), cal=(1, 'right'),
                                                   columnAttach=[(1, 'both', 0.25 * percentage), ], ):
                                 pm.button('Select_All_AD_Controller', l="Select All AD Controller",
@@ -301,7 +291,7 @@ def ad_show_ui():
                             with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage), cl2=('right', 'right'),
                                               columnAttach=[(1, 'both', 0.15 * percentage),
                                                             (2, 'both', 0.15 * percentage)]):
-                                pm.button("Save", l="Save", c=partial(ad_save_ctrl_button), bgc=(0.5, 0.0, 0.0))
+                                pm.button("Save", l="Save", c=partial(ad_save_dialog), bgc=(0.5, 0.0, 0.0))
                                 pm.button('Load', l="Load", c=partial(ad_load_dialog), bgc=(0.0, 0.0, 0.5))
 
                 pm.separator(h=10, st="in", w=layout)
@@ -322,53 +312,68 @@ def ad_show_ui():
 ########################################################################################################################
 #                                           CONTROLLER UTILITIES TAB FUNCTION
 ########################################################################################################################
-# def importImage( fileName, fileType):
-#    pm.saveFile()
-#    return 1
-
 def ad_load_dialog(*args):
-    load = pm.fileDialog2(fileMode=1, fileFilter='*.txt', okc='Select File', dialogStyle=2,
-                          cap='Load Shape Controller')
+    load = pm.fileDialog2(fileMode=1, fileFilter='*.json', okc='Load', dialogStyle=2,
+                          cap='Load AD Controller Shape')
 
-    if load:
-        #print load[0]
-        al.ad_import_ctrl_bin(str(load[0]))
-        # al.ad_load_controller(str(load[0]))
-        #return load[0]
-    else:
-        pass
+    if not load: return
+    filePath = load[0]
 
-def ad_set_dialog(*args):
-    filePath = pm.fileDialog2(dialogStyle=1, fileMode=3, caption='Set Folder Location')
+    # export json file
+    al.ad_lib_load_json_controller(filePath)
 
-    # Check Path
-    if not filePath: return
-    filePath = filePath[0]
-
-    # Return Result
     return filePath
 
-def ad_path_folder_load_button(text_input, *args):
-    pm.button(text_input, e=True, tx=ad_set_dialog())
 
-def ad_path_folder_textfield_button(text_input, *args):
-    pm.textFieldButtonGrp(text_input, e=True, tx=ad_set_dialog())
+def ad_save_dialog(*args):
+    save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
+                          cap='Save AD Controller Shape')
+    # Check Path
+    if not save: return
+    filePath = save[0]
 
-def ad_save_ctrl_button(*args):
-    file_location = pm.textFieldButtonGrp('File_Location', q=True, tx=True)
-    scene_name = pm.sceneName().split('/')[-1]
-    splitting_with_ext = scene_name.split('.')
-    # xml_extension= scene_name.replace(splitting_with_ext[-1], 'xml')
-    # print xml_extension
+    # export json file
+    al.ad_lib_save_json_controller(filePath)
 
-    if file_location:
-        path_exist = os.path.isdir(file_location)
-        if path_exist:
-            al.ad_export_ctrl_bin(file_location, splitting_with_ext[0])
-        else:
-            om.MGlobal.displayError("Wrong '%s' path!" % file_location)
+    # Return Result
+    if pm.ls(sl=1):
+        om.MGlobal.displayInfo('---------------- Only controller shapes selected are exported!')
     else:
-        om.MGlobal.displayError('The directory path must be exists!')
+        om.MGlobal.displayInfo('---------------- All controller shapes in the scene are exported!')
+    return filePath
+
+# def ad_set_dialog(*args):
+#     filePath = pm.fileDialog2(dialogStyle=1, fileMode=3, caption='Set Folder Location')
+#
+#     # Check Path
+#     if not filePath: return
+#     filePath = filePath[0]
+#
+#     # Return Result
+#     print filePath
+#     return filePath
+#
+# def ad_path_folder_load_button(text_input, *args):
+#     pm.button(text_input, e=True, tx=ad_set_dialog())
+#
+# def ad_path_folder_textfield_button(text_input, *args):
+#     pm.textFieldButtonGrp(text_input, e=True, tx=ad_set_dialog())
+
+# def ad_save_ctrl_button(*args):
+#     file_location = pm.textFieldButtonGrp('File_Location', q=True, tx=True)
+#     scene_name = pm.sceneName().split('/')[-1]
+#     splitting_with_ext = scene_name.split('.')
+#     # xml_extension= scene_name.replace(splitting_with_ext[-1], 'xml')
+#     # print xml_extension
+#
+#     if file_location:
+#         path_exist = os.path.isdir(file_location)
+#         if path_exist:
+#             al.ad_export_ctrl_bin(file_location, splitting_with_ext[0])
+#         else:
+#             om.MGlobal.displayError("Wrong '%s' path!" % file_location)
+#     else:
+#         om.MGlobal.displayError('The directory path must be exists!')
 
 
 # # Recommended way:
@@ -409,8 +414,8 @@ def ad_mirror_button(key_position, matrix_rotation, *args):
                 if prefix_text_from_string in item_string:
                     replacing = item_string.replace(prefix_text_from_string, prefix_text_to_string)
                     if pm.objExists(replacing):
-                        al.ad_mirror_lib(object_origin=item, object_target=replacing,
-                                         key_position=key_position, matrix_rotations=matrix_rotation)
+                        al.ad_lib_mirror_controller(object_origin=item, object_target=replacing,
+                                                    key_position=key_position, matrix_rotations=matrix_rotation)
                     else:
                         om.MGlobal.displayWarning(
                             "Skip the mirroring '%s'! There is no target curve object '%s' is the scene!" % (
@@ -423,13 +428,13 @@ def ad_mirror_button(key_position, matrix_rotation, *args):
                 om.MGlobal.displayWarning("Skip the mirroring '%s'! The object type is not curve." % item_string)
 
 def ad_rotation_x_button(*args):
-    ad_rotate_controller(al.ad_matrix_rotation_x(ad_degree_rotation_int_field()))
+    ad_rotate_controller(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
 
 def ad_rotation_y_button(*args):
-    ad_rotate_controller(al.ad_matrix_rotation_y(ad_degree_rotation_int_field()))
+    ad_rotate_controller(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
 
 def ad_rotation_z_button(*args):
-    ad_rotate_controller(al.ad_matrix_rotation_z(ad_degree_rotation_int_field()))
+    ad_rotate_controller(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
 
 def ad_degree_rotation_int_field():
     value = pm.intField('Degree_Rotate', q=True, value=True)
@@ -1210,7 +1215,6 @@ def ad_tagging_untagging_button(tagging, *args):
                     al.ad_lib_untagging(item)
             else:
                 pass
-
 
 # def ad_controller_resize_slider(*args):
 #     selection = pm.ls(selection=True)
