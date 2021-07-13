@@ -275,11 +275,11 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                         (3, 'both', 0 * percentage)]):
                             pm.button("Mirror_X", l="X",
-                                      c=partial(ad_mirror_button, 'x', al.ad_lib_matrix_rotation_x(180.0)), bgc=(0.5, 0, 0))
+                                      c=partial(ad_mirror_button, 'x'), bgc=(0.5, 0, 0))
                             pm.button("Mirror_Y", l="Y",
-                                      c=partial(ad_mirror_button, 'y', al.ad_lib_matrix_rotation_y(180.0)), bgc=(0, 0.5, 0))
+                                      c=partial(ad_mirror_button, 'y'), bgc=(0, 0.5, 0))
                             pm.button('Mirror_Z', l="Z",
-                                      c=partial(ad_mirror_button, 'z', al.ad_lib_matrix_rotation_z(180.0)), bgc=(0, 0, 0.5))
+                                      c=partial(ad_mirror_button, 'z'), bgc=(0, 0, 0.5))
 
                     with pm.frameLayout(collapsable=True, l='Save/Load', mh=1):
                         with pm.columnLayout():
@@ -399,48 +399,79 @@ def ad_to_prefix_text():
     return text_field
 
 
-def ad_mirror_button(key_position, matrix_rotation, *args):
+def ad_mirror_button(key_position, *args):
     selection = pm.ls(selection=True)
     if not selection:
-        om.MGlobal.displayWarning("No objects selected")
+        om.MGlobal.displayWarning("No objects is selected!")
     else:
-        for item in selection:
-            item_string = str(item)
+        for select_obj in selection:
+
+            string_select = str(select_obj)
+
             prefix_text_from_string = str(ad_from_prefix_text())
             prefix_text_to_string = str(ad_to_prefix_text())
 
-            shape_node = pm.listRelatives(item, s=True)[0]
-            if pm.objectType(shape_node) == 'nurbsCurve':
-                if prefix_text_from_string in item_string:
-                    replacing = item_string.replace(prefix_text_from_string, prefix_text_to_string)
-                    if pm.objExists(replacing):
-                        al.ad_lib_mirror_controller(object_origin=item, object_target=replacing,
-                                                    key_position=key_position, matrix_rotations=matrix_rotation)
+            if pm.objectType(select_obj.getShape()) == 'nurbsCurve':
+                if prefix_text_from_string in string_select:
+                    get_target_name = string_select.replace(prefix_text_from_string, prefix_text_to_string)
+                    if pm.objExists(get_target_name):
+                        list_target =  pm.ls(get_target_name)
+                        for item_target in list_target:
+                            if len(item_target.getShape().cv) == len(select_obj.getShape().cv):
+                                al.ad_lib_mirror_controller(object_origin=select_obj, object_target=item_target,
+                                                            key_position=key_position)
+                                if len(list_target) > 1:
+                                    om.MGlobal.displayWarning(
+                                        "There is more than one '%s' with similar name!" % (item_target))
+                                else:
+                                    pass
+                            else:
+                                om.MGlobal.displayWarning(
+                                    "Skip the mirroring '%s'! The cv's '%s' number is not similar!" % (
+                                        select_obj, item_target))
+
                     else:
                         om.MGlobal.displayWarning(
-                            "Skip the mirroring '%s'! There is no target curve object '%s' is the scene!" % (
-                            item_string, replacing))
+                            "Skip the mirroring '%s'! There is no target curve object '%s' in the scene!" % (
+                                string_select, get_target_name))
                 else:
                     om.MGlobal.displayWarning("Skip the mirroring '%s'! It doesn't have prefix '%s' name" % (
-                    item_string, prefix_text_from_string))
+                        string_select, prefix_text_from_string))
 
             else:
-                om.MGlobal.displayWarning("Skip the mirroring '%s'! The object type is not curve." % item_string)
+                om.MGlobal.displayWarning("Skip the mirroring '%s'! The object type is not curve." % string_select)
 
 def ad_rotation_x_button(*args):
-    ad_rotate_controller(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
+    ad_rotate_controller(x = ad_degree_rotation_int_field(), y = 0.0, z=0.0)
+    matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
+    # ad_rotate_controller(matrix)
 
 def ad_rotation_y_button(*args):
-    ad_rotate_controller(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
+    ad_rotate_controller(x = 0.0, y = ad_degree_rotation_int_field(), z=0.0)
+    matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
+    # ad_rotate_controller(matrix)
+    # ad_rotate_controller(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
 
 def ad_rotation_z_button(*args):
-    ad_rotate_controller(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
+    ad_rotate_controller(x = 0.0, y = 0.0, z=ad_degree_rotation_int_field())
+    matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
+    # ad_rotate_controller(matrix)
+
+    # ad_rotate_controller(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
 
 def ad_degree_rotation_int_field():
     value = pm.intField('Degree_Rotate', q=True, value=True)
     return value
 
-def ad_rotate_controller(matrix_rotations):
+def ad_degree_matrix_object():
+    sel = pm.ls(sl=1)
+
+    for item in sel:
+
+        get_value = pm.getAttr(item + '.r')
+        return get_value[0], get_value[1], get_value[2]
+
+def ad_rotate_controller(x, y, z):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
@@ -448,14 +479,16 @@ def ad_rotate_controller(matrix_rotations):
         for item in selection:
             try:
                 shape_node = pm.listRelatives(item, s=True)[0]
-                if pm.objectType(shape_node) == 'nurbsCurve':
-                    al.ad_rotation_object(object=item,
-                                          matrix_rotation_position=matrix_rotations)
-                else:
-                    om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
             except:
                 om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
-
+            else:
+                if pm.objectType(shape_node) == 'nurbsCurve':
+                    al.ad_lib_rotation_controller(object=item, x=x, y=y, z=z)
+                    # al.ad_lib_rotation_controller(object=item,
+                    #                                     matrix_rotation_position=matrix_rotations,
+                    #                                     )
+                else:
+                    om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
 
 def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
     # elect and add object
@@ -514,7 +547,6 @@ def ad_create_controller_button(*args):
                 # add visibility to target
                 ad_visibility_target(object=controller_shape_prefix_suffix[0][0],
                                      target=target)
-
 
         # object mode
         else:
@@ -961,101 +993,101 @@ def ad_set_color(*args):
 def ad_controller_shape(size_ctrl, *args):
     control_shape = []
     if on_selector == 1:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 2:
-        control_shape = al.ad_lib_ctrl_shape(ac.LOCATOR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.LOCATOR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 3:
-        control_shape = al.ad_lib_ctrl_shape(ac.CUBE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CUBE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 4:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEHALF, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEHALF, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 5:
-        control_shape = al.ad_lib_ctrl_shape(ac.SQUARE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 6:
-        control_shape = al.ad_lib_ctrl_shape(ac.JOINT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.JOINT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 7:
-        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 8:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICKCIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICKCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 9:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSHALF, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSHALF, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 10:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 11:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICK2CIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICK2CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 12:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICKSQUARE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICKSQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 13:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICK2SQUARE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICK2SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 14:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICKSTAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STICKSTAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 15:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSARROW, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSARROW, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 16:
-        control_shape = al.ad_lib_ctrl_shape(ac.RECTANGLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.RECTANGLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 17:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 18:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DFLAT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DFLAT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 19:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 20:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2STRAIGHT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 21:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLAT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLAT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 22:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROWHEAD, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROWHEAD, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 23:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW90DEG, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW90DEG, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 24:
-        control_shape = al.ad_lib_ctrl_shape(ac.SQUAREPLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.SQUAREPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 25:
-        control_shape = al.ad_lib_ctrl_shape(ac.JOINTPLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.JOINTPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 26:
-        control_shape = al.ad_lib_ctrl_shape(ac.HAND, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.HAND, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 27:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROWCIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROWCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 28:
-        control_shape = al.ad_lib_ctrl_shape(ac.PLUS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 29:
-        control_shape = al.ad_lib_ctrl_shape(ac.PIVOT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PIVOT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 30:
-        control_shape = al.ad_lib_ctrl_shape(ac.KEYS, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.KEYS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 31:
-        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMIDCIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMIDCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 32:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4CIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4CIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 33:
-        control_shape = al.ad_lib_ctrl_shape(ac.EYES, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.EYES, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 34:
-        control_shape = al.ad_lib_ctrl_shape(ac.FOOTSTEP, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.FOOTSTEP, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 35:
-        control_shape = al.ad_lib_ctrl_shape(ac.HALF3DCIRCLE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.HALF3DCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 36:
-        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULECURVE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULECURVE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 37:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4STRAIGHT, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 38:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3D, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3D, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 39:
-        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMID, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMID, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 40:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DCIRCULAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 41:
-        control_shape = al.ad_lib_ctrl_shape(ac.CYLINDER, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.CYLINDER, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 42:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLATHALF, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLATHALF, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 43:
-        control_shape = al.ad_lib_ctrl_shape(ac.FLAG, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.FLAG, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 44:
-        control_shape = al.ad_lib_ctrl_shape(ac.WORLD, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.WORLD, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 45:
-        control_shape = al.ad_lib_ctrl_shape(ac.SETUP, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.SETUP, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 46:
-        control_shape = al.ad_lib_ctrl_shape(ac.STAR, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 47:
-        control_shape = al.ad_lib_ctrl_shape(ac.DIAMOND, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.DIAMOND, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 48:
-        control_shape = al.ad_lib_ctrl_shape(ac.STARSQUEEZE, size_ctrl=size_ctrl)
+        control_shape = al.ad_lib_ctrl_shape(ac.STARSQUEEZE, size_ctrl=size_ctrl, tag_number=on_selector)
     else:
         pass
     return control_shape

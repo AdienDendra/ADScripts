@@ -235,7 +235,7 @@ def ad_lib_save_json_controller(file_name):
             try:
                 object= pm.objectType(item.getShape())
             except Exception:
-                om.MGlobal.displayWarning("Object '%s' is skipped! Due to the types is not nurbsCurve." % (item))
+                om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
             else:
                 if object == 'nurbsCurve':
                     list.append(item.getShape())
@@ -259,7 +259,6 @@ def ad_lib_save_json_controller(file_name):
             color.append(color_number)
         shape_dict[item_parent.nodeName()] = {'cv': cvs, 'xValue': xvalue, 'yValue': yvalue, 'zValue': zvalue, 'overrideColor':color}
 
-        #print(json.dumps(shapeDict, indent=4))
     file = open("%s" % (file_name), "w")
     json.dump(shape_dict, file, indent=4)
 
@@ -277,7 +276,7 @@ def ad_lib_load_json_controller(file_name):
                 list.append(item)
             else:
                 om.MGlobal.displayWarning(
-                    "Object '%s' is skipped! Due to there is no saving curve in library." % (item))
+                    "Object '%s' is skipped! There is no saving curve in the library." % (item))
     else:
         for item in scene:
             item = item.getParent()
@@ -285,7 +284,7 @@ def ad_lib_load_json_controller(file_name):
                 list.append(item)
             else:
                 om.MGlobal.displayWarning(
-                    "Object '%s' is skipped! Due to there is no saving curve in library." % (item))
+                    "Object '%s' is skipped! There is no saving curve in the library." % (item))
 
     for name in list:
         name = name.nodeName()
@@ -411,37 +410,141 @@ def ad_lib_load_json_controller(file_name):
 #     print z
 
 
-def ad_lib_mirror_controller(object_origin, object_target, key_position, matrix_rotations):
+def ad_lib_mirror_controller(object_origin, object_target, key_position):
     object_curve_origin = pm.PyNode(object_origin)
     object_curve_target = pm.PyNode(object_target)
 
+    # if len(object_curve_origin.getShape().cv) == len(object_curve_target.getShape().cv):
+    for vtx_origin, vtx_target in zip(object_curve_origin.getShape().cv, object_curve_target.getShape().cv):
+        position_ws_vtx_origin = pm.xform(vtx_origin, q=True, ws=True, t=True)
+        vector_ws_vtx_origin = pm.dt.Vector(position_ws_vtx_origin[0], position_ws_vtx_origin[1], position_ws_vtx_origin[2])
+        vector_mirror = ad_lib_vector_reverse_position(vector_ws_vtx_origin[0], vector_ws_vtx_origin[1], vector_ws_vtx_origin[2])[key_position]
+
+        pm.move((vector_mirror[0]), (vector_mirror[1]), (vector_mirror[2]), vtx_target)
+
+# def ad_lib_rotation_controller(object, x, y, z):
+#     shape = object.getShape()
+#     points = pm.ls('%s.cv[0:*]' % shape)
+#     pm.rotate(points,(x, y, z), r=True, ocp=True, os=True, fo=True)
+
+# def ad_lib_rotation_controller(object, matrix_rotation_position):
+#     object_curve = pm.PyNode(object)
+#
+#     for vtx in object_curve.getShape().cv:
+#         split = vtx.split('.')[-1]
+#         # target_position = matrix_rotation_position
+#         # print ('ini target:', target_position)
+#         position_vtx = pm.xform(vtx, q=True, os=True, t=True)
+#         vector_ws_pos = pm.dt.Vector(position_vtx[0], position_vtx[1], position_vtx[2])
+#
+#         matrix_ws = pm.xform(vtx, q=True, ws=True, m=True)
+#         print (split, 'matrix', matrix_ws)
+#         print (split, 'xform', position_vtx)
+#         print (split, 'vector', vector_ws_pos)
+
+        # pm.xform(vtx, ws=True, m=matrix_ws)
+
+        # jumlah = target_position +  matrix_ws
+        # print ('ini jumlah:', jumlah)
+
+    #     # matrix_rotation =  matrix_rotation_position
+    #
+    #     hatspot_x = matrix_ws.__getitem__(0)
+    #     hatspot_y = matrix_ws.__getitem__(1)
+    #     hatspot_z = matrix_ws.__getitem__(2)
+    #     hatspot_position = matrix_ws.__getitem__(3)
+    #
+    #     hatspot_rot_x = matrix_rotation_position.__getitem__(0)
+    #     hatspot_rot_y = matrix_rotation_position.__getitem__(1)
+    #     hatspot_rot_z = matrix_rotation_position.__getitem__(2)
+    #     hatspot_rot_position = matrix_rotation_position.__getitem__(3)
+    #
+    #     # matrixes_x = hatspot_x + hatspot_rot_x
+    #     # matrixes_y = hatspot_y + hatspot_rot_y
+    #     # matrixes_z = hatspot_z + hatspot_rot_z
+    #     # matrixes_position = hatspot_position + hatspot_rot_position
+    #
+    #     matrixes_x = hatspot_rot_x
+    #     matrixes_y = hatspot_rot_y
+    #     matrixes_z = hatspot_rot_z
+    #     matrixes_position = hatspot_rot_position
+    #
+    #     # print hatspot_x
+    #     # print hatspot_y
+    #     # print hatspot_z
+    #     # print hatspot_position
+    #
+    #
+    # #     # replacing matrix value
+    #     matrix_ws.__setitem__(0, matrixes_x)
+    #     matrix_ws.__setitem__(1, matrixes_y)
+    #     matrix_ws.__setitem__(2, matrixes_z)
+    #     matrix_ws.__setitem__(3, matrixes_position)
+    # #
+    #     pm.xform(vtx, ws=True, m=matrix_ws)
+
+        # pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+# def ad_lib_rotation_controller_x(object, matrix_rotation_position):
+#     object_curve = pm.PyNode(object)
+#     position_ws = pm.xform(object_curve, q=True, ws=True, t=True)
+#     #rotation_ws = pm.xform(object_curve, q=True, ws=True, ro=True)
+#
+#     for vtx in object_curve.getShape().cv:
+#         position_vtx = pm.xform(vtx, q=True, ws=True, t=True)
+#         vector_ws_pos = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+#         #vector_ws_rot = pm.dt.Vector(rotation_ws[0], rotation_ws[1], rotation_ws[2])
+#         vector_ws_vtx = pm.dt.Vector(position_vtx[0], position_vtx[1], position_vtx[2])
+#         vector_pos_vtx = (vector_ws_pos - vector_ws_vtx)
+#         #vector_rot_vtx = (vector_ws_rot - vector_ws_vtx)
+#         x = pm.dt.Matrix(matrix_rotation_position)
+#         print x
+#         print vector_pos_vtx
+#         print x*vector_pos_vtx
+#         matrix_rotation = ((x * (vector_pos_vtx))) + (vector_ws_pos)
+#         # print matrix_rotation
+#         # matrix_rotation = ((matrix_rotation_position * vector_ws_vtx))
+#
+#         # pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+
+def ad_lib_rotation_controller_x(object, matrix_rotation_position):
+    object_curve = pm.PyNode(object)
+    position_ws = pm.xform(object_curve, q=True, ws=True, t=True)
+    #rotation_ws = pm.xform(object_curve, q=True, ws=True, ro=True)
+
+    for vtx in object_curve.getShape().cv:
+        position_vtx = pm.xform(vtx, q=True, ws=True, t=True)
+        vector_ws_pos = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+        #vector_ws_rot = pm.dt.Vector(rotation_ws[0], rotation_ws[1], rotation_ws[2])
+        vector_ws_vtx = pm.dt.Vector(position_vtx[0], position_vtx[1], position_vtx[2])
+        vector_pos_vtx = (vector_ws_pos - vector_ws_vtx)
+        #vector_rot_vtx = (vector_ws_rot - vector_ws_vtx)
+        x = pm.dt.Matrix(matrix_rotation_position)
+        print x
+        print vector_pos_vtx
+        print x*vector_pos_vtx
+        matrix_rotation = ((x * (vector_pos_vtx))) + (vector_ws_pos)
+        # print matrix_rotation
+        # matrix_rotation = ((matrix_rotation_position * vector_ws_vtx))
+
+        # pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+
+def ad_lib_vector_reverse_position(vector_origin_0, vector_origin_1, vector_origin_2):
     # position_origin = pm.xform(object_curve_origin, q=True, ws=True, t=True)
-
-    if len(object_curve_origin.getShape().cv) == len(object_curve_target.getShape().cv):
-        for vtx_origin, vtx_target in zip(object_curve_origin.getShape().cv, object_curve_target.getShape().cv):
-            position_ws = pm.xform(vtx_origin, q=True, ws=True, t=True)
-            vector_position_origin = ad_lib_vector_pos_origin(object_curve_origin)[key_position]
-            vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-            vector_final = (vector_position_origin - vector_ws)
-            matrix_rotation = (matrix_rotations * vector_final) - vector_position_origin
-
-            pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx_target)
-
-    else:
-        om.MGlobal.displayWarning("Skip the mirroring '%s'! The object target '%s' is not same number of cv's." % (
-            object_curve_origin, object_curve_target))
-
-
-def ad_lib_vector_pos_origin(object_curve_origin):
-    position_origin = pm.xform(object_curve_origin, q=True, ws=True, t=True)
-    vector_position_origin_x = pm.dt.Vector(position_origin[0], 0.0, 0.0)
-    vector_position_origin_y = pm.dt.Vector(0.0, position_origin[1], 0.0)
-    vector_position_origin_z = pm.dt.Vector(0.0, 0.0, position_origin[2])
+    vector_position_origin_x = pm.dt.Vector(vector_origin_0*-1.0, vector_origin_1, vector_origin_2)
+    vector_position_origin_y = pm.dt.Vector(vector_origin_0, vector_origin_1*-1.0, vector_origin_2)
+    vector_position_origin_z = pm.dt.Vector(vector_origin_0, vector_origin_1,vector_origin_2* -1.0)
 
     return {'x': vector_position_origin_x,
             'y': vector_position_origin_y,
             'z': vector_position_origin_z}
 
+def ad_lib_flaten_list(nested_list):
+    flat_list = []
+    for sub_list in nested_list:
+        for element in sub_list:
+            flat_list.append(element)
+
+    return flat_list
 
 def ad_lib_matrix_rotation_x(value):
     value_float = float(value)
@@ -471,24 +574,6 @@ def ad_lib_matrix_rotation_z(value):
          0.0, 0.0, 1.0, 0.0,
          0.0, 0.0, 0.0, 1.0])
     return matrix
-
-
-def ad_rotation_object(object, matrix_rotation_position):
-    object_curve = pm.PyNode(object)
-
-    position = pm.xform(object_curve, q=True, ws=True, t=True)
-
-    for vtx in object_curve.getShape().cv:
-        position_ws = pm.xform(vtx, q=True, ws=True, t=True)
-        vector_position = pm.dt.Vector(position[0], position[1], position[2])
-
-        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-        vector_final = (vector_position - vector_ws)
-
-        matrix_rotation = (matrix_rotation_position * vector_final) + vector_position
-
-        pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
-
 
 def ad_list_connections_object(object):
     # list connection
@@ -1002,14 +1087,19 @@ def ad_lib_ctrl_color(ctrl, color):
     return list_relatives
 
 
-def ad_lib_ctrl_shape(shape, size_ctrl):
+def ad_lib_ctrl_shape(shape, size_ctrl, tag_number):
     scale_shape = [[size_ctrl * i for i in j] for j in shape]
     create_curve = pm.curve(d=1, p=scale_shape)
+    ad_lib_tagging_controller_code(create_curve, tag_number)
     pm.addAttr(create_curve, ln='AD_Controller', at='bool')
     pm.setAttr(create_curve + '.AD_Controller', 1)
 
     return create_curve
 
+def ad_lib_tagging_controller_code(ctrl, tag_number):
+    #attributes = pm.attributeQuery('AD_Controller_Tag', n=ctrl, ex=True)
+    pm.addAttr(ctrl, ln='AD_Controller_Tag', at='long')
+    pm.setAttr(ctrl + '.AD_Controller_Tag', tag_number, l=True)
 
 def ad_lib_tagging(ctrl):
     attributes = pm.attributeQuery('AD_Controller', n=ctrl, ex=True)
