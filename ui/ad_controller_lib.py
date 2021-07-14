@@ -426,6 +426,30 @@ def ad_lib_mirror_controller(object_origin, object_target, key_position):
 #     shape = object.getShape()
 #     points = pm.ls('%s.cv[0:*]' % shape)
 #     pm.rotate(points,(x, y, z), r=True, ocp=True, os=True, fo=True)
+def ad_lib_average_position(vertices):
+    result = [0, 0, 0]
+    vertices = pm.PyNode(vertices)
+    for vtx in vertices.getShape().cv:
+        pos_tmp = pm.pointPosition(vtx)
+        result[0] += pos_tmp[0]
+        result[1] += pos_tmp[1]
+        result[2] += pos_tmp[2]
+
+    # geting amount of all vertices
+    vtxCount = len(vertices.getShape().cv)
+    # geting average of x y z values
+    result[0] /= vtxCount
+    result[1] /= vtxCount
+    result[2] /= vtxCount
+
+    return result[0], result[1], result[2]
+
+
+def ad_lib_rotation_controller(object, x, y, z):
+    shape = object.getShape()
+    points = pm.ls('%s.cv[0:*]' % shape)
+    pm.rotate(points, (x, y, z), r=True, p=ad_lib_average_position(object), os=True, fo=True)
+
 
 # def ad_lib_rotation_controller(object, matrix_rotation_position):
 #     object_curve = pm.PyNode(object)
@@ -484,6 +508,7 @@ def ad_lib_mirror_controller(object_origin, object_target, key_position):
     #     pm.xform(vtx, ws=True, m=matrix_ws)
 
         # pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+
 # def ad_lib_rotation_controller_x(object, matrix_rotation_position):
 #     object_curve = pm.PyNode(object)
 #     position_ws = pm.xform(object_curve, q=True, ws=True, t=True)
@@ -492,41 +517,23 @@ def ad_lib_mirror_controller(object_origin, object_target, key_position):
 #     for vtx in object_curve.getShape().cv:
 #         position_vtx = pm.xform(vtx, q=True, ws=True, t=True)
 #         vector_ws_pos = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-#         #vector_ws_rot = pm.dt.Vector(rotation_ws[0], rotation_ws[1], rotation_ws[2])
 #         vector_ws_vtx = pm.dt.Vector(position_vtx[0], position_vtx[1], position_vtx[2])
 #         vector_pos_vtx = (vector_ws_pos - vector_ws_vtx)
 #         #vector_rot_vtx = (vector_ws_rot - vector_ws_vtx)
-#         x = pm.dt.Matrix(matrix_rotation_position)
-#         print x
-#         print vector_pos_vtx
-#         print x*vector_pos_vtx
-#         matrix_rotation = ((x * (vector_pos_vtx))) + (vector_ws_pos)
-#         # print matrix_rotation
-#         # matrix_rotation = ((matrix_rotation_position * vector_ws_vtx))
+#         # x = pm.dt.Matrix(matrix_rotation_position)
+#         # print x
+#         # print vector_pos_vtx
+#         # print x*vector_pos_vtx
+#         # matrix_rotation = ((x * (vector_pos_vtx)))
+#         matrix_rotation = ((matrix_rotation_position * vector_pos_vtx)) + (vector_ws_pos)
 #
-#         # pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+#         pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
 
-def ad_lib_rotation_controller_x(object, matrix_rotation_position):
-    object_curve = pm.PyNode(object)
-    position_ws = pm.xform(object_curve, q=True, ws=True, t=True)
-    #rotation_ws = pm.xform(object_curve, q=True, ws=True, ro=True)
-
-    for vtx in object_curve.getShape().cv:
-        position_vtx = pm.xform(vtx, q=True, ws=True, t=True)
-        vector_ws_pos = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-        #vector_ws_rot = pm.dt.Vector(rotation_ws[0], rotation_ws[1], rotation_ws[2])
-        vector_ws_vtx = pm.dt.Vector(position_vtx[0], position_vtx[1], position_vtx[2])
-        vector_pos_vtx = (vector_ws_pos - vector_ws_vtx)
-        #vector_rot_vtx = (vector_ws_rot - vector_ws_vtx)
-        x = pm.dt.Matrix(matrix_rotation_position)
-        print x
-        print vector_pos_vtx
-        print x*vector_pos_vtx
-        matrix_rotation = ((x * (vector_pos_vtx))) + (vector_ws_pos)
-        # print matrix_rotation
-        # matrix_rotation = ((matrix_rotation_position * vector_ws_vtx))
-
-        # pm.move((matrix_rotation[0]), (matrix_rotation[1]), (matrix_rotation[2]), vtx)
+# def ad_lib_rotation_controller_matrix(object, matrix_rotation_position):
+#     object_curve = pm.PyNode(object)
+#
+#     for vtx in object_curve.getShape().cv:
+#         pm.xform(vtx, os=True, m=(matrix_rotation_position))
 
 def ad_lib_vector_reverse_position(vector_origin_0, vector_origin_1, vector_origin_2):
     # position_origin = pm.xform(object_curve_origin, q=True, ws=True, t=True)
@@ -538,13 +545,21 @@ def ad_lib_vector_reverse_position(vector_origin_0, vector_origin_1, vector_orig
             'y': vector_position_origin_y,
             'z': vector_position_origin_z}
 
-def ad_lib_flaten_list(nested_list):
-    flat_list = []
-    for sub_list in nested_list:
-        for element in sub_list:
-            flat_list.append(element)
+# def ad_lib_flaten_list(nested_list):
+#     flat_list = []
+#     for sub_list in nested_list:
+#         for element in sub_list:
+#             flat_list.append(element)
+#
+#     return flat_list
 
-    return flat_list
+def ad_lib_matrix_scale(value):
+    value_float = float(value)
+    matrix = pm.dt.Matrix([1.0+value_float, 0.0, 0.0, 0.0,
+                           0.0, 1.0+value_float, 0.0, 0.0,
+                           0.0, 0.0, 1.0+value_float, 0.0,
+                           0.0, 0.0, 0.0, 1.0])
+    return matrix
 
 def ad_lib_matrix_rotation_x(value):
     value_float = float(value)
@@ -926,10 +941,25 @@ def ad_lib_replacing_color(source, target):
                 om.MGlobal.displayWarning("Failed to override color: {0}".format(shape))
     return True
 
+# scale -r -p 34.041324cm 83.189589cm -76.327246cm 7.22059 7.22059 7.22059 ;
 
-# def ad_scaling_controllers(size_obj, ctrl_shape):
-#     points = mc.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
-#     mc.scale(size_obj, size_obj, size_obj, points, ocp=True, r=True)
+# def ad_lib_scaling_controller(object, size_obj):
+#     # shape = object.getShape()
+#     # points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+#
+#     # points = pm.ls('%s.cv[0:*]' % shape, fl=True)
+#     for point in object.getShape().cv:
+#         pos_tmp = pm.pointPosition(point)
+#         # print pos_tmp
+#         print pos_tmp[0]-(size_obj), pos_tmp[1]-(size_obj), pos_tmp[2]-(size_obj)
+#     # pm.scale(points, (x, y, z), r=True, p=ad_lib_average_position(object), os=True, fo=True)
+#         scale = pm.scale(pos_tmp[0]-(size_obj), pos_tmp[1]-(size_obj), pos_tmp[2]-(size_obj),
+#                  p=ad_lib_average_position(object), r=True)
+#         print scale
+
+# def ad_lib_scaling_controller_x(size_obj, ctrl_shape):
+#     points = pm.ls('%s.cv[0:*]' % ctrl_shape, fl=True)
+#     pm.scale(size_obj, size_obj, size_obj, points, p=True, r=True)
 
 # def ad_lib_scaling_controller(current_value, ctrl_shape):
 #     # hat = pm.PyNode("PartyHat")
@@ -958,59 +988,84 @@ def ad_lib_replacing_color(source, target):
 #     # set the hat position
 #     pm.xform(ctrl_shape, ws=True, m=hat_spot_mtx)
 
-def ad_lib_scaling_controller(current_value, ctrl_shape):
+def ad_lib_scaling_controller_x(ctrl_shape, current_value):
     object_curve = pm.PyNode(ctrl_shape)
-    position_object = pm.xform(object_curve, q=True, ws=True, t=True)
+    # position_object = pm.xform(object_curve, q=True, ws=True, t=True)
     # rotation_object = pm.xform(object_curve, q=True, ws=True, ro=True)
     # print rotation_object
-    #rotation = object_curve.getRotation()
+    # rotation = object_curve.getRotation()
     # print rotation_x
     # rotate_matrix_x_0 = ad_matrix_rotation_x(rotation_x[0])
     # rotate_matrix_y_0 = ad_matrix_rotation_x(rotation_x[0])
     # rotate_matrix_z_0 = ad_matrix_rotation_x(rotation_x[0])
 
     for cv in object_curve.getShape().cv:
-        position_ws = pm.xform(cv, q=True, ws=True, t=True)
-        position_os = pm.xform(cv, q=True, os=True, t=True)
-        #vector_position_ws = pm.dt.Vector(position_object[0], position_object[1], position_object[2])
+        # matrix_cv = pm.xform(cv, q=True, os=True, t=True)
+        # print matrix_cv
+        pm.xform(cv, os=True, m=(ad_lib_matrix_scale(current_value*0.1)))
+        # position_ws = pm.xform(cv, q=True, ws=True, t=True)
+        # position_os = pm.xform(cv, q=True, os=True, t=True)
+        # print position_os
+        # vector_position_ws = pm.dt.Vector(position_object[00], position_object[1], position_object[2])
         # vector_ro = pm.dt.Vector(rotation_object[0], rotation_object[1], rotation_object[2])
-        vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-        vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+        # vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
+        # vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
+        #
         # print 'vector pos:', vector_position_ws
         # print 'vector ws:', vector_ws
         # print 'vector os:', vector_os
         # vex = vector_ws - vector_os
         # print 'vector os-ws:', vex
-        final_position = vector_ws + (vector_os * (current_value * 0.2))
+        # final_position = vector_ws + (vector_os * (current_value * 0.2))
         # add = vector_position_ws - (vex)
         # print 'vector pos -(os-ws):', add
         # vexcv = vector_ws + add
-
+        #
         # print 'vector ws -(os-ws):', add
         # print 'vector multiply:', vector_multiply
         # vector_optimum = vector_os + vector_multiply + vector_position_ws
         # vector_optimum = vector_ws + vector_multiply)
         # print 'vector vec ws + vec os*(current value*0.2):', vector_optimum
         # pm.move((vector_optimum[0]), (vector_optimum[1]), (vector_optimum[2]), cv)
-
-    # pm.setAttr('%s.xValue' % cv, vector_multiply[0])
-        # pm.setAttr('%s.yValue' % cv, vector_multiply[1])
-        # pm.setAttr('%s.zValue' % cv, vector_multiply[2])
+        #
+        # pm.setAttr('%s.xValue' % cv, position_os[0]*(current_value))
+        # pm.setAttr('%s.yValue' % cv, position_os[1]*(current_value))
+        # pm.setAttr('%s.zValue' % cv, position_os[2]*(current_value))
 
         #pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
 
-def scaling_object(value, object):
+def ad_lib_scaling_controller(object, value):
     object_curve = pm.PyNode(object)
     for cv in object_curve.getShape().cv:
         position_ws = pm.xform(cv, q=True, ws=True, t=True)
         position_os = pm.xform(cv, q=True, os=True, t=True)
+        # point_position = pm.pointPosition(cv)
+        # print position_os
 
         vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
 
-        final_position = vector_ws + (vector_os * value)
+        # final_position = vector_ws + (vector_os * value)
+        final_position = vector_ws + (vector_os * value*0.1)
+        # final_position_x = ((position_os[0] * (value*0.1)))
+        # final_position_y = ((position_os[1] * (value*0.1)))
+        # final_position_z = ((position_os[2] * (value*0.1)))
 
-        pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
+        # print final_position_x
+        # print final_position_y
+        # print final_position_z
+
+        # print ad_lib_average_position(object)
+
+        # pm.scale((final_position_x, final_position_y, final_position_z),
+        #           r=True)
+
+        # print final_position
+        pm.setAttr('%s.xValue' % cv, final_position[0])
+        pm.setAttr('%s.yValue' % cv, final_position[1])
+        pm.setAttr('%s.zValue' % cv, final_position[2])
+        #
+        # pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
 
 
 def ad_lib_attr_value(channel):
@@ -1090,9 +1145,10 @@ def ad_lib_ctrl_color(ctrl, color):
 def ad_lib_ctrl_shape(shape, size_ctrl, tag_number):
     scale_shape = [[size_ctrl * i for i in j] for j in shape]
     create_curve = pm.curve(d=1, p=scale_shape)
-    ad_lib_tagging_controller_code(create_curve, tag_number)
     pm.addAttr(create_curve, ln='AD_Controller', at='bool')
     pm.setAttr(create_curve + '.AD_Controller', 1)
+    ad_lib_tagging_controller_code(create_curve, tag_number)
+
 
     return create_curve
 

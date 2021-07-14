@@ -115,7 +115,7 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0.5 * percentage),
                                                         (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
-                            pm.floatSlider('Controller_Resize', min=-1.0, value=0.0, max=1.0, step=0.0001,
+                            pm.floatSlider('Controller_Resize', min=-10.0, value=0.0, max=10.0, step=1.0,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset))
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
@@ -249,7 +249,7 @@ def ad_show_ui():
                         # pm.separator(h=5, st="in", w=90 * percentage)
                     with pm.frameLayout(collapsable=True, l='Mirror', mh=1):
                         with pm.rowColumnLayout(nc=3,
-                                                cw=[(1, 42 * percentage), (2, 11 * percentage), (3, 42 * percentage)],
+                                                cw=[(1, 42 * percentage), (2, 12 * percentage), (3, 42 * percentage)],
                                                 cal=[(1, 'center'), (2, 'center'), (3, 'center')],
                                                 columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                               (3, 'both', 0 * percentage)]):
@@ -263,7 +263,10 @@ def ad_show_ui():
                                                                 (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)], tx='L_',
                                                   bc=partial(ad_adding_object_sel_to_textfield_mirror, 'From_Prefix'))
-                            pm.text(label='>>>')
+
+                            pm.button("Swap", l="<<-->>",
+                                      c=partial(ad_swap_prefix))
+
                             pm.textFieldButtonGrp('To_Prefix', label='', cal=(1, "right"),
                                                   cw3=(10 * percentage, 13 * percentage, 7 * percentage),
                                                   columnAttach=[(1, 'both', 0 * percentage),
@@ -342,6 +345,16 @@ def ad_save_dialog(*args):
         om.MGlobal.displayInfo('---------------- All controller shapes in the scene are exported!')
     return filePath
 
+def ad_swap_prefix(*args):
+    from_prefix = pm.textFieldButtonGrp('From_Prefix', q=True, tx=True)
+    to_prefix = pm.textFieldButtonGrp('To_Prefix', q=True, tx=True)
+
+    from_prefix, to_prefix = to_prefix, from_prefix
+
+    pm.textFieldButtonGrp('From_Prefix', e=True, tx=from_prefix)
+    pm.textFieldButtonGrp('To_Prefix', e=True, tx=to_prefix)
+
+
 # def ad_set_dialog(*args):
 #     filePath = pm.fileDialog2(dialogStyle=1, fileMode=3, caption='Set Folder Location')
 #
@@ -405,18 +418,31 @@ def ad_mirror_button(key_position, *args):
         om.MGlobal.displayWarning("No objects is selected!")
     else:
         for select_obj in selection:
+            # get name object even though multiple object
+            name = select_obj.nodeName()
 
-            string_select = str(select_obj)
+            # conversion into string
+            string_select = str(name)
 
+            # get sting from the box fiel
             prefix_text_from_string = str(ad_from_prefix_text())
             prefix_text_to_string = str(ad_to_prefix_text())
 
+            # get shape object
             if pm.objectType(select_obj.getShape()) == 'nurbsCurve':
+
+                # condition text from box in object select
                 if prefix_text_from_string in string_select:
+                    # replace target name
                     get_target_name = string_select.replace(prefix_text_from_string, prefix_text_to_string)
+
+                    # check the object exists
                     if pm.objExists(get_target_name):
+
+                        # listing in case multiple object
                         list_target =  pm.ls(get_target_name)
                         for item_target in list_target:
+                            # check the length of cv's and match it
                             if len(item_target.getShape().cv) == len(select_obj.getShape().cv):
                                 al.ad_lib_mirror_controller(object_origin=select_obj, object_target=item_target,
                                                             key_position=key_position)
@@ -427,9 +453,8 @@ def ad_mirror_button(key_position, *args):
                                     pass
                             else:
                                 om.MGlobal.displayWarning(
-                                    "Skip the mirroring '%s'! The cv's '%s' number is not similar!" % (
-                                        select_obj, item_target))
-
+                                    "Skip the mirroring '%s'! The '%s' cv's number is not similar!" % (
+                                        name, item_target))
                     else:
                         om.MGlobal.displayWarning(
                             "Skip the mirroring '%s'! There is no target curve object '%s' in the scene!" % (
@@ -443,18 +468,20 @@ def ad_mirror_button(key_position, *args):
 
 def ad_rotation_x_button(*args):
     ad_rotate_controller(x = ad_degree_rotation_int_field(), y = 0.0, z=0.0)
-    matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
+    # matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
+    # ad_rotate_controller(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
+
     # ad_rotate_controller(matrix)
 
 def ad_rotation_y_button(*args):
     ad_rotate_controller(x = 0.0, y = ad_degree_rotation_int_field(), z=0.0)
-    matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
+    # matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
     # ad_rotate_controller(matrix)
     # ad_rotate_controller(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
 
 def ad_rotation_z_button(*args):
     ad_rotate_controller(x = 0.0, y = 0.0, z=ad_degree_rotation_int_field())
-    matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
+    # matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
     # ad_rotate_controller(matrix)
 
     # ad_rotate_controller(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
@@ -472,6 +499,8 @@ def ad_degree_matrix_object():
         return get_value[0], get_value[1], get_value[2]
 
 def ad_rotate_controller(x, y, z):
+
+# def ad_rotate_controller(matrix_rotations):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
@@ -1248,45 +1277,46 @@ def ad_tagging_untagging_button(tagging, *args):
             else:
                 pass
 
-# def ad_controller_resize_slider(*args):
-#     selection = pm.ls(selection=True)
-#     if not selection:
-#         om.MGlobal.displayWarning("No objects selected")
-#     else:
-#         for item in selection:
-#             shape_node = pm.listRelatives(item, s=True)[0]
-#             if pm.objectType(shape_node) == 'nurbsCurve':
-#                 global previous_value
-#                 currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
-#                 deltaValue = (currentValue - previous_value)
-#                 al.ad_lib_scaling_controller(deltaValue, shape_node)
-#                 # self.prevValue = value
-#                 previous_value = currentValue
-#             else:
-#                 om.MGlobal.displayError("Object type must be curve")
-#                 return False
-
 def ad_controller_resize_slider(*args):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
     else:
         for item in selection:
-            try:
-                shape_node = pm.listRelatives(item, s=True)[0]
-                if pm.objectType(shape_node) == 'nurbsCurve':
-                    # global previous_value
-                    current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
-                    # delta_value = (current_value - previous_value)
-                    # deltaValue = (previous_value/currentValue)
-                    # new_value = deltaValue
-                    al.ad_lib_scaling_controller(current_value, item)
-                    # self.prevValue = value
-                    # previous_value = current_value
-                else:
-                    om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
-            except:
-                om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
+            shape_node = pm.listRelatives(item, s=True)[0]
+            if pm.objectType(shape_node) == 'nurbsCurve':
+                global previous_value
+                currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
+                # deltaValue = (currentValue - previous_value)
+                al.ad_lib_scaling_controller(item, currentValue)
+                # self.prevValue = value
+                previous_value = currentValue
+            else:
+                om.MGlobal.displayError("Object type must be curve")
+                return False
+
+# def ad_controller_resize_slider(*args):
+#     selection = pm.ls(selection=True)
+#     if not selection:
+#         om.MGlobal.displayWarning("No objects selected")
+#     else:
+#         for item in selection:
+#             try:
+#                 shape_node = pm.listRelatives(item, s=True)[0]
+#             except:
+#                 om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
+#             else:
+#                 if pm.objectType(shape_node) == 'nurbsCurve':
+#                     # global previous_value
+#                     current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
+#                     # delta_value = (current_value - previous_value)
+#                     # deltaValue = (previous_value/currentValue)
+#                     # new_value = deltaValue
+#                     al.ad_lib_scaling_controller(item, current_value)
+#                     # self.prevValue = value
+#                     # previous_value = current_value
+#                 else:
+#                     om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
 
 
 # def ad_controller_resize_slider(*args):
@@ -1299,10 +1329,10 @@ def ad_controller_resize_slider(*args):
 #             if pm.objectType(shape_node) == 'nurbsCurve':
 #                 global previous_value
 #                 current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
-#                 delta_value = (current_value - previous_value)
-#                 # deltaValue = (previous_value/currentValue)
-#                 new_value = delta_value
-#                 al.ad_lib_scaling_controller(new_value, item)
+#                 # delta_value = (current_value + previous_value)
+#                 delta_value = (previous_value/current_value)
+#                 # new_value = delta_value
+#                 al.ad_lib_scaling_controller(item, current_value)
 #                 # self.prevValue = value
 #                 previous_value = current_value
 #             else:
