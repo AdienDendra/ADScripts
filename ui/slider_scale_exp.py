@@ -6,8 +6,7 @@ class Test(object):
     def UI(self):
         with pm.window(self.WINDOW_NAME, widthHeight=(200, 200))  as self.mainWindow:
             with pm.rowColumnLayout(nc=1):
-                self.slider = pm.floatSlider( w=500,min=-10, max=10, value=0, step=0.0001,
-                                              changeCommand=pm.Callback(self.action) , dragCommand=pm.Callback(self.dragSlider))
+                self.slider = pm.floatSlider( w=500,min=-10, max=10, value=0, step=0.0001, changeCommand=pm.Callback(self.action) , dragCommand=pm.Callback(self.dragSlider))
     def action(self):
         print('action')
         pm.floatSlider(self.slider, edit=True, v=0)
@@ -26,6 +25,7 @@ class Test(object):
             pm.makeIdentity(apply=True, s=1, n=0)
 main = Test()
 main.UI()
+
 
 ##############################################################################################
 

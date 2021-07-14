@@ -1,6 +1,7 @@
 import re
 from functools import partial
 from string import digits
+from datetime import datetime
 
 import maya.OpenMaya as om
 import pymel.core as pm
@@ -1278,7 +1279,10 @@ def ad_tagging_untagging_button(tagging, *args):
                 pass
 
 def ad_controller_resize_slider(*args):
+    start_time = datetime.now()
     selection = pm.ls(selection=True)
+    current_value = []
+    item =[]
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
     else:
@@ -1286,15 +1290,18 @@ def ad_controller_resize_slider(*args):
             shape_node = pm.listRelatives(item, s=True)[0]
             if pm.objectType(shape_node) == 'nurbsCurve':
                 global previous_value
-                currentValue = pm.floatSlider('Controller_Resize', q=True, v=True)
-                # deltaValue = (currentValue - previous_value)
-                al.ad_lib_scaling_controller(item, currentValue)
+                current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
+                # deltaValue = (previous_value-currentValue)
+                al.ad_lib_scaling_controller(item, current_value)
                 # self.prevValue = value
-                previous_value = currentValue
+                previous_value = current_value
             else:
                 om.MGlobal.displayError("Object type must be curve")
                 return False
 
+    end_time = datetime.now()
+    print('Object {2} is {0} times bigger. Takes scaling time: {1}'
+          .format(current_value,(end_time - start_time), item))
 # def ad_controller_resize_slider(*args):
 #     selection = pm.ls(selection=True)
 #     if not selection:

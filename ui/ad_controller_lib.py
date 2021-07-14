@@ -988,7 +988,31 @@ def ad_lib_replacing_color(source, target):
 #     # set the hat position
 #     pm.xform(ctrl_shape, ws=True, m=hat_spot_mtx)
 
-def ad_lib_scaling_controller_x(ctrl_shape, current_value):
+def ad_lib_scaling_controller_y(ctrl_shape, current_value):
+
+    object_curve = pm.PyNode(ctrl_shape)
+    for cv in object_curve.getShape().cv:
+        position_os = pm.xform(cv, q=True, os=True, t=True)
+        print 'before x:', position_os[0]
+        print 'before y:', position_os[1]
+        print 'before z:', position_os[2]
+        # obj.scale.set([position_os[0] + current_value, position_os[1]  + current_value, position_os[2]  + current_value])
+        x = pm.setAttr('%s.xValue' % cv, (position_os[0] + current_value))
+        y = pm.setAttr('%s.yValue' % cv, (position_os[1] + current_value))
+        z = pm.setAttr('%s.zValue' % cv, (position_os[2] + current_value))
+
+        print 'after x:', position_os[0] + current_value
+        print 'after y:', position_os[1] + current_value
+        print 'after z:', position_os[2] + current_value
+
+    # objList = [pm.PyNode(node) for node in pm.ls(selection=True)]
+    # for obj in objList:
+    #     currentScale = obj.scaleX.get()
+    #     obj.scale.set([currentScale + deltaValue, currentScale + deltaValue, currentScale + deltaValue])
+    #     pm.makeIdentity(apply=True, s=1, n=0)
+
+
+def ad_lib_scaling_controller(ctrl_shape, current_value):
     object_curve = pm.PyNode(ctrl_shape)
     # position_object = pm.xform(object_curve, q=True, ws=True, t=True)
     # rotation_object = pm.xform(object_curve, q=True, ws=True, ro=True)
@@ -1034,22 +1058,34 @@ def ad_lib_scaling_controller_x(ctrl_shape, current_value):
 
         #pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
 
-def ad_lib_scaling_controller(object, value):
+def ad_lib_scaling_controller_x(object, value):
     object_curve = pm.PyNode(object)
     for cv in object_curve.getShape().cv:
         position_ws = pm.xform(cv, q=True, ws=True, t=True)
         position_os = pm.xform(cv, q=True, os=True, t=True)
-        # point_position = pm.pointPosition(cv)
+        point_position = pm.pointPosition(cv)
         # print position_os
 
         vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
         vector_os = pm.dt.Vector(position_os[0], position_os[1], position_os[2])
 
+        print vector_ws
+        print vector_ws
+
         # final_position = vector_ws + (vector_os * value)
-        final_position = vector_ws + (vector_os * value*0.1)
-        # final_position_x = ((position_os[0] * (value*0.1)))
-        # final_position_y = ((position_os[1] * (value*0.1)))
-        # final_position_z = ((position_os[2] * (value*0.1)))
+        final_position = vector_ws+ (vector_os * (value * 0.2))
+        # final_position = ((vector_ws + (vector_os * value*0.1)) + (vector_os))
+        # print final_position
+
+        # final_position_x = ((position_ws[0] + (position_os[0]*value*0.1)))
+        # final_position_y = ((position_ws[1] + (position_os[1]*value*0.1)))
+        # final_position_z = ((position_ws[2] + (position_os[2]*value*0.1)))
+        #
+        # print final_position_x, final_position_y, final_position_z
+
+        final_position_x = ((vector_os[0]*value))
+        final_position_y = ((vector_os[1]*value))
+        final_position_z = ((vector_os[2]*value))
 
         # print final_position_x
         # print final_position_y
@@ -1057,15 +1093,22 @@ def ad_lib_scaling_controller(object, value):
 
         # print ad_lib_average_position(object)
 
-        # pm.scale((final_position_x, final_position_y, final_position_z),
-        #           r=True)
+        pm.scale(cv, final_position_x, final_position_y, final_position_z,
+                 p=ad_lib_average_position(object),
+                  r=True)
 
-        # print final_position
-        pm.setAttr('%s.xValue' % cv, final_position[0])
-        pm.setAttr('%s.yValue' % cv, final_position[1])
-        pm.setAttr('%s.zValue' % cv, final_position[2])
-        #
+        # # print final_position
+        # pm.setAttr('%s.xValue' % cv, final_position[0])
+        # pm.setAttr('%s.yValue' % cv, final_position[1])
+        # pm.setAttr('%s.zValue' % cv, final_position[2])
+
+        # pm.setAttr('%s.xValue' % cv, final_position_x)
+        # pm.setAttr('%s.yValue' % cv, final_position_y)
+        # pm.setAttr('%s.zValue' % cv, final_position_z)
+
+
         # pm.move((final_position[0]), (final_position[1]), (final_position[2]), cv)
+        # pm.move((final_position_x), (final_position_y), (final_position_z), cv)
 
 
 def ad_lib_attr_value(channel):
