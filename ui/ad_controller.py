@@ -1,7 +1,7 @@
 """
 DESCRIPTION:
-    Define the object with FkIk Setup is a tool before run FkIk match, this script purposes to match Fk/Ik task setup.
-    Works properly in any version of Autodesk Maya.
+    This file is a GUI for customizing creating controllers. The user can handle
+    flexibility the input and call the functionality from ad_controller_lib.py
 
 USAGE:
     You may go to this link to have more detail >>
@@ -14,8 +14,7 @@ CONTACT:
     adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 18 October 2020 - Initial Release
-    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl; Renaming joint guide; Deleting AD_MEASURE node fixed; Adding toe wiggle exists
+    1.0 - 20 July 2021 - Initial Release
 
 LICENSE:
     Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
@@ -23,7 +22,6 @@ LICENSE:
     distributed without the express permission of Adien Dendra
 
 """
-
 
 import re
 from functools import partial
@@ -33,7 +31,6 @@ import maya.OpenMaya as om
 import pymel.core as pm
 
 import ad_controller_lib as al
-import ad_controller_shp as ac
 
 reload(al)
 
@@ -506,41 +503,18 @@ def ad_mirror_button(key_position, *args):
                 om.MGlobal.displayWarning("Skip the mirroring '%s'! The object type is not curve." % string_select)
 
 def ad_rotation_x_button(*args):
-    ad_rotate_controller(x = ad_degree_rotation_int_field(), y = 0.0, z=0.0)
+    al.ad_lib_rotate_controller(x = ad_degree_rotation_int_field(), y = 0.0, z=0.0)
 
 def ad_rotation_y_button(*args):
-    ad_rotate_controller(x = 0.0, y = ad_degree_rotation_int_field(), z=0.0)
+    al.ad_lib_rotate_controller(x = 0.0, y = ad_degree_rotation_int_field(), z=0.0)
 
 def ad_rotation_z_button(*args):
-    ad_rotate_controller(x = 0.0, y = 0.0, z=ad_degree_rotation_int_field())
+    al.ad_lib_rotate_controller(x = 0.0, y = 0.0, z=ad_degree_rotation_int_field())
 
 def ad_degree_rotation_int_field():
     value = pm.intField('Degree_Rotate', q=True, value=True)
     return value
 
-def ad_degree_matrix_object():
-    sel = pm.ls(sl=1)
-    for item in sel:
-
-        get_value = pm.getAttr(item + '.r')
-        return get_value[0], get_value[1], get_value[2]
-
-def ad_rotate_controller(x, y, z):
-    selection = pm.ls(selection=True)
-    if not selection:
-        om.MGlobal.displayWarning("No objects selected")
-    else:
-        for item in selection:
-            try:
-                shape_node = pm.listRelatives(item, s=True)[0]
-            except:
-                om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
-            else:
-                if pm.objectType(shape_node) == 'nurbsCurve':
-                    al.ad_lib_rotation_controller(object=item, x=x, y=y, z=z)
-
-                else:
-                    om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
 
 def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
     # delect and add object
@@ -649,7 +623,7 @@ def ad_create_group_button(*args):
     # grouping controller
     if pm.textField('Parent_Group_Name', q=True, enable=True):
         for item in select:
-            name = ad_get_number_main_name(item)
+            name = al.ad_lib_get_number_main_name(item)
             group = al.ad_lib_group_parent(groups=al.ad_lib_query_list_textfield_object('Parent_Group_Name')[0],
                                            name=name[1],
                                            suffix=al.ad_lib_get_suffix_main(item),
@@ -668,24 +642,25 @@ def ad_visibility_target(object, target):
         pass
 
 
-def ad_get_number_main_name(main_name):
-    try:
-        patterns = [r'\d+']
-        name_number = al.ad_lib_main_name(main_name)
-        for p in patterns:
-            name_number = re.findall(p, name_number)[0]
-    except:
-        name_number = ''
-
-    # get the prefix without number
-    ad_main_name = str(al.ad_lib_main_name(main_name)).translate(None, digits)
-    return name_number, ad_main_name
+# def ad_get_number_main_name(main_name):
+#     try:
+#         patterns = [r'\d+']
+#         name_number = al.ad_lib_main_name(main_name)
+#         for p in patterns:
+#             name_number = re.findall(p, name_number)[0]
+#     except:
+#         name_number = ''
+#
+#     # get the prefix without number
+#     ad_main_name = str(al.ad_lib_main_name(main_name)).translate(None, digits)
+#     return name_number, ad_main_name
 
 
 def ad_main_ctrl_grouping(controller, main_name, prefix_2):
     grouping_controller = []
     for object_controller, name in zip(controller, main_name):
-        ad_main_name = ad_get_number_main_name(name)
+        # get main name and number
+        ad_main_name = al.ad_lib_get_number_main_name(name)
         group_controller = al.ad_lib_group_parent(groups=al.ad_lib_query_list_textfield_object('Parent_Group_Name')[0],
                                                   name=ad_main_name[1],
                                                   suffix=ad_suffix_main(),
@@ -714,7 +689,8 @@ def ad_child_ctrl(main_controller, main_name):
     query_name = al.ad_lib_query_textfield_object('Suffix_Child_Ctrl')[0]
     if check_box:
         for controller, name in zip(main_controller, main_name):
-            ad_main_name = ad_get_number_main_name(name)
+            # get main name and number
+            ad_main_name = al.ad_lib_get_number_main_name(name)
 
             object_main_shape = pm.listRelatives(controller, shapes=1)[0]
             controller_shape = ad_controller_shape(size_ctrl=0.8)
@@ -729,6 +705,7 @@ def ad_child_ctrl(main_controller, main_name):
             controller_childs.append(controller_child)
     else:
         pass
+
     # set color
     al.ad_lib_ctrl_color(ctrl=controller_childs, color=16)
 
@@ -837,7 +814,7 @@ def ad_main_ctrl_prefix_suffix_selection(selection):
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
 
                 pm.select(cl=1)
-    # print controller_shape_prefix_suffix_app, main_name_for_grp
+
     return controller_shape_prefix_suffix_app, main_name_for_grp
 
 
@@ -872,8 +849,6 @@ def ad_main_ctrl_prefix_suffix():
 
     return controller_shape_prefix_suffix_app, main_name_for_grp
 
-
-###########
 
 def ad_replacing_controller_button(*args):
     list_controller = pm.ls(sl=1)
@@ -927,7 +902,7 @@ def ad_hide_unhide(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
         al.ad_lib_hide_unhide_attr(channel=['v'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
-        list_attribute = ad_query_user_defined_channel(ctrl)
+        list_attribute = al.ad_lib_query_user_defined_channel(ctrl)
         al.ad_lib_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
 
 
@@ -953,7 +928,7 @@ def ad_lock_unlock(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
         al.ad_lib_lock_unlock_attr(channel=['v'], ctrl=ctrl)
     if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
-        list_attribute = ad_query_user_defined_channel(ctrl)
+        list_attribute = al.ad_lib_query_user_defined_channel(ctrl)
         al.ad_lib_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
 
 
@@ -989,14 +964,6 @@ def ad_hide_and_lock(ctrl, value):
         if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
             al.ad_lib_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
                                      hide_object=value)
-
-def ad_query_user_defined_channel(ctrl):
-    list_attr = pm.listAttr(ctrl, ud=1)
-    if 'AD_Controller' in list_attr:
-        list_attr.remove('AD_Controller')
-        return list_attr
-    else:
-        return list_attr
 
 
 def ad_query_lock_unlock_hide_unhide_channel(channel_name):
@@ -1041,101 +1008,101 @@ def ad_set_color(*args):
 def ad_controller_shape(size_ctrl, *args):
     control_shape = []
     if on_selector == 1:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 2:
-        control_shape = al.ad_lib_ctrl_shape(ac.LOCATOR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.LOCATOR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 3:
-        control_shape = al.ad_lib_ctrl_shape(ac.CUBE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CUBE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 4:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEHALF, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CIRCLEHALF, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 5:
-        control_shape = al.ad_lib_ctrl_shape(ac.SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 6:
-        control_shape = al.ad_lib_ctrl_shape(ac.JOINT, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.JOINT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 7:
-        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CAPSULE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 8:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICKCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STICKCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 9:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSHALF, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CIRCLEPLUSHALF, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 10:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CIRCLEPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 11:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICK2CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STICK2CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 12:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICKSQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STICKSQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 13:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICK2SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STICK2SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 14:
-        control_shape = al.ad_lib_ctrl_shape(ac.STICKSTAR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STICKSTAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 15:
-        control_shape = al.ad_lib_ctrl_shape(ac.CIRCLEPLUSARROW, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CIRCLEPLUSARROW, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 16:
-        control_shape = al.ad_lib_ctrl_shape(ac.RECTANGLE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.RECTANGLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 17:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 18:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DFLAT, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW3DFLAT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 19:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 20:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW2STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 21:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLAT, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW2FLAT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 22:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROWHEAD, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROWHEAD, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 23:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW90DEG, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW90DEG, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 24:
-        control_shape = al.ad_lib_ctrl_shape(ac.SQUAREPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.SQUAREPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 25:
-        control_shape = al.ad_lib_ctrl_shape(ac.JOINTPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.JOINTPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 26:
-        control_shape = al.ad_lib_ctrl_shape(ac.HAND, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.HAND, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 27:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROWCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROWCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 28:
-        control_shape = al.ad_lib_ctrl_shape(ac.PLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.PLUS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 29:
-        control_shape = al.ad_lib_ctrl_shape(ac.PIVOT, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.PIVOT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 30:
-        control_shape = al.ad_lib_ctrl_shape(ac.KEYS, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.KEYS, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 31:
-        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMIDCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.PYRAMIDCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 32:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4CIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW4CIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 33:
-        control_shape = al.ad_lib_ctrl_shape(ac.EYES, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.EYES, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 34:
-        control_shape = al.ad_lib_ctrl_shape(ac.FOOTSTEP, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.FOOTSTEP, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 35:
-        control_shape = al.ad_lib_ctrl_shape(ac.HALF3DCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.HALF3DCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 36:
-        control_shape = al.ad_lib_ctrl_shape(ac.CAPSULECURVE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CAPSULECURVE, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 37:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW4STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW4STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 38:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3D, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW3D, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 39:
-        control_shape = al.ad_lib_ctrl_shape(ac.PYRAMID, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.PYRAMID, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 40:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW3DCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW3DCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 41:
-        control_shape = al.ad_lib_ctrl_shape(ac.CYLINDER, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.CYLINDER, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 42:
-        control_shape = al.ad_lib_ctrl_shape(ac.ARROW2FLATHALF, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.ARROW2FLATHALF, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 43:
-        control_shape = al.ad_lib_ctrl_shape(ac.FLAG, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.FLAG, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 44:
-        control_shape = al.ad_lib_ctrl_shape(ac.WORLD, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.WORLD, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 45:
-        control_shape = al.ad_lib_ctrl_shape(ac.SETUP, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.SETUP, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 46:
-        control_shape = al.ad_lib_ctrl_shape(ac.STAR, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STAR, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 47:
-        control_shape = al.ad_lib_ctrl_shape(ac.DIAMOND, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.DIAMOND, size_ctrl=size_ctrl, tag_number=on_selector)
     elif on_selector == 48:
-        control_shape = al.ad_lib_ctrl_shape(ac.STARSQUEEZE, size_ctrl=size_ctrl, tag_number=on_selector)
+        control_shape = al.ad_lib_shape_controller(al.STARSQUEEZE, size_ctrl=size_ctrl, tag_number=on_selector)
     else:
         pass
     return control_shape
