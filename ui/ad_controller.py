@@ -1,7 +1,33 @@
+"""
+DESCRIPTION:
+    Define the object with FkIk Setup is a tool before run FkIk match, this script purposes to match Fk/Ik task setup.
+    Works properly in any version of Autodesk Maya.
+
+USAGE:
+    You may go to this link to have more detail >>
+    http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/
+
+AUTHOR:
+    Adien Dendra
+
+CONTACT:
+    adprojects.animation@gmail.com | hello@adiendendra.com
+
+VERSION:
+    1.0 - 18 October 2020 - Initial Release
+    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl; Renaming joint guide; Deleting AD_MEASURE node fixed; Adding toe wiggle exists
+
+LICENSE:
+    Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+    This is commercial license can not be copied and/or
+    distributed without the express permission of Adien Dendra
+
+"""
+
+
 import re
 from functools import partial
 from string import digits
-from datetime import datetime
 
 import maya.OpenMaya as om
 import pymel.core as pm
@@ -25,11 +51,16 @@ def ad_show_ui():
         pm.deleteUI(adien_controller)
         if pm.window(shape_controller, exists=True):
             pm.deleteUI(shape_controller)
+    # WINDOW LAYOUT
     with pm.window(adien_controller, title='AD Controller', width=layout, height=200):
-        with pm.tabLayout('tab', width=layout * 1.026, height=200):
+        # TAB LAYOUT
+        with pm.tabLayout('tab', width=layout*1.027, height=200):
+
+            # LAYOUT CREATE CONTROLLER
             with pm.scrollLayout('Create Controller', p='tab'):
                 with pm.columnLayout('Create_Controller_Column', w=layout, co=('both', 1 * percentage), adj=1):
-                    # ADDITIONAL
+
+                    # NAMING PREFIX SUFFIX FRAME
                     with pm.frameLayout(collapsable=True, l='Naming', mh=1):
                         with pm.rowColumnLayout(nc=8, rowAttach=(2, 'top', 0),
                                                 cs=[(3, 1 * percentage), (5, 1 * percentage),
@@ -37,21 +68,24 @@ def ad_show_ui():
                                                 cw=[(1, 12 * percentage), (2, 7 * percentage), (3, 13 * percentage),
                                                     (4, 20 * percentage), (5, 15 * percentage), (6, 9.5 * percentage),
                                                     (8, 8 * percentage)]):
+                            # prefix 1 text field
                             pm.checkBox('Prefix_1', label='Prfx 1:', cc=partial(ad_enabling_disabling_ui,
                                                                                 ['Prefix_1_Text'], 'L_'), value=False)
                             al.ad_lib_defining_object_text_field(define_object='Prefix_1_Text', tx='L_', enable=False)
-
+                            # name text field
                             pm.checkBox('Name_CheckBox', label='Name:', cc=partial(ad_enabling_disabling_ui,
                                                                                    ['Name_Text'], ''), value=False)
                             al.ad_lib_defining_object_text_field(define_object='Name_Text', enable=False)
+                            # prefix 2 text field
                             pm.checkBox('Prefix_2', label='Prefix 2:',
                                         cc=partial(ad_enabling_disabling_ui, ['Prefix_2_Text'], 'LFT'), value=False)
                             al.ad_lib_defining_object_text_field(define_object='Prefix_2_Text', tx='LFT', enable=False)
 
+                            # suffix text field
                             pm.text('Suffix:')
                             pm.textField('Suffix_Main', tx='ctrl')
 
-                    # CONNECTION
+                    # CONNECTION FRAME
                     with pm.frameLayout(collapsable=True, l='Connection', mh=1):
                         with pm.rowLayout('Connection', nc=3,
                                           cw3=(18.5 * percentage, 32 * percentage, 40 * percentage),
@@ -60,7 +94,9 @@ def ad_show_ui():
                                                         (3, 'both', 0.5 * percentage), ],
                                           rowAttach=[(1, 'top', 0), (3, 'top', 0)]):
                             pm.text('')
+                            # constraint channel box
                             ad_channelbox_constraint_connection()
+                            # direct connection channel box
                             ad_channelbox_direct_connection()
 
                         with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
@@ -68,17 +104,21 @@ def ad_show_ui():
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
                             pm.text('')
+                            # list connection button
                             pm.button("List_Connection", l="List Connection",
                                       c=partial(ad_create_list_connection_button))
+
+                            # create connection button
                             pm.button('Create_Connection', l="Create Connection",
                                       c=partial(ad_create_connection_button))
 
-                    # pm.separator(h=5, st="in", w=90 * percentage)
+                    # COLOR FRAME
                     with pm.frameLayout(collapsable=True, l='Color', mh=1):
                         with pm.rowLayout('Palette_Port', nc=2, cw2=(18.5 * percentage, 69 * percentage),
                                           cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
                             pm.text('')
+                            # color index palette
                             ad_color_index()
 
                         with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
@@ -86,10 +126,12 @@ def ad_show_ui():
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
                             pm.text(label='')
+                            # reset color button
                             pm.button('Reset_Color', l="Reset Color", c=partial(ad_reset_color_button))
+                            # replace color button
                             pm.button("Replace_Color", l="Replace Color", c=partial(ad_replace_color_button))
-                    # pm.separator(h=5, st="in", w=90 * percentage)
 
+                    # CHANNEL FRAME
                     with pm.frameLayout(collapsable=True, l='Channel', mh=1):
                         with pm.rowLayout(nc=4,
                                           cw4=(18.5 * percentage, 32 * percentage, 27 * percentage, 22 * percentage),
@@ -98,47 +140,59 @@ def ad_show_ui():
                                                         (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage), ],
                                           rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
                             pm.text('')
+                            # translation channel box
                             ad_channelbox_translation()
+                            # rotation channel box
                             ad_channelbox_rotation()
+                            # scale channel box
                             ad_channelbox_scale()
+
                         with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
                                           cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
                                                                                          (3, 'both',
                                                                                           0.15 * percentage)]):
                             pm.text(label='')
+                            # hide unhide button
                             pm.button("Hide_Unhide_Channel", l="Hide/Unhide", c=partial(ad_hide_unhide_button))
+                            # lock unlock button
                             pm.button('Lock_Unlock_Channel', l="Lock/Unlock",
                                       c=partial(ad_lock_unlock_button))
 
-                    # pm.separator(h=5, st="in", w=90 * percentage)
+                    # RESIZE FRAME
                     with pm.frameLayout(collapsable=True, l='Resize', mh=1):
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage),
                                                         (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
-                            pm.floatSlider('Controller_Resize', min=-10.0, value=0.0, max=10.0, step=1.0,
+                            # controller resize slider
+                            pm.floatSlider('Controller_Resize', min=0.9, value=1.0, max=1.1, step=0.1,
                                            dragCommand=partial(ad_controller_resize_slider),
                                            changeCommand=partial(ad_controller_resize_reset))
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text('')
+                            # select controller button
                             pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                       c=partial(ad_select_all_ad_controller_button))
-                    # GROUP AND SHAPE
+
+                    # GROUP AND SHAPE FRAME
                     with pm.frameLayout(collapsable=True, l='Group and Shape', mh=1):
                         with pm.rowColumnLayout(nc=3, cw=[(2, 56 * percentage)], cs=[(3, 1 * percentage)]):
                             pm.checkBox(label='Name List:',
                                         cc=partial(ad_enabling_disabling_ui, ['Parent_Group_Name'],
                                                    'Main,Offset'),
                                         value=True)
+                            # parent group text field
                             al.ad_lib_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
                                                                  enable=True
                                                                  )
+                            # create group button
                             pm.button("Create_Grp_Select", l="Create Group", c=partial(ad_create_group_button))
 
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)]):
                             pm.text('')
+                            # icon text
                             with pm.rowColumnLayout(nc=9,
                                                     cs=[(2, 0.25 * percentage), (3, 0.25 * percentage),
                                                         (4, 0.25 * percentage), (5, 0.25 * percentage),
@@ -175,6 +229,7 @@ def ad_show_ui():
                                                   c=partial(ad_shape_controller_ui, circle))
 
                                 pm.iconTextRadioCollection(icon_radio_control, edit=True, select=circle)
+
                         with pm.rowLayout(nc=2, cw2=(18 * percentage, 80 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage),
                                                         (2, 'both', 0.5 * percentage)]):
@@ -184,13 +239,17 @@ def ad_show_ui():
                                               columnAttach=[(1, 'both', 0 * percentage),
                                                             (2, 'both', 0 * percentage),
                                                             (3, 'both', 0 * percentage)]):
+                                # replace controller button
                                 pm.button("Replace_Controller", l="Replace Ctrl",
                                           c=partial(ad_replacing_controller_button))
+                                # tag controller button
                                 pm.button("Tag_as_AD_Controller", l="Tag as AD Ctrl",
                                           c=partial(ad_tagging_untagging_button, True))
+                                # untag controller button
                                 pm.button('Untag_AD_Controller', l="Untag AD Ctrl",
                                           c=partial(ad_tagging_untagging_button, False))
 
+                    # ADDITIONAL FRAME
                     with pm.frameLayout(collapsable=True, l='Additional', mh=1):
                         with pm.columnLayout():
                             with pm.rowLayout(nc=2, cw2=(17.5 * percentage, 50 * percentage), cl2=('right', 'left'),
@@ -199,26 +258,34 @@ def ad_show_ui():
                                 pm.text('')
                                 with pm.columnLayout():
                                     with pm.rowColumnLayout(nc=2):
+                                        # adding child check box
                                         pm.checkBox('Adding_Ctrl_Child', label='Add Child Ctrl:',
                                                     cc=partial(ad_enabling_disabling_ui, ['Suffix_Child_Ctrl'],
                                                                'Child'),
                                                     value=False)
                                         pm.textField('Suffix_Child_Ctrl', enable=False, tx='Child')
+
                                     with pm.rowColumnLayout():
+                                        # target visibility check box
                                         pm.checkBox('Target_Visibility', label='Add Attribute for Target Visibility',
                                                     value=False)
+                                        # add pivot check box
                                         pm.checkBox('Add_Pivot_Ctrl', label='Add Pivot Controller', value=False,
                                                     enable=False)
 
-                    # pm.separator(h=15, st="in", w=90 * percentage)
+                    # RUN FRAME
                     with pm.frameLayout(collapsable=True, l='Run', mh=3):
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text(label='')
+                            # create controller button
                             pm.button('Create_Controller', l="Create Controller With All Defined Above!",
                                       bgc=(0, 0.5, 0),
                                       c=partial(ad_create_controller_button))
+
                 pm.separator(h=10, st="in", w=layout)
+
+                # link tutorial
                 with pm.rowLayout(nc=3, cw3=(38 * percentage, 36 * percentage, 24 * percentage),
                                   cl3=('left', 'center', 'right'),
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
@@ -229,9 +296,10 @@ def ad_show_ui():
                         hl=True,
                         al='center')
                     pm.text(l='Version 1.0', al='right')
+
+            # LAYOUT CONTROLLER UTILITES
             with pm.scrollLayout('Controller Utilities', p='tab'):
                 with pm.columnLayout('Controller_Utilities_Column', w=layout, co=('both', 1 * percentage), adj=1):
-                    # pm.separator(h=5, st="in", w=90 * percentage)
 
                     with pm.frameLayout(collapsable=True, l='Rotate', mh=1):
                         with pm.rowLayout(nc=2, cw2=(18 * percentage, 77 * percentage), cl2=('right', 'left'),
@@ -247,7 +315,7 @@ def ad_show_ui():
                                 pm.button("Rotate_X", l="X", c=partial(ad_rotation_x_button), bgc=(0.5, 0, 0))
                                 pm.button("Rotate_Y", l="Y", c=partial(ad_rotation_y_button), bgc=(0, 0.5, 0))
                                 pm.button('Rotate_Z', l="Z", c=partial(ad_rotation_z_button), bgc=(0, 0, 0.5))
-                        # pm.separator(h=5, st="in", w=90 * percentage)
+
                     with pm.frameLayout(collapsable=True, l='Mirror', mh=1):
                         with pm.rowColumnLayout(nc=3,
                                                 cw=[(1, 42 * percentage), (2, 12 * percentage), (3, 42 * percentage)],
@@ -317,8 +385,18 @@ def ad_show_ui():
 #                                           CONTROLLER UTILITIES TAB FUNCTION
 ########################################################################################################################
 def ad_load_dialog(*args):
+    if pm.ls(sl=1):
+        pm.confirmDialog(icon='warning',
+                         title='Load Confirm',
+                         message='Only selected controllers \nwill be loaded!')
+
+    else:
+        pm.confirmDialog(icon='warning',
+                         title='Load Confirm',
+                         message='There is no object selected.\nAll of it will be loaded!')
+
     load = pm.fileDialog2(fileMode=1, fileFilter='*.json', okc='Load', dialogStyle=2,
-                          cap='Load AD Controller Shape')
+                          cap='Load AD Controller')
 
     if not load: return
     filePath = load[0]
@@ -326,12 +404,23 @@ def ad_load_dialog(*args):
     # export json file
     al.ad_lib_load_json_controller(filePath)
 
+    om.MGlobal.displayInfo('---------------- Controller already load!')
+
     return filePath
 
 
 def ad_save_dialog(*args):
+    if pm.ls(sl=1):
+        pm.confirmDialog(icon='warning',
+                         title='Save Confirm',
+                         message='Only selected controllers \nwill be saved!')
+    else:
+        pm.confirmDialog(icon='warning',
+                         title='Save Confirm',
+                         message='There is no object selected.\nAll of it will be saved!')
+
     save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
-                          cap='Save AD Controller Shape')
+                          cap='Save AD Controller')
     # Check Path
     if not save: return
     filePath = save[0]
@@ -339,11 +428,8 @@ def ad_save_dialog(*args):
     # export json file
     al.ad_lib_save_json_controller(filePath)
 
-    # Return Result
-    if pm.ls(sl=1):
-        om.MGlobal.displayInfo('---------------- Only controller shapes selected are exported!')
-    else:
-        om.MGlobal.displayInfo('---------------- All controller shapes in the scene are exported!')
+    om.MGlobal.displayInfo('---------------- Controller already saved!')
+
     return filePath
 
 def ad_swap_prefix(*args):
@@ -354,54 +440,6 @@ def ad_swap_prefix(*args):
 
     pm.textFieldButtonGrp('From_Prefix', e=True, tx=from_prefix)
     pm.textFieldButtonGrp('To_Prefix', e=True, tx=to_prefix)
-
-
-# def ad_set_dialog(*args):
-#     filePath = pm.fileDialog2(dialogStyle=1, fileMode=3, caption='Set Folder Location')
-#
-#     # Check Path
-#     if not filePath: return
-#     filePath = filePath[0]
-#
-#     # Return Result
-#     print filePath
-#     return filePath
-#
-# def ad_path_folder_load_button(text_input, *args):
-#     pm.button(text_input, e=True, tx=ad_set_dialog())
-#
-# def ad_path_folder_textfield_button(text_input, *args):
-#     pm.textFieldButtonGrp(text_input, e=True, tx=ad_set_dialog())
-
-# def ad_save_ctrl_button(*args):
-#     file_location = pm.textFieldButtonGrp('File_Location', q=True, tx=True)
-#     scene_name = pm.sceneName().split('/')[-1]
-#     splitting_with_ext = scene_name.split('.')
-#     # xml_extension= scene_name.replace(splitting_with_ext[-1], 'xml')
-#     # print xml_extension
-#
-#     if file_location:
-#         path_exist = os.path.isdir(file_location)
-#         if path_exist:
-#             al.ad_export_ctrl_bin(file_location, splitting_with_ext[0])
-#         else:
-#             om.MGlobal.displayError("Wrong '%s' path!" % file_location)
-#     else:
-#         om.MGlobal.displayError('The directory path must be exists!')
-
-
-# # Recommended way:
-# def ad_set_dialog_save(*args):
-#     filename = pm.fileDialog2(fileMode=2, caption="Save XML")
-#     cmds.file(filename[0], i=True)
-#
-# def ad_set_dialog_saves(*args):
-#     dialog = "All Files (*.*)"
-#     pm.fileBrowserDialog(fileFilter=dialog, dialogStyle=1)
-#
-# # def ad_set_dialog(*args):
-# #     dialog = "All Files (*.*)"
-# #     pm.fileDialog2(fileMode=4, fileFilter=dialog, dialogStyle=1)
 
 def ad_from_prefix_text():
     text_field = pm.textFieldButtonGrp('From_Prefix', q=True, tx=True)
@@ -469,23 +507,12 @@ def ad_mirror_button(key_position, *args):
 
 def ad_rotation_x_button(*args):
     ad_rotate_controller(x = ad_degree_rotation_int_field(), y = 0.0, z=0.0)
-    # matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
-    # ad_rotate_controller(al.ad_lib_matrix_rotation_x(ad_degree_rotation_int_field()))
-
-    # ad_rotate_controller(matrix)
 
 def ad_rotation_y_button(*args):
     ad_rotate_controller(x = 0.0, y = ad_degree_rotation_int_field(), z=0.0)
-    # matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
-    # ad_rotate_controller(matrix)
-    # ad_rotate_controller(al.ad_lib_matrix_rotation_y(ad_degree_rotation_int_field()))
 
 def ad_rotation_z_button(*args):
     ad_rotate_controller(x = 0.0, y = 0.0, z=ad_degree_rotation_int_field())
-    # matrix = al.ad_lib_flaten_list(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
-    # ad_rotate_controller(matrix)
-
-    # ad_rotate_controller(al.ad_lib_matrix_rotation_z(ad_degree_rotation_int_field()))
 
 def ad_degree_rotation_int_field():
     value = pm.intField('Degree_Rotate', q=True, value=True)
@@ -493,15 +520,12 @@ def ad_degree_rotation_int_field():
 
 def ad_degree_matrix_object():
     sel = pm.ls(sl=1)
-
     for item in sel:
 
         get_value = pm.getAttr(item + '.r')
         return get_value[0], get_value[1], get_value[2]
 
 def ad_rotate_controller(x, y, z):
-
-# def ad_rotate_controller(matrix_rotations):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
@@ -514,14 +538,12 @@ def ad_rotate_controller(x, y, z):
             else:
                 if pm.objectType(shape_node) == 'nurbsCurve':
                     al.ad_lib_rotation_controller(object=item, x=x, y=y, z=z)
-                    # al.ad_lib_rotation_controller(object=item,
-                    #                                     matrix_rotation_position=matrix_rotations,
-                    #                                     )
+
                 else:
                     om.MGlobal.displayWarning("Skip the rotating '%s'! The object type is not curve." % item)
 
 def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
-    # elect and add object
+    # delect and add object
     select = pm.ls(sl=True, l=True, tr=True)
     if len(select) == 1:
         object_selection = select[0]
@@ -535,7 +557,6 @@ def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
 ########################################################################################################################
 def ad_create_controller_button(*args):
     select = pm.ls(sl=1)
-
     # create controller
     if select:
         # query value of manipulation position
@@ -856,7 +877,6 @@ def ad_main_ctrl_prefix_suffix():
 
 def ad_replacing_controller_button(*args):
     list_controller = pm.ls(sl=1)
-    # instance_controller = list_controller.pop(0)
     if not list_controller:
         om.MGlobal.displayError("No curves selected, you have to select origin and target curve!")
         return False
@@ -884,7 +904,6 @@ def ad_lock_unlock_button(*args):
     else:
         for item in selection:
             ad_lock_unlock(ctrl=item)
-
 
 def ad_hide_unhide(ctrl):
     if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
@@ -970,7 +989,6 @@ def ad_hide_and_lock(ctrl, value):
         if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
             al.ad_lib_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
                                      hide_object=value)
-
 
 def ad_query_user_defined_channel(ctrl):
     list_attr = pm.listAttr(ctrl, ud=1)
@@ -1279,10 +1297,7 @@ def ad_tagging_untagging_button(tagging, *args):
                 pass
 
 def ad_controller_resize_slider(*args):
-    start_time = datetime.now()
     selection = pm.ls(selection=True)
-    current_value = []
-    item =[]
     if not selection:
         om.MGlobal.displayWarning("No objects selected")
     else:
@@ -1291,62 +1306,14 @@ def ad_controller_resize_slider(*args):
             if pm.objectType(shape_node) == 'nurbsCurve':
                 global previous_value
                 current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
-                # deltaValue = (previous_value-currentValue)
                 al.ad_lib_scaling_controller(item, current_value)
-                # self.prevValue = value
                 previous_value = current_value
             else:
                 om.MGlobal.displayError("Object type must be curve")
                 return False
 
-    end_time = datetime.now()
-    print('Object {2} is {0} times bigger. Takes scaling time: {1}'
-          .format(current_value,(end_time - start_time), item))
-# def ad_controller_resize_slider(*args):
-#     selection = pm.ls(selection=True)
-#     if not selection:
-#         om.MGlobal.displayWarning("No objects selected")
-#     else:
-#         for item in selection:
-#             try:
-#                 shape_node = pm.listRelatives(item, s=True)[0]
-#             except:
-#                 om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
-#             else:
-#                 if pm.objectType(shape_node) == 'nurbsCurve':
-#                     # global previous_value
-#                     current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
-#                     # delta_value = (current_value - previous_value)
-#                     # deltaValue = (previous_value/currentValue)
-#                     # new_value = deltaValue
-#                     al.ad_lib_scaling_controller(item, current_value)
-#                     # self.prevValue = value
-#                     # previous_value = current_value
-#                 else:
-#                     om.MGlobal.displayWarning("Skip the resize! The object is not curve.")
-
-
-# def ad_controller_resize_slider(*args):
-#     selection = pm.ls(selection=True)
-#     if not selection:
-#         om.MGlobal.displayWarning("No objects selected")
-#     else:
-#         for item in selection:
-#             shape_node = pm.listRelatives(item, s=True)[0]
-#             if pm.objectType(shape_node) == 'nurbsCurve':
-#                 global previous_value
-#                 current_value = pm.floatSlider('Controller_Resize', q=True, v=True)
-#                 # delta_value = (current_value + previous_value)
-#                 delta_value = (previous_value/current_value)
-#                 # new_value = delta_value
-#                 al.ad_lib_scaling_controller(item, current_value)
-#                 # self.prevValue = value
-#                 previous_value = current_value
-#             else:
-#                 pass
-
 def ad_controller_resize_reset(*args):
-    pm.floatSlider('Controller_Resize', edit=True, v=0.0)
+    pm.floatSlider('Controller_Resize', edit=True, v=1.0)
 
 
 def ad_enabling_disabling_ui(object, tx, value, *args):

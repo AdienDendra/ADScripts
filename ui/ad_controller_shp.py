@@ -1,3 +1,29 @@
+"""
+DESCRIPTION:
+    Define the object with FkIk Setup is a tool before run FkIk match, this script purposes to match Fk/Ik task setup.
+    Works properly in any version of Autodesk Maya.
+
+USAGE:
+    You may go to this link to have more detail >>
+    http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/
+
+AUTHOR:
+    Adien Dendra
+
+CONTACT:
+    adprojects.animation@gmail.com | hello@adiendendra.com
+
+VERSION:
+    1.0 - 18 October 2020 - Initial Release
+    1.1 - 01 November 2020 - Adding setup LocalSpace ctrl; Renaming joint guide; Deleting AD_MEASURE node fixed; Adding toe wiggle exists
+
+LICENSE:
+    Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+    This is commercial license can not be copied and/or
+    distributed without the express permission of Adien Dendra
+
+"""
+
 # POINT ON CURVE VALUES
 
 CIRCLEPLUS = [[1.1300200000000005, -4.996003610813204e-16, 0.0], [1.00412, 1.1102230246251565e-16, 0.0],
