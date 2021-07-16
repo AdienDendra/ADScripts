@@ -298,7 +298,7 @@ def ad_lib_pivot_controller(controller, parent_constraint_node, suffix):
     joint = pm.joint(n='instance_pivot')
     pm.setAttr(joint + '.drawStyle', 2)
     controller_rs = ad_lib_shape_controller(LOCATOR, size_ctrl=0.8, tag_number=2)
-    ad_lib_ctrl_color(ctrl=[controller_rs], color=20)
+    ad_lib_ctrl_color(ctrl=controller_rs, color=20)
     pm.rename(controller_rs, ad_lib_main_name(controller) + 'Pivot' + suffix)
 
     # parent relatives
@@ -363,16 +363,29 @@ def ad_lib_scale_constraint(obj_base, obj_target, mo=1):
     return new_name
 
 
-def ad_lib_query_textfield_object(object_define, *args):
-    text = []
-    if pm.textField(object_define, q=True, en=True):
-        if pm.textField(object_define, q=True, tx=True):
-            text = pm.textField(object_define, q=True, tx=True)
-        else:
-            pm.error("'%s' can not be empty!" % object_define)
+def ad_lib_text_field_query_enabled(object_define):
+    name_text_enable = pm.textField(object_define, q=True, enable=True)
+
+    return name_text_enable
+
+def ad_lib_text_field_query_text(object_define):
+    name_text_enable = pm.textField(object_define, q=True, tx=True)
+    if name_text_enable:
+        return name_text_enable
     else:
-        pass
-    return text, object_define
+        return ''
+
+
+# def ad_lib_query_textfield_object(object_define, *args):
+#     text = []
+#     if pm.textField(object_define, q=True, en=True):
+#         if pm.textField(object_define, q=True, tx=True):
+#             text = pm.textField(object_define, q=True, tx=True)
+#         else:
+#             om.MGlobal.displayError("'%s' can not be empty!" % object_define)
+#     else:
+#         pass
+#     return text, object_define
 
 
 def ad_lib_query_list_textfield_object(object_define, *args):
@@ -384,12 +397,12 @@ def ad_lib_query_list_textfield_object(object_define, *args):
             set_duplicate = set([x for x in listing if listing.count(x) > 1])
             if set_duplicate:
                 for item in list(set_duplicate):
-                    pm.error("'%s' is duplicate object!" % item)
+                    om.MGlobal.displayError("'%s' is duplicate object!" % item)
             else:
                 for item in listing:
                     listing_object.append(item)
         else:
-            pm.error("'%s' can not be empty!" % object_define)
+            om.MGlobal.displayError("'%s' can not be empty!" % object_define)
     else:
         pass
 
@@ -397,14 +410,19 @@ def ad_lib_query_list_textfield_object(object_define, *args):
 
 
 def ad_lib_prefix(prefix_text):
+    text = pm.textField(prefix_text, q=True, tx=True)
     if pm.textField(prefix_text, q=True, en=True):
-        return ad_lib_query_textfield_object(object_define=prefix_text)[0]
+        if text :
+            return text
+        else:
+            return ''
     else:
         return ''
 
 
 def ad_lib_match_position_target_to_ctrl(selection, target, manipulated_position,
                                          manipulated_rotation):
+    objects = []
     if '.' in str(selection[0]):
         cls = pm.cluster(selection)
         pm.pointConstraint(cls, target[0], mo=0)
@@ -425,7 +443,9 @@ def ad_lib_match_position_target_to_ctrl(selection, target, manipulated_position
         for object, tgt in zip(selection, target):
             # query and match
             ad_lib_xform_position_rotation(origin=object, target=tgt)
+            objects.append(object.nodeName())
 
+    return objects
 
 def ad_lib_xform_position_rotation(origin, target):
     origin_position = pm.xform(origin, ws=True, q=True, t=True)
@@ -659,11 +679,11 @@ def ad_lib_query_user_defined_channel(ctrl):
 
 
 def ad_lib_ctrl_color(ctrl, color):
-    list_relatives = []
-    for item in ctrl:
-        list_relatives = pm.listRelatives(item, s=1)[0]
-        pm.setAttr(list_relatives + '.ove', 1)
-        pm.setAttr(list_relatives + '.ovc', color)
+    # list_relatives = []
+    # for item in ctrl:
+    list_relatives = ctrl.getShape()
+    pm.setAttr(list_relatives + '.ove', 1)
+    pm.setAttr(list_relatives + '.ovc', color)
 
     return list_relatives
 

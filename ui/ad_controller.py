@@ -69,6 +69,7 @@ def ad_show_ui():
                             pm.checkBox('Prefix_1', label='Prfx 1:', cc=partial(ad_enabling_disabling_ui,
                                                                                 ['Prefix_1_Text'], 'L_'), value=False)
                             al.ad_lib_defining_object_text_field(define_object='Prefix_1_Text', tx='L_', enable=False)
+
                             # name text field
                             pm.checkBox('Name_CheckBox', label='Name:', cc=partial(ad_enabling_disabling_ui,
                                                                                    ['Name_Text'], ''), value=False)
@@ -531,91 +532,132 @@ def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
 ########################################################################################################################
 def ad_create_controller_button(*args):
     select = pm.ls(sl=1)
-    # create controller
-    if select:
-        # query value of manipulation position
-        manipulated_position = pm.manipPivot(q=True, p=True)[0]
-        # query value of manipulation rotation
-        manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
+    child_text_field = al.ad_lib_text_field_query_text('Suffix_Child_Ctrl')
+    child_check_box = pm.checkBox('Adding_Ctrl_Child', q=True, value=True)
+    # condition the text filed is empty
+    if not child_text_field:
+        om.MGlobal_displayError("'Add Child Ctrl:' cannot be empty!")
 
-        # create controller shape
-        controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix_selection(select)
-
-        # match position
-        al.ad_lib_match_position_target_to_ctrl(selection=select, target=controller_shape_prefix_suffix[0],
-                                                manipulated_position=manipulated_position,
-                                                manipulated_rotation=manipulated_rotation)
-        # add child controller
-        add_child_ctrl = ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0],
-                                       main_name=controller_shape_prefix_suffix[1])
-
-        # if component mode
-        get_objects = []
-        if '.' in str(select[0]):
-            for item in select:
-                get_object = item.split('.')
-                parent_query = pm.listRelatives(get_object[0], p=True)
-                get_objects.append(parent_query[0])
-
-            listing = list(set(get_objects))
-            for target in listing:
-                # add connection
-                if add_child_ctrl:
-                    ad_connection(ctrl=add_child_ctrl[0], target=target)
-
-                else:
-                    ad_connection(ctrl=controller_shape_prefix_suffix[0][0], target=target)
-
-                if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-                    pm.displayWarning("Adding pivot controller is skipped, since it's component mode.")
-
-                # add visibility to target
-                ad_visibility_target(object=controller_shape_prefix_suffix[0][0],
-                                     target=target)
-
-        # object mode
-        else:
-            if add_child_ctrl:
-                for target, child_ctrl in zip(select, add_child_ctrl):
-                    # add connection
-                    connection = ad_connection(ctrl=child_ctrl, target=target)
-                    # add pivot controller
-                    if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-                        al.ad_lib_pivot_controller(controller=child_ctrl, parent_constraint_node=connection[0],
-                                                   suffix='_' + ad_suffix_main())
-            else:
-                for ctrl, target, in zip(controller_shape_prefix_suffix[0], select):
-                    connection = ad_connection(ctrl=ctrl, target=target)
-                    # add pivot controller
-                    if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-                        al.ad_lib_pivot_controller(controller=ctrl, parent_constraint_node=connection[0],
-                                                   suffix='_' + ad_suffix_main())
-
-                    # add visibility to target
-                    ad_visibility_target(object=ctrl, target=target)
     else:
-        # create controller without selection
-        controller_shape_prefix_suffix = ad_main_ctrl_prefix_suffix()
-        # add child controller
-        ad_child_ctrl(main_controller=controller_shape_prefix_suffix[0], main_name=controller_shape_prefix_suffix[1])
+        # condition selection object
+        if select:
+            # query value of manipulation position
+            manipulated_position = pm.manipPivot(q=True, p=True)[0]
+            # query value of manipulation rotation
+            manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
 
-        # add pivot controller
-        if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-            pm.displayWarning("Adding pivot controller is skipped, since there is no object selection.")
+            # create controller shape
+            main_controller = ad_create_main_ctrl_prefix_suffix_selection(select)
 
-    # grouping controller
-    if pm.textField('Parent_Group_Name', q=True, enable=True):
-        ad_main_ctrl_grouping(controller=controller_shape_prefix_suffix[0],
-                              main_name=controller_shape_prefix_suffix[1],
-                              prefix_2=al.ad_lib_prefix('Prefix_2_Text'))
+            # condition the controller doesn't has an issue
+            if main_controller:
+                # match position
+                al.ad_lib_match_position_target_to_ctrl(selection=select, target=main_controller[0],
+                                                                                manipulated_position=manipulated_position,
+                                                                                manipulated_rotation=manipulated_rotation)
+                # condition adding the child controller
+                if child_check_box:
+                    # condition the object select as component
+                    if '.' in str(select[0]):
+                        # add child controller
+                        child_controller = ad_child_ctrl(main_controller=main_controller[0],
+                                                         main_name=main_controller[1])
+                        get_objects = []
+                        for item in select:
+                            get_object = item.split('.')
+                            parent_query = pm.listRelatives(get_object[0], p=True)
+                            get_objects.append(parent_query[0])
 
-    # controller color
-    al.ad_lib_ctrl_color(ctrl=controller_shape_prefix_suffix[0], color=ad_set_color())
+                        listing = list(set(get_objects))
+                        for target in listing:
+                            # add connection
+                            ad_connection(ctrl=child_controller[0], target=target)
 
-    # controller hide and unlock
-    ad_hide_and_lock(controller_shape_prefix_suffix[0], value=True)
+                            # add pivot controller
+                            if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                                pm.displayWarning("Adding pivot controller is skipped, since it's component mode.")
 
-    pm.select(cl=1)
+                            # add visibility to target
+                            ad_visibility_target(object=main_controller[0][0],
+                                                 target=target)
+
+                    # condition the object select as transform
+                    else:
+                        # add child controller
+                        child_controller = ad_child_ctrl(main_controller=main_controller[0],
+                                                         main_name=main_controller[1])
+
+                        for target, child_ctrl, main_ctrl in zip(select, child_controller, main_controller[0]):
+
+                            # add connection
+                            connection = ad_connection(ctrl=child_ctrl, target=target)
+
+                            # add pivot controller
+                            if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                                al.ad_lib_pivot_controller(controller=child_ctrl, parent_constraint_node=connection[0],
+                                                           suffix='_' + ad_suffix_main())
+
+                            # add visibility to target
+                            ad_visibility_target(object=main_ctrl, target=target)
+
+                # condition adding the main controller
+                else:
+                    for target, main_ctrl in zip(select, main_controller[0]):
+                        print target
+                        print main_ctrl
+                        # add connection
+                        connection = ad_connection(ctrl=main_ctrl, target=target)
+
+                        # add pivot controller
+                        if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                            al.ad_lib_pivot_controller(controller=main_ctrl, parent_constraint_node=connection[0],
+                                                       suffix='_' + ad_suffix_main())
+
+                        # add visibility to target
+                        ad_visibility_target(object=main_ctrl,
+                                             target=target)
+
+            else:
+                pass
+
+        else:
+            # create controller without selection
+            main_controller = ad_create_main_ctrl_prefix_suffix()
+
+            # condition the controller doesn't has an issue
+            if main_controller:
+                # add child controller
+                ad_child_ctrl(main_controller=main_controller[0], main_name=main_controller[1])
+
+                # add target visibility
+                if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                    pm.displayWarning("Adding pivot controller is skipped, since there is no object selection.")
+
+                # add pivot controller
+                if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                    pm.displayWarning("Adding pivot controller is skipped, since there is no object selection.")
+
+            else:
+                pass
+
+        # create group parent with condition the controller doesn't has an issue
+        if main_controller:
+            # grouping controller
+            if pm.textField('Parent_Group_Name', q=True, enable=True):
+                ad_main_ctrl_grouping(controller=main_controller[0],
+                                      main_name=main_controller[1],
+                                      prefix_2=al.ad_lib_prefix('Prefix_2_Text'))
+
+            # controller color
+            for item in main_controller[0]:
+                al.ad_lib_ctrl_color(ctrl=item, color=ad_set_color())
+
+            # controller hide and unlock
+            ad_hide_and_lock(main_controller[0], value=True)
+        else:
+            pass
+
+        pm.select(cl=1)
 
 
 def ad_create_group_button(*args):
@@ -680,34 +722,36 @@ def ad_suffix_main():
         add_space = suffix.lower()
         return add_space
     else:
-        om.MGlobal_displayError('suffix cannot be empty!')
+        om.MGlobal_displayError("'Suffix:' cannot be empty!")
 
 
 def ad_child_ctrl(main_controller, main_name):
+    child_text_field = al.ad_lib_text_field_query_text('Suffix_Child_Ctrl')
     controller_childs = []
-    check_box = pm.checkBox('Adding_Ctrl_Child', q=True, value=True)
-    query_name = al.ad_lib_query_textfield_object('Suffix_Child_Ctrl')[0]
-    if check_box:
-        for controller, name in zip(main_controller, main_name):
-            # get main name and number
-            ad_main_name = al.ad_lib_get_number_main_name(name)
+    for controller, name in zip(main_controller, main_name):
+        # get main name and number
+        ad_main_name = al.ad_lib_get_number_main_name(name)
 
-            object_main_shape = pm.listRelatives(controller, shapes=1)[0]
-            controller_shape = ad_controller_shape(size_ctrl=0.8)
-            controller_child = pm.rename(controller_shape,
-                                         ad_main_name[1] + query_name.title() + ad_main_name[0] + al.ad_lib_prefix(
-                                             'Prefix_2_Text') + '_' + ad_suffix_main())
-            al.ad_lib_xform_position_rotation(origin=controller, target=controller_child)
-            pm.parent(controller_child, controller)
-            al.ad_lib_display(object=object_main_shape, target=controller_child, long_name=query_name + 'Ctrl',
-                              default_vis=0,
-                              k=False, cb=True)
-            controller_childs.append(controller_child)
-    else:
-        pass
+        # object_main_shape = pm.listRelatives(controller, shapes=1)[0]
+        object_main_shape = controller.getShape()
+        controller_shape = ad_controller_shape(size_ctrl=0.8)
+        controller_child = pm.rename(controller_shape,
+                                     ad_main_name[1] + child_text_field.title() + ad_main_name[0] + al.ad_lib_prefix(
+                                         'Prefix_2_Text') + '_' + ad_suffix_main())
 
-    # set color
-    al.ad_lib_ctrl_color(ctrl=controller_childs, color=16)
+        controller_child_shape = controller_child.getShape()
+
+        al.ad_lib_xform_position_rotation(origin=controller, target=controller_child)
+        pm.parent(controller_child, controller)
+        al.ad_lib_display(object=object_main_shape, target=controller_child_shape,
+                          long_name=child_text_field + 'Ctrl',
+                          default_vis=0,
+                          k=False, cb=True)
+        # set color
+        al.ad_lib_ctrl_color(ctrl=controller_child, color=16)
+
+        controller_childs.append(controller_child)
+
 
     return controller_childs
 
@@ -751,103 +795,169 @@ def ad_connection(ctrl, target):
 
     return connection
 
+def ad_excute_main_ctrl(Prefix_1_Text, Prefix_2_Text, main_name_for_grp, main_name,
+                        suffix_text_field, controller_shape):
 
-def ad_main_ctrl_prefix_suffix_selection(selection):
+    main_name_for_grp.append(al.ad_lib_prefix(Prefix_1_Text) + main_name + suffix_text_field)
+    controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                               al.ad_lib_prefix(
+                                                   Prefix_1_Text) + main_name + al.ad_lib_prefix(
+                                                   Prefix_2_Text) + suffix_text_field)
+
+    return controller_shape_prefix_suffix
+
+def ad_create_main_ctrl_prefix_suffix_selection(selection):
+    name_text_enable = al.ad_lib_text_field_query_enabled('Name_Text')
+    name_text_field = al.ad_lib_text_field_query_text('Name_Text')
+    suffix_text_field = al.ad_lib_text_field_query_text('Suffix_Main')
+
     controller_shape_prefix_suffix_app = []
     main_name_for_grp = []
 
-    suffix = '_' + ad_suffix_main()
-    al.ad_lib_query_textfield_object(object_define='Suffix_Main')
-    al.ad_lib_query_textfield_object(object_define='Suffix_Child_Ctrl')
-    al.ad_lib_query_list_textfield_object(object_define='Parent_Group_Name')
-
-    if '.' in str(selection[0]):
-        get_first_object = selection[0].split('Shape')[0]
-        query_name = al.ad_lib_query_textfield_object('Name_Text')[0]
-        query_name_object = al.ad_lib_main_name(get_first_object)
-        controller_shape = ad_controller_shape(size_ctrl=1.0)
-        if pm.textField('Name_Text', q=True, enable=True):
-            main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name + suffix)
-            controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                       al.ad_lib_prefix(
-                                                           'Prefix_1_Text') + query_name + al.ad_lib_prefix(
-                                                           'Prefix_2_Text') + suffix)
-            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-
-        else:
-            main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name_object + suffix)
-            controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                       al.ad_lib_prefix(
-                                                           'Prefix_1_Text') + query_name_object + al.ad_lib_prefix(
-                                                           'Prefix_2_Text') + suffix)
-            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-    else:
-        for number, object in enumerate(selection):
-            query_name = al.ad_lib_query_textfield_object('Name_Text')[0]
-            query_name_object = al.ad_lib_main_name(object)
+    # suffix condition
+    if suffix_text_field:
+        suffix_text_field = '_' + suffix_text_field
+        # condition for selection by vertex
+        if '.' in str(selection[0]):
+            get_first_object = selection[0].split('Shape')[0]
+            query_name_object_select = al.ad_lib_main_name(get_first_object)
             controller_shape = ad_controller_shape(size_ctrl=1.0)
-            if pm.textField('Name_Text', q=True, enable=True):
-                if len(selection) > 1:
-                    main_name_for_grp.append(
-                        '%s%s%02d%s' % (al.ad_lib_prefix('Prefix_1_Text'), query_name, number + 1, suffix))
-                    controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                               '%s%s%02d%s%s' % (
-                                                                   al.ad_lib_prefix('Prefix_1_Text'), query_name,
-                                                                   number + 1,
-                                                                   al.ad_lib_prefix('Prefix_2_Text'), suffix))
+            if name_text_enable:
+                if name_text_field:
+                    controller_shape_prefix_suffix = \
+                        ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                            Prefix_2_Text='Prefix_2_Text',
+                                            main_name_for_grp=main_name_for_grp,
+                                            main_name=name_text_field,
+                                            suffix_text_field= suffix_text_field,
+                                            controller_shape=controller_shape)
+                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
                 else:
-                    main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name + suffix)
-                    controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                               al.ad_lib_prefix(
-                                                                   'Prefix_1_Text') + query_name + al.ad_lib_prefix(
-                                                                   'Prefix_2_Text') + suffix)
-                controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+                    controller_shape_prefix_suffix = \
+                        ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                            Prefix_2_Text='Prefix_2_Text',
+                                            main_name_for_grp=main_name_for_grp,
+                                            main_name=query_name_object_select,
+                                            suffix_text_field=suffix_text_field,
+                                            controller_shape=controller_shape)
+                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
 
             else:
-                main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name_object + suffix)
-                controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                           al.ad_lib_prefix(
-                                                               'Prefix_1_Text') + query_name_object + al.ad_lib_prefix(
-                                                               'Prefix_2_Text') + suffix)
+                controller_shape_prefix_suffix = \
+                    ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                        Prefix_2_Text='Prefix_2_Text',
+                                        main_name_for_grp=main_name_for_grp,
+                                        main_name=query_name_object_select,
+                                        suffix_text_field=suffix_text_field,
+                                        controller_shape=controller_shape)
                 controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+        # selection by object
+        else:
+            for number, object in enumerate(selection):
+                query_name_object_select = al.ad_lib_main_name(object)
+                controller_shape = ad_controller_shape(size_ctrl=1.0)
+                # condition enable the name text
+                if name_text_enable:
+                    # condition the name is not empty
+                    if name_text_field:
+                        # condition selection more than one object
+                        if len(selection) > 1:
+                            main_name_for_grp.append(
+                                '%s%s%02d%s' % (al.ad_lib_prefix('Prefix_1_Text'), name_text_field, number + 1, suffix_text_field))
+                            controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                                       '%s%s%02d%s%s' % (
+                                                                           al.ad_lib_prefix('Prefix_1_Text'), name_text_field,
+                                                                           number + 1,
+                                                                           al.ad_lib_prefix('Prefix_2_Text'), suffix_text_field))
+                        else:
+                            controller_shape_prefix_suffix = \
+                                ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                    Prefix_2_Text='Prefix_2_Text',
+                                                    main_name_for_grp=main_name_for_grp,
+                                                    main_name=name_text_field,
+                                                    suffix_text_field=suffix_text_field,
+                                                    controller_shape=controller_shape)
+                        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+                    else:
+                        controller_shape_prefix_suffix = \
+                            ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                Prefix_2_Text='Prefix_2_Text',
+                                                main_name_for_grp=main_name_for_grp,
+                                                main_name=query_name_object_select,
+                                                suffix_text_field=suffix_text_field,
+                                                controller_shape=controller_shape)
+
+                        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+                else:
+                    controller_shape_prefix_suffix = \
+                        ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                            Prefix_2_Text='Prefix_2_Text',
+                                            main_name_for_grp=main_name_for_grp,
+                                            main_name=query_name_object_select,
+                                            suffix_text_field=suffix_text_field,
+                                            controller_shape=controller_shape)
+
+                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+                    pm.select(cl=1)
+
+        return controller_shape_prefix_suffix_app, main_name_for_grp
+
+    else:
+        return om.MGlobal.displayError("'Suffix:' can not be empty!")
+
+
+def ad_create_main_ctrl_prefix_suffix():
+    name_text_enable = al.ad_lib_text_field_query_enabled('Name_Text')
+    name_text_field = al.ad_lib_text_field_query_text('Name_Text')
+    suffix_text_field = al.ad_lib_text_field_query_text('Suffix_Main')
+
+    controller_shape_prefix_suffix_app = []
+    main_name_for_grp = []
+
+    if suffix_text_field:
+        suffix_text_field = '_' + suffix_text_field
+
+        # condition the name field is enabled
+        if name_text_enable:
+            # condition if the text is exist
+            if name_text_field:
+                # create controller shape
+                controller_shape = ad_controller_shape(size_ctrl=1.0)
+                # create the name prefix, name, and suffix
+                controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                           al.ad_lib_prefix('Prefix_1_Text') + name_text_field +
+                                                           al.ad_lib_prefix('Prefix_2_Text') + suffix_text_field)
+                controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+                main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + name_text_field + suffix_text_field)
 
                 pm.select(cl=1)
 
-    return controller_shape_prefix_suffix_app, main_name_for_grp
+            else:
+                return om.MGlobal.displayError("'Name:' without selection object can not be empty!")
 
+        else:
+            controller_shape = ad_controller_shape(size_ctrl=1.0)
+            controller_shape_prefix_suffix = \
+                ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                    Prefix_2_Text='Prefix_2_Text',
+                                    main_name_for_grp=main_name_for_grp,
+                                    main_name=controller_shape,
+                                    suffix_text_field=suffix_text_field,
+                                    controller_shape=controller_shape)
 
-def ad_main_ctrl_prefix_suffix():
-    controller_shape_prefix_suffix_app = []
-    main_name_for_grp = []
-    suffix = '_' + ad_suffix_main()
-    al.ad_lib_query_textfield_object(object_define='Suffix_Main')
-    al.ad_lib_query_textfield_object(object_define='Suffix_Child_Ctrl')
-    al.ad_lib_query_list_textfield_object(object_define='Parent_Group_Name')
+            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+            pm.select(cl=1)
 
-    if al.ad_lib_query_textfield_object(object_define='Name_Text')[0]:
-        query_name = al.ad_lib_query_textfield_object('Name_Text')[0]
-        controller_shape = ad_controller_shape(size_ctrl=1.0)
-        controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                   al.ad_lib_prefix('Prefix_1_Text') + query_name + al.ad_lib_prefix(
-                                                       'Prefix_2_Text') + suffix)
-        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-        main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + query_name + suffix)
-
-        pm.select(cl=1)
+        return controller_shape_prefix_suffix_app, main_name_for_grp
 
     else:
-        controller_shape = ad_controller_shape(size_ctrl=1.0)
-        main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + controller_shape + suffix)
-        controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                   al.ad_lib_prefix(
-                                                       'Prefix_1_Text') + controller_shape + al.ad_lib_prefix(
-                                                       'Prefix_2_Text') + suffix)
-        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-        pm.select(cl=1)
+        return om.MGlobal.displayError("'Suffix:' can not be empty!")
 
-    return controller_shape_prefix_suffix_app, main_name_for_grp
 
 
 def ad_replacing_controller_button(*args):
