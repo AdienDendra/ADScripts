@@ -44,12 +44,14 @@ def ad_lib_save_json_controller(file_name):
                 pass
             else:
                 if object == 'nurbsCurve':
+                    om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
                     list.append(item.getShape())
                 else:
                     om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
 
     else:
         list = pm.ls(type='nurbsCurve')
+
     # all item shape in the list
     for item in list:
         # get transform name
@@ -78,10 +80,16 @@ def ad_lib_save_json_controller(file_name):
         shape_dict[item_parent.nodeName()] = {'cv': cvs, 'xValue': xvalue, 'yValue': yvalue, 'zValue': zvalue,
                                               'overrideColor': color}
 
+        om.MGlobal.displayInfo("Object '%s' is saved!." % (item.getParent()))
+
+    if not pm.ls(type='nurbsCurve'):
+        om.MGlobal.displayWarning("The file save is empty! There is no curve object in the scene")
+
+    om.MGlobal.displayInfo("---------------- File path saved: '%s'" % file_name)
+
     # write the json file
     file = open("%s" % (file_name), "w")
     json.dump(shape_dict, file, indent=4)
-
 
 def ad_lib_load_json_controller(file_name):
     # load the file
@@ -110,18 +118,22 @@ def ad_lib_load_json_controller(file_name):
                 if object == 'nurbsCurve':
                     # check item in keys dictionary
                     if item in keys:
+                        om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
                         list.append(item)
                     else:
                         om.MGlobal.displayWarning(
                             "Object '%s' is skipped! There is no saving curve in the library." % (item))
                 else:
                     om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+
     # if there is no object select in the scene
     else:
         for item in scene:
             # get transform on each item
             item = item.getParent()
             if item in keys:
+                ########################## match the cvs
+                om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
                 list.append(item)
             else:
                 om.MGlobal.displayWarning(
@@ -147,6 +159,10 @@ def ad_lib_load_json_controller(file_name):
         for color in value['overrideColor']:
             pm.setAttr('%s.overrideColor' % shape_name, color)
 
+    if not scene:
+        om.MGlobal.displayWarning("Loaded is failed! There is no curve object in the scene!")
+
+    om.MGlobal.displayInfo("---------------- File path loaded: '%s'" % file_name)
 
 def ad_lib_mirror_controller(object_origin, object_target, key_position):
     # object select node

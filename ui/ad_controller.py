@@ -389,7 +389,7 @@ def ad_load_dialog(*args):
     else:
         pm.confirmDialog(icon='warning',
                          title='Load Confirm',
-                         message='There is no object selected.\nAll of it will be loaded!')
+                         message='There is no object selected.\nAll of the controllers curve in the scene \nwill be loaded!')
 
     load = pm.fileDialog2(fileMode=1, fileFilter='*.json', okc='Load', dialogStyle=2,
                           cap='Load AD Controller')
@@ -400,7 +400,7 @@ def ad_load_dialog(*args):
     # export json file
     al.ad_lib_load_json_controller(filePath)
 
-    om.MGlobal.displayInfo('---------------- Controller already load!')
+    # om.MGlobal.displayInfo('---------------- Controller already load!')
 
     return filePath
 
@@ -413,7 +413,7 @@ def ad_save_dialog(*args):
     else:
         pm.confirmDialog(icon='warning',
                          title='Save Confirm',
-                         message='There is no object selected.\nAll of it will be saved!')
+                         message='There is no object selected.\nAll of the controllers curve in the scene \nwill be saved!')
 
     save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
                           cap='Save AD Controller')
@@ -423,8 +423,6 @@ def ad_save_dialog(*args):
 
     # export json file
     al.ad_lib_save_json_controller(filePath)
-
-    om.MGlobal.displayInfo('---------------- Controller already saved!')
 
     return filePath
 
@@ -635,9 +633,6 @@ def ad_create_controller_button(*args):
                 else:
                     pass
 
-                # connection query
-                ad_connection(ctrl=main_controller[0], target='')
-
                 # add target visibility
                 if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                     pm.displayWarning("Adding pivot controller is skipped, since there is no object selection.")
@@ -772,26 +767,22 @@ def ad_create_connection_button(*args):
 
 def ad_connection(ctrl, target):
     connection = []
-    if target:
-        if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
-            connection = al.ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
-        if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
-            connection = al.ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
-        if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
-            connection = al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
-        if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
-            connection = al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
-        if ad_query_lock_unlock_hide_unhide_channel('Parent'):
-            connection = pm.parent(target, ctrl)
-        if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
-            connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
-        if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
-            connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
-        if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
-            connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
-    else:
-        return om.MGlobal.displayWarning('Connection skipped! It should has target object!')
-
+    if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
+        connection = al.ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
+        connection = al.ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
+        connection = al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
+        connection = al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
+    if ad_query_lock_unlock_hide_unhide_channel('Parent'):
+        connection = pm.parent(target, ctrl)
+    if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
+        connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
+    if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
+        connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
+    if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
+        connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
     return connection
 
 def ad_excute_main_ctrl(Prefix_1_Text, Prefix_2_Text, main_name_for_grp, main_name,
