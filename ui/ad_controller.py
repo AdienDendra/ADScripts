@@ -23,9 +23,7 @@ LICENSE:
 
 """
 
-import re
 from functools import partial
-from string import digits
 
 import maya.OpenMaya as om
 import pymel.core as pm
@@ -538,6 +536,7 @@ def ad_create_controller_button(*args):
     if not child_text_field:
         om.MGlobal_displayError("'Add Child Ctrl:' cannot be empty!")
 
+    # condition the text filed is not empty
     else:
         # condition selection object
         if select:
@@ -555,35 +554,41 @@ def ad_create_controller_button(*args):
                 al.ad_lib_match_position_target_to_ctrl(selection=select, target=main_controller[0],
                                                                                 manipulated_position=manipulated_position,
                                                                                 manipulated_rotation=manipulated_rotation)
-                # condition adding the child controller
-                if child_check_box:
-                    # condition the object select as component
-                    if '.' in str(select[0]):
-                        # add child controller
-                        child_controller = ad_child_ctrl(main_controller=main_controller[0],
-                                                         main_name=main_controller[1])
-                        get_objects = []
-                        for item in select:
-                            get_object = item.split('.')
-                            parent_query = pm.listRelatives(get_object[0], p=True)
-                            get_objects.append(parent_query[0])
+                # condition the object select as COMPONENTS
+                if '.' in str(select[0]):
+                    get_objects = []
+                    for item in select:
+                        get_object = item.split('.')
+                        parent_query = pm.listRelatives(get_object[0], p=True)
+                        get_objects.append(parent_query[0])
 
-                        listing = list(set(get_objects))
-                        for target in listing:
+                    listing = list(set(get_objects))
+                    for target in listing:
+                        # condition when have child controller
+                        if child_check_box:
+                            # create child controller
+                            child_controller = ad_child_ctrl(main_controller=main_controller[0],
+                                                             main_name=main_controller[1])
                             # add connection
                             ad_connection(ctrl=child_controller[0], target=target)
 
-                            # add pivot controller
-                            if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-                                pm.displayWarning("Adding pivot controller is skipped, since it's component mode.")
+                        # condition when doesn't have child controller
+                        else:
+                            ad_connection(ctrl=main_controller[0], target=target)
 
-                            # add visibility to target
-                            ad_visibility_target(object=main_controller[0][0],
-                                                 target=target)
+                        # add pivot controller
+                        if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                            pm.displayWarning("Adding pivot controller is skipped, since it's component mode.")
 
-                    # condition the object select as transform
-                    else:
-                        # add child controller
+                        # add visibility to target
+                        ad_visibility_target(object=main_controller[0][0],
+                                             target=target)
+
+                # condition the object select as TRANSFORM
+                else:
+                    # condition when have child controller
+                    if child_check_box:
+                        # create child controller
                         child_controller = ad_child_ctrl(main_controller=main_controller[0],
                                                          main_name=main_controller[1])
 
@@ -594,40 +599,44 @@ def ad_create_controller_button(*args):
 
                             # add pivot controller
                             if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-                                al.ad_lib_pivot_controller(controller=child_ctrl, parent_constraint_node=connection[0],
+                                al.ad_lib_pivot_controller(controller=child_ctrl,
+                                                           parent_constraint_node=connection[0],
                                                            suffix='_' + ad_suffix_main())
-
                             # add visibility to target
                             ad_visibility_target(object=main_ctrl, target=target)
 
-                # condition adding the main controller
-                else:
-                    for target, main_ctrl in zip(select, main_controller[0]):
-                        print target
-                        print main_ctrl
-                        # add connection
-                        connection = ad_connection(ctrl=main_ctrl, target=target)
+                    # condition when doesn't have child controller
+                    else:
+                        for target, main_ctrl in zip(select, main_controller[0]):
 
-                        # add pivot controller
-                        if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
-                            al.ad_lib_pivot_controller(controller=main_ctrl, parent_constraint_node=connection[0],
-                                                       suffix='_' + ad_suffix_main())
+                           # add connection
+                            connection = ad_connection(ctrl=main_ctrl, target=target)
 
-                        # add visibility to target
-                        ad_visibility_target(object=main_ctrl,
-                                             target=target)
-
+                            # add pivot controller
+                            if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
+                                al.ad_lib_pivot_controller(controller=main_ctrl,
+                                                           parent_constraint_node=connection[0],
+                                                           suffix='_' + ad_suffix_main())
+                            # add visibility to target
+                            ad_visibility_target(object=main_ctrl, target=target)
             else:
                 pass
 
+        # condition nothing selected object
         else:
             # create controller without selection
             main_controller = ad_create_main_ctrl_prefix_suffix()
 
             # condition the controller doesn't has an issue
             if main_controller:
-                # add child controller
-                ad_child_ctrl(main_controller=main_controller[0], main_name=main_controller[1])
+                if child_check_box:
+                    # add child controller
+                    ad_child_ctrl(main_controller=main_controller[0], main_name=main_controller[1])
+                else:
+                    pass
+
+                # connection query
+                ad_connection(ctrl=main_controller[0], target='')
 
                 # add target visibility
                 if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
@@ -640,7 +649,7 @@ def ad_create_controller_button(*args):
             else:
                 pass
 
-        # create group parent with condition the controller doesn't has an issue
+        # continue create group parent with condition when the controller doesn't has an issue
         if main_controller:
             # grouping controller
             if pm.textField('Parent_Group_Name', q=True, enable=True):
@@ -648,12 +657,13 @@ def ad_create_controller_button(*args):
                                       main_name=main_controller[1],
                                       prefix_2=al.ad_lib_prefix('Prefix_2_Text'))
 
-            # controller color
+            # set the main controller color
             for item in main_controller[0]:
                 al.ad_lib_ctrl_color(ctrl=item, color=ad_set_color())
 
-            # controller hide and unlock
+            # set the main controller hide and unlock
             ad_hide_and_lock(main_controller[0], value=True)
+
         else:
             pass
 
@@ -682,20 +692,6 @@ def ad_visibility_target(object, target):
         al.ad_lib_display(object=object, target=target)
     else:
         pass
-
-
-# def ad_get_number_main_name(main_name):
-#     try:
-#         patterns = [r'\d+']
-#         name_number = al.ad_lib_main_name(main_name)
-#         for p in patterns:
-#             name_number = re.findall(p, name_number)[0]
-#     except:
-#         name_number = ''
-#
-#     # get the prefix without number
-#     ad_main_name = str(al.ad_lib_main_name(main_name)).translate(None, digits)
-#     return name_number, ad_main_name
 
 
 def ad_main_ctrl_grouping(controller, main_name, prefix_2):
@@ -776,22 +772,25 @@ def ad_create_connection_button(*args):
 
 def ad_connection(ctrl, target):
     connection = []
-    if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
-        connection = al.ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
-        connection = al.ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
-        connection = al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
-        connection = al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Parent'):
-        connection = pm.parent(target, ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
-        connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
-    if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
-        connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
-    if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
-        connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
+    if target:
+        if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
+            connection = al.ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
+        if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
+            connection = al.ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
+        if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
+            connection = al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
+        if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
+            connection = al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
+        if ad_query_lock_unlock_hide_unhide_channel('Parent'):
+            connection = pm.parent(target, ctrl)
+        if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
+            connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
+        if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
+            connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
+        if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
+            connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
+    else:
+        return om.MGlobal.displayWarning('Connection skipped! It should has target object!')
 
     return connection
 

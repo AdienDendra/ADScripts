@@ -375,19 +375,6 @@ def ad_lib_text_field_query_text(object_define):
     else:
         return ''
 
-
-# def ad_lib_query_textfield_object(object_define, *args):
-#     text = []
-#     if pm.textField(object_define, q=True, en=True):
-#         if pm.textField(object_define, q=True, tx=True):
-#             text = pm.textField(object_define, q=True, tx=True)
-#         else:
-#             om.MGlobal.displayError("'%s' can not be empty!" % object_define)
-#     else:
-#         pass
-#     return text, object_define
-
-
 def ad_lib_query_list_textfield_object(object_define, *args):
     listing_object = []
     if pm.textField(object_define, q=True, en=True):
