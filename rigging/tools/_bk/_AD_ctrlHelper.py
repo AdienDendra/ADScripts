@@ -40,7 +40,7 @@ def parentConsCtrl(objFirst, objScnd):
             ut.match_position(t, grpPrntScnd[0])
 
             # color control
-            ut.ad_set_color(renCtrlScnd, 'darkBrown')
+            ut.ad_cc_set_color(renCtrlScnd, 'darkBrown')
 
             mc.setAttr('%s.visibility' %renCtrlScnd, lock=False, keyable=False)
 

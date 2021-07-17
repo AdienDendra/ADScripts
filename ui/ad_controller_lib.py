@@ -15,7 +15,7 @@ VERSION:
     1.0 - 20 July 2021 - Initial Release
 
 LICENSE:
-    Copyright (C) 2020 Adien Dendra - hello@adiendendra.com>
+    Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
     This is commercial license can not be copied and/or
     distributed without the express permission of Adien Dendra
 
@@ -785,7 +785,7 @@ def ad_lib_create_main_ctrl_prefix_suffix_selection(selection, on_selector):
                         if len(selection) > 1:
                             main_name_for_grp.append(
                                 '%s%s%02d%s' % (
-                                ad_lib_prefix('Prefix_1_Text'), name_text_field, number + 1, suffix_text_field))
+                                    ad_lib_prefix('Prefix_1_Text'), name_text_field, number + 1, suffix_text_field))
                             controller_shape_prefix_suffix = pm.rename(controller_shape,
                                                                        '%s%s%02d%s%s' % (
                                                                            ad_lib_prefix('Prefix_1_Text'),
@@ -1080,12 +1080,13 @@ def ad_lib_get_number_main_name(main_name):
 
 def ad_lib_shape_controller(shape, size_ctrl, tag_number):
     scale_shape = [[size_ctrl * i for i in j] for j in shape]
-    create_curve = pm.curve(d=1, p=scale_shape)
+    curve = pm.curve(d=1, p=scale_shape)
+    create_curve = curve.getShape()
     pm.addAttr(create_curve, ln='AD_Controller', at='bool')
     pm.setAttr(create_curve + '.AD_Controller', 1)
     ad_lib_tagging_controller_code(create_curve, tag_number)
 
-    return create_curve
+    return curve
 
 
 def ad_lib_tagging_controller_code(ctrl, tag_number):

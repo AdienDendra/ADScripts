@@ -1691,7 +1691,7 @@ def createControl( select ='',
             cnntCtrl = renGmbl
 
             # gimbal color
-            ut.ad_set_color(renGmbl, 'white')
+            ut.ad_cc_set_color(renGmbl, 'white')
 
             # add attribute for switching on/off gimbal ctrl
             addAttr = ut.add_attr_transform_shape(renCtrl, 'gimbalCtrl', 'long', min=0, max=1, dv=0, edit=True, keyable=True)
@@ -1724,7 +1724,7 @@ def createControl( select ='',
         ut.ad_add_attr_message(renCtrl, grpPrnt[0])
 
         # color control
-        ut.ad_set_color(renCtrl, ctrlColor)
+        ut.ad_cc_set_color(renCtrl, ctrlColor)
 
         # lock and hide attribute
         ut.lock_hide_attr(lockChannels, renCtrl)
