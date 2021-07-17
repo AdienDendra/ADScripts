@@ -22,8 +22,8 @@ LICENSE:
 """
 
 import json
-from collections import OrderedDict
 import re
+from collections import OrderedDict
 from string import digits
 
 import maya.OpenMaya as om
@@ -31,138 +31,152 @@ import pymel.core as pm
 
 
 def ad_lib_save_json_controller(file_name):
-    # ordered dictionary
-    shape_dict = OrderedDict()
-    selection = pm.ls(sl=1)
-    list = []
-    if selection:
-        for item in selection:
-            try:
-                # get type and get the shape
-                object = pm.objectType(item.getShape())
-            except:
-                pass
-            else:
-                if object == 'nurbsCurve':
-                    om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
-                    list.append(item.getShape())
+    if pm.ls(type='nurbsCurve'):
+        # ordered dictionary
+        shape_dict = OrderedDict()
+        selection = pm.ls(sl=1)
+        list = []
+        # checking the naming
+        if selection:
+            for item in selection:
+                try:
+                    # get type and get the shape
+                    object = pm.objectType(item.getShape())
+                except:
+                    pass
                 else:
-                    om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+                    if object == 'nurbsCurve':
+                        om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
+                        list.append(item.getShape())
+                    else:
+                        om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+
+        else:
+            list = pm.ls(type='nurbsCurve')
+
+        # all item shape in the list
+        for item in list:
+            # get transform name
+            item_parent = item.getParent()
+            print item_parent
+            # get node
+            object_curve = pm.PyNode(item_parent)
+
+            # get cv number, x value, y value, z value and color on each item
+            cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
+
+            for cv in object_curve.getShape().cv:
+                x = pm.getAttr(cv + '.xValue')
+                y = pm.getAttr(cv + '.yValue')
+                z = pm.getAttr(cv + '.zValue')
+                xvalue.append(x)
+                yvalue.append(y)
+                zvalue.append(z)
+
+                # get the number cv
+                cv = cv.split('.')[-1]
+                cvs.append(cv)
+
+            if pm.getAttr('%s.overrideEnabled' % item):
+                color_number = pm.getAttr('%s.overrideColor' % item)
+                color.append(color_number)
+            shape_dict[str(item_parent)] = {'cv': cvs, 'xValue': xvalue, 'yValue': yvalue, 'zValue': zvalue,
+                                            'overrideColor': color}
+
+            om.MGlobal.displayInfo("Object '%s' is saved!." % (item.getParent()))
+
+        om.MGlobal.displayInfo("---------------- File path saved: '%s'" % file_name)
+
+        # write the json file
+        file = open("%s" % (file_name), "w")
+        json.dump(shape_dict, file, indent=4)
 
     else:
-        list = pm.ls(type='nurbsCurve')
+        return om.MGlobal.displayWarning("No write in the file save as there is no curve object exists in the scene")
 
-    # all item shape in the list
-    for item in list:
-        # get transform name
-        item_parent = item.getParent()
-        # get node
-        object_curve = pm.PyNode(item_parent)
-
-        # get cv number, x value, y value, z value and color on each item
-        cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
-
-        for cv in object_curve.getShape().cv:
-            x = pm.getAttr(cv + '.xValue')
-            y = pm.getAttr(cv + '.yValue')
-            z = pm.getAttr(cv + '.zValue')
-            xvalue.append(x)
-            yvalue.append(y)
-            zvalue.append(z)
-
-            # get the number cv
-            cv = cv.split('.')[-1]
-            cvs.append(cv)
-
-        if pm.getAttr('%s.overrideEnabled' % item):
-            color_number = pm.getAttr('%s.overrideColor' % item)
-            color.append(color_number)
-        shape_dict[item_parent.nodeName()] = {'cv': cvs, 'xValue': xvalue, 'yValue': yvalue, 'zValue': zvalue,
-                                              'overrideColor': color}
-
-        om.MGlobal.displayInfo("Object '%s' is saved!." % (item.getParent()))
-
-    if not pm.ls(type='nurbsCurve'):
-        om.MGlobal.displayWarning("The file save is empty! There is no curve object in the scene")
-
-    om.MGlobal.displayInfo("---------------- File path saved: '%s'" % file_name)
-
-    # write the json file
-    file = open("%s" % (file_name), "w")
-    json.dump(shape_dict, file, indent=4)
 
 def ad_lib_load_json_controller(file_name):
-    # load the file
-    file = open("%s" % (file_name))
-    shape_dict = json.load(file)
-
-    # get key in dictionary
-    keys = shape_dict.keys()
-
-    # object selection
-    select = pm.ls(sl=1)
-
     # get all the nurbs object in the scene
     scene = pm.ls(type='nurbsCurve')
-    list = []
-    # object select (if any)
-    if select:
-        for item in select:
-            try:
-                # query the object selection whether it has shape
-                object = pm.objectType(item.getShape())
-            except:
-                pass
-            else:
-                # if it has a shape check whether it curves object
-                if object == 'nurbsCurve':
-                    # check item in keys dictionary
-                    if item in keys:
-                        om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
-                        list.append(item)
-                    else:
-                        om.MGlobal.displayWarning(
-                            "Object '%s' is skipped! There is no saving curve in the library." % (item))
-                else:
-                    om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
 
-    # if there is no object select in the scene
-    else:
-        for item in scene:
-            # get transform on each item
-            item = item.getParent()
-            if item in keys:
-                ########################## match the cvs
-                om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
-                list.append(item)
+    # query the curve exist in the scene
+    if scene:
+        # load the file
+        file = open("%s" % (file_name))
+        shape_dict = json.load(file)
+
+        # get key in dictionary
+        keys = shape_dict.keys()
+
+        # object selection
+        select = pm.ls(sl=1)
+
+        list = []
+        # object select (if any)
+        if select:
+            for item in select:
+                try:
+                    # query the object selection whether it has shape
+                    object = pm.objectType(item.getShape())
+                except:
+                    pass
+                else:
+                    # if it has a shape check whether it curves object
+                    if object == 'nurbsCurve':
+                        # check item in keys dictionary
+                        if item in keys:
+                            om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
+                            list.append(item)
+                        else:
+                            om.MGlobal.displayWarning(
+                                "Object '%s' is skipped! There is no saving curve in the library." % (item))
+                    else:
+                        om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+
+        # if there is no object select in the scene
+        else:
+            for item in scene:
+                # get transform on each item
+                item = item.getParent()
+                if item in keys:
+                    # match the cvs
+                    # print len (item)
+                    # if len(item_target.getShape().cv) == len(select_obj.getShape().cv)
+                    # om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
+                    list.append(item)
+                else:
+                    om.MGlobal.displayWarning(
+                        "Object '%s' is skipped! There is no saving curve in the library." % (item))
+
+        for name in list:
+            # get name on query items
+            name = str(name)
+            # get the value of dictionary
+            value = shape_dict.get(name)
+            # get the node
+            name = pm.PyNode(name)
+            # get shape of from the string name
+            shape_name = name.getShape()
+
+            # checking the number or cv's
+            if len(name.getShape().cv) == len(value['cv']):
+                # set all the things up
+                for cv, x, y, z in zip(value['cv'], value['xValue'], value['yValue'],
+                                       value['zValue']):
+                    pm.setAttr('%s.%s.xValue' % (shape_name, cv), x)
+                    pm.setAttr('%s.%s.yValue' % (shape_name, cv), y)
+                    pm.setAttr('%s.%s.zValue' % (shape_name, cv), z)
+
+                for color in value['overrideColor']:
+                    pm.setAttr('%s.overrideColor' % shape_name, color)
             else:
                 om.MGlobal.displayWarning(
-                    "Object '%s' is skipped! There is no saving curve in the library." % (item))
+                    "Object '%s' is skipped! The number of cv's is doesn't match with data!." % (name))
 
-    for name in list:
-        # get name on query items
-        name = name.nodeName()
-        # get the value of dictionary
-        value = shape_dict.get(name)
-        # get the node
-        name = pm.PyNode(name)
-        # get shape of from the string name
-        shape_name = name.getShape()
+        om.MGlobal.displayInfo("---------------- File path loaded: '%s'" % file_name)
+    else:
+        return om.MGlobal.displayWarning("Loaded is failed as there is no curve object exists in the scene!")
 
-        # set all the things up
-        for cv, x, y, z in zip(value['cv'], value['xValue'], value['yValue'],
-                               value['zValue']):
-            pm.setAttr('%s.%s.xValue' % (shape_name, cv), x)
-            pm.setAttr('%s.%s.yValue' % (shape_name, cv), y)
-            pm.setAttr('%s.%s.zValue' % (shape_name, cv), z)
-
-        for color in value['overrideColor']:
-            pm.setAttr('%s.overrideColor' % shape_name, color)
-
-    if not scene:
-        om.MGlobal.displayWarning("Loaded is failed! There is no curve object in the scene!")
-
-    om.MGlobal.displayInfo("---------------- File path loaded: '%s'" % file_name)
 
 def ad_lib_mirror_controller(object_origin, object_target, key_position):
     # object select node
@@ -178,8 +192,8 @@ def ad_lib_mirror_controller(object_origin, object_target, key_position):
                                             position_ws_vtx_origin[2])
         # get the vector mirror value multiply by reverse
         vector_mirror = \
-        ad_lib_vector_reverse_position(vector_ws_vtx_origin[0], vector_ws_vtx_origin[1], vector_ws_vtx_origin[2])[
-            key_position]
+            ad_lib_vector_reverse_position(vector_ws_vtx_origin[0], vector_ws_vtx_origin[1], vector_ws_vtx_origin[2])[
+                key_position]
         # move each vertex
         pm.move((vector_mirror[0]), (vector_mirror[1]), (vector_mirror[2]), vtx_target)
 
@@ -238,7 +252,17 @@ def ad_lib_vector_reverse_position(vector_origin_0, vector_origin_1, vector_orig
             'z': vector_position_origin_z}
 
 
-def ad_list_connections_object(object):
+def ad_lib_from_to_prefix_text(prefix):
+    text_field = pm.textFieldButtonGrp(prefix, q=True, tx=True)
+    return text_field
+
+
+def ad_lib_degree_rotation_int_field(int_name):
+    value = pm.intField(int_name, q=True, value=True)
+    return value
+
+
+def ad_lib_list_connections_object(object):
     # list connection
     if len(object) > 1:
         om.MGlobal.displayError('Objects selected are multiple. Select a single object only!')
@@ -384,12 +408,183 @@ def ad_lib_text_field_query_enabled(object_define):
 
     return name_text_enable
 
+
 def ad_lib_text_field_query_text(object_define):
     name_text_enable = pm.textField(object_define, q=True, tx=True)
     if name_text_enable:
         return name_text_enable
     else:
         return ''
+
+
+def ad_lib_suffix_main():
+    suffix = pm.textField('Suffix_Main', q=True, tx=True)
+    if suffix:
+        add_space = suffix.lower()
+        return add_space
+    else:
+        om.MGlobal_displayError("'Suffix:' cannot be empty!")
+
+
+def ad_lib_main_ctrl_grouping(controller, main_name, prefix_2):
+    grouping_controller = []
+    for object_controller, name in zip(controller, main_name):
+        # get main name and number
+        ad_main_name = ad_lib_get_number_main_name(name)
+        group_controller = ad_lib_group_parent(groups=ad_lib_query_list_textfield_object('Parent_Group_Name')[0],
+                                               name=ad_main_name[1],
+                                               suffix=ad_lib_suffix_main(),
+                                               prefix_number=ad_main_name[0], prefix_2=prefix_2)
+
+        ad_lib_xform_position_rotation(origin=object_controller, target=group_controller[0])
+        pm.parent(object_controller, group_controller[-1])
+        grouping_controller.append(group_controller)
+        pm.select(cl=1)
+
+    return grouping_controller
+
+
+def ad_lib_child_ctrl(main_controller, main_name, on_selector):
+    child_text_field = ad_lib_text_field_query_text('Suffix_Child_Ctrl')
+    controller_childs = []
+    for controller, name in zip(main_controller, main_name):
+        # get main name and number
+        ad_main_name = ad_lib_get_number_main_name(name)
+
+        # object_main_shape = pm.listRelatives(controller, shapes=1)[0]
+        object_main_shape = controller.getShape()
+        controller_shape = ad_lib_controller_shape(size_ctrl=0.8, on_selector=on_selector)
+        controller_child = pm.rename(controller_shape,
+                                     ad_main_name[1] + child_text_field.title() + ad_main_name[0] +
+                                     ad_lib_prefix('Prefix_2_Text') + '_' + ad_lib_suffix_main())
+
+        controller_child_shape = controller_child.getShape()
+
+        ad_lib_xform_position_rotation(origin=controller, target=controller_child)
+        pm.parent(controller_child, controller)
+        ad_lib_display(object=object_main_shape, target=controller_child_shape,
+                       long_name=child_text_field + 'Ctrl',
+                       default_vis=0,
+                       k=False, cb=True)
+        # set color
+        ad_lib_ctrl_color(ctrl=controller_child, color=16)
+
+        controller_childs.append(controller_child)
+
+    return controller_childs
+
+
+def ad_lib_connection(ctrl, target):
+    connection = []
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Point_Cons'):
+        connection = ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
+        connection = ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
+        connection = ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
+        connection = ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Parent'):
+        connection = pm.parent(target, ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
+        connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
+        connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
+        connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
+    return connection
+
+
+def ad_lib_hide_unhide(ctrl):
+    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        ad_lib_hide_unhide_attr(channel=['tx'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        ad_lib_hide_unhide_attr(channel=['ty'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        ad_lib_hide_unhide_attr(channel=['tz'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        ad_lib_hide_unhide_attr(channel=['rx'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        ad_lib_hide_unhide_attr(channel=['ry'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        ad_lib_hide_unhide_attr(channel=['rz'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        ad_lib_hide_unhide_attr(channel=['sx'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        ad_lib_hide_unhide_attr(channel=['sy'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        ad_lib_hide_unhide_attr(channel=['sz'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+        ad_lib_hide_unhide_attr(channel=['v'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('User_Def'):
+        list_attribute = ad_lib_query_user_defined_channel(ctrl)
+        ad_lib_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
+
+
+def ad_lib_lock_unlock(ctrl):
+    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        ad_lib_lock_unlock_attr(channel=['tx'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        ad_lib_lock_unlock_attr(channel=['ty'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        ad_lib_lock_unlock_attr(channel=['tz'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        ad_lib_lock_unlock_attr(channel=['rx'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        ad_lib_lock_unlock_attr(channel=['ry'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        ad_lib_lock_unlock_attr(channel=['rz'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        ad_lib_lock_unlock_attr(channel=['sx'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        ad_lib_lock_unlock_attr(channel=['sy'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        ad_lib_lock_unlock_attr(channel=['sz'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+        ad_lib_lock_unlock_attr(channel=['v'], ctrl=ctrl)
+    if ad_lib_query_lock_unlock_hide_unhide_channel('User_Def'):
+        list_attribute = ad_lib_query_user_defined_channel(ctrl)
+        ad_lib_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
+
+
+def ad_lib_hide_and_lock(ctrl, value):
+    for item in ctrl:
+        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+            ad_lib_lock_hide_attr(lock_hide_channel=['tx'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+            ad_lib_lock_hide_attr(lock_hide_channel=['ty'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+            ad_lib_lock_hide_attr(lock_hide_channel=['tz'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['rx'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['ry'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['rz'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['sx'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['sy'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['sz'], ctrl=item,
+                                  hide_object=value)
+        if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+            ad_lib_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
+                                  hide_object=value)
+
+
+def ad_lib_query_lock_unlock_hide_unhide_channel(channel_name):
+    value = pm.checkBox(channel_name, q=True, value=True)
+    return value
+
 
 def ad_lib_query_list_textfield_object(object_define, *args):
     listing_object = []
@@ -415,7 +610,7 @@ def ad_lib_query_list_textfield_object(object_define, *args):
 def ad_lib_prefix(prefix_text):
     text = pm.textField(prefix_text, q=True, tx=True)
     if pm.textField(prefix_text, q=True, en=True):
-        if text :
+        if text:
             return text
         else:
             return ''
@@ -449,6 +644,7 @@ def ad_lib_match_position_target_to_ctrl(selection, target, manipulated_position
             objects.append(object.nodeName())
 
     return objects
+
 
 def ad_lib_xform_position_rotation(origin, target):
     origin_position = pm.xform(origin, ws=True, q=True, t=True)
@@ -486,6 +682,14 @@ def ad_lib_defining_object_text_field(define_object, tx='', *args, **kwargs):
     pm.textField(define_object, tx=tx, **kwargs)
 
 
+def ad_lib_visibility_target(object, target):
+    check_box = pm.checkBox('Target_Visibility', q=True, value=True)
+    if check_box:
+        ad_lib_display(object=object, target=target)
+    else:
+        pass
+
+
 def ad_lib_display(object, target, long_name='display', default_vis=1, k=True, cb=False):
     # create attr
     if not pm.objExists(object + '.' + long_name):
@@ -507,6 +711,173 @@ def ad_lib_group_parent(groups, name, suffix, prefix_2, prefix_number):
             pm.parent(grps[number], grps[number - 1])
 
     return grps
+
+
+def ad_lib_excute_main_ctrl(Prefix_1_Text, Prefix_2_Text, main_name_for_grp, main_name,
+                            suffix_text_field, controller_shape):
+    main_name_for_grp.append(ad_lib_prefix(Prefix_1_Text) + main_name + suffix_text_field)
+    controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                               ad_lib_prefix(
+                                                   Prefix_1_Text) + main_name + ad_lib_prefix(
+                                                   Prefix_2_Text) + suffix_text_field)
+
+    return controller_shape_prefix_suffix
+
+
+def ad_lib_create_main_ctrl_prefix_suffix_selection(selection, on_selector):
+    name_text_enable = ad_lib_text_field_query_enabled('Name_Text')
+    name_text_field = ad_lib_text_field_query_text('Name_Text')
+    suffix_text_field = ad_lib_text_field_query_text('Suffix_Main')
+
+    controller_shape_prefix_suffix_app = []
+    main_name_for_grp = []
+
+    # suffix condition
+    if suffix_text_field:
+        suffix_text_field = '_' + suffix_text_field
+        # condition for selection by vertex
+        if '.' in str(selection[0]):
+            get_first_object = selection[0].split('Shape')[0]
+            query_name_object_select = ad_lib_main_name(get_first_object)
+            controller_shape = ad_lib_controller_shape(size_ctrl=1.0, on_selector=on_selector)
+            if name_text_enable:
+                if name_text_field:
+                    controller_shape_prefix_suffix = \
+                        ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                Prefix_2_Text='Prefix_2_Text',
+                                                main_name_for_grp=main_name_for_grp,
+                                                main_name=name_text_field,
+                                                suffix_text_field=suffix_text_field,
+                                                controller_shape=controller_shape)
+                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+                else:
+                    controller_shape_prefix_suffix = \
+                        ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                Prefix_2_Text='Prefix_2_Text',
+                                                main_name_for_grp=main_name_for_grp,
+                                                main_name=query_name_object_select,
+                                                suffix_text_field=suffix_text_field,
+                                                controller_shape=controller_shape)
+                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+
+            else:
+                controller_shape_prefix_suffix = \
+                    ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                            Prefix_2_Text='Prefix_2_Text',
+                                            main_name_for_grp=main_name_for_grp,
+                                            main_name=query_name_object_select,
+                                            suffix_text_field=suffix_text_field,
+                                            controller_shape=controller_shape)
+                controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+        # selection by object
+        else:
+            for number, object in enumerate(selection):
+                query_name_object_select = ad_lib_main_name(object)
+                controller_shape = ad_lib_controller_shape(size_ctrl=1.0, on_selector=on_selector)
+                # condition enable the name text
+                if name_text_enable:
+                    # condition the name is not empty
+                    if name_text_field:
+                        # condition selection more than one object
+                        if len(selection) > 1:
+                            main_name_for_grp.append(
+                                '%s%s%02d%s' % (
+                                ad_lib_prefix('Prefix_1_Text'), name_text_field, number + 1, suffix_text_field))
+                            controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                                       '%s%s%02d%s%s' % (
+                                                                           ad_lib_prefix('Prefix_1_Text'),
+                                                                           name_text_field,
+                                                                           number + 1,
+                                                                           ad_lib_prefix('Prefix_2_Text'),
+                                                                           suffix_text_field))
+                        else:
+                            controller_shape_prefix_suffix = \
+                                ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                        Prefix_2_Text='Prefix_2_Text',
+                                                        main_name_for_grp=main_name_for_grp,
+                                                        main_name=name_text_field,
+                                                        suffix_text_field=suffix_text_field,
+                                                        controller_shape=controller_shape)
+                        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+                    else:
+                        controller_shape_prefix_suffix = \
+                            ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                    Prefix_2_Text='Prefix_2_Text',
+                                                    main_name_for_grp=main_name_for_grp,
+                                                    main_name=query_name_object_select,
+                                                    suffix_text_field=suffix_text_field,
+                                                    controller_shape=controller_shape)
+
+                        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+                else:
+                    controller_shape_prefix_suffix = \
+                        ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                                Prefix_2_Text='Prefix_2_Text',
+                                                main_name_for_grp=main_name_for_grp,
+                                                main_name=query_name_object_select,
+                                                suffix_text_field=suffix_text_field,
+                                                controller_shape=controller_shape)
+
+                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+
+                    pm.select(cl=1)
+
+        return controller_shape_prefix_suffix_app, main_name_for_grp
+
+    else:
+        return om.MGlobal.displayError("'Suffix:' can not be empty!")
+
+
+def ad_lib_create_main_ctrl_prefix_suffix(on_selector):
+    name_text_enable = ad_lib_text_field_query_enabled('Name_Text')
+    name_text_field = ad_lib_text_field_query_text('Name_Text')
+    suffix_text_field = ad_lib_text_field_query_text('Suffix_Main')
+
+    controller_shape_prefix_suffix_app = []
+    main_name_for_grp = []
+
+    if suffix_text_field:
+        suffix_text_field = '_' + suffix_text_field
+
+        # condition the name field is enabled
+        if name_text_enable:
+            # condition if the text is exist
+            if name_text_field:
+                # create controller shape
+                controller_shape = ad_lib_controller_shape(size_ctrl=1.0, on_selector=on_selector)
+                # create the name prefix, name, and suffix
+                controller_shape_prefix_suffix = pm.rename(controller_shape,
+                                                           ad_lib_prefix('Prefix_1_Text') + name_text_field +
+                                                           ad_lib_prefix('Prefix_2_Text') + suffix_text_field)
+                controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+                main_name_for_grp.append(ad_lib_prefix('Prefix_1_Text') + name_text_field + suffix_text_field)
+
+                pm.select(cl=1)
+
+            else:
+                return om.MGlobal.displayError("'Name:' without selection object can not be empty!")
+
+        else:
+            controller_shape = ad_lib_controller_shape(size_ctrl=1.0, on_selector=on_selector)
+            controller_shape_prefix_suffix = \
+                ad_lib_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
+                                        Prefix_2_Text='Prefix_2_Text',
+                                        main_name_for_grp=main_name_for_grp,
+                                        main_name=controller_shape,
+                                        suffix_text_field=suffix_text_field,
+                                        controller_shape=controller_shape)
+
+            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
+            pm.select(cl=1)
+
+        return controller_shape_prefix_suffix_app, main_name_for_grp
+
+    else:
+        return om.MGlobal.displayError("'Suffix:' can not be empty!")
 
 
 def ad_lib_replacing_controller(list_controller):
@@ -672,6 +1043,7 @@ def ad_lib_ctrl_color_list(color):
                     om.MGlobal.displayWarning("Failed to override color: {0}".format(shapeNodes))
     return True
 
+
 def ad_lib_query_user_defined_channel(ctrl):
     list_attr = pm.listAttr(ctrl, ud=1)
     if 'AD_Controller' in list_attr:
@@ -690,6 +1062,7 @@ def ad_lib_ctrl_color(ctrl, color):
 
     return list_relatives
 
+
 def ad_lib_get_number_main_name(main_name):
     try:
         patterns = [r'\d+']
@@ -703,6 +1076,7 @@ def ad_lib_get_number_main_name(main_name):
     ad_main_name = str(ad_lib_main_name(main_name)).translate(None, digits)
 
     return name_number, ad_main_name
+
 
 def ad_lib_shape_controller(shape, size_ctrl, tag_number):
     scale_shape = [[size_ctrl * i for i in j] for j in shape]
@@ -735,6 +1109,109 @@ def ad_lib_untagging(ctrl):
     else:
         pm.addAttr(ctrl, ln='AD_Controller', at='bool')
         pm.setAttr(ctrl + '.AD_Controller', 0)
+
+
+def ad_lib_controller_shape(size_ctrl, on_selector, *args):
+    control_shape = []
+    if on_selector == 1:
+        control_shape = ad_lib_shape_controller(CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 2:
+        control_shape = ad_lib_shape_controller(LOCATOR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 3:
+        control_shape = ad_lib_shape_controller(CUBE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 4:
+        control_shape = ad_lib_shape_controller(CIRCLEHALF, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 5:
+        control_shape = ad_lib_shape_controller(SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 6:
+        control_shape = ad_lib_shape_controller(JOINT, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 7:
+        control_shape = ad_lib_shape_controller(CAPSULE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 8:
+        control_shape = ad_lib_shape_controller(STICKCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 9:
+        control_shape = ad_lib_shape_controller(CIRCLEPLUSHALF, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 10:
+        control_shape = ad_lib_shape_controller(CIRCLEPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 11:
+        control_shape = ad_lib_shape_controller(STICK2CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 12:
+        control_shape = ad_lib_shape_controller(STICKSQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 13:
+        control_shape = ad_lib_shape_controller(STICK2SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 14:
+        control_shape = ad_lib_shape_controller(STICKSTAR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 15:
+        control_shape = ad_lib_shape_controller(CIRCLEPLUSARROW, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 16:
+        control_shape = ad_lib_shape_controller(RECTANGLE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 17:
+        control_shape = ad_lib_shape_controller(ARROW, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 18:
+        control_shape = ad_lib_shape_controller(ARROW3DFLAT, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 19:
+        control_shape = ad_lib_shape_controller(ARROW2HALFCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 20:
+        control_shape = ad_lib_shape_controller(ARROW2STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 21:
+        control_shape = ad_lib_shape_controller(ARROW2FLAT, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 22:
+        control_shape = ad_lib_shape_controller(ARROWHEAD, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 23:
+        control_shape = ad_lib_shape_controller(ARROW90DEG, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 24:
+        control_shape = ad_lib_shape_controller(SQUAREPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 25:
+        control_shape = ad_lib_shape_controller(JOINTPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 26:
+        control_shape = ad_lib_shape_controller(HAND, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 27:
+        control_shape = ad_lib_shape_controller(ARROWCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 28:
+        control_shape = ad_lib_shape_controller(PLUS, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 29:
+        control_shape = ad_lib_shape_controller(PIVOT, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 30:
+        control_shape = ad_lib_shape_controller(KEYS, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 31:
+        control_shape = ad_lib_shape_controller(PYRAMIDCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 32:
+        control_shape = ad_lib_shape_controller(ARROW4CIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 33:
+        control_shape = ad_lib_shape_controller(EYES, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 34:
+        control_shape = ad_lib_shape_controller(FOOTSTEP, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 35:
+        control_shape = ad_lib_shape_controller(HALF3DCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 36:
+        control_shape = ad_lib_shape_controller(CAPSULECURVE, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 37:
+        control_shape = ad_lib_shape_controller(ARROW4STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 38:
+        control_shape = ad_lib_shape_controller(ARROW3D, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 39:
+        control_shape = ad_lib_shape_controller(PYRAMID, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 40:
+        control_shape = ad_lib_shape_controller(ARROW3DCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 41:
+        control_shape = ad_lib_shape_controller(CYLINDER, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 42:
+        control_shape = ad_lib_shape_controller(ARROW2FLATHALF, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 43:
+        control_shape = ad_lib_shape_controller(FLAG, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 44:
+        control_shape = ad_lib_shape_controller(WORLD, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 45:
+        control_shape = ad_lib_shape_controller(SETUP, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 46:
+        control_shape = ad_lib_shape_controller(STAR, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 47:
+        control_shape = ad_lib_shape_controller(DIAMOND, size_ctrl=size_ctrl, tag_number=on_selector)
+    elif on_selector == 48:
+        control_shape = ad_lib_shape_controller(STARSQUEEZE, size_ctrl=size_ctrl, tag_number=on_selector)
+    else:
+        pass
+    return control_shape
 
 
 CIRCLEPLUS = [[1.1300200000000005, -4.996003610813204e-16, 0.0], [1.00412, 1.1102230246251565e-16, 0.0],

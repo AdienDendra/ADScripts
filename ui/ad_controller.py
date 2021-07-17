@@ -183,7 +183,7 @@ def ad_show_ui():
                                                                  enable=True
                                                                  )
                             # create group button
-                            pm.button("Create_Grp_Select", l="Create Group", c=partial(ad_create_group_button))
+                            pm.button("Create_Grp_Select", l="Create Group", c=partial(ad_cr_group_button))
 
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage)]):
@@ -277,7 +277,7 @@ def ad_show_ui():
                             # create controller button
                             pm.button('Create_Controller', l="Create Controller With All Defined Above!",
                                       bgc=(0, 0.5, 0),
-                                      c=partial(ad_create_controller_button))
+                                      c=partial(ad_cr_controller_button))
 
                 pm.separator(h=10, st="in", w=layout)
 
@@ -308,9 +308,9 @@ def ad_show_ui():
                                                             (3, 'both', 0 * percentage), (4, 'both', 0 * percentage)]):
                                 pm.intField('Degree_Rotate', value=90, min=-360, max=360)
 
-                                pm.button("Rotate_X", l="X", c=partial(ad_rotation_x_button), bgc=(0.5, 0, 0))
-                                pm.button("Rotate_Y", l="Y", c=partial(ad_rotation_y_button), bgc=(0, 0.5, 0))
-                                pm.button('Rotate_Z', l="Z", c=partial(ad_rotation_z_button), bgc=(0, 0, 0.5))
+                                pm.button("Rotate_X", l="X", c=partial(ad_ut_rotation_x_button), bgc=(0.5, 0, 0))
+                                pm.button("Rotate_Y", l="Y", c=partial(ad_ut_rotation_y_button), bgc=(0, 0.5, 0))
+                                pm.button('Rotate_Z', l="Z", c=partial(ad_ut_rotation_z_button), bgc=(0, 0, 0.5))
 
                     with pm.frameLayout(collapsable=True, l='Mirror', mh=1):
                         with pm.rowColumnLayout(nc=3,
@@ -327,27 +327,27 @@ def ad_show_ui():
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)], tx='L_',
-                                                  bc=partial(ad_adding_object_sel_to_textfield_mirror, 'From_Prefix'))
+                                                  bc=partial(ad_ut_object_sel_to_textfield_mirror, 'From_Prefix'))
 
                             pm.button("Swap", l="<<-->>",
-                                      c=partial(ad_swap_prefix))
+                                      c=partial(ad_ut_swap_button))
 
                             pm.textFieldButtonGrp('To_Prefix', label='', cal=(1, "right"),
                                                   cw3=(10 * percentage, 13 * percentage, 7 * percentage),
                                                   columnAttach=[(1, 'both', 0 * percentage),
                                                                 (2, 'both', 0 * percentage),
                                                                 (3, 'both', 0 * percentage)], bl="<<", tx='R_',
-                                                  bc=partial(ad_adding_object_sel_to_textfield_mirror, 'To_Prefix'))
+                                                  bc=partial(ad_ut_object_sel_to_textfield_mirror, 'To_Prefix'))
                         with pm.rowLayout(nc=3, cw3=(31.6 * percentage, 31.6 * percentage, 31.6 * percentage),
                                           cl3=('center', 'center', 'center'),
                                           columnAttach=[(1, 'both', 0 * percentage), (2, 'both', 0 * percentage),
                                                         (3, 'both', 0 * percentage)]):
                             pm.button("Mirror_X", l="X",
-                                      c=partial(ad_mirror_button, 'x'), bgc=(0.5, 0, 0))
+                                      c=partial(ad_ut_mirror_button, 'x'), bgc=(0.5, 0, 0))
                             pm.button("Mirror_Y", l="Y",
-                                      c=partial(ad_mirror_button, 'y'), bgc=(0, 0.5, 0))
+                                      c=partial(ad_ut_mirror_button, 'y'), bgc=(0, 0.5, 0))
                             pm.button('Mirror_Z', l="Z",
-                                      c=partial(ad_mirror_button, 'z'), bgc=(0, 0, 0.5))
+                                      c=partial(ad_ut_mirror_button, 'z'), bgc=(0, 0, 0.5))
 
                     with pm.frameLayout(collapsable=True, l='Save/Load', mh=1):
                         with pm.columnLayout():
@@ -359,8 +359,8 @@ def ad_show_ui():
                             with pm.rowLayout(nc=2, cw2=(47.5 * percentage, 47.5 * percentage), cl2=('right', 'right'),
                                               columnAttach=[(1, 'both', 0.15 * percentage),
                                                             (2, 'both', 0.15 * percentage)]):
-                                pm.button("Save", l="Save", c=partial(ad_save_dialog), bgc=(0.5, 0.0, 0.0))
-                                pm.button('Load', l="Load", c=partial(ad_load_dialog), bgc=(0.0, 0.0, 0.5))
+                                pm.button("Save", l="Save", c=partial(ad_ut_save_dialog), bgc=(0.5, 0.0, 0.0))
+                                pm.button('Load', l="Load", c=partial(ad_ut_load_dialog), bgc=(0.0, 0.0, 0.5))
 
                 pm.separator(h=10, st="in", w=layout)
                 with pm.rowLayout(nc=3, cw3=(38 * percentage, 36 * percentage, 24 * percentage),
@@ -380,7 +380,7 @@ def ad_show_ui():
 ########################################################################################################################
 #                                           CONTROLLER UTILITIES TAB FUNCTION
 ########################################################################################################################
-def ad_load_dialog(*args):
+def ad_ut_load_dialog(*args):
     if pm.ls(sl=1):
         pm.confirmDialog(icon='warning',
                          title='Load Confirm',
@@ -400,12 +400,9 @@ def ad_load_dialog(*args):
     # export json file
     al.ad_lib_load_json_controller(filePath)
 
-    # om.MGlobal.displayInfo('---------------- Controller already load!')
-
     return filePath
 
-
-def ad_save_dialog(*args):
+def ad_ut_save_dialog(*args):
     if pm.ls(sl=1):
         pm.confirmDialog(icon='warning',
                          title='Save Confirm',
@@ -426,7 +423,7 @@ def ad_save_dialog(*args):
 
     return filePath
 
-def ad_swap_prefix(*args):
+def ad_ut_swap_button(*args):
     from_prefix = pm.textFieldButtonGrp('From_Prefix', q=True, tx=True)
     to_prefix = pm.textFieldButtonGrp('To_Prefix', q=True, tx=True)
 
@@ -435,17 +432,7 @@ def ad_swap_prefix(*args):
     pm.textFieldButtonGrp('From_Prefix', e=True, tx=from_prefix)
     pm.textFieldButtonGrp('To_Prefix', e=True, tx=to_prefix)
 
-def ad_from_prefix_text():
-    text_field = pm.textFieldButtonGrp('From_Prefix', q=True, tx=True)
-    return text_field
-
-
-def ad_to_prefix_text():
-    text_field = pm.textFieldButtonGrp('To_Prefix', q=True, tx=True)
-    return text_field
-
-
-def ad_mirror_button(key_position, *args):
+def ad_ut_mirror_button(key_position, *args):
     selection = pm.ls(selection=True)
     if not selection:
         om.MGlobal.displayWarning("No objects is selected!")
@@ -458,8 +445,8 @@ def ad_mirror_button(key_position, *args):
             string_select = str(name)
 
             # get sting from the box fiel
-            prefix_text_from_string = str(ad_from_prefix_text())
-            prefix_text_to_string = str(ad_to_prefix_text())
+            prefix_text_from_string = str(al.ad_lib_from_to_prefix_text('From_Prefix'))
+            prefix_text_to_string = str(al.ad_lib_from_to_prefix_text('To_Prefix'))
 
             # get shape object
             if pm.objectType(select_obj.getShape()) == 'nurbsCurve':
@@ -499,22 +486,17 @@ def ad_mirror_button(key_position, *args):
             else:
                 om.MGlobal.displayWarning("Skip the mirroring '%s'! The object type is not curve." % string_select)
 
-def ad_rotation_x_button(*args):
-    al.ad_lib_rotate_controller(x = ad_degree_rotation_int_field(), y = 0.0, z=0.0)
+def ad_ut_rotation_x_button(*args):
+    al.ad_lib_rotate_controller(x = al.ad_lib_degree_rotation_int_field('Degree_Rotate'), y = 0.0, z=0.0)
 
-def ad_rotation_y_button(*args):
-    al.ad_lib_rotate_controller(x = 0.0, y = ad_degree_rotation_int_field(), z=0.0)
+def ad_ut_rotation_y_button(*args):
+    al.ad_lib_rotate_controller(x = 0.0, y = al.ad_lib_degree_rotation_int_field('Degree_Rotate'), z=0.0)
 
-def ad_rotation_z_button(*args):
-    al.ad_lib_rotate_controller(x = 0.0, y = 0.0, z=ad_degree_rotation_int_field())
+def ad_ut_rotation_z_button(*args):
+    al.ad_lib_rotate_controller(x = 0.0, y = 0.0, z= al.ad_lib_degree_rotation_int_field('Degree_Rotate'))
 
-def ad_degree_rotation_int_field():
-    value = pm.intField('Degree_Rotate', q=True, value=True)
-    return value
-
-
-def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
-    # delect and add object
+def ad_ut_object_sel_to_textfield_mirror(text_input, *args):
+    # delete and add object
     select = pm.ls(sl=True, l=True, tr=True)
     if len(select) == 1:
         object_selection = select[0]
@@ -526,7 +508,7 @@ def ad_adding_object_sel_to_textfield_mirror(text_input, *args):
 ########################################################################################################################
 #                                           CREATE CONTROLLER TAB FUNCTION
 ########################################################################################################################
-def ad_create_controller_button(*args):
+def ad_cr_controller_button(*args):
     select = pm.ls(sl=1)
     child_text_field = al.ad_lib_text_field_query_text('Suffix_Child_Ctrl')
     child_check_box = pm.checkBox('Adding_Ctrl_Child', q=True, value=True)
@@ -544,7 +526,7 @@ def ad_create_controller_button(*args):
             manipulated_rotation = pm.manipPivot(q=True, o=True)[0]
 
             # create controller shape
-            main_controller = ad_create_main_ctrl_prefix_suffix_selection(select)
+            main_controller = al.ad_lib_create_main_ctrl_prefix_suffix_selection(select, on_selector)
 
             # condition the controller doesn't has an issue
             if main_controller:
@@ -565,21 +547,21 @@ def ad_create_controller_button(*args):
                         # condition when have child controller
                         if child_check_box:
                             # create child controller
-                            child_controller = ad_child_ctrl(main_controller=main_controller[0],
-                                                             main_name=main_controller[1])
+                            child_controller = al.ad_lib_child_ctrl(main_controller=main_controller[0],
+                                                             main_name=main_controller[1], on_selector=on_selector)
                             # add connection
-                            ad_connection(ctrl=child_controller[0], target=target)
+                            al.ad_lib_connection(ctrl=child_controller[0], target=target)
 
                         # condition when doesn't have child controller
                         else:
-                            ad_connection(ctrl=main_controller[0], target=target)
+                            al.ad_lib_connection(ctrl=main_controller[0], target=target)
 
                         # add pivot controller
                         if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                             pm.displayWarning("Adding pivot controller is skipped, since it's component mode.")
 
                         # add visibility to target
-                        ad_visibility_target(object=main_controller[0][0],
+                        al.ad_lib_visibility_target(object=main_controller[0][0],
                                              target=target)
 
                 # condition the object select as TRANSFORM
@@ -587,49 +569,50 @@ def ad_create_controller_button(*args):
                     # condition when have child controller
                     if child_check_box:
                         # create child controller
-                        child_controller = ad_child_ctrl(main_controller=main_controller[0],
-                                                         main_name=main_controller[1])
+                        child_controller = al.ad_lib_child_ctrl(main_controller=main_controller[0],
+                                                         main_name=main_controller[1], on_selector=on_selector)
 
                         for target, child_ctrl, main_ctrl in zip(select, child_controller, main_controller[0]):
 
                             # add connection
-                            connection = ad_connection(ctrl=child_ctrl, target=target)
+                            connection = al.ad_lib_connection(ctrl=child_ctrl, target=target)
 
                             # add pivot controller
                             if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                                 al.ad_lib_pivot_controller(controller=child_ctrl,
                                                            parent_constraint_node=connection[0],
-                                                           suffix='_' + ad_suffix_main())
+                                                           suffix='_' + al.ad_lib_suffix_main())
                             # add visibility to target
-                            ad_visibility_target(object=main_ctrl, target=target)
+                            al.ad_lib_visibility_target(object=main_ctrl, target=target)
 
                     # condition when doesn't have child controller
                     else:
                         for target, main_ctrl in zip(select, main_controller[0]):
 
                            # add connection
-                            connection = ad_connection(ctrl=main_ctrl, target=target)
+                            connection = al.ad_lib_connection(ctrl=main_ctrl, target=target)
 
                             # add pivot controller
                             if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                                 al.ad_lib_pivot_controller(controller=main_ctrl,
                                                            parent_constraint_node=connection[0],
-                                                           suffix='_' + ad_suffix_main())
+                                                           suffix='_' + al.ad_lib_suffix_main())
                             # add visibility to target
-                            ad_visibility_target(object=main_ctrl, target=target)
+                            al.ad_lib_visibility_target(object=main_ctrl, target=target)
             else:
                 pass
 
         # condition nothing selected object
         else:
             # create controller without selection
-            main_controller = ad_create_main_ctrl_prefix_suffix()
+            main_controller = al.ad_lib_create_main_ctrl_prefix_suffix(on_selector)
 
             # condition the controller doesn't has an issue
             if main_controller:
                 if child_check_box:
                     # add child controller
-                    ad_child_ctrl(main_controller=main_controller[0], main_name=main_controller[1])
+                    al.ad_lib_child_ctrl(main_controller=main_controller[0], main_name=main_controller[1],
+                                         on_selector=on_selector)
                 else:
                     pass
 
@@ -648,7 +631,7 @@ def ad_create_controller_button(*args):
         if main_controller:
             # grouping controller
             if pm.textField('Parent_Group_Name', q=True, enable=True):
-                ad_main_ctrl_grouping(controller=main_controller[0],
+                al.ad_lib_main_ctrl_grouping(controller=main_controller[0],
                                       main_name=main_controller[1],
                                       prefix_2=al.ad_lib_prefix('Prefix_2_Text'))
 
@@ -657,7 +640,7 @@ def ad_create_controller_button(*args):
                 al.ad_lib_ctrl_color(ctrl=item, color=ad_set_color())
 
             # set the main controller hide and unlock
-            ad_hide_and_lock(main_controller[0], value=True)
+            al.ad_lib_hide_and_lock(main_controller[0], value=True)
 
         else:
             pass
@@ -665,7 +648,7 @@ def ad_create_controller_button(*args):
         pm.select(cl=1)
 
 
-def ad_create_group_button(*args):
+def ad_cr_group_button(*args):
     select = pm.ls(sl=1)
     # grouping controller
     if pm.textField('Parent_Group_Name', q=True, enable=True):
@@ -680,77 +663,10 @@ def ad_create_group_button(*args):
     else:
         pass
 
-
-def ad_visibility_target(object, target):
-    check_box = pm.checkBox('Target_Visibility', q=True, value=True)
-    if check_box:
-        al.ad_lib_display(object=object, target=target)
-    else:
-        pass
-
-
-def ad_main_ctrl_grouping(controller, main_name, prefix_2):
-    grouping_controller = []
-    for object_controller, name in zip(controller, main_name):
-        # get main name and number
-        ad_main_name = al.ad_lib_get_number_main_name(name)
-        group_controller = al.ad_lib_group_parent(groups=al.ad_lib_query_list_textfield_object('Parent_Group_Name')[0],
-                                                  name=ad_main_name[1],
-                                                  suffix=ad_suffix_main(),
-                                                  prefix_number=ad_main_name[0], prefix_2=prefix_2)
-
-        al.ad_lib_xform_position_rotation(origin=object_controller, target=group_controller[0])
-        pm.parent(object_controller, group_controller[-1])
-        grouping_controller.append(group_controller)
-        pm.select(cl=1)
-
-    return grouping_controller
-
-
-def ad_suffix_main():
-    suffix = pm.textField('Suffix_Main', q=True, tx=True)
-    if suffix:
-        add_space = suffix.lower()
-        return add_space
-    else:
-        om.MGlobal_displayError("'Suffix:' cannot be empty!")
-
-
-def ad_child_ctrl(main_controller, main_name):
-    child_text_field = al.ad_lib_text_field_query_text('Suffix_Child_Ctrl')
-    controller_childs = []
-    for controller, name in zip(main_controller, main_name):
-        # get main name and number
-        ad_main_name = al.ad_lib_get_number_main_name(name)
-
-        # object_main_shape = pm.listRelatives(controller, shapes=1)[0]
-        object_main_shape = controller.getShape()
-        controller_shape = ad_controller_shape(size_ctrl=0.8)
-        controller_child = pm.rename(controller_shape,
-                                     ad_main_name[1] + child_text_field.title() + ad_main_name[0] + al.ad_lib_prefix(
-                                         'Prefix_2_Text') + '_' + ad_suffix_main())
-
-        controller_child_shape = controller_child.getShape()
-
-        al.ad_lib_xform_position_rotation(origin=controller, target=controller_child)
-        pm.parent(controller_child, controller)
-        al.ad_lib_display(object=object_main_shape, target=controller_child_shape,
-                          long_name=child_text_field + 'Ctrl',
-                          default_vis=0,
-                          k=False, cb=True)
-        # set color
-        al.ad_lib_ctrl_color(ctrl=controller_child, color=16)
-
-        controller_childs.append(controller_child)
-
-
-    return controller_childs
-
-
 def ad_create_list_connection_button(*args):
     list_object = pm.ls(sl=1)
     if list_object:
-        al.ad_list_connections_object(list_object)
+        al.ad_lib_list_connections_object(list_object)
     else:
         om.MGlobal_displayError('Select the minimum one object which has a connection!')
 
@@ -762,192 +678,7 @@ def ad_create_connection_button(*args):
     else:
         instance_controller = list_controller.pop(0)
         for item in list_controller:
-            ad_connection(ctrl=instance_controller, target=item)
-
-
-def ad_connection(ctrl, target):
-    connection = []
-    if ad_query_lock_unlock_hide_unhide_channel('Point_Cons'):
-        connection = al.ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
-        connection = al.ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
-        connection = al.ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
-        connection = al.ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
-    if ad_query_lock_unlock_hide_unhide_channel('Parent'):
-        connection = pm.parent(target, ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
-        connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
-    if ad_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
-        connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
-    if ad_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
-        connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
-    return connection
-
-def ad_excute_main_ctrl(Prefix_1_Text, Prefix_2_Text, main_name_for_grp, main_name,
-                        suffix_text_field, controller_shape):
-
-    main_name_for_grp.append(al.ad_lib_prefix(Prefix_1_Text) + main_name + suffix_text_field)
-    controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                               al.ad_lib_prefix(
-                                                   Prefix_1_Text) + main_name + al.ad_lib_prefix(
-                                                   Prefix_2_Text) + suffix_text_field)
-
-    return controller_shape_prefix_suffix
-
-def ad_create_main_ctrl_prefix_suffix_selection(selection):
-    name_text_enable = al.ad_lib_text_field_query_enabled('Name_Text')
-    name_text_field = al.ad_lib_text_field_query_text('Name_Text')
-    suffix_text_field = al.ad_lib_text_field_query_text('Suffix_Main')
-
-    controller_shape_prefix_suffix_app = []
-    main_name_for_grp = []
-
-    # suffix condition
-    if suffix_text_field:
-        suffix_text_field = '_' + suffix_text_field
-        # condition for selection by vertex
-        if '.' in str(selection[0]):
-            get_first_object = selection[0].split('Shape')[0]
-            query_name_object_select = al.ad_lib_main_name(get_first_object)
-            controller_shape = ad_controller_shape(size_ctrl=1.0)
-            if name_text_enable:
-                if name_text_field:
-                    controller_shape_prefix_suffix = \
-                        ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                            Prefix_2_Text='Prefix_2_Text',
-                                            main_name_for_grp=main_name_for_grp,
-                                            main_name=name_text_field,
-                                            suffix_text_field= suffix_text_field,
-                                            controller_shape=controller_shape)
-                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-                else:
-                    controller_shape_prefix_suffix = \
-                        ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                            Prefix_2_Text='Prefix_2_Text',
-                                            main_name_for_grp=main_name_for_grp,
-                                            main_name=query_name_object_select,
-                                            suffix_text_field=suffix_text_field,
-                                            controller_shape=controller_shape)
-                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-
-            else:
-                controller_shape_prefix_suffix = \
-                    ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                        Prefix_2_Text='Prefix_2_Text',
-                                        main_name_for_grp=main_name_for_grp,
-                                        main_name=query_name_object_select,
-                                        suffix_text_field=suffix_text_field,
-                                        controller_shape=controller_shape)
-                controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-        # selection by object
-        else:
-            for number, object in enumerate(selection):
-                query_name_object_select = al.ad_lib_main_name(object)
-                controller_shape = ad_controller_shape(size_ctrl=1.0)
-                # condition enable the name text
-                if name_text_enable:
-                    # condition the name is not empty
-                    if name_text_field:
-                        # condition selection more than one object
-                        if len(selection) > 1:
-                            main_name_for_grp.append(
-                                '%s%s%02d%s' % (al.ad_lib_prefix('Prefix_1_Text'), name_text_field, number + 1, suffix_text_field))
-                            controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                                       '%s%s%02d%s%s' % (
-                                                                           al.ad_lib_prefix('Prefix_1_Text'), name_text_field,
-                                                                           number + 1,
-                                                                           al.ad_lib_prefix('Prefix_2_Text'), suffix_text_field))
-                        else:
-                            controller_shape_prefix_suffix = \
-                                ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                                    Prefix_2_Text='Prefix_2_Text',
-                                                    main_name_for_grp=main_name_for_grp,
-                                                    main_name=name_text_field,
-                                                    suffix_text_field=suffix_text_field,
-                                                    controller_shape=controller_shape)
-                        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-                    else:
-                        controller_shape_prefix_suffix = \
-                            ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                                Prefix_2_Text='Prefix_2_Text',
-                                                main_name_for_grp=main_name_for_grp,
-                                                main_name=query_name_object_select,
-                                                suffix_text_field=suffix_text_field,
-                                                controller_shape=controller_shape)
-
-                        controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-                else:
-                    controller_shape_prefix_suffix = \
-                        ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                            Prefix_2_Text='Prefix_2_Text',
-                                            main_name_for_grp=main_name_for_grp,
-                                            main_name=query_name_object_select,
-                                            suffix_text_field=suffix_text_field,
-                                            controller_shape=controller_shape)
-
-                    controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-
-                    pm.select(cl=1)
-
-        return controller_shape_prefix_suffix_app, main_name_for_grp
-
-    else:
-        return om.MGlobal.displayError("'Suffix:' can not be empty!")
-
-
-def ad_create_main_ctrl_prefix_suffix():
-    name_text_enable = al.ad_lib_text_field_query_enabled('Name_Text')
-    name_text_field = al.ad_lib_text_field_query_text('Name_Text')
-    suffix_text_field = al.ad_lib_text_field_query_text('Suffix_Main')
-
-    controller_shape_prefix_suffix_app = []
-    main_name_for_grp = []
-
-    if suffix_text_field:
-        suffix_text_field = '_' + suffix_text_field
-
-        # condition the name field is enabled
-        if name_text_enable:
-            # condition if the text is exist
-            if name_text_field:
-                # create controller shape
-                controller_shape = ad_controller_shape(size_ctrl=1.0)
-                # create the name prefix, name, and suffix
-                controller_shape_prefix_suffix = pm.rename(controller_shape,
-                                                           al.ad_lib_prefix('Prefix_1_Text') + name_text_field +
-                                                           al.ad_lib_prefix('Prefix_2_Text') + suffix_text_field)
-                controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-                main_name_for_grp.append(al.ad_lib_prefix('Prefix_1_Text') + name_text_field + suffix_text_field)
-
-                pm.select(cl=1)
-
-            else:
-                return om.MGlobal.displayError("'Name:' without selection object can not be empty!")
-
-        else:
-            controller_shape = ad_controller_shape(size_ctrl=1.0)
-            controller_shape_prefix_suffix = \
-                ad_excute_main_ctrl(Prefix_1_Text='Prefix_1_Text',
-                                    Prefix_2_Text='Prefix_2_Text',
-                                    main_name_for_grp=main_name_for_grp,
-                                    main_name=controller_shape,
-                                    suffix_text_field=suffix_text_field,
-                                    controller_shape=controller_shape)
-
-            controller_shape_prefix_suffix_app.append(controller_shape_prefix_suffix)
-            pm.select(cl=1)
-
-        return controller_shape_prefix_suffix_app, main_name_for_grp
-
-    else:
-        return om.MGlobal.displayError("'Suffix:' can not be empty!")
-
+            al.ad_lib_connection(ctrl=instance_controller, target=item)
 
 
 def ad_replacing_controller_button(*args):
@@ -968,7 +699,7 @@ def ad_hide_unhide_button(*args):
         return False
     else:
         for item in selection:
-            ad_hide_unhide(ctrl=item)
+            al.ad_lib_hide_unhide(ctrl=item)
 
 
 def ad_lock_unlock_button(*args):
@@ -978,97 +709,7 @@ def ad_lock_unlock_button(*args):
         return False
     else:
         for item in selection:
-            ad_lock_unlock(ctrl=item)
-
-def ad_hide_unhide(ctrl):
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
-        al.ad_lib_hide_unhide_attr(channel=['tx'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
-        al.ad_lib_hide_unhide_attr(channel=['ty'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
-        al.ad_lib_hide_unhide_attr(channel=['tz'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
-        al.ad_lib_hide_unhide_attr(channel=['rx'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
-        al.ad_lib_hide_unhide_attr(channel=['ry'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
-        al.ad_lib_hide_unhide_attr(channel=['rz'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
-        al.ad_lib_hide_unhide_attr(channel=['sx'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
-        al.ad_lib_hide_unhide_attr(channel=['sy'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
-        al.ad_lib_hide_unhide_attr(channel=['sz'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
-        al.ad_lib_hide_unhide_attr(channel=['v'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
-        list_attribute = al.ad_lib_query_user_defined_channel(ctrl)
-        al.ad_lib_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
-
-
-def ad_lock_unlock(ctrl):
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
-        al.ad_lib_lock_unlock_attr(channel=['tx'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
-        al.ad_lib_lock_unlock_attr(channel=['ty'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
-        al.ad_lib_lock_unlock_attr(channel=['tz'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
-        al.ad_lib_lock_unlock_attr(channel=['rx'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
-        al.ad_lib_lock_unlock_attr(channel=['ry'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
-        al.ad_lib_lock_unlock_attr(channel=['rz'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
-        al.ad_lib_lock_unlock_attr(channel=['sx'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
-        al.ad_lib_lock_unlock_attr(channel=['sy'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
-        al.ad_lib_lock_unlock_attr(channel=['sz'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
-        al.ad_lib_lock_unlock_attr(channel=['v'], ctrl=ctrl)
-    if ad_query_lock_unlock_hide_unhide_channel('User_Def'):
-        list_attribute = al.ad_lib_query_user_defined_channel(ctrl)
-        al.ad_lib_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
-
-
-def ad_hide_and_lock(ctrl, value):
-    for item in ctrl:
-        if ad_query_lock_unlock_hide_unhide_channel("Trans_X"):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['tx'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel("Trans_Y"):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['ty'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel("Trans_Z"):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['tz'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Rot_X'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['rx'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Rot_Y'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['ry'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Rot_Z'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['rz'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Scl_X'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['sx'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Scl_Y'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['sy'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Scl_Z'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['sz'], ctrl=item,
-                                     hide_object=value)
-        if ad_query_lock_unlock_hide_unhide_channel('Visibility'):
-            al.ad_lib_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
-                                     hide_object=value)
-
-
-def ad_query_lock_unlock_hide_unhide_channel(channel_name):
-    value = pm.checkBox(channel_name, q=True, value=True)
-    return value
+            al.ad_lib_lock_unlock(ctrl=item)
 
 
 def ad_select_all_ad_controller_button(*args):
@@ -1103,109 +744,6 @@ def ad_replace_color_button(*args):
 def ad_set_color(*args):
     controller_color = pm.palettePort('Pallete', query=True, setCurCell=True)
     return controller_color
-
-
-def ad_controller_shape(size_ctrl, *args):
-    control_shape = []
-    if on_selector == 1:
-        control_shape = al.ad_lib_shape_controller(al.CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 2:
-        control_shape = al.ad_lib_shape_controller(al.LOCATOR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 3:
-        control_shape = al.ad_lib_shape_controller(al.CUBE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 4:
-        control_shape = al.ad_lib_shape_controller(al.CIRCLEHALF, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 5:
-        control_shape = al.ad_lib_shape_controller(al.SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 6:
-        control_shape = al.ad_lib_shape_controller(al.JOINT, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 7:
-        control_shape = al.ad_lib_shape_controller(al.CAPSULE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 8:
-        control_shape = al.ad_lib_shape_controller(al.STICKCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 9:
-        control_shape = al.ad_lib_shape_controller(al.CIRCLEPLUSHALF, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 10:
-        control_shape = al.ad_lib_shape_controller(al.CIRCLEPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 11:
-        control_shape = al.ad_lib_shape_controller(al.STICK2CIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 12:
-        control_shape = al.ad_lib_shape_controller(al.STICKSQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 13:
-        control_shape = al.ad_lib_shape_controller(al.STICK2SQUARE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 14:
-        control_shape = al.ad_lib_shape_controller(al.STICKSTAR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 15:
-        control_shape = al.ad_lib_shape_controller(al.CIRCLEPLUSARROW, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 16:
-        control_shape = al.ad_lib_shape_controller(al.RECTANGLE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 17:
-        control_shape = al.ad_lib_shape_controller(al.ARROW, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 18:
-        control_shape = al.ad_lib_shape_controller(al.ARROW3DFLAT, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 19:
-        control_shape = al.ad_lib_shape_controller(al.ARROW2HALFCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 20:
-        control_shape = al.ad_lib_shape_controller(al.ARROW2STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 21:
-        control_shape = al.ad_lib_shape_controller(al.ARROW2FLAT, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 22:
-        control_shape = al.ad_lib_shape_controller(al.ARROWHEAD, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 23:
-        control_shape = al.ad_lib_shape_controller(al.ARROW90DEG, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 24:
-        control_shape = al.ad_lib_shape_controller(al.SQUAREPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 25:
-        control_shape = al.ad_lib_shape_controller(al.JOINTPLUS, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 26:
-        control_shape = al.ad_lib_shape_controller(al.HAND, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 27:
-        control_shape = al.ad_lib_shape_controller(al.ARROWCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 28:
-        control_shape = al.ad_lib_shape_controller(al.PLUS, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 29:
-        control_shape = al.ad_lib_shape_controller(al.PIVOT, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 30:
-        control_shape = al.ad_lib_shape_controller(al.KEYS, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 31:
-        control_shape = al.ad_lib_shape_controller(al.PYRAMIDCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 32:
-        control_shape = al.ad_lib_shape_controller(al.ARROW4CIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 33:
-        control_shape = al.ad_lib_shape_controller(al.EYES, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 34:
-        control_shape = al.ad_lib_shape_controller(al.FOOTSTEP, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 35:
-        control_shape = al.ad_lib_shape_controller(al.HALF3DCIRCLE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 36:
-        control_shape = al.ad_lib_shape_controller(al.CAPSULECURVE, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 37:
-        control_shape = al.ad_lib_shape_controller(al.ARROW4STRAIGHT, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 38:
-        control_shape = al.ad_lib_shape_controller(al.ARROW3D, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 39:
-        control_shape = al.ad_lib_shape_controller(al.PYRAMID, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 40:
-        control_shape = al.ad_lib_shape_controller(al.ARROW3DCIRCULAR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 41:
-        control_shape = al.ad_lib_shape_controller(al.CYLINDER, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 42:
-        control_shape = al.ad_lib_shape_controller(al.ARROW2FLATHALF, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 43:
-        control_shape = al.ad_lib_shape_controller(al.FLAG, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 44:
-        control_shape = al.ad_lib_shape_controller(al.WORLD, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 45:
-        control_shape = al.ad_lib_shape_controller(al.SETUP, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 46:
-        control_shape = al.ad_lib_shape_controller(al.STAR, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 47:
-        control_shape = al.ad_lib_shape_controller(al.DIAMOND, size_ctrl=size_ctrl, tag_number=on_selector)
-    elif on_selector == 48:
-        control_shape = al.ad_lib_shape_controller(al.STARSQUEEZE, size_ctrl=size_ctrl, tag_number=on_selector)
-    else:
-        pass
-    return control_shape
 
 
 def ad_on_selection_ctrl_shape(on):
