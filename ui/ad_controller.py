@@ -1023,7 +1023,7 @@ def ad_cu_mirror_button(key_position, *args):
             # conversion into string
             string_select = str(name)
 
-            # get sting from the box fiel
+            # get sting from the box field
             prefix_text_from_string = str(al.ad_lib_from_to_prefix_text('From_Prefix'))
             prefix_text_to_string = str(al.ad_lib_from_to_prefix_text('To_Prefix'))
 
