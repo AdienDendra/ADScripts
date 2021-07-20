@@ -179,7 +179,7 @@ def decompose_matrix_axis(axis_x, axis_y, axis_z, obj):
             'scale': scale}
 
 
-def split_evenly(obj_base, obj_tip, prefix, side=None, split=1, base_tip=False):
+def split_evenly(obj_base, obj_tip, prefix, side='', split=1, base_tip=False):
     base_xform = mc.xform(obj_base, q=1, ws=1, t=1)
     tip_xform = mc.xform(obj_tip, q=1, ws=1, t=1)
 

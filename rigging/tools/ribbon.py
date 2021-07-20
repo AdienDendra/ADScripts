@@ -580,8 +580,9 @@ class CreateRibbon:
         follicle = []
         follicle_shape = []
         for i in items:
-            follicle = au.create_follicle_selection(i, obj_tansform, connect_follicle=['rotateConn', 'transConn'])[0]
-            rename_follicle = mc.rename(follicle, '%s_%s' % (au.prefix_name(i), suffix))
+            fol = au.create_follicle_selection(i, obj_tansform, connect_follicle=['rotateConn', 'transConn'])[0]
+            rename_follicle = mc.rename(fol, '%s_%s' % (au.prefix_name(i), suffix))
+            #print rename_follicle
             follicle.append(rename_follicle)
             fol_shape = mc.listRelatives(rename_follicle, s=1)[0]
             follicle_shape.append(fol_shape)

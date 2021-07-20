@@ -159,7 +159,7 @@ def ad_show_ui():
                                                         (2, 'both', 0.5 * percentage)], ):
                             pm.text('')
                             # controller resize slider
-                            pm.floatSlider('Controller_Resize', min=0.9, value=1.0, max=1.1, step=0.1,
+                            pm.floatSlider('Controller_Resize', min=0.7, value=1.0, max=1.3, step=0.1,
                                            dragCommand=partial(ad_cc_controller_resize_slider),
                                            changeCommand=partial(ad_cc_controller_resize_reset))
                         with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
