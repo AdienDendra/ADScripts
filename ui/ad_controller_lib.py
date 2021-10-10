@@ -476,112 +476,135 @@ def ad_lib_child_ctrl(main_controller, main_name, on_selector):
 
 def ad_lib_connection(ctrl, target):
     connection = []
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Point_Cons'):
+    if ad_lib_query_checkbox_channel('Point_Cons'):
         connection = ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
+    if ad_lib_query_checkbox_channel('Orient_Cons'):
         connection = ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
+    if ad_lib_query_checkbox_channel('Scale_Cons'):
         connection = ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
+    if ad_lib_query_checkbox_channel('Parent_Cons'):
         connection = ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Parent'):
+    if ad_lib_query_checkbox_channel('Parent'):
         connection = pm.parent(target, ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
+    if ad_lib_query_checkbox_channel('Direct_Trans'):
         connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
+    if ad_lib_query_checkbox_channel('Direct_Rot'):
         connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
+    if ad_lib_query_checkbox_channel('Direct_Scl'):
         connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
     return connection
 
 
 def ad_lib_hide_unhide(ctrl):
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+    if ad_lib_query_checkbox_channel("Trans_X_Channel"):
         ad_lib_hide_unhide_attr(channel=['tx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+    if ad_lib_query_checkbox_channel("Trans_Y_Channel"):
         ad_lib_hide_unhide_attr(channel=['ty'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+    if ad_lib_query_checkbox_channel("Trans_Z_Channel"):
         ad_lib_hide_unhide_attr(channel=['tz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+    if ad_lib_query_checkbox_channel('Rot_X_Channel'):
         ad_lib_hide_unhide_attr(channel=['rx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+    if ad_lib_query_checkbox_channel('Rot_Y_Channel'):
         ad_lib_hide_unhide_attr(channel=['ry'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+    if ad_lib_query_checkbox_channel('Rot_Z_Channel'):
         ad_lib_hide_unhide_attr(channel=['rz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+    if ad_lib_query_checkbox_channel('Scl_X_Channel'):
         ad_lib_hide_unhide_attr(channel=['sx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+    if ad_lib_query_checkbox_channel('Scl_Y_Channel'):
         ad_lib_hide_unhide_attr(channel=['sy'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+    if ad_lib_query_checkbox_channel('Scl_Z_Channel'):
         ad_lib_hide_unhide_attr(channel=['sz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+    if ad_lib_query_checkbox_channel('Visibility'):
         ad_lib_hide_unhide_attr(channel=['v'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('User_Def'):
+    if ad_lib_query_checkbox_channel('User_Def'):
         list_attribute = ad_lib_query_user_defined_channel(ctrl)
         ad_lib_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
 
 
 def ad_lib_lock_unlock(ctrl):
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+    if ad_lib_query_checkbox_channel("Trans_X_Channel"):
         ad_lib_lock_unlock_attr(channel=['tx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+    if ad_lib_query_checkbox_channel("Trans_Y_Channel"):
         ad_lib_lock_unlock_attr(channel=['ty'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+    if ad_lib_query_checkbox_channel("Trans_Z_Channel"):
         ad_lib_lock_unlock_attr(channel=['tz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+    if ad_lib_query_checkbox_channel('Rot_X_Channel'):
         ad_lib_lock_unlock_attr(channel=['rx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+    if ad_lib_query_checkbox_channel('Rot_Y_Channel'):
         ad_lib_lock_unlock_attr(channel=['ry'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+    if ad_lib_query_checkbox_channel('Rot_Z_Channel'):
         ad_lib_lock_unlock_attr(channel=['rz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+    if ad_lib_query_checkbox_channel('Scl_X_Channel'):
         ad_lib_lock_unlock_attr(channel=['sx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+    if ad_lib_query_checkbox_channel('Scl_Y_Channel'):
         ad_lib_lock_unlock_attr(channel=['sy'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+    if ad_lib_query_checkbox_channel('Scl_Z_Channel'):
         ad_lib_lock_unlock_attr(channel=['sz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+    if ad_lib_query_checkbox_channel('Visibility'):
         ad_lib_lock_unlock_attr(channel=['v'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('User_Def'):
+    if ad_lib_query_checkbox_channel('User_Def'):
         list_attribute = ad_lib_query_user_defined_channel(ctrl)
         ad_lib_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
 
 
 def ad_lib_hide_and_lock(ctrl, value):
     for item in ctrl:
-        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        if ad_lib_query_checkbox_channel("Trans_X_Channel"):
             ad_lib_lock_hide_attr(lock_hide_channel=['tx'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        if ad_lib_query_checkbox_channel("Trans_Y_Channel"):
             ad_lib_lock_hide_attr(lock_hide_channel=['ty'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        if ad_lib_query_checkbox_channel("Trans_Z_Channel"):
             ad_lib_lock_hide_attr(lock_hide_channel=['tz'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        if ad_lib_query_checkbox_channel('Rot_X_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['rx'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        if ad_lib_query_checkbox_channel('Rot_Y_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['ry'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        if ad_lib_query_checkbox_channel('Rot_Z_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['rz'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        if ad_lib_query_checkbox_channel('Scl_X_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['sx'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        if ad_lib_query_checkbox_channel('Scl_Y_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['sy'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        if ad_lib_query_checkbox_channel('Scl_Z_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['sz'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+        if ad_lib_query_checkbox_channel('Visibility'):
             ad_lib_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
                                   hide_object=value)
 
 
-def ad_lib_query_lock_unlock_hide_unhide_channel(channel_name):
+def ad_lib_match_transform():
+    if ad_lib_query_checkbox_channel("Trans_X_Match"):
+        ad_lib_match_xform(channel='tx')
+    if ad_lib_query_checkbox_channel("Trans_Y_Match"):
+        ad_lib_match_xform(channel='ty')
+    if ad_lib_query_checkbox_channel("Trans_Z_Match"):
+        ad_lib_match_xform(channel='tz')
+
+    if ad_lib_query_checkbox_channel('Rot_X_Match'):
+        ad_lib_match_xform(channel='rx')
+    if ad_lib_query_checkbox_channel('Rot_Y_Match'):
+        ad_lib_match_xform(channel='ry')
+    if ad_lib_query_checkbox_channel('Rot_Z_Match'):
+        ad_lib_match_xform(channel='rz')
+
+    if ad_lib_query_checkbox_channel('Scl_X_Match'):
+        ad_lib_match_xform(channel='sx')
+    if ad_lib_query_checkbox_channel('Scl_Y_Match'):
+        ad_lib_match_xform(channel='sy')
+    if ad_lib_query_checkbox_channel('Scl_Z_Match'):
+        ad_lib_match_xform(channel='sz')
+
+
+def ad_lib_query_checkbox_channel(channel_name):
     value = pm.checkBox(channel_name, q=True, value=True)
     return value
 
@@ -1023,6 +1046,55 @@ def ad_lib_lock_hide_attr(lock_hide_channel, ctrl, hide_object, **kwargs):
             pm.setAttr(ctrl + '.' + at, l=0, k=1, **kwargs)
 
     return attr_lock_list
+
+
+def ad_lib_match_define_name():
+    selection = pm.ls(sl=1)
+    origin = selection.pop(0)
+    target = []
+    for object in selection:
+        target.append(object)
+
+    return origin, target
+
+
+def ad_lib_match_xform(channel):
+    selection = pm.ls(sl=1)
+    origin = selection.pop(0)
+
+    for object in selection:
+        # match translation
+        if channel == 'tx':
+            point_x = pm.pointConstraint(origin, object, mo=0, sk=('y', 'z'))
+            pm.delete(point_x)
+        if channel == 'ty':
+            point_y = pm.pointConstraint(origin, object, mo=0, sk=('x', 'z'))
+            pm.delete(point_y)
+        if channel == 'tz':
+            point_z = pm.pointConstraint(origin, object, mo=0, sk=('x', 'y'))
+            pm.delete(point_z)
+
+        # match rotation
+        if channel == 'rx':
+            rot_x = pm.orientConstraint(origin, object, mo=0, sk=('y', 'z'))
+            pm.delete(rot_x)
+        if channel == 'ry':
+            rot_y = pm.orientConstraint(origin, object, mo=0, sk=('x', 'z'))
+            pm.delete(rot_y)
+        if channel == 'rz':
+            rot_z = pm.orientConstraint(origin, object, mo=0, sk=('x', 'y'))
+            pm.delete(rot_z)
+
+        # match scale
+        if channel == 'sx':
+            scl_x = pm.scaleConstraint(origin, object, mo=0, sk=('y', 'z'))
+            pm.delete(scl_x)
+        if channel == 'sy':
+            scl_y = pm.scaleConstraint(origin, object, mo=0, sk=('x', 'z'))
+            pm.delete(scl_y)
+        if channel == 'sz':
+            scl_z = pm.scaleConstraint(origin, object, mo=0, sk=('x', 'y'))
+            pm.delete(scl_z)
 
 
 def ad_lib_ctrl_color_list(color):
