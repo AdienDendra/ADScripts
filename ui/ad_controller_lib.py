@@ -12,7 +12,7 @@ CONTACT:
     adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 20 July 2021 - Initial Release
+    1.0 - xx Xxxx 2021 - Initial Release
 
 LICENSE:
     Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>

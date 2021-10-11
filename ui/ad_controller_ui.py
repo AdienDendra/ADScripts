@@ -14,7 +14,7 @@ CONTACT:
     adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - 20 July 2021 - Initial Release
+    1.0 - xx Xxxx 2021 - Initial Release
 
 LICENSE:
     Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
@@ -22,9 +22,6 @@ LICENSE:
     distributed without the express permission of Adien Dendra
 
 """
-
-from functools import partial
-
 import json
 import re
 from collections import OrderedDict
@@ -33,12 +30,14 @@ from string import digits
 import maya.OpenMaya as om
 import pymel.core as pm
 
+from functools import partial
 
 
 layout = 400
 percentage = 0.01 * layout
 on_selector = 0
 previous_value = 0
+
 
 # UI
 def ad_show_ui():
@@ -138,11 +137,17 @@ def ad_show_ui():
                                           rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
                             pm.text('')
                             # translation channel box
-                            ad_cc_channelbox_translation()
+                            ad_cc_channelbox_translation(channel=True, name_all_trans='All_Trans_Channel',
+                                                         name_trans_x='Trans_X_Channel', name_trans_y='Trans_Y_Channel',
+                                                         name_trans_z='Trans_Z_Channel')
                             # rotation channel box
-                            ad_cc_channelbox_rotation()
+                            ad_cc_channelbox_rotation(channel=True, name_all_rot='All_Rot_Channel',
+                                                      name_rot_x='Rot_X_Channel',
+                                                      name_rot_y='Rot_Y_Channel', name_rot_z='Rot_Z_Channel')
                             # scale channel box
-                            ad_cc_channelbox_scale()
+                            ad_cc_channelbox_scale(name_all_scl='All_Scl_Channel', name_scl_x='Scl_X_Channel',
+                                                   name_scl_y='Scl_Y_Channel',
+                                                   name_scl_z='Scl_Z_Channel')
 
                         with pm.rowLayout(nc=3, cw3=(19 * percentage, 38 * percentage, 38 * percentage),
                                           cl3=('right', 'right', 'right'), columnAttach=[(2, 'both', 0.15 * percentage),
@@ -287,7 +292,7 @@ def ad_show_ui():
                                   cl3=('left', 'center', 'right'),
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
                                                 (3, 'both', 2 * percentage)]):
-                    pm.text(l='Adien Dendra | 07/2021', al='left')
+                    pm.text(l='Adien Dendra | 10/2021', al='left')
                     pm.text(
                         l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
                         hl=True,
@@ -297,6 +302,31 @@ def ad_show_ui():
             # LAYOUT CONTROLLER UTILITES
             with pm.scrollLayout('Controller Utilities', p='tab'):
                 with pm.columnLayout('Controller_Utilities_Column', w=layout, co=('both', 1 * percentage), adj=1):
+                    with pm.frameLayout(collapsable=True, l='Match Transform', mh=1):
+                        with pm.rowLayout(nc=4,
+                                          cw4=(18.5 * percentage, 32 * percentage, 27 * percentage, 22 * percentage),
+                                          cl4=('right', 'left', 'left', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage),
+                                                        (3, 'both', 0.5 * percentage), (4, 'both', 0.5 * percentage), ],
+                                          rowAttach=[(1, 'top', 0), (2, 'top', 0), (3, 'top', 0), (4, 'top', 0)]):
+                            pm.text('')
+                            # translation channel box
+                            ad_cc_channelbox_translation(channel=False, name_all_trans='All_Trans_Match',
+                                                         name_trans_x='Trans_X_Match', name_trans_y='Trans_Y_Match',
+                                                         name_trans_z='Trans_Z_Match')
+                            # rotation channel box
+                            ad_cc_channelbox_rotation(channel=False, name_all_rot='All_Rot_Match',
+                                                      name_rot_x='Rot_X_Match',
+                                                      name_rot_y='Rot_Y_Match', name_rot_z='Rot_Z_Match')
+                            # scale channel box
+                            ad_cc_channelbox_scale(name_all_scl='All_Scl_Match', name_scl_x='Scl_X_Match',
+                                                   name_scl_y='Scl_Y_Match',
+                                                   name_scl_z='Scl_Z_Match')
+                        with pm.rowLayout(nc=2, cw2=(18 * percentage, 77 * percentage), cl2=('right', 'left'),
+                                          columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
+                            pm.text('')
+                            pm.button("Match_Transform", l="Match Transform", c=partial(ad_cu_match_transform))
+
                     with pm.frameLayout(collapsable=True, l='Rotate', mh=1):
                         with pm.rowLayout(nc=2, cw2=(18 * percentage, 77 * percentage), cl2=('right', 'left'),
                                           columnAttach=[(1, 'both', 0.5 * percentage), (2, 'both', 0.5 * percentage)]):
@@ -367,7 +397,7 @@ def ad_show_ui():
                                   cl3=('left', 'center', 'right'),
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
                                                 (3, 'both', 2 * percentage)]):
-                    pm.text(l='Adien Dendra | 07/2021', al='left')
+                    pm.text(l='Adien Dendra | 10/2021', al='left')
                     pm.text(
                         l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
                         hl=True,
@@ -483,39 +513,64 @@ def ad_cc_replace_color_button(*args):
 
 
 # CHANNEL
-def ad_cc_channelbox_translation(*args):
+# def ad_cc_channelbox_translation(channel, *args):
+#     pm.columnLayout()
+#     pm.checkBox('All_Trans', label='All Translation', value=False,
+#                 cc=partial(ad_cc_checkbox_check_channel_translate, ['Trans_X', 'Trans_Y', 'Trans_Z']))
+#
+#     pm.checkBox('Trans_X', label='Translate X', value=False,
+#                 cc=partial(ad_cc_checkbox_uncheck_all_channel, 'Trans_X', ['Trans_X']))
+#     pm.checkBox('Trans_Y', label='Translate Y', value=False,
+#                 cc=partial(ad_cc_checkbox_uncheck_all_channel, 'Trans_Y', ['Trans_Y']))
+#     pm.checkBox('Trans_Z', label='Translate Z', value=False,
+#                 cc=partial(ad_cc_checkbox_uncheck_all_channel, 'Trans_Z', ['Trans_Z']))
+#     if channel:
+#         pm.checkBox('Visibility', label='Visibility', value=False)
+#     pm.setParent(u=True)
+
+def ad_cc_channelbox_translation(channel, name_all_trans, name_trans_x, name_trans_y, name_trans_z, *args):
     pm.columnLayout()
-    pm.checkBox('All_Trans', label='All Translation', value=False,
-                cc=partial(ad_cc_checkbox_check_channel_translate, ['Trans_X', 'Trans_Y', 'Trans_Z']))
-    pm.checkBox('Trans_X', label='Translate X', value=False,
-                cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Trans_X']))
-    pm.checkBox('Trans_Y', label='Translate Y', value=False,
-                cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Trans_Y']))
-    pm.checkBox('Trans_Z', label='Translate Z', value=False,
-                cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Trans_Z']))
-    pm.checkBox('Visibility', label='Visibility', value=False)
+    pm.checkBox(name_all_trans, label='All Translation', value=False,
+                cc=partial(ad_cc_checkbox_check_channel_translate_channel,
+                           [name_trans_x, name_trans_y, name_trans_z, name_all_trans]))
+    pm.checkBox(name_trans_x, label='Translate X', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_trans_x, name_all_trans]))
+    pm.checkBox(name_trans_y, label='Translate Y', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_trans_y, name_all_trans]))
+    pm.checkBox(name_trans_z, label='Translate Z', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_trans_z, name_all_trans]))
+    if channel:
+        pm.checkBox('Visibility', label='Visibility', value=False)
+
     pm.setParent(u=True)
 
 
-def ad_cc_channelbox_rotation(*args):
+def ad_cc_channelbox_rotation(channel, name_all_rot, name_rot_x, name_rot_y, name_rot_z, *args):
     pm.columnLayout()
-    pm.checkBox('All_Rot', label='All Rotation', value=False,
-                cc=partial(ad_cc_checkbox_check_channel_rotate, ['Rot_X', 'Rot_Y', 'Rot_Z']))
-    pm.checkBox('Rot_X', label='Rotate X', value=False, cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Rot_X']))
-    pm.checkBox('Rot_Y', label='Rotate Y', value=False, cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Rot_Y']))
-    pm.checkBox('Rot_Z', label='Rotate Z', value=False, cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Rot_Z']))
-    pm.checkBox('User_Def', label='User Defined', value=False)
+    pm.checkBox(name_all_rot, label='All Rotation', value=False,
+                cc=partial(ad_cc_checkbox_check_channel_rotate, [name_rot_x, name_rot_y, name_rot_z, name_all_rot]))
+    pm.checkBox(name_rot_x, label='Rotate X', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_rot_x, name_all_rot]))
+    pm.checkBox(name_rot_y, label='Rotate Y', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_rot_y, name_all_rot]))
+    pm.checkBox(name_rot_z, label='Rotate Z', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_rot_z, name_all_rot]))
+    if channel:
+        pm.checkBox('User_Def', label='User Defined', value=False)
 
     pm.setParent(u=True)
 
 
-def ad_cc_channelbox_scale(*args):
+def ad_cc_channelbox_scale(name_all_scl, name_scl_x, name_scl_y, name_scl_z, *args):
     pm.columnLayout()
-    pm.checkBox('All_Scale', label='All Scale', value=False,
-                cc=partial(ad_cc_checkbox_check_channel_scale, ['Scl_X', 'Scl_Y', 'Scl_Z']))
-    pm.checkBox('Scl_X', label='Scale X', value=False, cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Scl_X']))
-    pm.checkBox('Scl_Y', label='Scale Y', value=False, cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Scl_Y']))
-    pm.checkBox('Scl_Z', label='Scale Z', value=False, cc=partial(ad_cc_checkbox_uncheck_all_channel, ['Scl_Z']))
+    pm.checkBox(name_all_scl, label='All Scale', value=False,
+                cc=partial(ad_cc_checkbox_check_channel_scale, [name_scl_x, name_scl_y, name_scl_z, name_all_scl]))
+    pm.checkBox(name_scl_x, label='Scale X', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_scl_x, name_all_scl]))
+    pm.checkBox(name_scl_y, label='Scale Y', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_scl_y, name_all_scl]))
+    pm.checkBox(name_scl_z, label='Scale Z', value=False,
+                cc=partial(ad_cc_checkbox_uncheck_all_channel, [name_scl_z, name_all_scl]))
     pm.setParent(u=True)
 
 
@@ -935,9 +990,9 @@ def ad_cc_set_color(*args):
 
 
 #
-def ad_cc_checkbox_check_channel_translate(objects, value, *args):
+def ad_cc_checkbox_check_channel_translate_channel(objects, value, *args):
     for item in objects:
-        all_trans = pm.checkBox('All_Trans', q=True, value=value)
+        all_trans = pm.checkBox(objects[-1], q=True, value=value)
         if all_trans == 1:
             pm.checkBox(item, e=True, value=True)
         else:
@@ -946,7 +1001,7 @@ def ad_cc_checkbox_check_channel_translate(objects, value, *args):
 
 def ad_cc_checkbox_check_channel_rotate(objects, value, *args):
     for item in objects:
-        all_rot = pm.checkBox('All_Rot', q=True, value=value)
+        all_rot = pm.checkBox(objects[-1], q=True, value=value)
         if all_rot == 1:
             pm.checkBox(item, e=True, value=True)
         else:
@@ -955,37 +1010,19 @@ def ad_cc_checkbox_check_channel_rotate(objects, value, *args):
 
 def ad_cc_checkbox_check_channel_scale(objects, value, *args):
     for item in objects:
-        all_scale = pm.checkBox('All_Scale', q=True, value=value)
+        all_scale = pm.checkBox(objects[-1], q=True, value=value)
         if all_scale == 1:
             pm.checkBox(item, e=True, value=True)
         else:
             pm.checkBox(item, e=True, value=False)
 
 
-def ad_cc_checkbox_uncheck_all_channel(*args):
-    trans_x = pm.checkBox('Trans_X', q=True, value=True)
-    trans_y = pm.checkBox('Trans_Y', q=True, value=True)
-    trans_z = pm.checkBox('Trans_Z', q=True, value=True)
-
-    rot_x = pm.checkBox('Rot_X', q=True, value=True)
-    rot_y = pm.checkBox('Rot_Y', q=True, value=True)
-    rot_z = pm.checkBox('Rot_Z', q=True, value=True)
-
-    scale_x = pm.checkBox('Scl_X', q=True, value=True)
-    scale_y = pm.checkBox('Scl_Y', q=True, value=True)
-    scale_z = pm.checkBox('Scl_Z', q=True, value=True)
-
-    if trans_x == 0 or trans_y == 0 or trans_z == 0:
-        pm.checkBox('All_Trans', e=True, value=False)
-
-    if rot_x == 0 or rot_y == 0 or rot_z == 0:
-        pm.checkBox('All_Rot', e=True, value=False)
-
-    if scale_x == 0 or scale_y == 0 or scale_z == 0:
-        pm.checkBox('All_Scale', e=True, value=False)
+def ad_cc_checkbox_uncheck_all_channel(object, *args):
+    name_checkbox = pm.checkBox(object[0], q=True, value=True)
+    if name_checkbox == 0:
+        pm.checkBox(object[-1], e=True, value=False)
 
 
-#
 def ad_cc_controller_resize_reset(*args):
     pm.floatSlider('Controller_Resize', edit=True, v=1.0)
 
@@ -1000,6 +1037,21 @@ def ad_cc_on_selection_ctrl_shape(on):
 #                                           CONTROLLER UTILITIES TAB FUNCTION
 ########################################################################################################################
 ####### CONTROLLER UTILITIES UI FUNCTION
+# MATCH TRANSFORM
+def ad_cu_match_transform(*args):
+    selection = pm.ls(selection=True)
+    if selection:
+        if len(selection) == 1:
+            om.MGlobal.displayError("Minimum selection two objects. Select object origin and target!")
+            return False
+        else:
+            ad_lib_match_transform()
+
+    else:
+        om.MGlobal.displayError("No objects selected")
+        return False
+
+
 # ROTATE
 def ad_cu_rotation_x_button(*args):
     ad_lib_rotate_controller(x=ad_lib_degree_rotation_int_field('Degree_Rotate'), y=0.0, z=0.0)
@@ -1134,33 +1186,11 @@ def ad_cu_load_dialog(*args):
 
     return filePath
 
-########################################################################################################################
-#                                                    LIBRARY                                                           #
-########################################################################################################################
+#**********************************************************************************************************************#
 
-"""
-DESCRIPTION:
-    Module library for ad_controller.py.
+#                                                   LIBRARY
 
-USAGE:
-    -
-
-AUTHOR:
-    Adien Dendra
-
-CONTACT:
-    adprojects.animation@gmail.com | hello@adiendendra.com
-
-VERSION:
-    1.0 - 20 July 2021 - Initial Release
-
-LICENSE:
-    Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
-    This is commercial license can not be copied and/or
-    distributed without the express permission of Adien Dendra
-
-"""
-
+#**********************************************************************************************************************#
 
 def ad_lib_save_json_controller(file_name):
     if pm.ls(type='nurbsCurve'):
@@ -1608,112 +1638,135 @@ def ad_lib_child_ctrl(main_controller, main_name, on_selector):
 
 def ad_lib_connection(ctrl, target):
     connection = []
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Point_Cons'):
+    if ad_lib_query_checkbox_channel('Point_Cons'):
         connection = ad_lib_point_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Orient_Cons'):
+    if ad_lib_query_checkbox_channel('Orient_Cons'):
         connection = ad_lib_orient_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scale_Cons'):
+    if ad_lib_query_checkbox_channel('Scale_Cons'):
         connection = ad_lib_scale_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Parent_Cons'):
+    if ad_lib_query_checkbox_channel('Parent_Cons'):
         connection = ad_lib_parent_constraint(obj_base=ctrl, obj_target=target)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Parent'):
+    if ad_lib_query_checkbox_channel('Parent'):
         connection = pm.parent(target, ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Trans'):
+    if ad_lib_query_checkbox_channel('Direct_Trans'):
         connection = pm.connectAttr(ctrl + '.translate', target + '.translate')
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Rot'):
+    if ad_lib_query_checkbox_channel('Direct_Rot'):
         connection = pm.connectAttr(ctrl + '.rotate', target + '.rotate')
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Direct_Scl'):
+    if ad_lib_query_checkbox_channel('Direct_Scl'):
         connection = pm.connectAttr(ctrl + '.scale', target + '.scale')
     return connection
 
 
 def ad_lib_hide_unhide(ctrl):
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+    if ad_lib_query_checkbox_channel("Trans_X_Channel"):
         ad_lib_hide_unhide_attr(channel=['tx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+    if ad_lib_query_checkbox_channel("Trans_Y_Channel"):
         ad_lib_hide_unhide_attr(channel=['ty'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+    if ad_lib_query_checkbox_channel("Trans_Z_Channel"):
         ad_lib_hide_unhide_attr(channel=['tz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+    if ad_lib_query_checkbox_channel('Rot_X_Channel'):
         ad_lib_hide_unhide_attr(channel=['rx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+    if ad_lib_query_checkbox_channel('Rot_Y_Channel'):
         ad_lib_hide_unhide_attr(channel=['ry'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+    if ad_lib_query_checkbox_channel('Rot_Z_Channel'):
         ad_lib_hide_unhide_attr(channel=['rz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+    if ad_lib_query_checkbox_channel('Scl_X_Channel'):
         ad_lib_hide_unhide_attr(channel=['sx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+    if ad_lib_query_checkbox_channel('Scl_Y_Channel'):
         ad_lib_hide_unhide_attr(channel=['sy'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+    if ad_lib_query_checkbox_channel('Scl_Z_Channel'):
         ad_lib_hide_unhide_attr(channel=['sz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+    if ad_lib_query_checkbox_channel('Visibility'):
         ad_lib_hide_unhide_attr(channel=['v'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('User_Def'):
+    if ad_lib_query_checkbox_channel('User_Def'):
         list_attribute = ad_lib_query_user_defined_channel(ctrl)
         ad_lib_hide_unhide_attr(channel=list_attribute, ctrl=ctrl)
 
 
 def ad_lib_lock_unlock(ctrl):
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+    if ad_lib_query_checkbox_channel("Trans_X_Channel"):
         ad_lib_lock_unlock_attr(channel=['tx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+    if ad_lib_query_checkbox_channel("Trans_Y_Channel"):
         ad_lib_lock_unlock_attr(channel=['ty'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+    if ad_lib_query_checkbox_channel("Trans_Z_Channel"):
         ad_lib_lock_unlock_attr(channel=['tz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+    if ad_lib_query_checkbox_channel('Rot_X_Channel'):
         ad_lib_lock_unlock_attr(channel=['rx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+    if ad_lib_query_checkbox_channel('Rot_Y_Channel'):
         ad_lib_lock_unlock_attr(channel=['ry'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+    if ad_lib_query_checkbox_channel('Rot_Z_Channel'):
         ad_lib_lock_unlock_attr(channel=['rz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+    if ad_lib_query_checkbox_channel('Scl_X_Channel'):
         ad_lib_lock_unlock_attr(channel=['sx'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+    if ad_lib_query_checkbox_channel('Scl_Y_Channel'):
         ad_lib_lock_unlock_attr(channel=['sy'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+    if ad_lib_query_checkbox_channel('Scl_Z_Channel'):
         ad_lib_lock_unlock_attr(channel=['sz'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+    if ad_lib_query_checkbox_channel('Visibility'):
         ad_lib_lock_unlock_attr(channel=['v'], ctrl=ctrl)
-    if ad_lib_query_lock_unlock_hide_unhide_channel('User_Def'):
+    if ad_lib_query_checkbox_channel('User_Def'):
         list_attribute = ad_lib_query_user_defined_channel(ctrl)
         ad_lib_lock_unlock_attr(channel=list_attribute, ctrl=ctrl)
 
 
 def ad_lib_hide_and_lock(ctrl, value):
     for item in ctrl:
-        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_X"):
+        if ad_lib_query_checkbox_channel("Trans_X_Channel"):
             ad_lib_lock_hide_attr(lock_hide_channel=['tx'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Y"):
+        if ad_lib_query_checkbox_channel("Trans_Y_Channel"):
             ad_lib_lock_hide_attr(lock_hide_channel=['ty'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel("Trans_Z"):
+        if ad_lib_query_checkbox_channel("Trans_Z_Channel"):
             ad_lib_lock_hide_attr(lock_hide_channel=['tz'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_X'):
+        if ad_lib_query_checkbox_channel('Rot_X_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['rx'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Y'):
+        if ad_lib_query_checkbox_channel('Rot_Y_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['ry'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Rot_Z'):
+        if ad_lib_query_checkbox_channel('Rot_Z_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['rz'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_X'):
+        if ad_lib_query_checkbox_channel('Scl_X_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['sx'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Y'):
+        if ad_lib_query_checkbox_channel('Scl_Y_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['sy'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Scl_Z'):
+        if ad_lib_query_checkbox_channel('Scl_Z_Channel'):
             ad_lib_lock_hide_attr(lock_hide_channel=['sz'], ctrl=item,
                                   hide_object=value)
-        if ad_lib_query_lock_unlock_hide_unhide_channel('Visibility'):
+        if ad_lib_query_checkbox_channel('Visibility'):
             ad_lib_lock_hide_attr(lock_hide_channel=['v'], ctrl=item,
                                   hide_object=value)
 
 
-def ad_lib_query_lock_unlock_hide_unhide_channel(channel_name):
+def ad_lib_match_transform():
+    if ad_lib_query_checkbox_channel("Trans_X_Match"):
+        ad_lib_match_xform(channel='tx')
+    if ad_lib_query_checkbox_channel("Trans_Y_Match"):
+        ad_lib_match_xform(channel='ty')
+    if ad_lib_query_checkbox_channel("Trans_Z_Match"):
+        ad_lib_match_xform(channel='tz')
+
+    if ad_lib_query_checkbox_channel('Rot_X_Match'):
+        ad_lib_match_xform(channel='rx')
+    if ad_lib_query_checkbox_channel('Rot_Y_Match'):
+        ad_lib_match_xform(channel='ry')
+    if ad_lib_query_checkbox_channel('Rot_Z_Match'):
+        ad_lib_match_xform(channel='rz')
+
+    if ad_lib_query_checkbox_channel('Scl_X_Match'):
+        ad_lib_match_xform(channel='sx')
+    if ad_lib_query_checkbox_channel('Scl_Y_Match'):
+        ad_lib_match_xform(channel='sy')
+    if ad_lib_query_checkbox_channel('Scl_Z_Match'):
+        ad_lib_match_xform(channel='sz')
+
+
+def ad_lib_query_checkbox_channel(channel_name):
     value = pm.checkBox(channel_name, q=True, value=True)
     return value
 
@@ -2155,6 +2208,55 @@ def ad_lib_lock_hide_attr(lock_hide_channel, ctrl, hide_object, **kwargs):
             pm.setAttr(ctrl + '.' + at, l=0, k=1, **kwargs)
 
     return attr_lock_list
+
+
+def ad_lib_match_define_name():
+    selection = pm.ls(sl=1)
+    origin = selection.pop(0)
+    target = []
+    for object in selection:
+        target.append(object)
+
+    return origin, target
+
+
+def ad_lib_match_xform(channel):
+    selection = pm.ls(sl=1)
+    origin = selection.pop(0)
+
+    for object in selection:
+        # match translation
+        if channel == 'tx':
+            point_x = pm.pointConstraint(origin, object, mo=0, sk=('y', 'z'))
+            pm.delete(point_x)
+        if channel == 'ty':
+            point_y = pm.pointConstraint(origin, object, mo=0, sk=('x', 'z'))
+            pm.delete(point_y)
+        if channel == 'tz':
+            point_z = pm.pointConstraint(origin, object, mo=0, sk=('x', 'y'))
+            pm.delete(point_z)
+
+        # match rotation
+        if channel == 'rx':
+            rot_x = pm.orientConstraint(origin, object, mo=0, sk=('y', 'z'))
+            pm.delete(rot_x)
+        if channel == 'ry':
+            rot_y = pm.orientConstraint(origin, object, mo=0, sk=('x', 'z'))
+            pm.delete(rot_y)
+        if channel == 'rz':
+            rot_z = pm.orientConstraint(origin, object, mo=0, sk=('x', 'y'))
+            pm.delete(rot_z)
+
+        # match scale
+        if channel == 'sx':
+            scl_x = pm.scaleConstraint(origin, object, mo=0, sk=('y', 'z'))
+            pm.delete(scl_x)
+        if channel == 'sy':
+            scl_y = pm.scaleConstraint(origin, object, mo=0, sk=('x', 'z'))
+            pm.delete(scl_y)
+        if channel == 'sz':
+            scl_z = pm.scaleConstraint(origin, object, mo=0, sk=('x', 'y'))
+            pm.delete(scl_z)
 
 
 def ad_lib_ctrl_color_list(color):
