@@ -22,6 +22,8 @@ LICENSE:
     distributed without the express permission of Adien Dendra
 
 """
+
+from functools import partial
 import json
 import re
 from collections import OrderedDict
@@ -29,8 +31,6 @@ from string import digits
 
 import maya.OpenMaya as om
 import pymel.core as pm
-
-from functools import partial
 
 
 layout = 400
@@ -1186,11 +1186,12 @@ def ad_cu_load_dialog(*args):
 
     return filePath
 
-#**********************************************************************************************************************#
+########################################################################################################################
+#
+#                                                       LIBRARY
+#
+########################################################################################################################
 
-#                                                   LIBRARY
-
-#**********************************************************************************************************************#
 
 def ad_lib_save_json_controller(file_name):
     if pm.ls(type='nurbsCurve'):
