@@ -37,38 +37,48 @@ def ad_lib_save_json_controller(file_name):
         selection = pm.ls(sl=1)
         list = []
         # checking the naming
-        if selection:
-            for item in selection:
-                try:
-                    # get type and get the shape
-                    object = pm.objectType(item.getShape())
-                except:
-                    pass
+        # if selection:
+        for item in selection:
+            try:
+                # get type and get the shape
+                object = pm.objectType(item.getShape())
+            except:
+                pass
+            else:
+                if object == 'nurbsCurve':
+                    om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
+                    list.append(item.getShape())
                 else:
-                    if object == 'nurbsCurve':
-                        om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
-                        list.append(item.getShape())
-                    else:
-                        om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
-
-        else:
-            list = pm.ls(type='nurbsCurve')
+                    om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+        # if selection:
+        #     for item in selection:
+        #         try:
+        #             # get type and get the shape
+        #             object = pm.objectType(item.getShape())
+        #         except:
+        #             pass
+        #         else:
+        #             if object == 'nurbsCurve':
+        #                 om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
+        #                 list.append(item.getShape())
+        #             else:
+        #                 om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+        #
+        # else:
+        #     list = pm.ls(type='nurbsCurve')
 
         # all item shape in the list
         for item in list:
             # get transform name
             item_parent = item.getParent()
-            print item_parent
-            # get node
-            object_curve = pm.PyNode(item_parent)
 
             # get cv number, x value, y value, z value and color on each item
             cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
-
-            for cv in object_curve.getShape().cv:
-                x = pm.getAttr(cv + '.xValue')
-                y = pm.getAttr(cv + '.yValue')
-                z = pm.getAttr(cv + '.zValue')
+            for cv in pm.PyNode(item).cv:
+            # for cv in object_curve.getShape().cv:
+                x = pm.getAttr(str(cv) + '.xValue')
+                y = pm.getAttr(str(cv) + '.yValue')
+                z = pm.getAttr(str(cv) + '.zValue')
                 xvalue.append(x)
                 yvalue.append(y)
                 zvalue.append(z)

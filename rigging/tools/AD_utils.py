@@ -391,7 +391,7 @@ def get_transform_shape_position(shape):
     if mc.nodeType(shape) == 'transform':
         shape_node = mc.listRelatives(shape, s=True)[0]
 
-    if mc.nodeType(shape) == 'nurbCurve':
+    if mc.nodeType(shape) == 'nurbsCurve':
         shape_node = shape
 
     # get cv list

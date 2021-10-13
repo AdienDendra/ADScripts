@@ -1221,17 +1221,17 @@ def ad_lib_save_json_controller(file_name):
         for item in list:
             # get transform name
             item_parent = item.getParent()
-            print item_parent
-            # get node
-            object_curve = pm.PyNode(item_parent)
+            # print item_parent
+            # # get node
+            # object_curve = pm.PyNode(item_parent)
 
             # get cv number, x value, y value, z value and color on each item
             cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
-
-            for cv in object_curve.getShape().cv:
-                x = pm.getAttr(cv + '.xValue')
-                y = pm.getAttr(cv + '.yValue')
-                z = pm.getAttr(cv + '.zValue')
+            for cv in pm.PyNode(item).cv:
+                # for cv in object_curve.getShape().cv:
+                x = pm.getAttr(str(cv) + '.xValue')
+                y = pm.getAttr(str(cv) + '.yValue')
+                z = pm.getAttr(str(cv) + '.zValue')
                 xvalue.append(x)
                 yvalue.append(y)
                 zvalue.append(z)
