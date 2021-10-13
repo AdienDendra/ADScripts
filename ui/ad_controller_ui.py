@@ -32,7 +32,6 @@ from string import digits
 import maya.OpenMaya as om
 import pymel.core as pm
 
-
 layout = 400
 percentage = 0.01 * layout
 on_selector = 0
@@ -170,9 +169,19 @@ def ad_show_ui():
                             pm.floatSlider('Controller_Resize', min=0.7, value=1.0, max=1.3, step=0.1,
                                            dragCommand=partial(ad_cc_controller_resize_slider),
                                            changeCommand=partial(ad_cc_controller_resize_reset))
-                        with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
-                                          columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
+                        with pm.rowLayout(nc=3, cw3=(18.5 * percentage, 25.66641 * percentage, 51.33359 * percentage),
+                                          cl3=('right', 'left', 'left'),
+                                          columnAttach=[(1, 'both', 0 * percentage),
+                                                        (2, 'both', 0 * percentage),
+                                                        (3, 'both', 0 * percentage)]):
+                        # with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
+                        #                   columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text('')
+
+                            # select cv nurbs
+                            pm.button('Select_Curves_Cv', l="Select Curve CVs",
+                                      c=partial(ad_cc_select_cv_controller))
+
                             # select controller button
                             pm.button('Select_All_AD_Controller', l="Select All AD Controller",
                                       c=partial(ad_cc_select_all_ad_controller_button))
@@ -611,6 +620,21 @@ def ad_cc_controller_resize_slider(*args):
                 om.MGlobal.displayError("Object type must be curve")
                 return False
 
+def ad_cc_select_cv_controller(*args):
+    sel = pm.ls(sl=1)
+    if not sel:
+        om.MGlobal.displayError("No objects curves selected!")
+        return False
+    else:
+        all = []
+        for item in sel:
+            sel = item.getShape()
+            if pm.nodeType(sel) == 'nurbsCurve':
+                obj_sh = item.cv
+                all.append(obj_sh)
+            else:
+                pass
+        pm.select(all)
 
 def ad_cc_select_all_ad_controller_button(*args):
     list_scene = pm.ls(type='transform')
@@ -1114,7 +1138,7 @@ def ad_cu_mirror_button(key_position, *args):
                             "Skip the mirroring '%s'! There is no target curve object '%s' in the scene!" % (
                                 string_select, get_target_name))
                 else:
-                    om.MGlobal.displayWarning("Skip the mirroring '%s'! It doesn't have prefix '%s' name" % (
+                    om.MGlobal.displayWarning("Skip the mirroring '%s'! The prefix '%s' doesn't exist on its name" % (
                         string_select, prefix_text_from_string))
 
             else:
@@ -1146,34 +1170,46 @@ def ad_cu_save_dialog(*args):
     if pm.ls(sl=1):
         pm.confirmDialog(icon='warning',
                          title='Save Confirm',
-                         message='Only selected controllers \nwill be saved!')
+                         message='Only selected controller \nwill be saved!')
+        save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
+                              cap='Save AD Controller')
+        # Check Path
+        if not save: return
+        filePath = save[0]
+
+        # export json file
+        ad_lib_save_json_controller(filePath)
+
+        return filePath
     else:
-        pm.confirmDialog(icon='warning',
-                         title='Save Confirm',
-                         message='There is no object selected.\nAll of the controllers curve in the scene \nwill be saved!')
-
-    save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
-                          cap='Save AD Controller')
-    # Check Path
-    if not save: return
-    filePath = save[0]
-
-    # export json file
-    ad_lib_save_json_controller(filePath)
-
-    return filePath
+        pm.confirmDialog(icon='critical', b='Cancel',
+                         title='Object Selection',
+                         message='There is no curve selected.\nSelect at least one controller \ncurve to save it!')
+        # pm.confirmDialog(icon='warning',
+        #                  title='Save Confirm',
+        #                  message='There is no object selected.\nAll of the controllers curve in the scene \nwill be saved!')
+    # save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
+    #                       cap='Save AD Controller')
+    # # Check Path
+    # if not save: return
+    # filePath = save[0]
+    #
+    # # export json file
+    # ad_lib_save_json_controller(filePath)
+    #
+    # return filePath
 
 
 def ad_cu_load_dialog(*args):
     if pm.ls(sl=1):
         pm.confirmDialog(icon='warning',
                          title='Load Confirm',
-                         message='Only selected controllers \nwill be loaded!')
+                         message='Only controllers selected \nwill be loaded!')
 
     else:
         pm.confirmDialog(icon='warning',
                          title='Load Confirm',
-                         message='There is no object selected.\nAll of the controllers curve in the scene \nwill be loaded!')
+                         message='Since there is no object selected.\nAll of the controllers curve in the scene \nwill be loaded with data saved!')
 
     load = pm.fileDialog2(fileMode=1, fileFilter='*.json', okc='Load', dialogStyle=2,
                           cap='Load AD Controller')
@@ -1188,10 +1224,9 @@ def ad_cu_load_dialog(*args):
 
 ########################################################################################################################
 #
-#                                                       LIBRARY
+#                                                      LIBRARY
 #
 ########################################################################################################################
-
 
 def ad_lib_save_json_controller(file_name):
     if pm.ls(type='nurbsCurve'):
@@ -1200,35 +1235,45 @@ def ad_lib_save_json_controller(file_name):
         selection = pm.ls(sl=1)
         list = []
         # checking the naming
-        if selection:
-            for item in selection:
-                try:
-                    # get type and get the shape
-                    object = pm.objectType(item.getShape())
-                except:
-                    pass
+        # if selection:
+        for item in selection:
+            try:
+                # get type and get the shape
+                object = pm.objectType(item.getShape())
+            except:
+                pass
+            else:
+                if object == 'nurbsCurve':
+                    om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
+                    list.append(item.getShape())
                 else:
-                    if object == 'nurbsCurve':
-                        om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
-                        list.append(item.getShape())
-                    else:
-                        om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
-
-        else:
-            list = pm.ls(type='nurbsCurve')
+                    om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+        # if selection:
+        #     for item in selection:
+        #         try:
+        #             # get type and get the shape
+        #             object = pm.objectType(item.getShape())
+        #         except:
+        #             pass
+        #         else:
+        #             if object == 'nurbsCurve':
+        #                 om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
+        #                 list.append(item.getShape())
+        #             else:
+        #                 om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
+        #
+        # else:
+        #     list = pm.ls(type='nurbsCurve')
 
         # all item shape in the list
         for item in list:
             # get transform name
             item_parent = item.getParent()
-            # print item_parent
-            # # get node
-            # object_curve = pm.PyNode(item_parent)
 
             # get cv number, x value, y value, z value and color on each item
             cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
             for cv in pm.PyNode(item).cv:
-                # for cv in object_curve.getShape().cv:
+            # for cv in object_curve.getShape().cv:
                 x = pm.getAttr(str(cv) + '.xValue')
                 y = pm.getAttr(str(cv) + '.yValue')
                 z = pm.getAttr(str(cv) + '.zValue')
