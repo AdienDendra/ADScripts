@@ -303,7 +303,7 @@ def ad_show_ui():
                                                 (3, 'both', 2 * percentage)]):
                     pm.text(l='Adien Dendra | 10/2021', al='left')
                     pm.text(
-                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        l='<a href="https://youtu.be/lsG9u-Ld-fQ">find out how to use it! >> </a>',
                         hl=True,
                         al='center')
                     pm.text(l='Version 1.0', al='right')
@@ -408,7 +408,7 @@ def ad_show_ui():
                                                 (3, 'both', 2 * percentage)]):
                     pm.text(l='Adien Dendra | 10/2021', al='left')
                     pm.text(
-                        l='<a href="http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/">find out how to use it! >> </a>',
+                        l='<a href="https://youtu.be/lsG9u-Ld-fQ">find out how to use it! >> </a>',
                         hl=True,
                         al='center')
                     pm.text(l='Version 1.0', al='right')
