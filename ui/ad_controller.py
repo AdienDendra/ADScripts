@@ -5,7 +5,7 @@ DESCRIPTION:
 
 USAGE:
     You may go to this link to have more detail >>
-    http://projects.adiendendra.com/ad-universal-fkik-setup-tutorial/
+
 
 AUTHOR:
     Adien Dendra
@@ -14,7 +14,7 @@ CONTACT:
     adprojects.animation@gmail.com | hello@adiendendra.com
 
 VERSION:
-    1.0 - xx Xxxx 2021 - Initial Release
+    1.0 - 18 October 2021 - Initial Release
 
 LICENSE:
     Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
@@ -522,20 +522,6 @@ def ad_cc_replace_color_button(*args):
 
 
 # CHANNEL
-# def ad_cc_channelbox_translation(channel, *args):
-#     pm.columnLayout()
-#     pm.checkBox('All_Trans', label='All Translation', value=False,
-#                 cc=partial(ad_cc_checkbox_check_channel_translate, ['Trans_X', 'Trans_Y', 'Trans_Z']))
-#
-#     pm.checkBox('Trans_X', label='Translate X', value=False,
-#                 cc=partial(ad_cc_checkbox_uncheck_all_channel, 'Trans_X', ['Trans_X']))
-#     pm.checkBox('Trans_Y', label='Translate Y', value=False,
-#                 cc=partial(ad_cc_checkbox_uncheck_all_channel, 'Trans_Y', ['Trans_Y']))
-#     pm.checkBox('Trans_Z', label='Translate Z', value=False,
-#                 cc=partial(ad_cc_checkbox_uncheck_all_channel, 'Trans_Z', ['Trans_Z']))
-#     if channel:
-#         pm.checkBox('Visibility', label='Visibility', value=False)
-#     pm.setParent(u=True)
 
 def ad_cc_channelbox_translation(channel, name_all_trans, name_trans_x, name_trans_y, name_trans_z, *args):
     pm.columnLayout()
