@@ -90,7 +90,7 @@ def ad_export_skin_button(*args):
 def ad_export_skin_selected(item):
     path = pm.textFieldButtonGrp('Path', q=True, tx=True)
     # Export skin weight values into selected geometries
-    suffix = 'Weight'
+    suffix = 'SkinWeight'
     # Check whether the specified path exists or not
 
     directory_sel = '%s/%s' % (path, item)
@@ -103,10 +103,48 @@ def ad_export_skin_selected(item):
     else:
         directory = directory_sel
 
-    file_path = '%s/%s%s.json' % (directory, item, suffix)
+    # file_path = '%s/%s%s.json' % (directory, item, suffix)
 
-    ad_export_skin(item, file_path)
+    file_path = ad_increment_file(directory, item, suffix)
 
+    ad_export_skin(item, file_path[0])
+
+    # for file in sorted(current_file_exists):
+    if file_path[1] > 11:
+        os.remove('%s/%s' % (directory, (file_path[0][2])))
+
+    # if len(numb) > 10:
+    #     print
+    # os.remove('%s/%s.%s.%03d.json' % (directory_path, object_name, suffix, new_num))
+    # print num_list[2]
+    else:
+        pass
+
+
+def ad_increment_file(directory_path, object_name, suffix):
+    """
+    increment the version update skin weight and deleting the older one
+    """
+    current_file_exists = os.listdir(directory_path)
+    # prefix = 'SkinWeight'
+    current_file_exists = filter(lambda x: '.json' in x, current_file_exists)
+    num_list = [0]
+    for file in current_file_exists:
+        i = os.path.splitext(file)[0]
+        try:
+            num = re.findall('[0-9]+$', i)[0]
+            num_list.append(int(num))
+        except IndexError:
+            pass
+    num_list = sorted(num_list)
+    print num_list
+    new_num = num_list[-1] + 1
+    total_file = len(num_list)
+
+    save_name = '%s/%s.%s.%03d.json' % (directory_path, object_name, suffix, new_num)
+
+    print "Saving %s" % save_name
+    return save_name, total_file, current_file_exists
 
 def ad_export_skin(item, path):
     skin = mm.eval('findRelatedSkinCluster( "%s" )' % item)
@@ -134,12 +172,26 @@ def ad_export_skin(item, path):
             weight_dict[range] = skin_value
 
         # write the json file
+
         file = open("%s" % (path), "w")
         json.dump(weight_dict, file, indent=4)
 
     else:
         print('%s has no related skinCluster node.' % item)
 
+
+
+
+def ad_exporting_skin_selected(item):
+    path = 'C:\Users\Raizel Dendra\Documents\maya\projects\default\scenes'
+    # Export skin weight values into selected geometries
+    suffix = 'Weight'
+    # Check whether the specified path exists or not
+
+    file_path = '%s/%s%s' % (path, item, suffix)
+    return file_path
+
+    # ad_export_skin(item, file_path)
 
 
     # # all item shape in the list
