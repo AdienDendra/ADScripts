@@ -74,7 +74,7 @@ def ad_export_skin_button(*args):
                 if get_shape:
                     node_type =  pm.nodeType(get_shape)
                     if node_type == 'mesh' or node_type == 'nurbsSurface':
-                        ad_export_skin_selected(item)
+                        ad_create_directories(item)
                     else:
                         om.MGlobal_displayWarning('The object type is not mesh. Skip object to export!')
                 else:
@@ -87,7 +87,7 @@ def ad_export_skin_button(*args):
         om.MGlobal_displayError('Set the path first!')
 
 
-def ad_export_skin_selected(item):
+def ad_create_directories(item):
     path = pm.textFieldButtonGrp('Path', q=True, tx=True)
     # Export skin weight values into selected geometries
     suffix = 'SkinWeight'
@@ -105,23 +105,24 @@ def ad_export_skin_selected(item):
 
     # file_path = '%s/%s%s.json' % (directory, item, suffix)
 
-    file_path = ad_increment_file(directory, item, suffix)
-
-    ad_export_skin(item, file_path[0])
+    file_path = ad_create_increment_file(directory, item, suffix)
 
     # for file in sorted(current_file_exists):
-    if file_path[1] > 11:
-        os.remove('%s/%s' % (directory, (file_path[0][2])))
+    if file_path['total file'] > 10:
+        print file_path['current file exists'][0]
+        os.remove('%s/%s' % (directory, (file_path['current file exists'][0])))
+    else:
+        pass
+
+    ad_data_skin_weight(item, file_path['file name'])
 
     # if len(numb) > 10:
     #     print
     # os.remove('%s/%s.%s.%03d.json' % (directory_path, object_name, suffix, new_num))
     # print num_list[2]
-    else:
-        pass
 
 
-def ad_increment_file(directory_path, object_name, suffix):
+def ad_create_increment_file(directory_path, object_name, suffix):
     """
     increment the version update skin weight and deleting the older one
     """
@@ -137,16 +138,18 @@ def ad_increment_file(directory_path, object_name, suffix):
         except IndexError:
             pass
     num_list = sorted(num_list)
-    print num_list
+    # print num_list
     new_num = num_list[-1] + 1
     total_file = len(num_list)
 
     save_name = '%s/%s.%s.%03d.json' % (directory_path, object_name, suffix, new_num)
 
-    print "Saving %s" % save_name
-    return save_name, total_file, current_file_exists
+    # print "Saving %s" % save_name
+    return {'file name' : save_name,
+            'total file': total_file,
+            'current file exists' : current_file_exists}
 
-def ad_export_skin(item, path):
+def ad_data_skin_weight(item, path):
     skin = mm.eval('findRelatedSkinCluster( "%s" )' % item)
     if skin:
         print(path)
