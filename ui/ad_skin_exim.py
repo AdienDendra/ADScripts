@@ -295,7 +295,8 @@ def ad_data_skin_weight_import(item_version, path, object_name):
     # number_vertex = sorted(map(int, number_vertex))
     for vertices in number_vertex:
         tranform_value = zip(influences, weight_dict[str(vertices)])
-        pm.progressBar('Progress_Bar', e=True, progress=vertices)
+        progress = 100.0 / vertices * (number_vertex)
+        pm.progressBar('Progress_Bar', e=True, progress=progress)
         pm.skinPercent(skin_attribute, object_name +'.vtx[%s]' % vertices, transformValue=tranform_value)
 
 # vertices = len(number_vertex)
