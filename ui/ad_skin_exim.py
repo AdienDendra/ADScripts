@@ -264,13 +264,13 @@ def ad_data_skin_weight_import(item_version, path, object_name):
     for influence in influences[1:]:
         influence_type = pm.objectType(influence)
         if influence_type == 'joint':
-            pm.skinCluster(create_skin, e=True, ai=influence)
+            pm.skinCluster(create_skin, e=True, ai=influence, lw=True)
         elif influence_type == 'transform':
             base_influence = pm.duplicate(influence)[0]
             pm.setAttr('%s.v' % base_influence, 0)
             base_influence = pm.rename(base_influence, '%sBase' % base_influence)
             shape = pm.listRelatives(base_influence, s=True, f=True, ni=True)[0]
-            pm.skinCluster(create_skin, e=True, ug=True, dr=4, ps=0, ns=10, wt=0,
+            pm.skinCluster(create_skin, e=True, lw=True, ug=True, dr=4, ps=0, ns=10, wt=0,
                            ai=influence, bsh=shape)
         else:
             continue
@@ -295,6 +295,7 @@ def ad_data_skin_weight_import(item_version, path, object_name):
     # number_vertex = sorted(map(int, number_vertex))
     for vertices in number_vertex:
         tranform_value = zip(influences, weight_dict[str(vertices)])
+        pm.progressBar('Progress_Bar', e=True, progress=vertices)
         pm.skinPercent(skin_attribute, object_name +'.vtx[%s]' % vertices, transformValue=tranform_value)
 
 # vertices = len(number_vertex)
