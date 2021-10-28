@@ -1,7 +1,6 @@
 from functools import partial
 import re
 from collections import OrderedDict
-from string import digits
 import os
 import json
 
@@ -9,8 +8,6 @@ import json
 import maya.OpenMaya as om
 import pymel.core as pm
 import maya.mel as mm
-import maya.cmds as cmds
-
 
 layout = 400
 percentage = 0.01 * layout
@@ -124,7 +121,7 @@ def ad_import_skin_button(*args):
         om.MGlobal_displayError('Set the path first!')
 
 def ad_transfer_button(*args):
-    om.MGlobal.displayInfo('will be released soon!')
+    om.MGlobal.displayInfo('will be added soon!')
 
 # EXPORT
 
@@ -194,15 +191,18 @@ def ad_increment_data_file(directory_path, object_name, suffix, create):
 def ad_data_skin_weight_export(item, path):
     skin = mm.eval('findRelatedSkinCluster( "%s" )' % item)
     if skin:
-        method = cmds.getAttr('%s.skinningMethod' % skin)
-        components = cmds.getAttr('%s.useComponents' % skin)
-        influence = cmds.skinCluster(skin, q=True, inf=True)
-        skin_set = cmds.listConnections('%s.message' % skin, d=True, s=False)[0]
+        method = pm.getAttr('%s.skinningMethod' % skin)
+        components = pm.getAttr('%s.useComponents' % skin)
+        influence = pm.skinCluster(skin, q=True, inf=True)
+        skin_set = pm.listConnections('%s.message' % skin, d=True, s=False)[0]
+
+        # store_influence =[obj.name() for obj in influence]
+        store_influence = influence.name(stripNamespace=True)
 
         weight_dict = OrderedDict()
-        weight_dict['influences'] = influence
+        weight_dict['influences'] = store_influence
         weight_dict['name'] = skin
-        weight_dict['set'] = skin_set
+        weight_dict['set'] = skin_set.name()
         weight_dict['skinningMethod'] = method
         weight_dict['useComponents'] = components
         vertices = pm.polyEvaluate(item, v=True)
@@ -239,7 +239,6 @@ def ad_read_increment_file_import(item):
             om.MGlobal.displayWarning("There is no skin %s exported. Import skipped!" % item)
         else:
             file_path = ad_increment_data_file(path, item, suffix, create=False)
-
             ad_data_skin_weight_import(file_path['get file path'][-1], path, item)
 
 
@@ -287,132 +286,14 @@ def ad_data_skin_weight_import(item_version, path, object_name):
     # pm.skinPercent(skin_attribute, object_name, nrm=False, prw=100)
     pm.setAttr('%s.normalizeWeights' % skin_attribute, True)
 
-    # vertices = pm.polyEvaluate(object_name, v=True)
-
     keys = weight_dict.keys()
 
     number_vertex = [number_vertex for number_vertex in keys if number_vertex.isdigit()]
-    # number_vertex = sorted(map(int, number_vertex))
-    for vertices in number_vertex:
-        tranform_value = zip(influences, weight_dict[str(vertices)])
-        progress = 100.0 / vertices * (number_vertex)
+    number_vertex = sorted(map(int, number_vertex))
+    length = len(number_vertex)
+    for vertices in xrange (length):
+        progress = (100.0 / float(length)) * (float(vertices))
         pm.progressBar('Progress_Bar', e=True, progress=progress)
+        tranform_value = zip(influences, weight_dict[str(vertices)])
         pm.skinPercent(skin_attribute, object_name +'.vtx[%s]' % vertices, transformValue=tranform_value)
-
-# vertices = len(number_vertex)
-    # pm.skinPercent(skin_attribute, object_name+'.vtx[%s]' % number_vertex, transformValue=weight_dict[number_vertex])
-
-    # for value_range in range(0, vertices):
-    #     tranform_value = zip(influences, weight_dict[str(value_range)])
-    #     pm.skinPercent(skin_attribute, object_name +'.vtx[%s]' % value_range, transformValue=tranform_value)
-    #     # if progress % step:
-    #     #     continue
-    #     progress = 100.0 / vertices * (value_range)
-    #     pm.progressBar('Progress_Bar', e=True, progress=progress)
-    #
-
-
-    # length = len(number_vertex)
-    #
-    # value = []
-    # for vertex in number_vertex:
-    #     pm.skinPercent(skin_attribute, object_name+'.vtx[%s]' % vertex, transformValue=weight_dict[str(vertex)])
-
-
-        # # calculation
-        # previous_value = int((float(vertex + 1) / float(length)) * 100.00)
-        # if previous_value not in value:
-        #     value.append(previous_value)
-
-
-
-        #om.MGlobal.displayInfo('%s%% done.' % str(value))
-
-
-    # for percent in value:
-    #     for vertex in number_vertex:
-    #         pm.skinPercent(skin_attribute, object_name+'.vtx[%s]' % vertex, transformValue=weight_dict[str(vertex)])
-    #     om.MGlobal.displayInfo('%s%% done.' % str(percent))
-
-
-        # if vertex == (vertex - 1):
-        #     om.MGlobal.displayInfo('100%% done.')
-        # else:
-        #
-        #     counting = 0
-        #     if vertex > 0:
-        #         counting = int((float(vertex - 1) / float(vertex))* 100.00)
-        #
-        #     total_value = int((float(vertex) / float(vertex)) * 100.00)
-        #
-        #     if not total_value == counting:
-        #         om.MGlobal.displayInfo('%s%% done.' % str(total_value))
-
-    # print mynewlist
-    # print sorted(map(int, keys))
-
-    # numbers = []
-    # for number_vertex in keys:
-    #     if number_vertex.isdigit():
-    #         numbers.append(number_vertex)
-    #         pm.skinPercent(skin_attribute, object_name+'.vtx[%s]' % number_vertex, transformValue=weight_dict[number_vertex])
-
-
-            # print number_vertex, vertex
-            # if number_vertex == vertex:
-            #     om.MGlobal.displayInfo('100%% done.')
-            # else:
-            #     total_value = int((float(number_vertex) / vertex) * 100.00)
-            #     om.MGlobal.displayInfo('%s%% done.' % str(total_value))
-
-        #         counting = 0
-        #         if number_vertex > 0:
-        #             counting = int((float(number_vertex - 1) / vertex) * 100.00)
-        #
-        #         total_value = int((float(number_vertex) / vertex) * 100.00)
-        #
-        #         if not total_value == counting:
-        #             om.MGlobal.displayInfo('%s%% done.' % str(total_value))
-        # else:
-        #     pass
-        #
-        # list_influence = sorted(map(int, numbers))
-        # if number_vertex == list_influence[-1]:
-        #     om.MGlobal.displayInfo('100%% done.')
-
-
-
-#     om.MGlobal.displayInfo('100%% done.')
-
-
-            # for number_influence, influence in zip (weight_dict[number_vertex], influences):
-            #     print number_influence, influence
-            #     pm.skinPercent(skin_attribute, object_name+'.vtx[%s]' % number_vertex, transformValue=[])
-
-                # weight_attribute = '%s.weightList[%s].weights[%s]' % (skin_attribute, number_vertex, number_influence)
-                # pm.setAttr(weight_attribute, number_vertex)
-
-            # weight_value = weight_dict[item]
-
-    # for number_vertex in xrange(vertex):
-    #     for number_influence in xrange(len(influences)):
-    #         # print weight_dict[number_vertex]
-    #         weight_value = weight_dict[number_vertex][number_influence]
-    #         print weight_value
-
-                # if weight_value:
-
-        # # calculation
-        # number_vertex = int(number_vertex)
-        # if number_vertex == (vertex - 1):
-        #     om.MGlobal.displayInfo('100%% done.')
-        # else:
-        #     counting = 0
-        #     if number_vertex > 0:
-        #         counting = int((float(number_vertex - 1) / vertex) * 100.00)
-        #
-        #     total_value = int((float(number_vertex) / vertex) * 100.00)
-        #
-        #     if not total_value == counting:
-        #         om.MGlobal.displayInfo('%s%% done.' % str(total_value))
 
