@@ -1,7 +1,7 @@
 import maya.cmds as mc
 import maya.mel as mel
-
-from collections import OrderedDict
+from functools import partial
+import maya.OpenMaya as om
 
 MENU_NAME = "markingMenu"
 
@@ -9,39 +9,23 @@ class markingMenu():
 
     def __init__(self):
 
-        self._removeOld()
-        self._build()
+        self.removeOld()
+        self.build()
 
-    def _build(self):
-        menu = mc.popupMenu(MENU_NAME, mm=1, b=2, aob=1, ctl=1, alt=1, sh=0, p="viewPanes", pmo=1, pmc=self._buildMarkingMenu)
+    def build(self):
+        menu = mc.popupMenu(MENU_NAME, mm=1, b=2, aob=1, ctl=1, alt=1, sh=0, p="viewPanes", pmo=1, pmc=self.buildMarkingMenu)
 
-    def _removeOld(self):
+    def removeOld(self):
         if mc.popupMenu(MENU_NAME, ex=1):
             mc.deleteUI(MENU_NAME)
 
-    def _buildMarkingMenu(self, menu, parent):
+    def buildMarkingMenu(self, menu):
 
         # Radial positioned
-        mc.menuItem(p=menu, l="Delete All Value", rp="SW", c="print 'SouthWest'")
-        mc.menuItem(p=menu, l="Delete Value", rp="NW", c="mc.circle()")
-        mc.menuItem(p=menu, l="Reset Value", rp="SE", c=exampleFunction)
-        mc.menuItem(p=menu, l="Assign Value", rp="NE", c="mc.circle()")
-
-        # subMenu = mc.menuItem(p=menu, l="North Sub Menu", rp="N", subMenu=1)
-        # mc.menuItem(p=subMenu, l="North Sub Menu Item 1")
-        # mc.menuItem(p=subMenu, l="North Sub Menu Item 2")
-        #
-        # mc.menuItem(p=menu, l="South", rp="S", c="print 'South'")
-        # mc.menuItem(p=menu, ob=1, c="print 'South with Options'")
-        #
-        # # List
-        # mc.menuItem(p=menu, l="First menu item")
-        # mc.menuItem(p=menu, l="Second menu item")
-        # mc.menuItem(p=menu, l="Third menu item")
-        # mc.menuItem(p=menu, l="Create poly cube", c="mc.polyCube()")
-        #
-        # # Rebuild
-        # mc.menuItem(p=menu, l="Rebuild Marking Menu", c=rebuildMarkingMenu)
+        mc.menuItem(p=menu, l="Delete All Define Value", rp="SE", c=partial(ad_delete_all_define_value))
+        mc.menuItem(p=menu, l="Delete Define Value", rp="SW", c=partial(ad_delete_define_value))
+        mc.menuItem(p=menu, l="Define Attr Value", rp="NW", c=partial(ad_define_attr_value))
+        mc.menuItem(p=menu, l="Reset Attr Value", rp="NE", c=partial(ad_reset_attr_value))
 
 markingMenu()
 
@@ -135,47 +119,127 @@ markingMenu()
 #     return attr_list
 
 
+# delete the _adNet node all in the scene
+def ad_delete_all_define_value(*args):
+    confirm_dialog = mc.confirmDialog(title='Confirm', message='Are you sure to delete all define values?',
+                                      button=['Yes', 'No'], defaultButton='Yes',
+                       cancelButton='No', dismissString='No')
+    if confirm_dialog == 'Yes':
+        transform_listing = mc.ls(type='transform')
+        ad_delete_node(transform_listing)
+    else:
+        om.MGlobal.displayInfo("Cancel delete Define Attr Value!")
 
-def ad_network_node():
-    # For every node in selection #
-    sel = mc.ls(selection=1)
-    for item in sel:
-        key_value_message = ad_get_attr_value(item)
 
-        for (key, value) in key_value_message.items():
-            if mc.objExists(item+'_net'):
-                pass
+# delete the _adNet node with selection
+def ad_delete_define_value(*args):
+    selection = mc.ls(sl=1)
+    if not selection:
+        pass
+    else:
+        ad_delete_node(selection)
+        # for object in selection:
+        #     node = ad_reset_delete_query_attr(object)
+        #     if node:
+        #         for object_sel, node in zip (object, node):
+        #             mc.delete(node)
+        #             mc.deleteAttr('%s._adNet' % object_sel)
+        #     else:
+        #         pass
+
+# deleting the node network
+def ad_delete_node(selection):
+    for object in selection:
+        # get the node name
+        node = ad_reset_delete_query_attr(object)
+        # if the node exists delete the node and attribute _adNet on object
+        if node:
+            mc.delete(node)
+            mc.deleteAttr('%s._adNet' % object)
+            om.MGlobal.displayInfo("Delete Define Attr Value %s" % object)
+        else:
+            pass
+
+
+# reset the value attr
+def ad_reset_attr_value(*args):
+    selection = mc.ls(sl=1)
+    if not selection:
+        pass
+    else:
+        for object in selection:
+            # get the node name
+            node = ad_reset_delete_query_attr(object)
+            # if the node exists
+            if node:
+                # query all the attribute in node
+                list_attributes = mc.listAttr(node, ud=1)
+                # get the value on every attribute then set to the selection object
+                for attribute in list_attributes:
+                    get_value = mc.getAttr('%s.%s' % (node, attribute))
+                    mc.setAttr('%s.%s' % (object, attribute), get_value)
+                # else:
+                #     om.MGlobal.displayWarning("Reset %s skipped! Please set the 'Define Attr Value' first!" % object)
             else:
-                # create node
-                network_node = mc.createNode('network', n=item+'_net')
-                mc.connectAttr(network_node+'.message', item+'.AD_network')
+                om.MGlobal.displayWarning("Reset %s skipped! Please set the 'Define Attr Value' first!" % object)
 
-            # get the value and attr
-            add_attr = ad_add_attr_node(item+'_net', attribute_name=key, attribute_type='double')
-            if add_attr:
-                mc.setAttr(item+'_net'+'.'+add_attr, value)
+# query the node for reset and delete function
+def ad_reset_delete_query_attr(selection):
+    # selection = mc.ls(sl=1)
+    # if not selection:
+    #     pass
+    # else:
+    #     # check the attribute exists
+    # items, source_connections =[],[]
+    # for item in selection:
+    # node_name = item + '_adNet'
+    # source_connections=[]
+    attr_node = mc.attributeQuery("_adNet", node=selection, exists=True)
+    # check the connection exists
+    if attr_node:
+        # query the source node name
+        node = mc.listConnections(selection + '._adNet', s=True)[0]
+        return node
 
+    else:
+        om.MGlobal.displayInfo('There is no Define Attr Value exists to %s. Skipped the job!' % selection)
+        # pass
+        # om.MGlobal.displayWarning("Reset or delete %s is skipped! Please set the 'Define Attr Value' first!" % selection)
+    # return selection, source_connections
 
-        # # set value
-        # ad_add_message_node(item, attribute_name=, attribute_type):
-        # mc.addAttr(item, )
-        #
+# define attr value to marking menu
+def ad_define_attr_value(*args):
+    selection = mc.ls(sl=1)
+    if selection:
+        # For every node in selection #
+        for item in selection:
+            key_value_message = ad_get_attr_value(item)
+            node_name = item+'_adNet'
+            for (key, value) in key_value_message.items():
+                if mc.objExists(node_name):
+                    pass
+                else:
+                    # create node
+                    network_node = mc.createNode('network', n=node_name)
+                    mc.connectAttr(network_node+'.message', item+'._adNet')
 
-# def ad_attr_query(node, attribute_name):
-#     query_attr = mc.attributeQuery(attribute_name, node= node, exists=True)
-#     if query_attr:
-#         return attribute_name
-#     else:
-#         return
-#
-def ad_add_attr_node(node, attribute_name, attribute_type):
+                # get the value and add to attr
+                ad_add_attr_node(node_name, attribute_name=key, attribute_type='double',
+                                 setAttr=True, attr=key, value=value)
+    else:
+        om.MGlobal.displayWarning('Please select at least one object to define!')
+
+# add and set the attr
+def ad_add_attr_node(node, attribute_name, attribute_type, setAttr=False, attr=[], value=[]):
     query_attr = mc.attributeQuery(attribute_name, node=node, exists=True)
     if query_attr:
         pass
     else:
         mc.addAttr(node, ln=attribute_name, at=attribute_type)
-    # return query_attr
+    if setAttr:
+        mc.setAttr(node+'.'+attr, value)
 
+# channel attr on the object
 def ad_channel_attr():
     # Get the currently selected attributes from the main channelbox.
     # From here: http://forums.cgsociety.org/showthread.php?f=89&t=892246&highlight=main+channelbox
@@ -186,12 +250,13 @@ def ad_channel_attr():
         return []
     return attrs
 
+# get attribute name and that value
 def ad_get_attr_value(selection):
     # storing dictionary
     dic ={}
 
     # for node in selection:
-    ad_add_attr_node(selection, attribute_name='AD_network', attribute_type='message')
+    ad_add_attr_node(selection, attribute_name='_adNet', attribute_type='message')
 
     # If no channels are selected:
     if ad_channel_attr() == []:
