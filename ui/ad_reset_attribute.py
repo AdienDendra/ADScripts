@@ -44,13 +44,18 @@ def ad_delete_all_default_attrs(*args):
         transform_listing = mc.ls()
         # selection all the object nurbsCurve and joint
         for object in transform_listing:
-            node_type = mc.nodeType(object)
-            # condition if it's nurbsCurve
-            if node_type == 'nurbsCurve':
-                object = mc.listRelatives(object, p=1)[0]
-                ad_delete_attr(object)
+            try:
+                # query the object selection whether it has shape
+                object_type = mc.objectType(mc.listRelatives(object, s=1))
+            except:
+                pass
+            else:
+                # if it has a shape check whether it curves object
+                if object_type == 'nurbsCurve':
+                    ad_delete_attr(object)
+
             # condition if it's joint
-            elif node_type == 'joint':
+            if mc.nodeType(object) == 'joint':
                 ad_delete_attr(object)
             else:
                 pass
