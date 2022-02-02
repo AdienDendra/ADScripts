@@ -120,6 +120,7 @@ def ad_channel_attr():
     attrs = mc.channelBox(channelBox, q=1, sma=1)
     if not attrs:
         return []
+    print attrs
     return attrs
 
 
