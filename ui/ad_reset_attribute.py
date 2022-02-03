@@ -86,12 +86,6 @@ def ad_delete_attr(selection):
         om.MGlobal.displayInfo('There is no attr value %s has been set! Skipped delete!' % selection)
 
 
-import maya.cmds as cmds
-import maya.mel as mel
-
-
-
-
 # reset the value attr
 def ad_reset_to_default(*args):
     selection = mc.ls(sl=1)
