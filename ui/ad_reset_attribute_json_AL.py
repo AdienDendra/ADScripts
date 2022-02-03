@@ -1,5 +1,4 @@
 import maya.cmds as mc
-import maya.mel as mel
 from functools import partial
 import maya.OpenMaya as om
 import os
@@ -7,9 +6,7 @@ import json
 from collections import OrderedDict
 from AL.breed.ui.services import sessionManager
 
-
 MENU_NAME = "markingMenu"
-STRING_NAME = '_adNote'
 
 class markingMenu():
 
@@ -28,8 +25,6 @@ class markingMenu():
     def buildMarkingMenu(self, menu, parent):
 
         # Radial positioned
-        # mc.menuItem(p=menu, l="Delete All Default Attrs", rp="SE", c=partial(ad_delete_all_default_attrs))
-        # mc.menuItem(p=menu, l="Delete Default Attr", rp="SW", c=partial(ad_delete_default_attr))
         mc.menuItem(p=menu, l="Set Default Attr", rp="W", c=partial(ad_set_default_attr))
         mc.menuItem(p=menu, l="Reset to Default", rp="E", c=partial(ad_reset_to_default))
 
@@ -73,41 +68,14 @@ def ad_save_json_controller(file_name, object):
         json.dump(attr_dict, file, indent=4)
 
 
-
 def ad_load_json_controller(file_name):
     file = open("%s" % (file_name))
     shape_dict = json.load(file)
     return shape_dict
-    # for object in selection:
-    #     # for (object_name, attribute) in shape_dict.items():
-    #         # print object_name, object
-    #         # for object in shape_dict.keys():
-    #     for (objects, dictionary) in shape_dict.items():
-    #         if object == objects:
-    #             pass
-    #             # if ad_channel_attr() == []:
-    #             #         # print key, value
-    #             #     for (key, value) in dictionary.items():
-    #             #         mc.setAttr('%s.%s' % (object, key), value)
-    #             #     # mc.setAttr('%s.%s' % (shape_dict, key), value)
-    #             # else:
-    #             #     for attr in ad_channel_attr():
-    #             #         # print file_name
-    #             #         # pass
-    #             #         print attr
-    #             #         print dictionary.get(attr)
-    #                 # mc.setAttr('%s.%s' % (object, attr), dictionary.get(attr))
-    #                 # mc.setAttr('%s.%s' % (shape_dict, attr), shape_dict.get(attr))
-    #
-    #         # else:
-    #         #     om.MGlobal.displayWarning("Reset %s skipped! Please set the 'Define Attr Value' first!" % object)
 
 # reset the value attr
 def ad_reset_to_default(*args):
 
-    # when the specific the attribute reset
-    # for attr in ad_channel_attr():
-    #     return attr
     ad_channel_attr()
 
     selection = mc.ls(sl=1)
@@ -120,16 +88,13 @@ def ad_reset_to_default(*args):
         for object in selection:
             for (key, attribute) in json_file.items():
                 if object == key:
-                    for (attr, value) in attribute.items():
-                        if ad_channel_attr() == []:
+                    if ad_channel_attr() == []:
+                        for (attr, value) in attribute.items():
                             mc.setAttr('%s.%s' % (object, attr), value)
 
-                        # when the specific the attribute reset
-                        for attr in ad_channel_attr():
-                            mc.setAttr('%s.%s' % (object, attr), attribute.get(attr))
-                else:
-                    pass
-
+                    # when the specific the attribute reset
+                    for attr in ad_channel_attr():
+                        mc.setAttr('%s.%s' % (object, attr), attribute.get(attr))
 
 # set the default attribute from marking menu
 def ad_set_default_attr(*args):
@@ -165,11 +130,34 @@ def ad_set_default_attr(*args):
 # channel attr on the selection object
 def ad_channel_attr():
     # get the currently selected attributes from the main channel box.
-    channelBox = mel.eval('global string $gChannelBoxName; $temp=$gChannelBoxName;')  # fetch maya's main channelbox
-    attrs = mc.channelBox(channelBox, q=1, sma=1)
+    # def getSelectedChannels():
+
+    # if not mc.ls(sl=True):
+    #     return
+    gChannelBoxName = 'mainChannelBox'
+    sma = mc.channelBox(gChannelBoxName, q=True, sma=True)
+    ssa = mc.channelBox(gChannelBoxName, q=True, ssa=True)
+    sha = mc.channelBox(gChannelBoxName, q=True, sha=True)
+
+    attrs = list()
+    if sma:
+        attrs.extend(sma)
+    if ssa:
+        attrs.extend(ssa)
+    if sha:
+        attrs.extend(sha)
+
     if not attrs:
-        return []
+        return  []
+
     return attrs
+
+    # getSelectedChannels()
+    # channelBox = mel.eval('global string $gChannelBoxName; $temp=$gChannelBoxName;')  # fetch maya's main channelbox
+    # attrs = mc.channelBox(channelBox, q=1, sma=1)
+    # if not attrs:
+    #     return []
+    # return attrs
 
 # get attribute name and that value
 def ad_get_attr_value(selection):

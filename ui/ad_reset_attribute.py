@@ -86,6 +86,12 @@ def ad_delete_attr(selection):
         om.MGlobal.displayInfo('There is no attr value %s has been set! Skipped delete!' % selection)
 
 
+import maya.cmds as cmds
+import maya.mel as mel
+
+
+
+
 # reset the value attr
 def ad_reset_to_default(*args):
     selection = mc.ls(sl=1)
@@ -116,11 +122,21 @@ def ad_reset_to_default(*args):
 # channel attr on the selection object
 def ad_channel_attr():
     # get the currently selected attributes from the main channel box.
-    channelBox = mel.eval('global string $gChannelBoxName; $temp=$gChannelBoxName;')  # fetch maya's main channelbox
-    attrs = mc.channelBox(channelBox, q=1, sma=1)
+    gChannelBoxName = mel.eval('$temp=$gChannelBoxName')
+    sma = mc.channelBox(gChannelBoxName, q=True, sma=True)
+    ssa = mc.channelBox(gChannelBoxName, q=True, ssa=True)
+    sha = mc.channelBox(gChannelBoxName, q=True, sha=True)
+
+    attrs = list()
+    if sma:
+        attrs.extend(sma)
+    if ssa:
+        attrs.extend(ssa)
+    if sha:
+        attrs.extend(sha)
+
     if not attrs:
         return []
-    print attrs
     return attrs
 
 
