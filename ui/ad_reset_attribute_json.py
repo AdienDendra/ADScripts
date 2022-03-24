@@ -1,15 +1,14 @@
+import ast
 import json
 import os
-from collections import OrderedDict
 from functools import partial
 
 import maya.OpenMaya as om
 import maya.cmds as mc
-from urllib.parse import urlparse
-
-from AL.breed.ui.services import sessionManager
+from collections import OrderedDict
 
 MENU_NAME = "markingMenu"
+STRING_NAME = '_adNote'
 
 
 class ResetAttrMarkingMenu():
@@ -28,90 +27,27 @@ class ResetAttrMarkingMenu():
     def buildMarkingMenu(self, menu, parent):
         # Radial positioned
         mc.menuItem(p=menu, l="Set Attr as Default", rp="W", c=partial(set_default_attr))
-        mc.menuItem(p=menu, l="Reset to Default", rp="NE", c=partial(reset_to_default))
-        mc.menuItem(p=menu, l="Reset to Bindpose", rp="SE", c=partial(reset_to_bindpose))
+        mc.menuItem(p=menu, l="Reset to Default", rp="E", c=partial(reset_to_default))
 
 
 ResetAttrMarkingMenu()
 
 
-def query_data_bindPose():
-    import_object = os.path.join(get_directory_path("motion", ""), "bindPose" + ".json")
-    file = open("%s" % (import_object))
-    shape_dict = json.load(file)
+def get_directory_path(folder):
+    file_path = mc.file(q=True, sn=True)
+    if file_path:
+        path = os.path.dirname(file_path)
+        file_name= os.path.basename(file_path)
+        raw_name, extension = os.path.splitext(file_name)
+        extension = extension.split('.')
+        directory = os.path.join(path, folder)
+        raw_extension = raw_name+'_'+ extension[1]
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        return directory, raw_extension
 
-    data = shape_dict['data']
-    internal = data['internal']
-    new_dic = {}
-    for item_value in internal.values():
-        values = item_value['values']
-        for (key, value) in values.items():
-            parsed = urlparse(key)
-            fragment = parsed.fragment
-            split_path = os.path.split(fragment)
-
-            main_object = split_path[0].split('#')
-            replacing = main_object[1].replace('/control', '_')
-
-            # exception for side
-            if 'L/' in replacing:
-                split = replacing.split('/')
-                object = split[0] + '_'
-
-            elif 'R/' in replacing:
-                split = replacing.split('/')
-                object = split[0] + '_'
-            else:
-                object = replacing
-
-            second_object = split_path[1].split('@')[0]
-
-            object_name = object + second_object
-
-            new_dic[object_name] = value
-
-    return new_dic
-
-
-def reset_to_bindpose(*args):
-    selection = mc.ls(sl=1)
-    data = query_data_bindPose()
-
-    for item in selection:
-        object_name = item.split(':')[1]
-        new_data = data.get(str(object_name))
-        # condition without selecting mainChannelbox
-        if query_channel_attr(item) == []:
-            for (key, value) in new_data.items():
-                if mc.getAttr('%s.%s' % (item, key), l=True):
-                    pass
-                else:
-                    # condition if selection rotate
-                    if key == 'rotateX' or key == 'rotateY' or key == 'rotateZ':
-                        mc.setAttr('%s.%s' % (item, key), value[0] * 57.2958)
-                    else:
-                        mc.setAttr('%s.%s' % (item, key), value[0])
-
-        # when selecting mainChannelbox
-        for attr in query_channel_attr(item):
-            # condition if selection rotate
-            if attr == 'rotateX' or attr == 'rotateY' or attr == 'rotateZ':
-                mc.setAttr('%s.%s' % (item, attr), (new_data.get(attr)[0] * 57.2958))
-            else:
-                mc.setAttr('%s.%s' % (item, attr), new_data.get(attr)[0])
-
-
-def get_directory_path(folder, subfolder=''):
-    dataPath = (
-        sessionManager.SessionManager.instance()
-            .activeManifest()
-            .rigDirectory()
-            .asFilepath()
-    )
-    directory = os.path.join(os.path.dirname(dataPath), folder, subfolder)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    return directory
+    else:
+        om.MGlobal_displayError('Save the file first before set the attribute!')
 
 
 def save_json_file(file_name, object):
@@ -147,26 +83,31 @@ def reset_to_default(*args):
     if not selection:
         om.MGlobal.displayWarning('Please select at least one object to Reset to Default!')
     else:
-        import_object = os.path.join(get_directory_path("resources", "ctrlAttr"), "resetAttr" + ".json")
-        json_file = load_json_file(import_object)
+        directory = get_directory_path("ad_resetAttr")
+        import_object = os.path.join(directory[0], directory[1]+'.json')
+        json_file=[]
+        if os.path.exists(import_object):
+            json_file = load_json_file(import_object)
+            for object in selection:
+                for (key, attribute) in json_file.items():
+                    if object == key:
+                        if query_channel_attr(object) == []:
+                            for (attr, value) in attribute.items():
+                                mc.setAttr('%s.%s' % (object, attr), value)
 
-        for object in selection:
-            for (key, attribute) in json_file.items():
-                if object == key:
-                    if query_channel_attr(object) == []:
-                        for (attr, value) in attribute.items():
-                            mc.setAttr('%s.%s' % (object, attr), value)
+                        # when the specific the attribute reset
+                        for attr in query_channel_attr(object):
+                            mc.setAttr('%s.%s' % (object, attr), attribute.get(attr))
 
-                    # when the specific the attribute reset
-                    for attr in query_channel_attr(object):
-                        mc.setAttr('%s.%s' % (object, attr), attribute.get(attr))
-
+        else:
+            om.MGlobal_displayError("There is no file '%s.json' in the directory" % directory[1])
 
 # set the default attribute from marking menu
 def set_default_attr(*args):
     selection = mc.ls(sl=1)
     if selection:
-        export_object = os.path.join(get_directory_path("resources", "ctrlAttr"), 'resetAttr' + ".json")
+        directory = get_directory_path("ad_resetAttr")
+        export_object = os.path.join(directory[0], directory[1] + ".json")
         objects = []
         for object in selection:
             if mc.listAnimatable(object):
@@ -239,3 +180,4 @@ def get_attr_value(selection):
         # storing into dic
         dic[attr] = get_value
     return dic
+
