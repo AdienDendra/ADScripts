@@ -7,8 +7,6 @@ import maya.OpenMaya as om
 import maya.cmds as mc
 
 MENU_NAME = "markingMenu"
-STRING_NAME = '_adNote'
-
 
 class ResetAttrMarkingMenu():
 
