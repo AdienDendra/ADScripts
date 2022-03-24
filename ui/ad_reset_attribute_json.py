@@ -1,11 +1,10 @@
-import ast
 import json
 import os
+from collections import OrderedDict
 from functools import partial
 
 import maya.OpenMaya as om
 import maya.cmds as mc
-from collections import OrderedDict
 
 MENU_NAME = "markingMenu"
 STRING_NAME = '_adNote'
@@ -37,11 +36,11 @@ def get_directory_path(folder):
     file_path = mc.file(q=True, sn=True)
     if file_path:
         path = os.path.dirname(file_path)
-        file_name= os.path.basename(file_path)
+        file_name = os.path.basename(file_path)
         raw_name, extension = os.path.splitext(file_name)
         extension = extension.split('.')
         directory = os.path.join(path, folder)
-        raw_extension = raw_name+'_'+ extension[1]
+        raw_extension = raw_name + '_' + extension[1]
         if not os.path.exists(directory):
             os.makedirs(directory)
         return directory, raw_extension
@@ -58,7 +57,6 @@ def save_json_file(file_name, object):
         attr_dict[str(obj)] = get_attr_value(obj)
         # condition json file exist
         file_names = "%s" % (file_name)
-        # print file_names
         if os.path.isfile(file_names):
             file = open(file_names, "r")
             load = json.load(file)
@@ -84,8 +82,7 @@ def reset_to_default(*args):
         om.MGlobal.displayWarning('Please select at least one object to Reset to Default!')
     else:
         directory = get_directory_path("ad_resetAttr")
-        import_object = os.path.join(directory[0], directory[1]+'.json')
-        json_file=[]
+        import_object = os.path.join(directory[0], directory[1] + '.json')
         if os.path.exists(import_object):
             json_file = load_json_file(import_object)
             for object in selection:
@@ -101,6 +98,7 @@ def reset_to_default(*args):
 
         else:
             om.MGlobal_displayError("There is no file '%s.json' in the directory" % directory[1])
+
 
 # set the default attribute from marking menu
 def set_default_attr(*args):
@@ -180,4 +178,3 @@ def get_attr_value(selection):
         # storing into dic
         dic[attr] = get_value
     return dic
-
