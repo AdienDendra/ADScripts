@@ -1,15 +1,12 @@
 """
 module for controller base
 """
+from __future__ import absolute_import
+
 import re
-from __builtin__ import reload
-from string import digits
+import maya.cmds as cmds
 
-import maya.cmds as mc
-
-from rigging.tools import AD_utils as ut
-
-reload(ut)
+from rigging.tools import pythonVersion as rt_pythonVersion, utils as rt_utils
 
 CIRCLEPLUS = [[1.1300200000000005, -4.996003610813204e-16, 0.0], [1.00412, 1.1102230246251565e-16, 0.0],
               [0.99176, -8.326672684688674e-17, -0.15708], [0.9549800000000004, -2.498001805406602e-16, -0.31029],
@@ -1349,116 +1346,116 @@ class Control():
                  ):
 
         """
-    :param prefix           : str, prefix object name
-    :param suffix           : str, suffix object name
-    :param groups_ctrl       : list (str), list of groups name
-    :param group_connect_attr : str, group of attribute that control connect to its object
-    :param ctrl_size         : float, size of controller
-    :param ctrl_color        : str, list the controller color
-    :param gimbal           : bool, adding the gimbal control
-    :param lock_channels     : list (str), list of lock channel
-    :param lock_gmbl_channels : list (str), list of lock gimbal channel
-    :param objVis           : bool, adding the attribute visibility the object
-    :param shape            : variable name of oject shape
-    :param connection          : str, connection options to the object
-    :return                 : None
+        :param prefix           : str, prefix object name
+        :param suffix           : str, suffix object name
+        :param groups_ctrl       : list (str), list of groups name
+        :param group_connect_attr : str, group of attribute that control connect to its object
+        :param ctrl_size         : float, size of controller
+        :param ctrl_color        : str, list the controller color
+        :param gimbal           : bool, adding the gimbal control
+        :param lock_channels     : list (str), list of lock channel
+        :param lock_gmbl_channels : list (str), list of lock gimbal channel
+        :param objVis           : bool, adding the attribute visibility the object
+        :param shape            : variable name of oject shape
+        :param connection          : str, connection options to the object
+        :return                 : None
 
         """
-        scale_controller = ut.scale_curve(ctrl_size, shape)
-        ctrl = ut.controller(scale_controller)
+        scale_controller = rt_utils.scale_curve(ctrl_size, shape)
+        ctrl = rt_utils.controller(scale_controller)
 
-        rename_controller = mc.rename(ctrl, '%s%s_%s' % (ut.prefix_name(prefix), side, suffix))
+        rename_controller = cmds.rename(ctrl, '%s%s_%s' % (rt_utils.prefix_name(prefix), side, suffix))
 
         # get the number
         try:
             patterns = [r'\d+']
-            prefix_number = ut.prefix_name(prefix)
+            prefix_number = rt_utils.prefix_name(prefix)
             for p in patterns:
                 prefix_number = re.findall(p, prefix_number)[0]
         except:
             prefix_number = ''
 
         # get the prefix without number
-        prefix_without_number = str(prefix).translate(None, digits)
+        prefix_without_number = rt_pythonVersion.translation_string(prefix)
 
-        group_parent = ut.group_parent(groups=groups_ctrl, prefix=prefix_without_number, number=prefix_number,
-                                       suffix=suffix.title(),
-                                       side=side)
+        group_parent = rt_utils.group_parent(groups=groups_ctrl, prefix=prefix_without_number, number=prefix_number,
+                                             suffix=suffix.title(),
+                                             side=side)
 
-        parent_controller = ut.parent_object(group_parent[-1], rename_controller)
+        parent_controller = rt_utils.parent_object(group_parent[-1], rename_controller)
 
-        ut.set_color(rename_controller, ctrl_color)
+        rt_utils.set_color(rename_controller, ctrl_color)
 
         # lock and hide attribute
-        ut.lock_hide_attr(lock_channels, rename_controller)
+        rt_utils.lock_hide_attr(lock_channels, rename_controller)
 
         connection_controller = rename_controller
 
         # gimbal control true
         if gimbal:
             # scaling size gimbal from the main ctrl
-            scale_gimbal = ut.scale_curve(ctrl_size * 0.75, shape)
+            scale_gimbal = rt_utils.scale_curve(ctrl_size * 0.75, shape)
 
             # create gimbal control
-            controller_gimbal = ut.controller(scale_gimbal)
+            controller_gimbal = rt_utils.controller(scale_gimbal)
 
-            rename_gimbal = mc.rename(controller_gimbal,
-                                      '%s%s%s_%s' % (ut.prefix_name(prefix), ut.GIMBAL, side, suffix))
+            rename_gimbal = cmds.rename(controller_gimbal,
+                                      '%s%s%s_%s' % (rt_utils.prefix_name(prefix), rt_utils.GIMBAL, side, suffix))
 
             # gimbal control alias
             connection_controller = rename_gimbal
 
             # gimbal color
-            ut.set_color(rename_gimbal, 'white')
+            rt_utils.set_color(rename_gimbal, 'white')
 
             # add attribute for switching on/off gimbal ctrl
-            add_attr = ut.add_attr_transform_shape(rename_controller, 'gimbalCtrl', 'long', edit=True, channel_box=True,
-                                                   min=0,
-                                                   max=1, dv=0)
-            list_relatives_gimbal = mc.listRelatives(rename_gimbal, shapes=True)[0]
+            add_attr = rt_utils.add_attr_transform_shape(rename_controller, 'gimbalCtrl', 'long', edit=True, channel_box=True,
+                                                         min=0,
+                                                         max=1, dv=0)
+            list_relatives_gimbal = cmds.listRelatives(rename_gimbal, shapes=True)[0]
 
-            mc.connectAttr('%s.gimbalCtrl' % add_attr, '%s.visibility' % list_relatives_gimbal)
+            cmds.connectAttr('%s.gimbalCtrl' % add_attr, '%s.visibility' % list_relatives_gimbal)
 
             # lock and hide attribute
-            ut.lock_hide_attr(lock_gmbl_channels, rename_gimbal)
+            rt_utils.lock_hide_attr(lock_gmbl_channels, rename_gimbal)
 
             # lock and hide visibility the gimbal ctrl
-            ut.lock_hide_attr_object(connection_controller, 'visibility')
+            rt_utils.lock_hide_attr_object(connection_controller, 'visibility')
 
             # parent gimbal ctrl to main ctrl
-            ut.parent_object(rename_controller, rename_gimbal)
+            rt_utils.parent_object(rename_controller, rename_gimbal)
 
             self.control_gimbal = rename_gimbal
 
         if match_obj_first_position:
-            mc.delete(mc.parentConstraint(match_obj_first_position, match_obj_second_position, group_parent[0]))
+            cmds.delete(cmds.parentConstraint(match_obj_first_position, match_obj_second_position, group_parent[0]))
 
         # connection to attribute
         if connection == ['connectAttr']:
-            group_connection = ut.group_object(group_connect_attr, match_obj_first_position, connection_controller)
-            connection = ut.connection(connection, rename_controller, match_obj_first_position)
+            group_connection = rt_utils.group_object(group_connect_attr, match_obj_first_position, connection_controller)
+            connection = rt_utils.connection(connection, rename_controller, match_obj_first_position)
 
         # connection parent
         elif connection == ['parent']:
             # query list relatives
-            list_relatives_parent = mc.listRelatives(match_obj_first_position, p=1)
+            list_relatives_parent = cmds.listRelatives(match_obj_first_position, p=1)
 
             if list_relatives_parent == None:
-                connection = ut.connection(connection, connection_controller, match_obj_first_position)
+                connection = rt_utils.connection(connection, connection_controller, match_obj_first_position)
 
             else:
                 # parent object to controller
-                connection = ut.connection(connection, connection_controller, match_obj_first_position)
+                connection = rt_utils.connection(connection, connection_controller, match_obj_first_position)
 
                 # parent ctrl group to list relatives
-                ut.parent_object(list_relatives_parent, group_parent[0])
+                rt_utils.parent_object(list_relatives_parent, group_parent[0])
 
         # connection constraint
         else:
-            connection = ut.connection(connection, connection_controller, match_obj_first_position)
+            connection = rt_utils.connection(connection, connection_controller, match_obj_first_position)
 
         # clear selection
-        mc.select(cl=1)
+        cmds.select(cl=1)
 
         self.control = rename_controller
         self.parent_control = group_parent

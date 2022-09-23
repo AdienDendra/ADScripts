@@ -6,6 +6,7 @@ The only rule is that you have to use the same Matrix as in the put_on_party_hat
 """
 import pymel.core as pm
 
+
 def fix_present():
     present = pm.PyNode("BirthdayPresent")
     for vtx in present.getShape().vtx:
@@ -20,17 +21,21 @@ def fix_present():
 
         move_x = (vector_optimum[0] * pm.dt.sqrt(1.0 - (vector_optimum[1] * vector_optimum[1] / 2.0) -
                                                  (vector_optimum[2] * vector_optimum[2] / 2.0) +
-                                                 (vector_optimum[1] * vector_optimum[1] * vector_optimum[2] * vector_optimum[2] / 3.0)))
+                                                 (vector_optimum[1] * vector_optimum[1] * vector_optimum[2] *
+                                                  vector_optimum[2] / 3.0)))
 
         move_y = (vector_optimum[1] * pm.dt.sqrt(1.0 - (vector_optimum[2] * vector_optimum[2] / 2.0) -
                                                  (vector_optimum[0] * vector_optimum[0] / 2.0) +
-                                                 (vector_optimum[2] * vector_optimum[2] * vector_optimum[0] * vector_optimum[0] / 3.0)))
+                                                 (vector_optimum[2] * vector_optimum[2] * vector_optimum[0] *
+                                                  vector_optimum[0] / 3.0)))
 
         move_z = (vector_optimum[2] * pm.dt.sqrt(1.0 - (vector_optimum[0] * vector_optimum[0] / 2.0) -
                                                  (vector_optimum[1] * vector_optimum[1] / 2.0) +
-                                                 (vector_optimum[0] * vector_optimum[0] * vector_optimum[1] * vector_optimum[1] / 3.0)))
+                                                 (vector_optimum[0] * vector_optimum[0] * vector_optimum[1] *
+                                                  vector_optimum[1] / 3.0)))
 
-        pm.move(move_x+(vector_position[0]), move_y+(vector_position[1]), move_z+(vector_position[2]), vtx)
+        pm.move(move_x + (vector_position[0]), move_y + (vector_position[1]), move_z + (vector_position[2]), vtx)
+
 
 def look_at_gift():
     bird = pm.PyNode("Birdy")
@@ -38,12 +43,13 @@ def look_at_gift():
 
     # 90 degree Y axis rotation
     y_rot = pm.dt.Matrix([0.0, 0.0, -1.0, 0.0,
-                          0.0,1.0,0.0,0.0,
-                          1.0, 0.0, 0.0,0.0,
-                          0.0,0.0,0.0,1.0])
+                          0.0, 1.0, 0.0, 0.0,
+                          1.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 1.0])
 
-    yz_matrix =  pm.dt.Matrix(mtx) * y_rot
+    yz_matrix = pm.dt.Matrix(mtx) * y_rot
     pm.xform('Birdy', ws=True, m=yz_matrix)
+
 
 def put_on_party_hat():
     hat = pm.PyNode("PartyHat")
@@ -54,7 +60,7 @@ def put_on_party_hat():
         [0, 0.167, 0.985, 0.0],
         [12.13, 83.57, -15.185, 1.0],
     ])
-    hat_spot=pm.PyNode('hat_spot')
+    hat_spot = pm.PyNode('hat_spot')
     hat_spot_mtx = pm.dt.Matrix(pm.xform(hat_spot, ws=True, q=True, m=True))
 
     # query matrix value

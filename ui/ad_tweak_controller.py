@@ -29,14 +29,17 @@ from functools import partial
 
 import pymel.core as pm
 
-SHAPE_CTRL = [[-1.0, 1.0, 1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, 1.0, 1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0],
-        [-1.0, -1.0, -1.0], [-1.0, 1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0], [1.0, -1.0, 1.0], [1.0, 1.0, 1.0],
-        [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [1.0, -1.0, 1.0], [1.0, -1.0, -1.0], [-1.0, -1.0, -1.0]]
+SHAPE_CTRL = [[-1.0, 1.0, 1.0], [-1.0, 1.0, -1.0], [1.0, 1.0, -1.0], [1.0, 1.0, 1.0], [-1.0, 1.0, 1.0],
+              [-1.0, -1.0, 1.0],
+              [-1.0, -1.0, -1.0], [-1.0, 1.0, -1.0], [-1.0, 1.0, 1.0], [-1.0, -1.0, 1.0], [1.0, -1.0, 1.0],
+              [1.0, 1.0, 1.0],
+              [1.0, 1.0, -1.0], [1.0, -1.0, -1.0], [1.0, -1.0, 1.0], [1.0, -1.0, -1.0], [-1.0, -1.0, -1.0]]
 
 layout = 400
 percentage = 0.01 * layout
 on_selector = 0
-method_radio_button =1
+method_radio_button = 1
+
 
 def ad_show_ui():
     adien_tweak_ctrl = 'AD_TweakControllerTool'
@@ -115,7 +118,8 @@ def ad_show_ui():
                                                 (3, 'both', 0 * percentage)]
                                   ):
                     pm.button(l="Clear Define Objects", bgc=(1, 1, 0),
-                              c=partial(ad_clearing_all_text_field, 'Reconnect_List_Tweak_Joint', 'Reconnect_Tweak_Mesh'))
+                              c=partial(ad_clearing_all_text_field, 'Reconnect_List_Tweak_Joint',
+                                        'Reconnect_Tweak_Mesh'))
                     # create button to delete last pair of text fields
                     pm.button('disconnect_tweak_controller', l="Disconnect Tweak Ctrl", bgc=(0.5, 0, 0),
                               c=partial(ad_disconnect_tweak_controller)
@@ -168,6 +172,7 @@ def ad_on_selection_button(on):
     on_selector = on
     ad_clearing_all_text_field(['List_Tweak_Joint'])
 
+
 def ad_hierarchy_joint(*args):
     hierarchy = []
     # query object with value on shape selector status
@@ -180,6 +185,7 @@ def ad_hierarchy_joint(*args):
         pass
 
     return hierarchy
+
 
 def ad_clearing_all_text_field(*args):
     # clearing object text field
@@ -255,7 +261,8 @@ def ad_query_list_textfield_object(object_define, *args):
                     if pm.ls(item):
                         listing_object.append(item)
                     else:
-                        pm.error("'%s' has wrong input object name. There is no object with name '%s'!" % (object_define, item))
+                        pm.error("'%s' has wrong input object name. There is no object with name '%s'!" % (
+                        object_define, item))
         else:
             pm.error("'%s' can not be empty!" % object_define)
     else:
@@ -284,6 +291,7 @@ def ad_create_tweak_controller(*args):
     else:
         ad_tweak_non_hierarchy_condition(list_joint, main_mesh, scale_connection, tweak_mesh)
 
+
 def ad_tweak_non_hierarchy_condition(list_joint, main_mesh, scale_connection, tweak_mesh):
     for joint in list_joint:
         parents = joint.getParent()
@@ -298,6 +306,7 @@ def ad_tweak_non_hierarchy_condition(list_joint, main_mesh, scale_connection, tw
                     ad_create_tweak_non_hierarchy_controller(joint, main_mesh, scale_connection, tweak_mesh)
             else:
                 ad_create_tweak_non_hierarchy_controller(joint, main_mesh, scale_connection, tweak_mesh)
+
 
 def ad_tweak_hierarchy_condition(list_joint, main_mesh, scale_connection, tweak_mesh):
     if len(list_joint) > 1:
@@ -341,8 +350,9 @@ def ad_tweak_hierarchy_condition(list_joint, main_mesh, scale_connection, tweak_
         pm.parent(follicle_grp, drive_grp, ctrl_grp, all_grp)
 
         # looping the object
-        for joint, driver, controller in zip (list_joint, driver_group, controller['group']):
-            ad_create_tweak_hierarchy_controller(joint, main_mesh, scale_connection, tweak_mesh, driver, controller, follicle_grp)
+        for joint, driver, controller in zip(list_joint, driver_group, controller['group']):
+            ad_create_tweak_hierarchy_controller(joint, main_mesh, scale_connection, tweak_mesh, driver, controller,
+                                                 follicle_grp)
 
     else:
         for joint in list_joint:
@@ -350,96 +360,103 @@ def ad_tweak_hierarchy_condition(list_joint, main_mesh, scale_connection, tweak_
                 if pm.listConnections(joint + '.AD_Parent_Grp'):
                     pm.error("Tweak controller '%s' already added!" % joint)
                 else:
-                    pm.error("Joint '%s' shouldn't as a single joint input, check your Tweak Method option!" % list_joint[0])
+                    pm.error(
+                        "Joint '%s' shouldn't as a single joint input, check your Tweak Method option!" % list_joint[0])
 
             else:
                 pm.error(
                     "Joint '%s' shouldn't as a single joint input, check your Tweak Method option!" % list_joint[0])
 
-def ad_create_tweak_hierarchy_controller(joints, main_mesh, scale_connection, tweak_mesh, driver, controller, follicle_grp):
-        # create follicle
-        follicles = ad_follicle_set(joints, main_mesh)
 
-        # add attribute
-        ad_add_attr_message(joints, driver)
+def ad_create_tweak_hierarchy_controller(joints, main_mesh, scale_connection, tweak_mesh, driver, controller,
+                                         follicle_grp):
+    # create follicle
+    follicles = ad_follicle_set(joints, main_mesh)
 
-        # connected the bind pre matrix
-        pm.connectAttr('%s.worldInverseMatrix[0]' % driver,
-                       '%s.bindPreMatrix[%d]' % (
-                           ad_query_skin_name(tweak_mesh), ad_skin_matrix_list_from_joint(joints)))
+    # add attribute
+    ad_add_attr_message(joints, driver)
 
-        if pm.textFieldButtonGrp('Scale_Connection', q=True, en=True):
-            ad_scale_constraint(scale_connection, follicles['folTrans'])
+    # connected the bind pre matrix
+    pm.connectAttr('%s.worldInverseMatrix[0]' % driver,
+                   '%s.bindPreMatrix[%d]' % (
+                       ad_query_skin_name(tweak_mesh), ad_skin_matrix_list_from_joint(joints)))
 
-        # hide visibility
-        pm.setAttr(follicles['folShape'] + '.lodVisibility', 0)
-        pm.setAttr(joints + '.drawStyle', 2)
+    if pm.textFieldButtonGrp('Scale_Connection', q=True, en=True):
+        ad_scale_constraint(scale_connection, follicles['folTrans'])
 
-        # lock_attr
-        pm.setAttr(follicles['folTrans'] + '.translate', l=1)
-        pm.setAttr(follicles['folTrans'] + '.rotate', l=1)
-        pm.setAttr(follicles['folTrans'] + '.scale', l=1)
-        pm.setAttr('%s.%s' % (follicles['folTrans'], 'v'), l=True, k=False)
-        pm.setAttr('%s.%s' % (follicles['folTrans'], 'pu'), l=True, k=False)
-        pm.setAttr('%s.%s' % (follicles['folTrans'], 'pv'), l=True, k=False)
+    # hide visibility
+    pm.setAttr(follicles['folShape'] + '.lodVisibility', 0)
+    pm.setAttr(joints + '.drawStyle', 2)
 
-        pm.parent(follicles['folTrans'], follicle_grp)
-        # constraining
-        ad_parent_scale_constraint(follicles['folTrans'], driver)
+    # lock_attr
+    pm.setAttr(follicles['folTrans'] + '.translate', l=1)
+    pm.setAttr(follicles['folTrans'] + '.rotate', l=1)
+    pm.setAttr(follicles['folTrans'] + '.scale', l=1)
+    pm.setAttr('%s.%s' % (follicles['folTrans'], 'v'), l=True, k=False)
+    pm.setAttr('%s.%s' % (follicles['folTrans'], 'pu'), l=True, k=False)
+    pm.setAttr('%s.%s' % (follicles['folTrans'], 'pv'), l=True, k=False)
 
-        # connect attribute
-        pm.connectAttr(driver + '.translate', controller + '.translate')
-        pm.connectAttr(driver + '.rotate', controller + '.rotate')
-        pm.connectAttr(driver + '.scale', controller + '.scale')
+    pm.parent(follicles['folTrans'], follicle_grp)
+    # constraining
+    ad_parent_scale_constraint(follicles['folTrans'], driver)
+
+    # connect attribute
+    pm.connectAttr(driver + '.translate', controller + '.translate')
+    pm.connectAttr(driver + '.rotate', controller + '.rotate')
+    pm.connectAttr(driver + '.scale', controller + '.scale')
+
 
 def ad_create_tweak_non_hierarchy_controller(joint, main_mesh, scale_connection, tweak_mesh):
+    all_grp = ad_create_group('transform', "%s_%s" % ('AllTweakCtrl_NonHJ', 'grp'))
+    controller = ad_create_controller(object_list=[joint],
+                                      ctrl_color=18,
+                                      )
 
-        all_grp = ad_create_group('transform', "%s_%s" % ('AllTweakCtrl_NonHJ', 'grp'))
-        controller = ad_create_controller(object_list=[joint],
-                                          ctrl_color=18,
-                                          )
+    # for list_joint, group_ctrl in zip(list_joint, controller['group']):
+    # create follicle
+    follicles = ad_follicle_set(joint, main_mesh)
 
-        # for list_joint, group_ctrl in zip(list_joint, controller['group']):
-        # create follicle
-        follicles = ad_follicle_set(joint, main_mesh)
+    # # parent the object to follicle
+    pm.parent(controller['group'], follicles['folTrans'])
 
-        # # parent the object to follicle
-        pm.parent(controller['group'], follicles['folTrans'])
+    # for scl in scaleObj:
+    if pm.textFieldButtonGrp('Scale_Connection', q=True, en=True):
+        ad_scale_constraint(scale_connection, follicles['folTrans'])
 
-        # for scl in scaleObj:
-        if pm.textFieldButtonGrp('Scale_Connection', q=True, en=True):
-            ad_scale_constraint(scale_connection, follicles['folTrans'])
+    # add attribute
+    ad_add_attr_message(joint, controller['group'][0])
 
-        # add attribute
-        ad_add_attr_message(joint, controller['group'][0])
+    pm.setAttr(follicles['folShape'] + '.lodVisibility', 0)
+    pm.setAttr(joint + '.drawStyle', 2)
 
-        pm.setAttr(follicles['folShape'] + '.lodVisibility', 0)
-        pm.setAttr(joint + '.drawStyle', 2)
+    pm.setAttr(follicles['folTrans'] + '.translate', l=1)
+    pm.setAttr(follicles['folTrans'] + '.rotate', l=1)
+    pm.setAttr('%s.%s' % (follicles['folTrans'], 'v'), l=True, k=False)
+    pm.setAttr('%s.%s' % (follicles['folTrans'], 'pu'), l=True, k=False)
+    pm.setAttr('%s.%s' % (follicles['folTrans'], 'pv'), l=True, k=False)
 
-        pm.setAttr(follicles['folTrans'] + '.translate', l=1)
-        pm.setAttr(follicles['folTrans'] + '.rotate', l=1)
-        pm.setAttr('%s.%s' % (follicles['folTrans'], 'v'), l=True, k=False)
-        pm.setAttr('%s.%s' % (follicles['folTrans'], 'pu'), l=True, k=False)
-        pm.setAttr('%s.%s' % (follicles['folTrans'], 'pv'), l=True, k=False)
+    pm.setAttr(controller['group'][0] + '.translate', l=1)
+    pm.setAttr(controller['group'][0] + '.rotate', l=1)
+    pm.setAttr(controller['group'][0] + '.scale', l=1)
 
-        pm.setAttr(controller['group'][0] + '.translate', l=1)
-        pm.setAttr(controller['group'][0] + '.rotate', l=1)
-        pm.setAttr(controller['group'][0] + '.scale', l=1)
+    pm.connectAttr('%s.worldInverseMatrix[0]' % ad_array_tweak_folder(follicles['folTrans']),
+                   '%s.bindPreMatrix[%d]' % (
+                       ad_query_skin_name(tweak_mesh), ad_skin_matrix_list_from_joint(joint)))
 
-        pm.connectAttr('%s.worldInverseMatrix[0]' % ad_array_tweak_folder(follicles['folTrans']),
-                       '%s.bindPreMatrix[%d]' % (
-                           ad_query_skin_name(tweak_mesh), ad_skin_matrix_list_from_joint(joint)))
+    pm.parent(follicles['folTrans'], all_grp)
 
-        pm.parent(follicles['folTrans'], all_grp)
+    print
+    "Tweak controller '%s' has been created!" % joint
 
-        print "Tweak controller '%s' has been created!" % joint
 
 ################################################# reconnect tweak controller ##################################################
 def ad_reconnect_tweak_controller(*args):
     ad_reconnect_or_disconnect_looping(reconnect=True)
 
+
 def ad_disconnect_tweak_controller(*args):
     ad_reconnect_or_disconnect_looping(reconnect=False)
+
 
 def ad_reconnect_or_disconnect_looping(reconnect):
     joints = ad_query_list_textfield_object('Reconnect_List_Tweak_Joint')[0]
@@ -457,7 +474,8 @@ def ad_reconnect_or_disconnect_looping(reconnect):
 
         # query whether it has contain parent hook
         if not grp_driver:
-            pm.error("Tweak controller '%s' doesn't exists! Create setup first or delete existing setup before create tweaker." % joint)
+            pm.error(
+                "Tweak controller '%s' doesn't exists! Create setup first or delete existing setup before create tweaker." % joint)
 
         # query list connection
         list_connection = pm.listConnections('%s.worldInverseMatrix[0]' % grp_driver[0], p=1)
@@ -472,12 +490,12 @@ def ad_reconnect_or_disconnect_looping(reconnect):
                 pm.connectAttr('%s.worldInverseMatrix[0]' % grp_driver[0],
                                '%s.bindPreMatrix[%d]' % (
                                    ad_query_skin_name(tweak_mesh), ad_skin_matrix_list_from_joint(joint)))
-                print ("Tweak controller '%s' is reconnected!" % joint)
+                print("Tweak controller '%s' is reconnected!" % joint)
         else:
             # condition if it has connection
             if list_connection:
                 pm.disconnectAttr('%s.worldInverseMatrix[0]' % grp_driver[0], list_connection[0])
-                print ("Tweak controller '%s' is disconnected!" % joint)
+                print("Tweak controller '%s' is disconnected!" % joint)
 
             else:
                 pm.warning(
@@ -538,9 +556,11 @@ def ad_query_skin_name(obj):
     relatives = pm.listRelatives(obj, type="shape")
     skin_cluster = pm.listConnections(relatives, type="skinCluster")
     if not skin_cluster:
-        return pm.error("Please add bind skin to '%s' before create or reconnect or disconnect tweak controller!" % obj[0])
+        return pm.error(
+            "Please add bind skin to '%s' before create or reconnect or disconnect tweak controller!" % obj[0])
     else:
         return skin_cluster[0]
+
 
 def ad_query_object_skin_influence(object_mesh, joints):
     skin_cluster = ad_query_skin_name(object_mesh)
@@ -550,6 +570,7 @@ def ad_query_object_skin_influence(object_mesh, joints):
             pm.error("Joint '%s' doesn't have influence bind skin to '%s' mesh!" % (joint, object_mesh[0]))
 
     return query_object_influence
+
 
 # CREATE FOLLICLE BASED ON OBJECT (JOINT OR TRANSFORM) SELECTED
 def ad_create_follicle_selection(obj_select, obj_mesh, prefix=None, suffix=None):
@@ -648,6 +669,7 @@ def ad_create_follicle_selection(obj_select, obj_mesh, prefix=None, suffix=None)
 
     return follicle_transform, follicle_shape
 
+
 def ad_follicle_set(obj_select, obj_mesh, prefix=None, suffix=None, ):
     grps = []
     grps.extend(ad_create_follicle_selection(obj_select, obj_mesh, prefix=prefix, suffix=suffix))
@@ -703,7 +725,8 @@ def ad_prefix_name(obj):
         joining = '_'.join(get_prefix_name)
         return joining
     else:
-        print obj
+        print
+        obj
 
 
 def ad_set_color(ctrl, color):

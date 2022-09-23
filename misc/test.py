@@ -19,6 +19,7 @@ SUFFIXES = {
 # And if something doesn't have an appropriate suffix, lets default to group.
 DEFAULT = "grp"
 
+
 # Here we create our first function.
 # The word 'def' is used to define (def-ine) a function
 # Following the def, is the name of the function
@@ -84,7 +85,7 @@ def rename(selection=False):
             continue
 
         # To prevent adding the suffix twice, we'll check if it already has the suffix and skip it if it does
-        if shortName.endswith('_'+suffix):
+        if shortName.endswith('_' + suffix):
             continue
 
         # Now we'll make the new name using string formatting
@@ -100,5 +101,6 @@ def rename(selection=False):
 
     # Finally we return the list back to the user of our function
     # Returning is how a function can let things outside it know what the result of it is
-    print objects
+    print
+    objects
     return objects

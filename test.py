@@ -1,5 +1,6 @@
 import maya.cmds as cmds
 
+
 class TransferMode(object):
     vertexIndex = 0
     closestVertex = 1
@@ -14,7 +15,7 @@ dControls['iMode'] = controls.RadioButtonsControl(TransferMode)
 
 
 @uiSettings.addToUI(sTab='SkinCluster', sModuleButton='Transfer', sRunButton='Transfer', dControls=dControls,
-                  tRefreshControlsAfterRun=[], bAddDefaultButton=True)
+                    tRefreshControlsAfterRun=[], bAddDefaultButton=True)
 def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patch.JointLocks.ignore,
                         iMode=TransferMode.closestPoint, sPositionMesh=None,
                         xDistanceMeshes=None, iBorderEdges=patch.BorderEdges.doEverything, iSmoothBorderMask=2,
@@ -26,7 +27,6 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
 
     # _validateChooseSkinCluster(sChooseSkinCluster)
 
-
     sFroms = utils.toList(sFrom)
     dFroms = defaultdict(list)
     for sF in sFroms:
@@ -35,7 +35,6 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
             dFroms[sObj].append(sF)
         else:
             dFroms[sF] = None
-
 
     if _bResetSettings:
         patch.iMissingInfluencesForNext = None
@@ -58,7 +57,7 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
             xSkipDict = {}
             for i, sFromMesh in enumerate(sFromsTransfer):
                 if dFroms[sFromMesh] != None:
-                    sComponents = dFroms[sFromMesh]#sFromMesh.split(' ')
+                    sComponents = dFroms[sFromMesh]  # sFromMesh.split(' ')
                     # sFromMeshMesh = sComponents[0].split('.')[0]
 
                     if iMode in [TransferMode.closestVertex, TransferMode.closestUV]:
@@ -75,7 +74,6 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
                         aSkip = np.setdiff1d(np.arange(cmds.polyEvaluate(sFromMesh, face=True)), aComps)
                     xSkipDict[sFromMesh] = aSkip
 
-
                 if cmds.objectType(sFromMesh) == 'skinCluster':
                     sFromsTransfer[i] = deformers.getGeoFromDeformer(sFromMesh)
                     dChooseSkinCluster[sFromsTransfer[i]] = sFromMesh
@@ -91,7 +89,8 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
                         sFromsTransfer[i] = None
 
             if sNonExistingMeshes:
-                print 'WARNING: skipping %s, because mesh %s don\'t exist!' % (sMesh, ', '.join(sNonExistingMeshes))
+                print
+                'WARNING: skipping %s, because mesh %s don\'t exist!' % (sMesh, ', '.join(sNonExistingMeshes))
                 continue
             sFromsTransfer = [sM for sM in sFromsTransfer if sM != None]
             if not sFromsTransfer:
@@ -158,7 +157,8 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
                         else:  # curves or surfaces
                             aIslandIntersectionEdges = aIntersectionEdges
                         if len(aIslandIntersectionEdges):
-                            if isinstance(pSelected, patch.CurvePatch): # if it's a hair strand, we just want the closest intersection at the root
+                            if isinstance(pSelected,
+                                          patch.CurvePatch):  # if it's a hair strand, we just want the closest intersection at the root
                                 aIslandIntersectionEdges = aIslandIntersectionEdges[:1]
                             aIslandIntersectionEdges = np.array(aIslandIntersectionEdges, dtype=int)
                             aIndices = aMapEdges[aIslandIntersectionEdges]
@@ -227,7 +227,6 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
                 if not sSkinCluster:
                     raise Exception, 'trying to transfer weights from %s, but it doesn\'t have a skinCluster!' % tbFromPatch.getName()
 
-
                 sInfluences = np.array(sInfluences)
                 if funcMapJoint != None:
                     sInfluences = [funcMapJoint(sJ) for sJ in sInfluences]
@@ -235,15 +234,13 @@ def transferSkinCluster(_pSelection=None, sFrom=[], fBlend=1.0, iJointLocks=patc
                 if sDuplicates:
                     for sDupl in sDuplicates:
                         iDuplInds = []
-                        for i,sInf in enumerate(sInfluences):
+                        for i, sInf in enumerate(sInfluences):
                             if sInf == sDupl:
                                 iDuplInds.append(i)
                         for iInd in iDuplInds[1:]:
-                            aWeights2d[:,iDuplInds[0]] += aWeights2d[:,iInd]
+                            aWeights2d[:, iDuplInds[0]] += aWeights2d[:, iInd]
                         sInfluences = np.delete(sInfluences, iDuplInds[1:])
                         aWeights2d = np.delete(aWeights2d, iDuplInds[1:], axis=1)
-
-
 
                 sAllFromSkinClusters.append(sSkinCluster)
 

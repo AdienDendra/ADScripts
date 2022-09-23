@@ -8,6 +8,7 @@ import maya.cmds as mc
 
 MENU_NAME = "markingMenu"
 
+
 class ResetAttrMarkingMenu():
 
     def __init__(self):

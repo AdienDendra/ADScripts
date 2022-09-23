@@ -2,11 +2,10 @@ import json
 import os
 from collections import OrderedDict
 from functools import partial
+from urllib.parse import urlparse
 
 import maya.OpenMaya as om
 import maya.cmds as mc
-from urllib.parse import urlparse
-
 from AL.breed.ui.services import sessionManager
 
 MENU_NAME = "markingMenu"
@@ -104,9 +103,9 @@ def reset_to_bindpose(*args):
 def get_directory_path(folder, subfolder=''):
     dataPath = (
         sessionManager.SessionManager.instance()
-            .activeManifest()
-            .rigDirectory()
-            .asFilepath()
+        .activeManifest()
+        .rigDirectory()
+        .asFilepath()
     )
     directory = os.path.join(os.path.dirname(dataPath), folder, subfolder)
     if not os.path.exists(directory):

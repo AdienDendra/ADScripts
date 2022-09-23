@@ -869,6 +869,7 @@ def lr_create_rig(*args):
 
     mc.select(cl=1)
 
+
 def lr_delete_rig(*args):
     RigUI = Lr_RigUI()
     if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
@@ -885,6 +886,7 @@ def lr_delete_rig(*args):
         om.MGlobal.displayError('There is no rig %s in the scene' % RigUI.prefix_name)
 
     mc.select(cl=1)
+
 
 def lr_create_path(*args):
     RigUI = Lr_RigUI()
@@ -906,6 +908,7 @@ def lr_create_path(*args):
 
     mc.select(cl=1)
 
+
 def lr_delete_path(*args):
     RigUI = Lr_RigUI()
     if mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
@@ -926,6 +929,7 @@ def lr_delete_path(*args):
         om.MGlobal.displayError('There is no path %s setup in the scene' % RigUI.prefix_name)
 
     mc.select(cl=1)
+
 
 def lr_attach_to_path(*args):
     RigUI = Lr_RigUI()
@@ -959,6 +963,7 @@ def lr_attach_to_path(*args):
 
     mc.select(cl=1)
 
+
 def lr_reset_attach(*args):
     RigUI = Lr_RigUI()
     world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
@@ -969,7 +974,8 @@ def lr_reset_attach(*args):
 
         for mpt in attr_locator:
             object_mpt = mc.listConnections(world_up_loc + '.' + mpt, d=1)[0]
-            print object_mpt
+            print
+            object_mpt
             mc.delete(object_mpt)
 
         mc.delete(world_up_loc)
@@ -997,6 +1003,7 @@ def lr_reset_attach(*args):
 
     mc.select(cl=1)
 
+
 def lr_reset_value(*args):
     RigUI = Lr_RigUI()
     world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
@@ -1015,6 +1022,7 @@ def lr_reset_value(*args):
         om.MGlobal.displayError('There is no attach path %s setup' % RigUI.prefix_name)
 
     mc.select(cl=1)
+
 
 def lr_load_skin(*args):
     lr_readSelectedWeight(weightFolderPath='')
@@ -1074,7 +1082,7 @@ def lr_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             om.MGlobal.displayError('Path already exists. Please delete the previous path first.')
         else:
             Main_Controller = Lr_GeneralBase(prefix=prefix_rig_name.title() + add_prefix, scale=8, color_world='red',
-                                             color_place='blue', lock_channel_ctrl=['s','v'])
+                                             color_place='blue', lock_channel_ctrl=['s', 'v'])
 
             skeleton = path_size
             size = float(skeleton)
@@ -1259,7 +1267,7 @@ def lr_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_
         controller = Lr_Control(match_obj_first_position=item,
                                 prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
                                 ctrl_color='lightPink', ctrl_size=skeleton / 4,
-                                lock_channels=['s','v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
+                                lock_channels=['s', 'v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
         ctrl.append(controller.control)
         mainGroup.append(controller.parent_control[0])
 

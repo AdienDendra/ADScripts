@@ -1,5 +1,4 @@
 import pymel.core as pm
-import os
 
 
 class SimpleBrowserUI():
@@ -51,26 +50,32 @@ class SimpleBrowserUI():
         """
         # If the user presses "Go" without entering a path, warn them and exit gracefully
         if self.target_dir.getText() == '':
-            print 'No directory chosen yet'
+            print
+            'No directory chosen yet'
             return
 
         # Now we can do stuff with our directory path from the UI
-        print 'Doing stuff using directory : "%s"' % self.target_dir.getText()
+        print
+        'Doing stuff using directory : "%s"' % self.target_dir.getText()
 
-        print 'Directory exists = %s' % os.path.exists(self.target_dir.getText())
+        print
+        'Directory exists = %s' % os.path.exists(self.target_dir.getText())
 
 
 SimpleBrowserUI()
 
-import maya.cmds as cmds
 import urllib2
 import json
+
+
 def makeObjectAt(type, position, size):
     if (type == 1):
         cmds.polyCube(height=size, width=size, depth=size)
     elif (type == 2):
-        cmds.sphere(radius=size/2)
+        cmds.sphere(radius=size / 2)
         cmds.move(position[0], position[1], position[2])
+
+
 def loadJSON():
     url = 'http://localhost:8000/data.json'
     try:
@@ -82,7 +87,7 @@ def loadJSON():
     for item in data:
         objectType = 1
         objectSize = 1
-        position = [0,0,0]
+        position = [0, 0, 0]
     if ('type' in item and item['type'] == "sphere"):
         objectType = 2
     if ('x' in item):
@@ -95,14 +100,20 @@ def loadJSON():
         objectSize = float(item['size'])
     print(objectType, position, objectSize)
     makeObjectAt(objectType, position, objectSize)
+
+
 loadJSON()
 
 import os
 import maya.cmds as cmds
+
+
 def browseCustomData():
     projDir = cmds.internalVar(userWorkspaceDir=True)
     newDir = os.path.join(projDir, 'customData')
     if (not os.path.exists(newDir)):
         os.makedirs(newDir)
     cmds.fileDialog2(startingDirectory=newDir)
+
+
 browseCustomData()

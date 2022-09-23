@@ -1,12 +1,14 @@
-import pymel.core as pm
 import maya.OpenMayaUI as omui
+import pymel.core as pm
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from shiboken2 import wrapInstance
 
+
 def maya_main_window():
     main_window_ptr = omui.MQtUtil.mainWindow()
     return wrapInstance(long(main_window_ptr), QtWidgets.QWidget)
+
 
 class FindRenameDialog(QtWidgets.QDialog):
     dialogInstance = None
@@ -86,7 +88,6 @@ class FindRenameDialog(QtWidgets.QDialog):
         else:
             pm.displayError("Text box line 'Find' cannot be empty! Fill it with one object from the scene.")
 
-
     def line_search_name_text(self):
         search = self.line_find_name.text()
         return search
@@ -99,8 +100,8 @@ class FindRenameDialog(QtWidgets.QDialog):
         undeletable_node = pm.ls(ro=1)
         items = []
         for item in undeletable_node:
-            print item
+            print
+            item
             items.append(item)
         # print items
         return items
-

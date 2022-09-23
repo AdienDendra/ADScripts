@@ -1,6 +1,7 @@
 import maya.cmds as mc
 
-class Gear (object):
+
+class Gear(object):
 
     def __init__(self):
         self.transform = None
@@ -20,7 +21,6 @@ class Gear (object):
             mc.select('%s.f[%s]' % (self.transform, face), add=True)
 
         self.extrude = mc.polyExtrudeFacet(ltz=length)[0]
-
 
     def changeTeeth(self, teeth=10, length=0.3):
         spans = teeth * 2

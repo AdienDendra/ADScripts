@@ -1,8 +1,10 @@
 import os
 
-import maya.cmds as mc
+import maya.cmds as cmds
 
 sub_dir_list = ['assets', 'data', 'publish', 'scene']
+
+
 # scene_dir_list = ['anim', 'bsh', 'build', 'csp', 'ctrl', 'master']
 
 
@@ -21,7 +23,7 @@ def create_character_dir(root_path, new_dir_name):
     if not os.path.exists(new_path):
         os.mkdir(new_path)
     else:
-        return mc.error("The directory %s already exist. Please change another name" % new_dir_name)
+        return cmds.error("The directory %s already exist. Please change another name" % new_dir_name)
 
     res_dir = create_dir(new_path, sub_dir_list)
     # create_dir(res_dir.get('scene'), scene_dir_list)
@@ -39,7 +41,7 @@ def create_directories(project_name='name', biped=True):
     if not os.path.isdir(project_name):
         os.mkdir(project_name)
     else:
-        mc.error("The directory %s already exist. Please change another name" % project_name)
+        cmds.error("The directory %s already exist. Please change another name" % project_name)
 
     path_name = os.path.join(get_path, project_name)
 

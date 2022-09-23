@@ -1,13 +1,11 @@
+from __future__ import absolute_import
+
 import re
-from __builtin__ import reload
 
-import maya.cmds as mc
+import maya.cmds as cmds
 
-from rigging.library.utils import transform as tf
-from rigging.tools import AD_utils as au
-
-reload(au)
-reload(tf)
+from rigging.library.utils import transform as rlu_transform
+from rigging.tools import utils as rt_utils
 
 
 class BuildTwoSide:
@@ -45,20 +43,20 @@ class BuildTwoSide:
                               clamp_driver_first_two='', clamp_driver_second_one='', clamp_driver_second_two='',
                               two_side=True):
 
-        ctrl_new = tf.reposition_side(controller, 'BshRGT', 'BshLFT')
-        list_weight = mc.listAttr(blendshape_name + '.w', m=True)
+        ctrl_new = rlu_transform.reposition_side(controller, 'BshRGT', 'BshLFT')
+        list_weight = cmds.listAttr(blendshape_name + '.w', m=True)
 
         # DRIVER VALUE
-        mult_double_linear_combined_one = mc.createNode('multDoubleLinear', n=au.prefix_name(
+        mult_double_linear_combined_one = cmds.createNode('multDoubleLinear', n=rt_utils.prefix_name(
             ctrl_new) + sub_prefix_first + 'BshCombined' + side + '_mdl')
-        mc.connectAttr(clamp_driver_first_one + '.outputR', mult_double_linear_combined_one + '.input1')
-        mc.connectAttr(clamp_driver_first_two + '.outputR', mult_double_linear_combined_one + '.input2')
+        cmds.connectAttr(clamp_driver_first_one + '.outputR', mult_double_linear_combined_one + '.input1')
+        cmds.connectAttr(clamp_driver_first_two + '.outputR', mult_double_linear_combined_one + '.input2')
 
         if two_side:
-            mult_double_linear_combined_two = mc.createNode('multDoubleLinear', n=au.prefix_name(
+            mult_double_linear_combined_two = cmds.createNode('multDoubleLinear', n=rt_utils.prefix_name(
                 ctrl_new) + sub_prefix_second + 'BshCombined' + side + '_mdl')
-            mc.connectAttr(clamp_driver_second_one + '.outputR', mult_double_linear_combined_two + '.input1')
-            mc.connectAttr(clamp_driver_second_two + '.outputR', mult_double_linear_combined_two + '.input2')
+            cmds.connectAttr(clamp_driver_second_one + '.outputR', mult_double_linear_combined_two + '.input1')
+            cmds.connectAttr(clamp_driver_second_two + '.outputR', mult_double_linear_combined_two + '.input2')
             self.connect_node_to_bsh(list_weight, mult_double_linear_combined_two, 'output',
                                      blendshape_name=blendshape_name, side_RGT='BshCombinedRGT',
                                      side_LFT='BshCombinedLFT', side=side)
@@ -74,32 +72,34 @@ class BuildTwoSide:
                          clamp_down_min=0.0,
                          clamp_down_max=10.0):
         # UP
-        ctrl_new = tf.reposition_side(prefix, side_RGT, side_LFT)
-        mult_double_linear_up = mc.createNode('multDoubleLinear',
-                                              n=au.prefix_name(ctrl_new) + sub_prefix_one + 'Bsh' + side + '_mdl')
-        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
+        ctrl_new = rlu_transform.reposition_side(prefix, side_RGT, side_LFT)
+        mult_double_linear_up = cmds.createNode('multDoubleLinear',
+                                                n=rt_utils.prefix_name(
+                                                    ctrl_new) + sub_prefix_one + 'Bsh' + side + '_mdl')
+        cmds.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
-        clamp_up = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_one + 'Bsh' + side + '_clm')
-        mc.setAttr(clamp_up + '.maxR', clamp_up_max)
-        mc.setAttr(clamp_up + '.minR', clamp_up_min)
+        clamp_up = cmds.createNode('clamp', n=rt_utils.prefix_name(ctrl_new) + sub_prefix_one + 'Bsh' + side + '_clm')
+        cmds.setAttr(clamp_up + '.maxR', clamp_up_max)
+        cmds.setAttr(clamp_up + '.minR', clamp_up_min)
 
-        mc.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
+        cmds.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
 
         # DOWN
-        mult_double_linear_down = mc.createNode('multDoubleLinear',
-                                                n=au.prefix_name(ctrl_new) + sub_prefix_two + 'Bsh' + side + '_mdl')
-        mc.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
+        mult_double_linear_down = cmds.createNode('multDoubleLinear',
+                                                  n=rt_utils.prefix_name(
+                                                      ctrl_new) + sub_prefix_two + 'Bsh' + side + '_mdl')
+        cmds.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
 
-        clamp_down = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_two + 'Bsh' + side + '_clm')
-        mc.setAttr(clamp_down + '.maxR', clamp_down_max)
-        mc.setAttr(clamp_down + '.minR', clamp_down_min)
-        mc.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
+        clamp_down = cmds.createNode('clamp', n=rt_utils.prefix_name(ctrl_new) + sub_prefix_two + 'Bsh' + side + '_clm')
+        cmds.setAttr(clamp_down + '.maxR', clamp_down_max)
+        cmds.setAttr(clamp_down + '.minR', clamp_down_min)
+        cmds.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
 
         # CONNECT TO BSH
         if connect:
-            list_weight = mc.listAttr(blendshape_name + '.w', m=True)
+            list_weight = cmds.listAttr(blendshape_name + '.w', m=True)
             self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_name=blendshape_name,
                                      side_RGT=side_RGT, side_LFT=side_LFT, side=side, suffix_bsh=suffix_bsh)
             self.connect_node_to_bsh(list_weight, clamp_down, 'outputR', blendshape_name=blendshape_name,
@@ -111,19 +111,19 @@ class BuildTwoSide:
                          valueNode, side_RGT='', side_LFT='',
                          clamp_max=10.0, clamp_min=0.0
                          ):
-        ctrl_new = tf.reposition_side(prefix, side_RGT, side_LFT)
-        mult_double_linear = mc.createNode('multDoubleLinear',
-                                           n=au.prefix_name(ctrl_new) + sub_prefix + 'Bsh' + side + '_mdl')
-        mc.setAttr(mult_double_linear + '.input2', 1.0 / valueNode)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear + '.input1')
+        ctrl_new = rlu_transform.reposition_side(prefix, side_RGT, side_LFT)
+        mult_double_linear = cmds.createNode('multDoubleLinear',
+                                             n=rt_utils.prefix_name(ctrl_new) + sub_prefix + 'Bsh' + side + '_mdl')
+        cmds.setAttr(mult_double_linear + '.input2', 1.0 / valueNode)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear + '.input1')
 
-        clamp = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix + 'Bsh' + side + '_clm')
-        mc.setAttr(clamp + '.maxR', clamp_max)
-        mc.setAttr(clamp + '.minR', clamp_min)
+        clamp = cmds.createNode('clamp', n=rt_utils.prefix_name(ctrl_new) + sub_prefix + 'Bsh' + side + '_clm')
+        cmds.setAttr(clamp + '.maxR', clamp_max)
+        cmds.setAttr(clamp + '.minR', clamp_min)
 
-        mc.connectAttr(mult_double_linear + '.output', clamp + '.inputR')
+        cmds.connectAttr(mult_double_linear + '.output', clamp + '.inputR')
         # CONNECT TO BSH
-        list_weight = mc.listAttr(blendshape_name + '.w', m=True)
+        list_weight = cmds.listAttr(blendshape_name + '.w', m=True)
 
         # UP
         self.connect_node_to_bsh(list_weight, clamp, 'outputR', blendshape_name=blendshape_name, side_RGT=side_RGT,
@@ -137,12 +137,12 @@ class BuildTwoSide:
             listI = i[:-7]
             list.append(listI)
 
-        base_name = tf.reposition_side(connector_node, side_RGT, side_LFT)
+        base_name = rlu_transform.reposition_side(connector_node, side_RGT, side_LFT)
         if re.compile('|'.join(list), re.IGNORECASE).search(connector_node):  # re.IGNORECASE is used to ignore case
-            mc.connectAttr(connector_node + '.%s' % attribute_node,
-                           blendshape_name + '.%s%s%s' % (au.prefix_name(base_name), side, '_' + suffix_bsh))
+            cmds.connectAttr(connector_node + '.%s' % attribute_node,
+                             blendshape_name + '.%s%s%s' % (rt_utils.prefix_name(base_name), side, '_' + suffix_bsh))
         else:
-            print(mc.error('There is no weight on blendshape'))
+            print(cmds.error('There is no weight on blendshape'))
 
 
 class BuildOneSide:
@@ -252,32 +252,32 @@ class BuildOneSide:
                          clamp_up_max=1.0, clamp_down_min=0.0,
                          clamp_down_max=1.0):
         # UP
-        ctrl_new = tf.reposition_side(controller, side_RGT, side_LFT)
-        mult_double_linear_up = mc.createNode('multDoubleLinear',
-                                              n=au.prefix_name(ctrl_new) + sub_prefix_one + '_mdl')
-        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
+        ctrl_new = rlu_transform.reposition_side(controller, side_RGT, side_LFT)
+        mult_double_linear_up = cmds.createNode('multDoubleLinear',
+                                                n=rt_utils.prefix_name(ctrl_new) + sub_prefix_one + '_mdl')
+        cmds.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
-        clamp_up = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_one + '_clm')
-        mc.setAttr(clamp_up + '.maxR', clamp_up_max)
-        mc.setAttr(clamp_up + '.minR', clamp_up_min)
+        clamp_up = cmds.createNode('clamp', n=rt_utils.prefix_name(ctrl_new) + sub_prefix_one + '_clm')
+        cmds.setAttr(clamp_up + '.maxR', clamp_up_max)
+        cmds.setAttr(clamp_up + '.minR', clamp_up_min)
 
-        mc.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
+        cmds.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
 
         # DOWN
-        mult_double_linear_down = mc.createNode('multDoubleLinear',
-                                                n=au.prefix_name(ctrl_new) + sub_prefix_two + '_mdl')
-        mc.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
+        mult_double_linear_down = cmds.createNode('multDoubleLinear',
+                                                  n=rt_utils.prefix_name(ctrl_new) + sub_prefix_two + '_mdl')
+        cmds.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
 
-        clamp_down = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix_two + '_clm')
-        mc.setAttr(clamp_down + '.maxR', clamp_down_max)
-        mc.setAttr(clamp_down + '.minR', clamp_down_min)
+        clamp_down = cmds.createNode('clamp', n=rt_utils.prefix_name(ctrl_new) + sub_prefix_two + '_clm')
+        cmds.setAttr(clamp_down + '.maxR', clamp_down_max)
+        cmds.setAttr(clamp_down + '.minR', clamp_down_min)
 
-        mc.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
+        cmds.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
 
         # CONNECT TO BSH
-        list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
+        list_weight = cmds.listAttr(blendshape_node_name + '.w', m=True)
         # UP
         self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_node_name, add_prefix, side_RGT=side_RGT,
                                  side_LFT=side_LFT)
@@ -290,20 +290,20 @@ class BuildOneSide:
                          side_RGT='Bsh', side_LFT='Bsh',
                          clamp_max=1.0, clamp_min=0.0,
                          ):
-        ctrl_new = tf.reposition_side(controller, side_RGT, side_LFT)
-        mult_double_linear = mc.createNode('multDoubleLinear',
-                                           n=au.prefix_name(ctrl_new) + sub_prefix + '_mdl')
-        mc.setAttr(mult_double_linear + '.input2', 1.0 / value_node)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear + '.input1')
+        ctrl_new = rlu_transform.reposition_side(controller, side_RGT, side_LFT)
+        mult_double_linear = cmds.createNode('multDoubleLinear',
+                                             n=rt_utils.prefix_name(ctrl_new) + sub_prefix + '_mdl')
+        cmds.setAttr(mult_double_linear + '.input2', 1.0 / value_node)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear + '.input1')
 
-        clamp = mc.createNode('clamp', n=au.prefix_name(ctrl_new) + sub_prefix + '_clm')
-        mc.setAttr(clamp + '.maxR', clamp_max)
-        mc.setAttr(clamp + '.minR', clamp_min)
+        clamp = cmds.createNode('clamp', n=rt_utils.prefix_name(ctrl_new) + sub_prefix + '_clm')
+        cmds.setAttr(clamp + '.maxR', clamp_max)
+        cmds.setAttr(clamp + '.minR', clamp_min)
 
-        mc.connectAttr(mult_double_linear + '.output', clamp + '.inputR')
+        cmds.connectAttr(mult_double_linear + '.output', clamp + '.inputR')
 
         # CONNECT TO BSH
-        list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
+        list_weight = cmds.listAttr(blendshape_node_name + '.w', m=True)
 
         # UP
         self.connect_node_to_bsh(list_weight, clamp, 'outputR', blendshape_node_name, add_prefix, side_RGT=side_RGT,
@@ -316,13 +316,13 @@ class BuildOneSide:
             listI = i[:-7]
             list.append(listI)
 
-        base_name = tf.reposition_side(connector_node, side_RGT, side_LFT)
+        base_name = rlu_transform.reposition_side(connector_node, side_RGT, side_LFT)
         if re.compile('|'.join(list), re.IGNORECASE).search(
                 connector_node):  # re.IGNORECASE is used to ignore case
-            mc.connectAttr(connector_node + '.%s' % attribute_node,
-                           blendshape_node_name + '.%s%s%s' % (au.prefix_name(base_name), add_prefix, '_ply'))
+            cmds.connectAttr(connector_node + '.%s' % attribute_node,
+                             blendshape_node_name + '.%s%s%s' % (rt_utils.prefix_name(base_name), add_prefix, '_ply'))
         else:
-            print(mc.error('There is no weight on blendshape'))
+            print(cmds.error('There is no weight on blendshape'))
 
 
 class BuildFree:
@@ -355,44 +355,44 @@ class BuildFree:
                          connect=True):
         # UP
         # ctrlNew = self.replacePosLFTRGT(weightBsnName, sideRGT=sideRGT, sideLFT=sideLFT)
-        weight_names = au.prefix_name(weight_blendshape_name)
+        weight_names = rt_utils.prefix_name(weight_blendshape_name)
         weight_name = weight_names.replace(sub_prefix_one, '').replace(sub_prefix_two, '')
 
-        mult_double_linear_up = mc.createNode('multDoubleLinear',
-                                              n=weight_name[:-3] + sub_prefix_one + weight_name[-3:] + '_mdl')
-        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
+        mult_double_linear_up = cmds.createNode('multDoubleLinear',
+                                                n=weight_name[:-3] + sub_prefix_one + weight_name[-3:] + '_mdl')
+        cmds.setAttr(mult_double_linear_up + '.input2', 1.0 / value_pos_one)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
-        clamp_up = mc.createNode('clamp', n=weight_name[:-3] + sub_prefix_one + weight_name[-3:] + '_clm')
-        mc.setAttr(clamp_up + '.maxR', 1)
-        mc.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
+        clamp_up = cmds.createNode('clamp', n=weight_name[:-3] + sub_prefix_one + weight_name[-3:] + '_clm')
+        cmds.setAttr(clamp_up + '.maxR', 1)
+        cmds.connectAttr(mult_double_linear_up + '.output', clamp_up + '.inputR')
 
         # DOWN
-        mult_double_linear_down = mc.createNode('multDoubleLinear',
-                                                n=weight_name[:-3] + sub_prefix_two + weight_name[-3:] + '_mdl')
-        mc.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
+        mult_double_linear_down = cmds.createNode('multDoubleLinear',
+                                                  n=weight_name[:-3] + sub_prefix_two + weight_name[-3:] + '_mdl')
+        cmds.setAttr(mult_double_linear_down + '.input2', 1.0 / value_pos_two)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_down + '.input1')
 
-        clamp_down = mc.createNode('clamp', n=weight_name[:-3] + sub_prefix_two + weight_name[-3:] + '_clm')
-        mc.setAttr(clamp_down + '.maxR', 1)
-        mc.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
+        clamp_down = cmds.createNode('clamp', n=weight_name[:-3] + sub_prefix_two + weight_name[-3:] + '_clm')
+        cmds.setAttr(clamp_down + '.maxR', 1)
+        cmds.connectAttr(mult_double_linear_down + '.output', clamp_down + '.inputR')
 
         # CONNECT TO BSH
         if connect:
-            list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
+            list_weight = cmds.listAttr(blendshape_node_name + '.w', m=True)
             self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_node_name=blendshape_node_name)
             self.connect_node_to_bsh(list_weight, clamp_down, 'outputR', blendshape_node_name=blendshape_node_name)
         return clamp_up, clamp_down
 
     def one_value_slider(self, blendshape_node_name, controller, slide_atribute, value_node, weight_blendshape_name):
-        weight_name = au.prefix_name(weight_blendshape_name)
-        mult_double_linear_up = mc.createNode('multDoubleLinear',
-                                              n=weight_name[:-3] + weight_name[-3:] + '_mdl')
-        mc.setAttr(mult_double_linear_up + '.input2', 1.0 / value_node)
-        mc.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
+        weight_name = rt_utils.prefix_name(weight_blendshape_name)
+        mult_double_linear_up = cmds.createNode('multDoubleLinear',
+                                                n=weight_name[:-3] + weight_name[-3:] + '_mdl')
+        cmds.setAttr(mult_double_linear_up + '.input2', 1.0 / value_node)
+        cmds.connectAttr(controller + '.%s' % slide_atribute, mult_double_linear_up + '.input1')
 
         # CONNECT TO BSH
-        list_weight = mc.listAttr(blendshape_node_name + '.w', m=True)
+        list_weight = cmds.listAttr(blendshape_node_name + '.w', m=True)
 
         # UP
         self.connect_node_to_bsh(list_weight, mult_double_linear_up, 'output',
@@ -406,7 +406,7 @@ class BuildFree:
 
         # baseName = self.replacePosLFTRGT(connectorNode, sideRGT=sideRGT, sideLFT=sideLFT)
         if re.compile('|'.join(list), re.IGNORECASE).search(connector_node):  # re.IGNORECASE is used to ignore case
-            mc.connectAttr(connector_node + '.%s' % attribute_node,
-                           blendshape_node_name + '.%s%s' % (au.prefix_name(connector_node), '_ply'))
+            cmds.connectAttr(connector_node + '.%s' % attribute_node,
+                             blendshape_node_name + '.%s%s' % (rt_utils.prefix_name(connector_node), '_ply'))
         else:
-            print(mc.error('There is no weight on blendshape'))
+            print(cmds.error('There is no weight on blendshape'))

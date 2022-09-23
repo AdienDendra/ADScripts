@@ -1,12 +1,14 @@
 import pymel.core as pm
 
+
 def ad_lib_matrix_scale(value):
     value_float = float(value)
-    matrix = pm.dt.Matrix([1.0+value_float, 0.0, 0.0, 0.0,
-                           0.0, 1.0+value_float, 0.0, 0.0,
-                           0.0, 0.0, 1.0+value_float, 0.0,
+    matrix = pm.dt.Matrix([1.0 + value_float, 0.0, 0.0, 0.0,
+                           0.0, 1.0 + value_float, 0.0, 0.0,
+                           0.0, 0.0, 1.0 + value_float, 0.0,
                            0.0, 0.0, 0.0, 1.0])
     return matrix
+
 
 def ad_lib_matrix_rotation_x(value):
     value_float = float(value)
@@ -37,8 +39,8 @@ def ad_lib_matrix_rotation_z(value):
          0.0, 0.0, 0.0, 1.0])
     return matrix
 
+
 def ad_lib_scaling_controller_matrix(ctrl_shape, current_value):
     object_curve = pm.PyNode(ctrl_shape)
     for cv in object_curve.getShape().cv:
-
-        pm.xform(cv, os=True, m=(ad_lib_matrix_scale(current_value*0.1)))
+        pm.xform(cv, os=True, m=(ad_lib_matrix_scale(current_value * 0.1)))

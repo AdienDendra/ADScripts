@@ -1,29 +1,24 @@
 """
 listing the joint
 """
-from __builtin__ import reload
+from __future__ import absolute_import
 
 import maya.OpenMaya as om
-import maya.cmds as mc
+import maya.cmds as cmds
 
-from rigging.library.utils import controller as ct
-from rigging.library.utils import transform as tf
-from rigging.tools import AD_utils as au
-
-reload(au)
-reload(ct)
-reload(tf)
+from rigging.library.utils import controller as rlu_controller
+from rigging.tools import utils as rt_utils
 
 
 def hierarchy(top_joint, with_end_joints=True):
-    list_joint = mc.listRelatives(top_joint, type='joint', ad=True)
+    list_joint = cmds.listRelatives(top_joint, type='joint', ad=True)
     list_joint.append(top_joint)
     list_joint.reverse()
 
     complete_joint = list_joint[:]
 
     if not with_end_joints:
-        complete_joint = [j for j in list_joint if mc.listRelatives(j, c=1, type='joint')]
+        complete_joint = [j for j in list_joint if cmds.listRelatives(j, c=1, type='joint')]
 
     return complete_joint
 
@@ -67,12 +62,12 @@ def create_joint_lid(crv):
     all_joint = []
     all_locator = []
     ranges = []
-    for i, v in enumerate(mc.ls('%s.cv[0:*]' % crv, fl=True)):
+    for i, v in enumerate(cmds.ls('%s.cv[0:*]' % crv, fl=True)):
         # create joint
-        mc.select(cl=1)
-        joint = mc.joint(n='%s%02d%s' % (au.prefix_name(crv), (i + 1), '_jnt'), rad=0.1)
-        pos = mc.xform(v, q=1, ws=1, t=1)
-        mc.xform(joint, ws=1, t=pos)
+        cmds.select(cl=1)
+        joint = cmds.joint(n='%s%02d%s' % (rt_utils.prefix_name(crv), (i + 1), '_jnt'), rad=0.1)
+        pos = cmds.xform(v, q=1, ws=1, t=1)
+        cmds.xform(joint, ws=1, t=pos)
         all_joint.append(joint)
 
         ranges.append(i)
@@ -94,63 +89,64 @@ def joint_on_curve(curve='', world_up_loc='', spline_ik=None, delete_group=True,
     for n, i in enumerate(newJnt[0]):
         ranges = num * n
         if ctrl:
-            new_transform = ct.Control(match_obj_first_position=i, prefix=au.prefix_name(i) + 'Jnt', shape=ct.CUBE,
-                                       groups_ctrl=['Zro'], ctrl_size=2.0,
-                                       ctrl_color='blue', gimbal=False, lock_channels=['r', 's', 'v'],
-                                       connection=['parent'])
-            motion_path = mc.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
-                                           wut='objectrotation',
-                                           wuo=world_up_loc,
-                                           c=curve,
-                                           n=au.prefix_name(i) + '_mpt')
+            new_transform = rlu_controller.Control(match_obj_first_position=i, prefix=rt_utils.prefix_name(i) + 'Jnt',
+                                                   shape=rlu_controller.CUBE,
+                                                   groups_ctrl=['Zro'], ctrl_size=2.0,
+                                                   ctrl_color='blue', gimbal=False, lock_channels=['r', 's', 'v'],
+                                                   connection=['parent'])
+            motion_path = cmds.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
+                                             wut='objectrotation',
+                                             wuo=world_up_loc,
+                                             c=curve,
+                                             n=rt_utils.prefix_name(i) + '_mpt')
 
             transform.append(new_transform.parent_control[0])
             controls.append(new_transform.control)
             new_transform = new_transform.control
 
         else:
-            new_transform = mc.createNode('transform', n=au.prefix_name(i) + 'Jnt_grp')
-            mc.parent(i, new_transform)
-            motion_path = mc.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
-                                           wut='objectrotation',
-                                           wuo=world_up_loc,
-                                           c=curve,
-                                           n=au.prefix_name(i) + '_mpt')
+            new_transform = cmds.createNode('transform', n=rt_utils.prefix_name(i) + 'Jnt_grp')
+            cmds.parent(i, new_transform)
+            motion_path = cmds.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
+                                             wut='objectrotation',
+                                             wuo=world_up_loc,
+                                             c=curve,
+                                             n=rt_utils.prefix_name(i) + '_mpt')
             transform.append(new_transform)
             controls.append(newJnt[0])
 
-        mc.cutKey(motion_path + '.u', time=())
-        mc.setAttr(motion_path + '.u', ranges)
+        cmds.cutKey(motion_path + '.u', time=())
+        cmds.setAttr(motion_path + '.u', ranges)
         motion_paths.append(motion_path)
 
-        mc.setAttr(i + '.translate', 0, 0, 0, type='double3')
-        mc.setAttr(i + '.rotate', 0, 0, 0, type='double3')
+        cmds.setAttr(i + '.translate', 0, 0, 0, type='double3')
+        cmds.setAttr(i + '.rotate', 0, 0, 0, type='double3')
 
         joints.append(i)
 
         if delete_group:
-            mc.parent(joints[n], w=True)
-            mc.delete(new_transform + '.tx', icn=1)
-            mc.delete(new_transform + '.ty', icn=1)
-            mc.delete(new_transform + '.tz', icn=1)
-            mc.delete(new_transform + '.rx', icn=1)
-            mc.delete(new_transform + '.ry', icn=1)
-            mc.delete(new_transform + '.rz', icn=1)
-            mc.xform(new_transform, ws=True, ro=(0, 0, 0))
-            mc.delete(motion_path)
-            mc.delete(new_transform)
+            cmds.parent(joints[n], w=True)
+            cmds.delete(new_transform + '.tx', icn=1)
+            cmds.delete(new_transform + '.ty', icn=1)
+            cmds.delete(new_transform + '.tz', icn=1)
+            cmds.delete(new_transform + '.rx', icn=1)
+            cmds.delete(new_transform + '.ry', icn=1)
+            cmds.delete(new_transform + '.rz', icn=1)
+            cmds.xform(new_transform, ws=True, ro=(0, 0, 0))
+            cmds.delete(motion_path)
+            cmds.delete(new_transform)
 
             if n > 0:
-                mc.parent(joints[n], joints[n - 1])
+                cmds.parent(joints[n], joints[n - 1])
 
-            mc.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
+            cmds.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
 
     if spline_ik:
         if not delete_group:
-            mc.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
+            cmds.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
         else:
-            ikHdl = mc.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
-                                n=au.prefix_name(curve) + '_ikh')
+            ikHdl = cmds.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
+                                  n=rt_utils.prefix_name(curve) + '_ikh')
 
         return {'joints': transform,
                 'motionPath': motion_paths,
@@ -178,68 +174,70 @@ def joint_on_crv_with_num_jnt(curve='', world_up_loc='', number_of_jnt=None, spl
     worldUp_locator = None
     for i in range(0, number_of_jnt):
         ranges = num * i
-        mc.select(cl=1)
+        cmds.select(cl=1)
 
-        new_jnt = mc.joint(n=au.prefix_name(curve) + str(i + 1).zfill(2) + '_jnt')
+        new_jnt = cmds.joint(n=rt_utils.prefix_name(curve) + str(i + 1).zfill(2) + '_jnt')
         if ctrl:
 
-            new_transform = ct.Control(match_obj_first_position=new_jnt,
-                                       prefix=au.prefix_name(curve) + str(i + 1).zfill(2) + 'Jnt', shape=ct.CUBE,
-                                       groups_ctrl=['Zro'], ctrl_size=2.0,
-                                       ctrl_color='blue', gimbal=False, lock_channels=['r', 's', 'v'],
-                                       connection=['parent'])
-            motion_path = mc.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
-                                           wut='objectrotation',
-                                           wuo=worldUp_locator,
-                                           c=curve,
-                                           n=au.prefix_name(curve) + str(i + 1).zfill(2) + '_mpt')
+            new_transform = rlu_controller.Control(match_obj_first_position=new_jnt,
+                                                   prefix=rt_utils.prefix_name(curve) + str(i + 1).zfill(2) + 'Jnt',
+                                                   shape=rlu_controller.CUBE,
+                                                   groups_ctrl=['Zro'], ctrl_size=2.0,
+                                                   ctrl_color='blue', gimbal=False, lock_channels=['r', 's', 'v'],
+                                                   connection=['parent'])
+            motion_path = cmds.pathAnimation(new_transform.parent_control[0], fractionMode=True, fa='z', ua='x',
+                                             wut='objectrotation',
+                                             wuo=worldUp_locator,
+                                             c=curve,
+                                             n=rt_utils.prefix_name(curve) + str(i + 1).zfill(2) + '_mpt')
             transform.append(new_transform.parent_control[0])
             controls.append(new_transform.control)
             new_transform = new_transform.control
 
         else:
-            new_transform = mc.createNode('transform', n=au.prefix_name(curve) + str(i + 1).zfill(2) + 'Jnt_grp')
-            mc.parent(new_jnt, new_transform)
-            mc.xform(new_jnt, ws=1, t=(0, 0, 0), ro=(0, 0, 0))
-            motion_path = mc.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
-                                           wut='objectrotation',
-                                           wuo=world_up_loc,
-                                           c=curve,
-                                           n=au.prefix_name(curve) + str(i + 1).zfill(2) + '_mpt')
+            new_transform = cmds.createNode('transform',
+                                            n=rt_utils.prefix_name(curve) + str(i + 1).zfill(2) + 'Jnt_grp')
+            cmds.parent(new_jnt, new_transform)
+            cmds.xform(new_jnt, ws=1, t=(0, 0, 0), ro=(0, 0, 0))
+            motion_path = cmds.pathAnimation(new_transform, fractionMode=True, fa='z', ua='x',
+                                             wut='objectrotation',
+                                             wuo=world_up_loc,
+                                             c=curve,
+                                             n=rt_utils.prefix_name(curve) + str(i + 1).zfill(2) + '_mpt')
             transform.append(new_transform)
             controls.append(new_jnt)
 
         joints.append(new_jnt)
 
-        mc.cutKey(motion_path + '.u', time=())
-        mc.setAttr(motion_path + '.u', ranges)
+        cmds.cutKey(motion_path + '.u', time=())
+        cmds.setAttr(motion_path + '.u', ranges)
         motion_paths.append(motion_path)
 
         if delete_group:
-            mc.parent(joints[i], w=True)
-            mc.delete(new_transform + '.tx', icn=1)
-            mc.delete(new_transform + '.ty', icn=1)
-            mc.delete(new_transform + '.tz', icn=1)
-            mc.delete(new_transform + '.rx', icn=1)
-            mc.delete(new_transform + '.ry', icn=1)
-            mc.delete(new_transform + '.rz', icn=1)
-            mc.xform(new_transform, ws=True, ro=(0, 0, 0))
-            mc.delete(motion_path)
-            mc.delete(new_transform)
+            cmds.parent(joints[i], w=True)
+            cmds.delete(new_transform + '.tx', icn=1)
+            cmds.delete(new_transform + '.ty', icn=1)
+            cmds.delete(new_transform + '.tz', icn=1)
+            cmds.delete(new_transform + '.rx', icn=1)
+            cmds.delete(new_transform + '.ry', icn=1)
+            cmds.delete(new_transform + '.rz', icn=1)
+            cmds.xform(new_transform, ws=True, ro=(0, 0, 0))
+            cmds.delete(motion_path)
+            cmds.delete(new_transform)
 
             if i > 0:
-                mc.parent(joints[i], joints[i - 1])
+                cmds.parent(joints[i], joints[i - 1])
 
-            mc.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
+            cmds.joint(joints[0], e=True, oj='xyz', sao='yup', ch=True, zso=True)
 
     if spline_ik:
         if not delete_group:
-            mc.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
+            cmds.error('Spline Ik cannot be created. Please delGrp set to True in order to remove group parent joints!')
         else:
-            ik_hdl = mc.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
-                                 n=au.prefix_name(curve) + '_ikh')
+            ik_hdl = cmds.ikHandle(sj=joints[0], ee=joints[-1], c=curve, sol='ikSplineSolver', ccv=False,
+                                   n=rt_utils.prefix_name(curve) + '_ikh')
     if del_worldUp_loc:
-        mc.delete(worldUp_locator)
+        cmds.delete(worldUp_locator)
 
         return {'joints': transform,
                 'motionPath': motion_paths,

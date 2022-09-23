@@ -3,21 +3,14 @@ base setup
 main module
 
 """
-from __builtin__ import reload
 
-import maya.cmds as mc
+import maya.cmds as cmds
 
-from pipeline import project as pr
-from rigging.library.module import base_module as md
-from rigging.library.utils import controller as ct
+from pipeline import project
 
-reload(pr)
-reload(ct)
-reload(md)
-
-model_path        = '%s/assets/%s.ma'
-builder_biped_path   = '%s/builder/bipedTmp_jnt.ma'
-builder_quadruped_path   = '%s/builder/quadrupedTmp_jnt.ma'
+model_path = '%s/assets/%s.ma'
+builder_biped_path = '%s/builder/bipedTmp_jnt.ma'
+builder_quadruped_path = '%s/builder/quadrupedTmp_jnt.ma'
 
 # skin_jnt_path      = '%s/builder/skinBiped_skin.ma'
 # ctrl_path_hero     = '%s/release/%s_ctrl.ma'
@@ -25,14 +18,14 @@ builder_quadruped_path   = '%s/builder/quadrupedTmp_jnt.ma'
 
 project_path = 'E:/Project/character'
 
+
 # import def file
 def import_builder_file(character_mesh_name, project_name, biped=True):
-
     """
     main function to instance controller base
     """
     # new scene
-    mc.file(new = True, f=True)
+    cmds.file(new=True, f=True)
 
     # query character name of the path
 
@@ -44,12 +37,11 @@ def import_builder_file(character_mesh_name, project_name, biped=True):
         builder_file = builder_biped_path % (builder_quadruped_path)
         model_file = model_path % ((project_path + '/quadruped/%s' % project_name), character_mesh_name)
 
-    mc.file(builder_file, i = 1)
-    mc.file(model_file, i = 1)
+    cmds.file(builder_file, i=1)
+    cmds.file(model_file, i=1)
 
 
 def csp_file(projectPath):
-
     """
     main function to build control, skin, poly base
 
@@ -67,8 +59,8 @@ def csp_file(projectPath):
     # mc.file(skin_path, i = 1)
 
     # import model
-    model_file = model_path % (projectPath, pr.character_name(projectPath))
-    mc.file (model_file, i=1)
+    model_file = model_path % (projectPath, project.character_name(projectPath))
+    cmds.file(model_file, i=1)
 
     # # parent joint to Skin grp Base
     # mc.parent('rootSkin_jnt', baseRig.skinGrp)
@@ -77,7 +69,8 @@ def csp_file(projectPath):
     # ctrl_name = '%s_ctrl:partAnim_grp' % (pr.character_name(projectPath))
     # mc.parent(ctrl_name, baseRig.partGrp)
 
+
 def ref_model():
     # reference model
-    model_file = model_path % (pr.query_project_name(), pr.query_character_name())
-    mc.file(model_file, r=1, ns='%s_ply' % pr.query_character_name())
+    model_file = model_path % (project.query_project_name(), project.query_character_name())
+    cmds.file(model_file, r=1, ns='%s_ply' % project.query_character_name())

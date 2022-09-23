@@ -1,17 +1,17 @@
-from functools import partial
+import json
+import os
 import re
 from collections import OrderedDict
-import os
-import json
-
+from functools import partial
 
 import maya.OpenMaya as om
-import pymel.core as pm
 import maya.mel as mm
+import pymel.core as pm
 
 layout = 400
 percentage = 0.01 * layout
 suffix = 'SkinWeight'
+
 
 def ad_show_ui():
     adien_skin = 'AD_Skin_Tool'
@@ -29,8 +29,8 @@ def ad_show_ui():
                                       bl="Get Path",
                                       bc=partial(ad_get_path_button))
 
-            with pm.rowLayout(nc=4, cw4=(12 * percentage, 33 * percentage, 33 * percentage, 18 * percentage) ,
-                                  cat=[(1, 'right', 2), (2, 'both', 2), (3, 'both', 2), (4, 'both', 1)]):
+            with pm.rowLayout(nc=4, cw4=(12 * percentage, 33 * percentage, 33 * percentage, 18 * percentage),
+                              cat=[(1, 'right', 2), (2, 'both', 2), (3, 'both', 2), (4, 'both', 1)]):
                 pm.text(l='')
                 pm.button('export_skin_weight', l="Export Skin Weight", bgc=(1, 1, 0),
                           c=partial(ad_export_skin_button))
@@ -41,13 +41,13 @@ def ad_show_ui():
 
                 pm.button("transfer_skin_weight", l="Transfer", c=partial(ad_transfer_button)
                           )
-            with pm.rowLayout(nc=2, cw2=(12 * percentage, 67 * percentage, ),
+            with pm.rowLayout(nc=2, cw2=(12 * percentage, 67 * percentage,),
                               cat=[(1, 'right', 2), (2, 'both', 2)]):
                 pm.text(l='Progress:')
                 pm.progressBar('Progress_Bar', maxValue=100)
 
             pm.separator(h=1, st="out", w=layout)
-            with pm.rowLayout(nc=2, cw2=(34 * percentage, 63* percentage),
+            with pm.rowLayout(nc=2, cw2=(34 * percentage, 63 * percentage),
                               cl2=('right', 'right'),
                               cat=[(1, 'right', 4 * percentage), (2, 'both', 1 * percentage)]
                               ):
@@ -60,9 +60,10 @@ def ad_show_ui():
 
     pm.showWindow()
 
+
 def ad_get_path_button(*args):
-    set = pm.fileDialog2(fileMode=2, dialogStyle=2, okc='Set',fileFilter='*.json',
-                          cap='Set The Path')
+    set = pm.fileDialog2(fileMode=2, dialogStyle=2, okc='Set', fileFilter='*.json',
+                         cap='Set The Path')
     if set:
         pm.textFieldButtonGrp('Path', e=True, tx=set[0])
     else:
@@ -70,15 +71,16 @@ def ad_get_path_button(*args):
 
     return set
 
+
 def ad_export_skin_button(*args):
     selection = pm.ls(sl=1)
     object_path = pm.textFieldButtonGrp('Path', q=True, tx=True)
-    if object_path :
+    if object_path:
         if selection:
             for item in selection:
                 get_shape = item.getShape()
                 if get_shape:
-                    node_type =  pm.nodeType(get_shape)
+                    node_type = pm.nodeType(get_shape)
                     if node_type == 'mesh' or node_type == 'nurbsSurface':
                         ad_create_directories_export(item)
                     else:
@@ -95,15 +97,16 @@ def ad_export_skin_button(*args):
     else:
         om.MGlobal_displayError('Set the path first!')
 
+
 def ad_import_skin_button(*args):
     selection = pm.ls(sl=1)
     object_path = pm.textFieldButtonGrp('Path', q=True, tx=True)
-    if object_path :
+    if object_path:
         if selection:
             for item in selection:
                 get_shape = item.getShape()
                 if get_shape:
-                    node_type =  pm.nodeType(get_shape)
+                    node_type = pm.nodeType(get_shape)
                     if node_type == 'mesh' or node_type == 'nurbsSurface':
                         ad_read_increment_file_import(item)
                     else:
@@ -120,8 +123,10 @@ def ad_import_skin_button(*args):
     else:
         om.MGlobal_displayError('Set the path first!')
 
+
 def ad_transfer_button(*args):
     om.MGlobal.displayInfo('will be added soon!')
+
 
 # EXPORT
 
@@ -154,13 +159,14 @@ def ad_create_directories_export(item):
 
         ad_data_skin_weight_export(item, file_path['file name'])
 
+
 def ad_increment_data_file(directory_path, object_name, suffix, create):
     """
     increment the version update skin weight and deleting the older one
     """
-    save_name, total_file, current_file_exists, get_file_path = [],[],[],[]
+    save_name, total_file, current_file_exists, get_file_path = [], [], [], []
     # for export
-    if create :
+    if create:
         current_file_exists = os.listdir(directory_path)
         current_file_exists = filter(lambda x: '.json' in x, current_file_exists)
         num_list = [0]
@@ -177,25 +183,26 @@ def ad_increment_data_file(directory_path, object_name, suffix, create):
 
         save_name = '%s/%s.%s.%03d.json' % (directory_path, object_name, suffix, new_num)
         pm.text('Object_progress', e=True, l="Export '%s' skin weight" % (object_name))
-        om.MGlobal.displayInfo('Export skin weight %s as %s.%s.%03d.json file' % (object_name, object_name, suffix, new_num))
+        om.MGlobal.displayInfo(
+            'Export skin weight %s as %s.%s.%03d.json file' % (object_name, object_name, suffix, new_num))
 
     # for import file
     else:
         get_file_path = sorted(os.listdir('%s/%s' % (directory_path, object_name)))
 
-    return {'file name' : save_name,
+    return {'file name': save_name,
             'total file': total_file,
-            'current file exists' : current_file_exists,
+            'current file exists': current_file_exists,
             'get file path': get_file_path}
+
 
 def ad_data_skin_weight_export(item, path):
     skin = mm.eval('findRelatedSkinCluster( "%s" )' % item)
     if skin:
         method = pm.getAttr('%s.skinningMethod' % skin)
         components = pm.getAttr('%s.useComponents' % skin)
-        store_influence =[obj.name() for obj in pm.skinCluster(skin, q=True, inf=True)]
+        store_influence = [obj.name() for obj in pm.skinCluster(skin, q=True, inf=True)]
         skin_set = pm.listConnections('%s.message' % skin, d=True, s=False)[0]
-
 
         weight_dict = OrderedDict()
         weight_dict['influences'] = store_influence
@@ -211,7 +218,6 @@ def ad_data_skin_weight_export(item, path):
             weight_dict[range] = skin_value
             progress = 100.0 / vertices * (range)
             pm.progressBar('Progress_Bar', e=True, progress=progress)
-
 
         file = open("%s" % (path), "w")
         json.dump(weight_dict, file, indent=1)
@@ -231,7 +237,8 @@ def ad_read_increment_file_import(item):
 
     if not directory_exists:
         # Create a new directory because it does not exist
-        om.MGlobal.displayWarning("Please check your object selection name. It doesn't match with directories exported!")
+        om.MGlobal.displayWarning(
+            "Please check your object selection name. It doesn't match with directories exported!")
     else:
         if not os.listdir(directory_sel):
             om.MGlobal.displayWarning("There is no skin %s exported. Import skipped!" % item)
@@ -279,7 +286,6 @@ def ad_data_skin_weight_import(item_version, path, object_name):
     skin_set = pm.listConnections('%s.message' % skin_attribute, d=True, s=False)[0]
     pm.rename(skin_set, weight_dict['set'])
 
-
     # pm.setAttr('%s.normalizeWeights' % skin_attribute, False)
     # pm.skinPercent(skin_attribute, object_name, nrm=False, prw=100)
     pm.setAttr('%s.normalizeWeights' % skin_attribute, True)
@@ -289,9 +295,8 @@ def ad_data_skin_weight_import(item_version, path, object_name):
     number_vertex = [number_vertex for number_vertex in keys if number_vertex.isdigit()]
     number_vertex = sorted(map(int, number_vertex))
     length = len(number_vertex)
-    for vertices in xrange (length):
+    for vertices in xrange(length):
         progress = (100.0 / float(length)) * (float(vertices))
         pm.progressBar('Progress_Bar', e=True, progress=progress)
         tranform_value = zip(influences, weight_dict[str(vertices)])
-        pm.skinPercent(skin_attribute, object_name +'.vtx[%s]' % vertices, transformValue=tranform_value)
-
+        pm.skinPercent(skin_attribute, object_name + '.vtx[%s]' % vertices, transformValue=tranform_value)

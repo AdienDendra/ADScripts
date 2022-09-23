@@ -1,9 +1,8 @@
-from __builtin__ import long
-import pymel.core as pm
 import maya.OpenMayaUI as omui
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
+from __builtin__ import long
 from shiboken2 import wrapInstance
 
 

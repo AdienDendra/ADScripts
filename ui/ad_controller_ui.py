@@ -23,18 +23,16 @@ LICENSE:
 
 """
 
-from functools import partial
 import json
 import re
 from collections import OrderedDict
+from functools import partial
 from string import digits
 
 import maya.OpenMaya as om
 import pymel.core as pm
 
 import ad_controller_lib as al
-
-reload(al)
 
 layout = 400
 percentage = 0.01 * layout
@@ -178,8 +176,8 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0 * percentage),
                                                         (2, 'both', 0 * percentage),
                                                         (3, 'both', 0 * percentage)]):
-                        # with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
-                        #                   columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
+                            # with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
+                            #                   columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text('')
 
                             # select cv nurbs
@@ -199,8 +197,8 @@ def ad_show_ui():
                                         value=True)
                             # parent group text field
                             ad_lib_defining_object_text_field(define_object='Parent_Group_Name', tx='Main,Offset',
-                                                                 enable=True
-                                                                 )
+                                                              enable=True
+                                                              )
                             # create group button
                             pm.button("Create_Grp_Select", l="Create Group", c=partial(ad_cc_group_button))
 
@@ -610,6 +608,7 @@ def ad_cc_controller_resize_slider(*args):
                 om.MGlobal.displayError("Object type must be curve")
                 return False
 
+
 def ad_cc_select_cv_controller(*args):
     sel = pm.ls(sl=1)
     if not sel:
@@ -625,6 +624,7 @@ def ad_cc_select_cv_controller(*args):
             else:
                 pass
         pm.select(all)
+
 
 def ad_cc_select_all_ad_controller_button(*args):
     list_scene = pm.ls(type='transform')
@@ -653,9 +653,9 @@ def ad_cc_group_button(*args):
         for item in select:
             name = ad_lib_get_number_main_name(item)
             group = ad_lib_group_parent(groups=ad_lib_query_list_textfield_object('Parent_Group_Name')[0],
-                                           name=name[1],
-                                           suffix=ad_lib_get_suffix_main(item),
-                                           prefix_number=name[0], prefix_2=ad_lib_prefix('Prefix_2_Text'))
+                                        name=name[1],
+                                        suffix=ad_lib_get_suffix_main(item),
+                                        prefix_number=name[0], prefix_2=ad_lib_prefix('Prefix_2_Text'))
             ad_lib_xform_position_rotation(origin=item, target=group[0])
             pm.parent(item, group[-1])
     else:
@@ -850,8 +850,8 @@ def ad_cc_controller_button(*args):
             if main_controller:
                 # match position
                 ad_lib_match_position_target_to_ctrl(selection=select, target=main_controller[0],
-                                                        manipulated_position=manipulated_position,
-                                                        manipulated_rotation=manipulated_rotation)
+                                                     manipulated_position=manipulated_position,
+                                                     manipulated_rotation=manipulated_rotation)
                 # condition the object select as COMPONENTS
                 if '.' in str(select[0]):
                     get_objects = []
@@ -866,8 +866,8 @@ def ad_cc_controller_button(*args):
                         if child_check_box:
                             # create child controller
                             child_controller = ad_lib_child_ctrl(main_controller=main_controller[0],
-                                                                    main_name=main_controller[1],
-                                                                    on_selector=on_selector)
+                                                                 main_name=main_controller[1],
+                                                                 on_selector=on_selector)
                             # add connection
                             ad_lib_connection(ctrl=child_controller[0], target=target)
 
@@ -881,7 +881,7 @@ def ad_cc_controller_button(*args):
 
                         # add visibility to target
                         ad_lib_visibility_target(object=main_controller[0][0],
-                                                    target=target)
+                                                 target=target)
 
                 # condition the object select as TRANSFORM
                 else:
@@ -889,7 +889,7 @@ def ad_cc_controller_button(*args):
                     if child_check_box:
                         # create child controller
                         child_controller = ad_lib_child_ctrl(main_controller=main_controller[0],
-                                                                main_name=main_controller[1], on_selector=on_selector)
+                                                             main_name=main_controller[1], on_selector=on_selector)
 
                         for target, child_ctrl, main_ctrl in zip(select, child_controller, main_controller[0]):
 
@@ -899,8 +899,8 @@ def ad_cc_controller_button(*args):
                             # add pivot controller
                             if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                                 ad_lib_pivot_controller(controller=child_ctrl,
-                                                           parent_constraint_node=connection[0],
-                                                           suffix='_' + ad_lib_suffix_main())
+                                                        parent_constraint_node=connection[0],
+                                                        suffix='_' + ad_lib_suffix_main())
                             # add visibility to target
                             ad_lib_visibility_target(object=main_ctrl, target=target)
 
@@ -914,8 +914,8 @@ def ad_cc_controller_button(*args):
                             # add pivot controller
                             if pm.checkBox('Add_Pivot_Ctrl', q=True, value=True):
                                 ad_lib_pivot_controller(controller=main_ctrl,
-                                                           parent_constraint_node=connection[0],
-                                                           suffix='_' + ad_lib_suffix_main())
+                                                        parent_constraint_node=connection[0],
+                                                        suffix='_' + ad_lib_suffix_main())
                             # add visibility to target
                             ad_lib_visibility_target(object=main_ctrl, target=target)
             else:
@@ -931,7 +931,7 @@ def ad_cc_controller_button(*args):
                 if child_check_box:
                     # add child controller
                     ad_lib_child_ctrl(main_controller=main_controller[0], main_name=main_controller[1],
-                                         on_selector=on_selector)
+                                      on_selector=on_selector)
                 else:
                     pass
 
@@ -951,8 +951,8 @@ def ad_cc_controller_button(*args):
             # grouping controller
             if pm.textField('Parent_Group_Name', q=True, enable=True):
                 ad_lib_main_ctrl_grouping(controller=main_controller[0],
-                                             main_name=main_controller[1],
-                                             prefix_2=ad_lib_prefix('Prefix_2_Text'))
+                                          main_name=main_controller[1],
+                                          prefix_2=ad_lib_prefix('Prefix_2_Text'))
 
             # set the main controller color
             for item in main_controller[0]:
@@ -1113,7 +1113,7 @@ def ad_cu_mirror_button(key_position, *args):
                             # check the length of cv's and match it
                             if len(item_target.getShape().cv) == len(select_obj.getShape().cv):
                                 ad_lib_mirror_controller(object_origin=select_obj, object_target=item_target,
-                                                            key_position=key_position)
+                                                         key_position=key_position)
                                 if len(list_target) > 1:
                                     om.MGlobal.displayWarning(
                                         "There is more than one '%s' with similar name!" % (item_target))
@@ -1211,6 +1211,8 @@ def ad_cu_load_dialog(*args):
     ad_lib_load_json_controller(filePath)
 
     return filePath
+
+
 ########################################################################################################################
 
 #                                                       LIBRARY
@@ -1262,7 +1264,7 @@ def ad_lib_save_json_controller(file_name):
             # get cv number, x value, y value, z value and color on each item
             cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
             for cv in pm.PyNode(item).cv:
-            # for cv in object_curve.getShape().cv:
+                # for cv in object_curve.getShape().cv:
                 x = pm.getAttr(str(cv) + '.xValue')
                 y = pm.getAttr(str(cv) + '.yValue')
                 z = pm.getAttr(str(cv) + '.zValue')

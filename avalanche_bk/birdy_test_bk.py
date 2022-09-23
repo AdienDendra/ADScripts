@@ -6,6 +6,7 @@ The only rule is that you have to use the same Matrix as in the put_on_party_hat
 """
 import pymel.core as pm
 
+
 def fix_present():
     present = pm.PyNode("BirthdayPresent")
     for vtx in present.getShape().vtx:
@@ -15,25 +16,31 @@ def fix_present():
         start_vector = pm.dt.Vector(position[0], position[1], position[2])
 
         start_vector_ws = pm.dt.Vector(position_ws[0], position_ws[1], position_ws[2])
-        vector_position = start_vector_ws- start_vector
-        start_vector =  start_vector*2
-        print start_vector
+        vector_position = start_vector_ws - start_vector
+        start_vector = start_vector * 2
+        print
+        start_vector
 
         move_x = (start_vector[0] * pm.dt.sqrt(1.0 - (start_vector[1] * start_vector[1] / 2.0) -
                                                (start_vector[2] * start_vector[2] / 2.0) +
-                                               (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[2] / 3.0)))
+                                               (start_vector[1] * start_vector[1] * start_vector[2] * start_vector[
+                                                   2] / 3.0)))
 
         move_y = (start_vector[1] * pm.dt.sqrt(1.0 - (start_vector[2] * start_vector[2] / 2.0) -
                                                (start_vector[0] * start_vector[0] / 2.0) +
-                                               (start_vector[2] * start_vector[2] * start_vector[0] * start_vector[0] / 3.0)))
+                                               (start_vector[2] * start_vector[2] * start_vector[0] * start_vector[
+                                                   0] / 3.0)))
 
         move_z = (start_vector[2] * pm.dt.sqrt(1.0 - (start_vector[0] * start_vector[0] / 2.0) -
                                                (start_vector[1] * start_vector[1] / 2.0) +
-                                               (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[1] / 3.0)))
+                                               (start_vector[0] * start_vector[0] * start_vector[1] * start_vector[
+                                                   1] / 3.0)))
 
         # pm.move(move_x+(vector_position[0]), move_y+(vector_position[1]), move_z+(vector_position[2]), vtx)
 
-        pm.move(move_x*0.5+(vector_position[0]), move_y*0.5+(vector_position[1]), move_z*0.5+(vector_position[2]), vtx)
+        pm.move(move_x * 0.5 + (vector_position[0]), move_y * 0.5 + (vector_position[1]),
+                move_z * 0.5 + (vector_position[2]), vtx)
+
 
 def look_at_gift():
     # import maya.OpenMaya as om
@@ -112,7 +119,8 @@ def look_at_gift():
     # pm.xform(bird, ws=True, ro=((newVector[0]* math.radians(45)), (newVector[1]* math.radians(45)), (newVector[2]* math.radians(45))))
 
     mtx = pm.xform(bird, q=True, ws=True, m=True)
-    print mtx
+    print
+    mtx
     # print mtx
     #
     # print mtx
@@ -186,39 +194,36 @@ def look_at_gift():
     #
     # # print matrix
 
-
     # numbers are approximated!
     # y axis rotation 60 degrees
 
     # 45 degrees
     y_rot = pm.dt.Matrix([0.52532198881, 0.0, -0.85090352453, 0.0,
-                          0.0,1.0,0.0,0.0,
-                          0.85090352453, 0.0, 0.52532198881,0.0,
-                          0.0,0.0,0.0,1.0])
+                          0.0, 1.0, 0.0, 0.0,
+                          0.85090352453, 0.0, 0.52532198881, 0.0,
+                          0.0, 0.0, 0.0, 1.0])
     # 90 degree
     y_rot = pm.dt.Matrix([-0.44807361612, 0.0, -0.8939966636, 0.0,
-                          0.0,1.0,0.0,0.0,
-                          0.8939966636, 0.0, -0.44807361612,0.0,
-                          0.0,0.0,0.0,1.0])
+                          0.0, 1.0, 0.0, 0.0,
+                          0.8939966636, 0.0, -0.44807361612, 0.0,
+                          0.0, 0.0, 0.0, 1.0])
 
     # 60 degree
     y_rot = pm.dt.Matrix([0.5, 0.0, -0.86602540378443864676372317075294, 0.0,
-                          0.0,1.0,0.0,0.0,
-                          0.86602540378443864676372317075294, 0.0, 0.5,0.0,
-                          0.0,0.0,0.0,1.0])
+                          0.0, 1.0, 0.0, 0.0,
+                          0.86602540378443864676372317075294, 0.0, 0.5, 0.0,
+                          0.0, 0.0, 0.0, 1.0])
     # 75 degree
     y_rot = pm.dt.Matrix([0.25881904510252076234889883762405, 0.0, -0.9659258262890682867497431997289, 0.0,
-                          0.0,1.0,0.0,0.0,
-                          0.9659258262890682867497431997289, 0.0, 0.25881904510252076234889883762405,0.0,
-                          0.0,0.0,0.0,1.0])
+                          0.0, 1.0, 0.0, 0.0,
+                          0.9659258262890682867497431997289, 0.0, 0.25881904510252076234889883762405, 0.0,
+                          0.0, 0.0, 0.0, 1.0])
 
     # 90 degree Y axis
     y_rot = pm.dt.Matrix([0.0, 0.0, -1, 0.0,
-                          0.0,1.0,0.0,0.0,
-                          1, 0.0, 0.0,0.0,
-                          0.0,0.0,0.0,1.0])
-
-
+                          0.0, 1.0, 0.0, 0.0,
+                          1, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 1.0])
 
     # 45 degrees in Z
     # z_rot = pm.dt.Matrix([0.707, 0.707, 0, 0, -0.707, 0.707, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1])
@@ -234,7 +239,7 @@ def look_at_gift():
     #                   -0.3932689586134617, 0.08241201558696216, 0.84798661168925, 0.0,
     #                   0.0, 178.67416191492592, 0.0, 1.0])
 
-    yz_matrix =  pm.dt.Matrix(mtx) * y_rot
+    yz_matrix = pm.dt.Matrix(mtx) * y_rot
 
     pm.xform('Birdy', ws=True, m=yz_matrix)
 
@@ -245,8 +250,8 @@ def look_at_gift():
 
     # print (zy_matrix)
 
-
     #  MMatrix([0.612, 0.707, 0.354, 0, -707, 0.707, 0, -0.354, -0.354, 0.866, 0, 0,0, 0, 1])
+
 
 def put_on_party_hat():
     hat = pm.PyNode("PartyHat")
@@ -257,7 +262,7 @@ def put_on_party_hat():
         [0, 0.167, 0.985, 0.0],
         [12.13, 83.57, -15.185, 1.0],
     ])
-    hat_spot=pm.PyNode('hat_spot')
+    hat_spot = pm.PyNode('hat_spot')
     hat_spot_mtx = pm.dt.Matrix(pm.xform(hat_spot, ws=True, q=True, m=True))
 
     # query matrix value
@@ -273,11 +278,8 @@ def put_on_party_hat():
     birdy_likes_his_hat_here.__setitem__(2, hatspot_z)
     birdy_likes_his_hat_here.__setitem__(3, hatspot_position)
 
-
     # set the hat position
     pm.xform(hat, ws=True, m=birdy_likes_his_hat_here)
-
-
 
 # fix_present()
 # look_at_gift()

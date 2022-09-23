@@ -1,14 +1,11 @@
+from __future__ import absolute_import
+
 import math
 import os
-from __builtin__ import reload
 
 import maya.OpenMaya as om
-import maya.cmds as mc
+import maya.cmds as cmds
 import pymel.core as pm
-
-from rigging.tools import AD_utils as ut
-
-reload(ut)
 
 
 def get_uParam(point=[], curve=None):
@@ -48,14 +45,14 @@ def get_dag_path(objectName):
 
 def load_matrix_quad_plugin():
     # load Plug-ins
-    matrix_node = mc.pluginInfo('matrixNodes.mll', query=True, loaded=True)
-    quat_node = mc.pluginInfo('quatNodes.mll', query=True, loaded=True)
+    matrix_node = cmds.pluginInfo('matrixNodes.mll', query=True, loaded=True)
+    quat_node = cmds.pluginInfo('quatNodes.mll', query=True, loaded=True)
 
     if not matrix_node:
-        mc.loadPlugin('matrixNodes.mll')
+        cmds.loadPlugin('matrixNodes.mll')
 
     if not quat_node:
-        mc.loadPlugin('quatNodes.mll')
+        cmds.loadPlugin('quatNodes.mll')
 
 
 def list_of_floats_matrix(axis_x, axis_y, axis_z, obj):
@@ -131,9 +128,9 @@ def decompose_matrix(obj_selection, obj, translation=False):
     mt.getScale(scaleVec, om.MSpace.kWorld)
     scale = [om.MScriptUtil.getDoubleArrayItem(scaleVec, i) for i in range(0, 3)]
 
-    translate = mc.move(translate.x, translate.y, translate.z, obj)
+    translate = cmds.move(translate.x, translate.y, translate.z, obj)
 
-    rotation = mc.rotate(rotation.x, rotation.y, rotation.z, obj)
+    rotation = cmds.rotate(rotation.x, rotation.y, rotation.z, obj)
 
     # scale = mc.scale(scale.x, scale.y, scale.z, obj)
 
@@ -168,9 +165,9 @@ def decompose_matrix_axis(axis_x, axis_y, axis_z, obj):
     mt.getScale(scale_vector, om.MSpace.kWorld)
     scale = [om.MScriptUtil.getDoubleArrayItem(scale_vector, i) for i in range(0, 3)]
 
-    translate = mc.move(translate.x, translate.y, translate.z, obj)
+    translate = cmds.move(translate.x, translate.y, translate.z, obj)
 
-    rotation = mc.rotate(rotation.x, rotation.y, rotation.z, obj)
+    rotation = cmds.rotate(rotation.x, rotation.y, rotation.z, obj)
 
     # scale = mc.scale(scale.x, scale.y, scale.z, obj)
 
@@ -180,8 +177,8 @@ def decompose_matrix_axis(axis_x, axis_y, axis_z, obj):
 
 
 def split_evenly(obj_base, obj_tip, prefix, side='', split=1, base_tip=False):
-    base_xform = mc.xform(obj_base, q=1, ws=1, t=1)
-    tip_xform = mc.xform(obj_tip, q=1, ws=1, t=1)
+    base_xform = cmds.xform(obj_base, q=1, ws=1, t=1)
+    tip_xform = cmds.xform(obj_tip, q=1, ws=1, t=1)
 
     base_vector = om.MVector(base_xform[0], base_xform[1], base_xform[2])
     tip_vector = om.MVector(tip_xform[0], tip_xform[1], tip_xform[2])
@@ -194,22 +191,22 @@ def split_evenly(obj_base, obj_tip, prefix, side='', split=1, base_tip=False):
     list = []
     new_list = []
     for i in range(0, split):
-        segment = mc.duplicate(obj_base)
-        new_name = mc.rename(segment, str('%s%01d%s_%s' % (prefix, (i + 1), side, 'ref')))
+        segment = cmds.duplicate(obj_base)
+        new_name = cmds.rename(segment, str('%s%01d%s_%s' % (prefix, (i + 1), side, 'ref')))
         list.append(new_name)
-        mc.move(segment_location.x, segment_location.y, segment_location.z, new_name)
+        cmds.move(segment_location.x, segment_location.y, segment_location.z, new_name)
         segment_location = segment_location + segment_vector
     if base_tip:
-        base = mc.duplicate(obj_base)
-        tip = mc.duplicate(obj_tip)
+        base = cmds.duplicate(obj_base)
+        tip = cmds.duplicate(obj_tip)
         list.insert(0, base[0])
         list.insert(split + 1, tip[0])
         for i in list:
-            new_name = mc.rename(i, '%s%s%s_%s' % (prefix, str(list.index(i) + 1).zfill(2), side, 'splt'))
+            new_name = cmds.rename(i, '%s%s%s_%s' % (prefix, str(list.index(i) + 1).zfill(2), side, 'splt'))
             new_list.append(new_name)
     else:
         for i in list:
-            new_name = mc.rename(i, '%s%s%s_%s' % (prefix, str(list.index(i) + 1).zfill(2), side, 'splt'))
+            new_name = cmds.rename(i, '%s%s%s_%s' % (prefix, str(list.index(i) + 1).zfill(2), side, 'splt'))
             new_list.append(new_name)
 
     return new_list
@@ -363,7 +360,7 @@ def str_vec(vec):
 
 
 def convert_to_matrix(obj):
-    pos = mc.xform(get_selection(obj), q=1, ws=1, t=1, r=1)
+    pos = cmds.xform(get_selection(obj), q=1, ws=1, t=1, r=1)
     # poleVecPos = getPoleVecPos(rootJointPos, midJointPos, endJointPos, length)
     return pos
 
@@ -454,12 +451,12 @@ def direction_pivot(obj, aim_axis='', up_axis=''):
         decompose_matrix_axis('z', 'y', 'x', obj)
 
     else:
-        return mc.warning(
+        return cmds.warning(
             'Some pivot direction might be not working. Please check naming the value %s as aim axis and %s as '
             'up axis?' % (aim_axis, up_axis))
 
     # If it is joint then freezing the rotation
-    if mc.nodeType(obj) == 'joint':
-        mc.makeIdentity(obj, apply=True, r=True, n=1)
+    if cmds.nodeType(obj) == 'joint':
+        cmds.makeIdentity(obj, apply=True, r=True, n=1)
     else:
         return obj

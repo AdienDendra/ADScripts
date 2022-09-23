@@ -243,7 +243,6 @@ class BSControlsUtils():
 
         return sel
 
-
     # Function to replace shape(s) with a loaded replacement(s).
     def bsReplaceShape(self, target, replacement, mirror):
         # Duplicating the replacement shape source.

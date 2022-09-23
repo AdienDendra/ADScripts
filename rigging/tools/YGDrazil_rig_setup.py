@@ -1,6 +1,13 @@
+from __future__ import absolute_import
+
+from importlib import reload
+
 import pymel.core as pm
-import AD_utils as au
+
+from rigging.tools import utils as au
+
 reload(au)
+
 
 def rearrange_rig():
     if pm.objExists('headx_ctrl') and pm.objExists('neckx_ctrl'):
@@ -9,8 +16,8 @@ def rearrange_rig():
         pm.rename('head_ctrl', 'headx_ctrl')
         pm.rename('neck_ctrl', 'neckx_ctrl')
 
-    pm.parent('lidUpJntDriverLFT_grp ','lidLowJntDriverLFT_grp', 'eyeLFT_skn')
-    pm.parent('lidUpJntDriverRGT_grp ','lidLowJntDriverRGT_grp', 'eyeRGT_skn')
+    pm.parent('lidUpJntDriverLFT_grp ', 'lidLowJntDriverLFT_grp', 'eyeLFT_skn')
+    pm.parent('lidUpJntDriverRGT_grp ', 'lidLowJntDriverRGT_grp', 'eyeRGT_skn')
 
     pm.setAttr("lidUpMoveZroLFT_grp.inheritsTransform", 1)
     pm.setAttr("lidLowMoveZroLFT_grp.inheritsTransform", 1)
@@ -82,10 +89,3 @@ def rearrange_rig():
     pm.delete('headTip_skn', 'neckJnt_grp', 'neckCtrlAll_grp', 'anim_ctrl', 'neck_bind')
     pm.rename('headx_ctrl', 'head_ctrl')
     pm.rename('neckx_ctrl', 'neck_ctrl')
-
-
-
-
-
-
-

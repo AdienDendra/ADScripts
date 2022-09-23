@@ -13,15 +13,12 @@ CONTACT:
 
 """
 
-import os
-import pickle
 import re
 from functools import partial
 from string import digits
 
 import maya.OpenMaya as om
 import maya.cmds as mc
-import maya.mel as mm
 import pymel.core as pm
 
 WORLD = [[2.249819018465117e-06, 4.4954081543323836e-21, -0.9995246068942343],
@@ -573,15 +570,17 @@ class Ad_Template():
 
             if RigUI.checkbox_upJaw_tmp:
                 self.upperJaw_joint = self.joint_template(name_template='upperJaw_tmp', pos_x=0, pos_y=3.6,
-                                                      pos_z=115.57511046)
-                self.upperJaw_tip = self.joint_template(name_template='upperJawTip_tmp', pos_x=0, pos_y=3.6, pos_z=125.248)
+                                                          pos_z=115.57511046)
+                self.upperJaw_tip = self.joint_template(name_template='upperJawTip_tmp', pos_x=0, pos_y=3.6,
+                                                        pos_z=125.248)
                 mc.parent(self.upperJaw_tip, self.upperJaw_joint)
                 mc.parent(self.upperJaw_joint, self.head)
                 self.add_message(object_origin=self.tmp_grp, object_target=self.upperJaw_joint, ln='upperJaw_joint_msg')
                 self.add_message(object_origin=self.tmp_grp, object_target=self.upperJaw_tip, ln='upperJaw_tip_msg')
 
             if RigUI.checkbox_jaw_tmp:
-                self.jaw_joint = self.joint_template(name_template='jaw_tmp', pos_x=0, pos_y=3.11584354, pos_z=113.89205641)
+                self.jaw_joint = self.joint_template(name_template='jaw_tmp', pos_x=0, pos_y=3.11584354,
+                                                     pos_z=113.89205641)
                 self.jaw_tip = self.joint_template(name_template='jawTip_tmp', pos_x=0, pos_y=-4.005, pos_z=121.998)
                 mc.setAttr(self.jaw_joint + '.jointOrientX', 45)
                 mc.parent(self.jaw_tip, self.jaw_joint)
@@ -591,7 +590,8 @@ class Ad_Template():
 
             if RigUI.checkbox_tongue_tmp:
                 self.tongue = self.joint_template(name_template='tongue_tmp', pos_x=0, pos_y=1.137, pos_z=116.245)
-                self.tongue_tip = self.joint_template(name_template='tongueTip_tmp', pos_x=0, pos_y=-7.289, pos_z=127.29)
+                self.tongue_tip = self.joint_template(name_template='tongueTip_tmp', pos_x=0, pos_y=-7.289,
+                                                      pos_z=127.29)
                 mc.setAttr(self.tongue + '.jointOrientX', 45)
                 mc.setAttr(self.tongue_tip + '.jointOrientX', 45)
                 self.add_message(object_origin=self.tmp_grp, object_target=self.tongue, ln='tongue_msg')
@@ -604,7 +604,8 @@ class Ad_Template():
 
             if RigUI.checkbox_fang_tmp:
                 self.left_fang = self.joint_template(name_template='leftFang_tmp', pos_x=1, pos_y=3.402, pos_z=124.164)
-                self.right_fang = self.joint_template(name_template='rightFang_tmp', pos_x=-1, pos_y=3.402, pos_z=124.164)
+                self.right_fang = self.joint_template(name_template='rightFang_tmp', pos_x=-1, pos_y=3.402,
+                                                      pos_z=124.164)
                 self.add_message(object_origin=self.tmp_grp, object_target=self.left_fang, ln='left_fang_msg')
                 self.add_message(object_origin=self.tmp_grp, object_target=self.right_fang, ln='right_fang_msg')
                 if RigUI.checkbox_upJaw_tmp:
@@ -620,7 +621,6 @@ class Ad_Template():
             # parent
             mc.parent(self.body_tip, self.body_base)
             mc.parent(self.head, self.body_base, self.tmp_grp)
-
 
     def joint_template(self, name_template, pos_x, pos_y, pos_z):
         mc.select(cl=1)
@@ -658,6 +658,7 @@ class Ad_RigUI():
 
         self.rig_direction = ad_create_path_action_translate_radio_button()
         self.tip_position = ad_create_path_action_pos_radio_button()
+
     def set_checkbox_jaw(self, channel_name):
         self.checkbox_jaw_tmp = channel_name
         pm.checkBox('Jaw_Tmp', edit=True, value=True)
@@ -868,6 +869,7 @@ def ad_delete_template(*args):
     else:
         om.MGlobal.displayError('There is no template joint in the scene')
 
+
 def ad_create_rig(*args):
     RigUI = Ad_RigUI()
     if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
@@ -937,6 +939,7 @@ def ad_create_rig(*args):
 
     mc.select(cl=1)
 
+
 def ad_delete_rig(*args):
     RigUI = Ad_RigUI()
     if mc.objExists('Rig%s_Grp' % RigUI.prefix_name.title()):
@@ -953,6 +956,7 @@ def ad_delete_rig(*args):
         om.MGlobal.displayError('There is no rig %s in the scene' % RigUI.prefix_name)
 
     mc.select(cl=1)
+
 
 def ad_create_path(*args):
     RigUI = Ad_RigUI()
@@ -974,6 +978,7 @@ def ad_create_path(*args):
 
     mc.select(cl=1)
 
+
 def ad_delete_path(*args):
     RigUI = Ad_RigUI()
     if mc.objExists('Rig%s%s_Grp' % (RigUI.prefix_name.title(), add_prefix)):
@@ -994,6 +999,7 @@ def ad_delete_path(*args):
         om.MGlobal.displayError('There is no path %s setup in the scene' % RigUI.prefix_name)
 
     mc.select(cl=1)
+
 
 def ad_attach_to_path(*args):
     RigUI = Ad_RigUI()
@@ -1027,6 +1033,7 @@ def ad_attach_to_path(*args):
 
     mc.select(cl=1)
 
+
 def ad_reset_attach(*args):
     RigUI = Ad_RigUI()
     world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
@@ -1037,7 +1044,8 @@ def ad_reset_attach(*args):
 
         for mpt in attr_locator:
             object_mpt = mc.listConnections(world_up_loc + '.' + mpt, d=1)[0]
-            print object_mpt
+            print
+            object_mpt
             mc.delete(object_mpt)
 
         mc.delete(world_up_loc)
@@ -1065,6 +1073,7 @@ def ad_reset_attach(*args):
 
     mc.select(cl=1)
 
+
 def ad_reset_value(*args):
     RigUI = Ad_RigUI()
     world_up_loc = '%s%sAttach_loc' % (RigUI.prefix_name, add_prefix)
@@ -1083,6 +1092,7 @@ def ad_reset_value(*args):
         om.MGlobal.displayError('There is no attach path %s setup' % RigUI.prefix_name)
 
     mc.select(cl=1)
+
 
 # def ad_load_skin(*args):
 #     ad_readSelectedWeight(weightFolderPath='')
@@ -1142,7 +1152,7 @@ def ad_create_path_setup(parallel_axis, prefix, tip_pos, path_size, prefix_rig_n
             om.MGlobal.displayError('Path already exists. Please delete the previous path first.')
         else:
             Main_Controller = Ad_GeneralBase(prefix=prefix_rig_name.title() + add_prefix, scale=8, color_world='red',
-                                             color_place='blue', lock_channel_ctrl=['s','v'])
+                                             color_place='blue', lock_channel_ctrl=['s', 'v'])
 
             skeleton = path_size
             size = float(skeleton)
@@ -1327,7 +1337,7 @@ def ad_create_path_joint(joint_path_base, joint_path_tip, prefix, skeleton, add_
         controller = Ad_Control(match_obj_first_position=item,
                                 prefix=item, suffix='ctrl', groups_ctrl=['Main', 'Offset'],
                                 ctrl_color='lightPink', ctrl_size=skeleton / 4,
-                                lock_channels=['s','v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
+                                lock_channels=['s', 'v'], shape=CIRCLE, connection=['parentCons', 'scaleCons'])
         ctrl.append(controller.control)
         mainGroup.append(controller.parent_control[0])
 
@@ -1480,10 +1490,12 @@ def ad_create_rig_tongue(prefix):
     else:
         pass
 
+
 def ad_create_rig_right_fang(prefix):
     list_tmp_jnt = ad_create_rig_sorted_joint_tmp()
     if mc.objExists('rightFang_tmp'):
-        setup = ad_create_rig_head_area(position_sorted='rightFang_tmp', joint_name=prefix + 'RightFang_jnt', color='red',
+        setup = ad_create_rig_head_area(position_sorted='rightFang_tmp', joint_name=prefix + 'RightFang_jnt',
+                                        color='red',
                                         shape=CUBE, size=1.0)
 
         return {
@@ -1494,6 +1506,7 @@ def ad_create_rig_right_fang(prefix):
         }
     else:
         pass
+
 
 def ad_create_rig_left_fang(prefix):
     list_tmp_jnt = ad_create_rig_sorted_joint_tmp()
@@ -1508,6 +1521,7 @@ def ad_create_rig_left_fang(prefix):
     else:
         pass
 
+
 def ad_create_rig_upperJaw(prefix):
     list_tmp_jnt = ad_create_rig_sorted_joint_tmp()
     if mc.objExists('upperJaw_tmp'):
@@ -1520,6 +1534,7 @@ def ad_create_rig_upperJaw(prefix):
             'joint': setup['joint']}
     else:
         pass
+
 
 def ad_create_rig_jaw(prefix):
     list_tmp_jnt = ad_create_rig_sorted_joint_tmp()
@@ -1534,6 +1549,7 @@ def ad_create_rig_jaw(prefix):
     else:
         pass
 
+
 def ad_create_rig_head(prefix):
     list_tmp_jnt = ad_create_rig_sorted_joint_tmp()
     if mc.objExists('head_tmp'):
@@ -1546,6 +1562,7 @@ def ad_create_rig_head(prefix):
             'joint': setup['joint']}
     else:
         pass
+
 
 def ad_create_rig_head_area(position_sorted, joint_name, color, shape, size):
     mc.select(cl=1)
@@ -2072,7 +2089,6 @@ def ad_add_attribute(objects=[], long_name=[''], nice_name='', separator=False, 
                 mc.setAttr((obj + '.' + long_name[x]), k=keyable, e=1, cb=channel_box) if separator else mc.setAttr(
                     (obj + '.' + long_name[x]), k=keyable, e=1, cb=channel_box)
     return long_name[0]
-
 
 # **********************************************************************************************************************#
 #                                                   SKIN CTRL FUNCTION                                                 #

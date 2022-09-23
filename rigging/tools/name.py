@@ -1,11 +1,14 @@
 """
 remove the suffix name and take the prefix name
 """
-from __builtin__ import reload
+from __future__ import absolute_import
 
-from rigging.tools import AD_utils as ut
+from importlib import reload
 
-reload (ut)
+from rigging.tools import utils as rt_utils
+
+reload(rt_utils)
+
 
 def remove_suffix(obj):
-    return ut.prefix_name(obj)
+    return rt_utils.prefix_name(obj)

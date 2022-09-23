@@ -30,7 +30,6 @@ import pymel.core as pm
 
 import ad_controller_lib as al
 
-reload(al)
 
 layout = 400
 percentage = 0.01 * layout
@@ -174,8 +173,8 @@ def ad_show_ui():
                                           columnAttach=[(1, 'both', 0 * percentage),
                                                         (2, 'both', 0 * percentage),
                                                         (3, 'both', 0 * percentage)]):
-                        # with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
-                        #                   columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
+                            # with pm.rowLayout(nc=2, cw2=(18.5 * percentage, 77 * percentage), cl2=('right', 'left'),
+                            #                   columnAttach=[(1, 'both', 0), (2, 'both', 0)]):
                             pm.text('')
 
                             # select cv nurbs
@@ -606,6 +605,7 @@ def ad_cc_controller_resize_slider(*args):
                 om.MGlobal.displayError("Object type must be curve")
                 return False
 
+
 def ad_cc_select_cv_controller(*args):
     sel = pm.ls(sl=1)
     if not sel:
@@ -621,6 +621,7 @@ def ad_cc_select_cv_controller(*args):
             else:
                 pass
         pm.select(all)
+
 
 def ad_cc_select_all_ad_controller_button(*args):
     list_scene = pm.ls(type='transform')

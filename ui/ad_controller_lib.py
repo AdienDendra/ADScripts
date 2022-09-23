@@ -75,7 +75,7 @@ def ad_lib_save_json_controller(file_name):
             # get cv number, x value, y value, z value and color on each item
             cvs, xvalue, yvalue, zvalue, color = [], [], [], [], []
             for cv in pm.PyNode(item).cv:
-            # for cv in object_curve.getShape().cv:
+                # for cv in object_curve.getShape().cv:
                 x = pm.getAttr(str(cv) + '.xValue')
                 y = pm.getAttr(str(cv) + '.yValue')
                 z = pm.getAttr(str(cv) + '.zValue')

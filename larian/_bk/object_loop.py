@@ -1,10 +1,9 @@
+import maya.cmds as mc
 from __builtin__ import reload
 
-import maya.cmds as mc
-
-import rigging.tools.AD_utils as au
+import rigging.tools.utils as au
 from rigging.library.utils import joint as jn, controller as ct
-from rigging.library.utils import rotation_controller as rc, core as cr
+from rigging.library.utils import rotationController as rc, core as cr
 
 reload(ct)
 reload(au)
@@ -14,6 +13,7 @@ reload(cr)
 
 # load Plug-ins
 cr.load_matrix_quad_plugin()
+
 
 def loop(curve='', world_up_loc='', controller=False):
     all_grp = mc.group(empty=True, n=au.prefix_name(curve) + 'MotionLoop' + '_grp')
