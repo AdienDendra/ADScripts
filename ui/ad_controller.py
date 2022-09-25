@@ -28,7 +28,7 @@ from functools import partial
 import maya.OpenMaya as om
 import pymel.core as pm
 
-import ad_controller_lib as al
+from ui import ad_controller_lib as al
 
 
 layout = 400

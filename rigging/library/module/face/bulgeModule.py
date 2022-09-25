@@ -250,6 +250,7 @@ class Bulge:
         cmds.connectAttr(pma_node + '.output3D', soft_mod[0] + '.falloffCenter')
         cmds.connectAttr(bulge_soft_mod_ctrl + '.%s' % self.wide, soft_mod[0] + '.falloffRadius')
         cmds.connectAttr(bulge_soft_mod_ctrl + '.%s' % self.bulge, soft_mod[0] + '.envelope')
+        cmds.setAttr(soft_mod[0] + '.falloffAroundSelection', 0)
 
         # CONNECT CTRL TRANSLATE TO HANDLE
         cmds.connectAttr(bulge_soft_mod_ctrl + '.translate', reverse_soft_mod_trans_mdn + '.input1')

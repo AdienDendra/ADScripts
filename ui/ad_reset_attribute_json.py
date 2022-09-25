@@ -4,7 +4,7 @@ from collections import OrderedDict
 from functools import partial
 
 import maya.OpenMaya as om
-import maya.cmds as mc
+import maya.cmds as cmds
 
 MENU_NAME = "markingMenu"
 
@@ -16,23 +16,23 @@ class ResetAttrMarkingMenu():
         self.build()
 
     def build(self):
-        mc.popupMenu(MENU_NAME, mm=1, b=2, aob=1, ctl=1, alt=1, sh=0, p="viewPanes", pmo=1, pmc=self.buildMarkingMenu)
+        cmds.popupMenu(MENU_NAME, mm=1, b=2, aob=1, ctl=1, alt=1, sh=0, p="viewPanes", pmo=1, pmc=self.buildMarkingMenu)
 
     def removeOld(self):
-        if mc.popupMenu(MENU_NAME, ex=1):
-            mc.deleteUI(MENU_NAME)
+        if cmds.popupMenu(MENU_NAME, ex=1):
+            cmds.deleteUI(MENU_NAME)
 
     def buildMarkingMenu(self, menu, parent):
         # Radial positioned
-        mc.menuItem(p=menu, l="Set Attr as Default", rp="W", c=partial(set_default_attr))
-        mc.menuItem(p=menu, l="Reset to Default", rp="E", c=partial(reset_to_default))
+        cmds.menuItem(p=menu, l="Set Attr as Default", rp="W", c=partial(set_default_attr))
+        cmds.menuItem(p=menu, l="Reset to Default", rp="E", c=partial(reset_to_default))
 
 
 ResetAttrMarkingMenu()
 
 
 def get_directory_path(folder):
-    file_path = mc.file(q=True, sn=True)
+    file_path = cmds.file(q=True, sn=True)
     if file_path:
         path = os.path.dirname(file_path)
         file_name = os.path.basename(file_path)
@@ -52,20 +52,20 @@ def save_json_file(file_name, object):
     # ordered dictionary
     attr_dict = OrderedDict()
 
-    for obj in object:
-        attr_dict[str(obj)] = get_attr_value(obj)
-        # condition json file exist
-        file_names = "%s" % (file_name)
-        if os.path.isfile(file_names):
-            file = open(file_names, "r")
-            load = json.load(file)
-            load.update(attr_dict)
-            file = open(file_names, "w")
-            json.dump(load, file, indent=4)
-        # condition json not exist
-        else:
-            file = open(file_names, "w")
-            json.dump(attr_dict, file, indent=4)
+    # for obj in object:
+    attr_dict[str(object)] = get_attr_value(object)
+    # condition json file exist
+    file_names = "%s" % (file_name)
+    if os.path.isfile(file_names):
+        file = open(file_names, "r")
+        load = json.load(file)
+        load.update(attr_dict)
+        file = open(file_names, "w")
+        json.dump(load, file, indent=1)
+    # condition json not exist
+    else:
+        file = open(file_names, "w")
+        json.dump(attr_dict, file, indent=1)
 
 
 def load_json_file(file_name):
@@ -76,7 +76,7 @@ def load_json_file(file_name):
 
 # reset the value attr
 def reset_to_default(*args):
-    selection = mc.ls(sl=1)
+    selection = cmds.ls(sl=1)
     if not selection:
         om.MGlobal.displayWarning('Please select at least one object to Reset to Default!')
     else:
@@ -89,11 +89,11 @@ def reset_to_default(*args):
                     if object == key:
                         if query_channel_attr(object) == []:
                             for (attr, value) in attribute.items():
-                                mc.setAttr('%s.%s' % (object, attr), value)
+                                cmds.setAttr('%s.%s' % (object, attr), value)
 
                         # when the specific the attribute reset
                         for attr in query_channel_attr(object):
-                            mc.setAttr('%s.%s' % (object, attr), attribute.get(attr))
+                            cmds.setAttr('%s.%s' % (object, attr), attribute.get(attr))
 
         else:
             om.MGlobal_displayError("There is no file '%s.json' in the directory" % directory[1])
@@ -101,48 +101,46 @@ def reset_to_default(*args):
 
 # set the default attribute from marking menu
 def set_default_attr(*args):
-    selection = mc.ls(sl=1)
+    selection = cmds.ls(sl=1)
     if selection:
         directory = get_directory_path("ad_resetAttr")
         export_object = os.path.join(directory[0], directory[1] + ".json")
         objects = []
         for object in selection:
-            if mc.listAnimatable(object):
+            if cmds.listAnimatable(object):
                 try:
                     # query the object selection whether it has shape
-                    object_type = mc.objectType(mc.listRelatives(object, s=True))
+                    object_type = cmds.objectType(cmds.listRelatives(object, s=True))
                 except:
                     pass
                 else:
-                    if object_type == 'nurbsCurve' or mc.nodeType(object) == 'joint':
+                    if object_type == 'nurbsCurve' or cmds.nodeType(object) == 'joint':
                         # for every node in selection
                         objects.append(object)
 
+                        # saving to json file
+                        save_json_file(export_object, object)
                         om.MGlobal.displayInfo("---------- Saved attribute value %s" % object)
 
                     else:
                         om.MGlobal.displayInfo("Object '%s' is not nurbCurves or Joint. Skipped save!." % (object))
-
-                save_json_file(export_object, objects)
 
             else:
                 om.MGlobal.displayInfo('Skipped object %s due to not animatable!' % object)
 
         if objects:
             om.MGlobal.displayInfo("********** File path: %s" % export_object)
-        else:
-            pass
 
     else:
-        om.MGlobal.displayInfo('Skipped object %s due to not animatable!' % selection)
+        om.MGlobal.displayInfo('Select at least one animatable object!')
 
 
 # channel attr on the selection object
 def query_channel_attr(selection):
     # query main channel box
     gChannelBoxName = 'mainChannelBox'
-    sma = mc.channelBox(gChannelBoxName, q=True, sma=True)
-    sha = mc.channelBox(gChannelBoxName, q=True, sha=True)
+    sma = cmds.channelBox(gChannelBoxName, q=True, sma=True)
+    sha = cmds.channelBox(gChannelBoxName, q=True, sha=True)
 
     attrs = list()
     if sma:
@@ -156,7 +154,7 @@ def query_channel_attr(selection):
 
     longNames = []
 
-    result = [mc.attributeQuery(a, n=selection, ln=1) for a in attrs]
+    result = [cmds.attributeQuery(a, n=selection, ln=1) for a in attrs]
     longNames = longNames + result
     longNames = list(set(longNames))
 
@@ -168,12 +166,9 @@ def get_attr_value(selection):
     # storing dictionary
     # get all animatable attribute in the scene of the selection object
     dic = {}
-    for attr in mc.listAnimatable(selection):
-        # Sort out the actual name of just the attribute.
-        attr = mc.ls(attr)[0]
-        attr = attr.partition('.')[2]
+    for attr in cmds.listAttr(selection, k=True):
         # get the value.
-        get_value = mc.getAttr('%s.%s' % (selection, attr))
+        get_value = cmds.getAttr('%s.%s' % (selection, attr))
         # storing into dic
         dic[attr] = get_value
     return dic
