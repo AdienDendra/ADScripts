@@ -4,6 +4,7 @@ module for controller base
 from __future__ import absolute_import
 
 import re
+
 import maya.cmds as cmds
 
 from rigging.tools import pythonVersion as rt_pythonVersion, utils as rt_utils
@@ -1389,6 +1390,9 @@ class Control():
         # lock and hide attribute
         rt_utils.lock_hide_attr(lock_channels, rename_controller)
 
+        # tagging controller
+        self.tagging(rename_controller)
+
         connection_controller = rename_controller
 
         # gimbal control true
@@ -1400,7 +1404,7 @@ class Control():
             controller_gimbal = rt_utils.controller(scale_gimbal)
 
             rename_gimbal = cmds.rename(controller_gimbal,
-                                      '%s%s%s_%s' % (rt_utils.prefix_name(prefix), rt_utils.GIMBAL, side, suffix))
+                                        '%s%s%s_%s' % (rt_utils.prefix_name(prefix), rt_utils.GIMBAL, side, suffix))
 
             # gimbal control alias
             connection_controller = rename_gimbal
@@ -1409,7 +1413,8 @@ class Control():
             rt_utils.set_color(rename_gimbal, 'white')
 
             # add attribute for switching on/off gimbal ctrl
-            add_attr = rt_utils.add_attr_transform_shape(rename_controller, 'gimbalCtrl', 'long', edit=True, channel_box=True,
+            add_attr = rt_utils.add_attr_transform_shape(rename_controller, 'gimbalCtrl', 'long', edit=True,
+                                                         channel_box=True,
                                                          min=0,
                                                          max=1, dv=0)
             list_relatives_gimbal = cmds.listRelatives(rename_gimbal, shapes=True)[0]
@@ -1425,6 +1430,9 @@ class Control():
             # parent gimbal ctrl to main ctrl
             rt_utils.parent_object(rename_controller, rename_gimbal)
 
+            # tagging gimbal
+            self.tagging(rename_gimbal)
+
             self.control_gimbal = rename_gimbal
 
         if match_obj_first_position:
@@ -1432,7 +1440,8 @@ class Control():
 
         # connection to attribute
         if connection == ['connectAttr']:
-            group_connection = rt_utils.group_object(group_connect_attr, match_obj_first_position, connection_controller)
+            group_connection = rt_utils.group_object(group_connect_attr, match_obj_first_position,
+                                                     connection_controller)
             connection = rt_utils.connection(connection, rename_controller, match_obj_first_position)
 
         # connection parent
@@ -1460,3 +1469,14 @@ class Control():
         self.control = rename_controller
         self.parent_control = group_parent
         self.connection = connection
+    def tagging(self, ctrl):
+        attributes = cmds.attributeQuery('AD_Controller', n=ctrl, ex=True)
+        if attributes:
+            cmds.setAttr(ctrl + '.AD_Controller', 1)
+        else:
+            cmds.addAttr(ctrl, ln='AD_Controller', at='bool')
+            cmds.setAttr(ctrl + '.AD_Controller', 1)
+        return ctrl
+
+
+        

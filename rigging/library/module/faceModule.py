@@ -147,11 +147,16 @@ def build_rig(
             cmds.setAttr(item + '.visibility', 1)
             cmds.setAttr(item + '.segmentScaleCompensate', 0)
 
-        bind_game = sorted(sGame.list_joint.values())
-        bind_sj = sorted(sj.list_joint.values())
+        # print (list(sGame.list_joint.values()))
+        # bind_games, bind_sjs= [],[]
+        # for skinJnt, gameJnt in zip(sj.list_joint.values(),sGame.list_joint.values()):
+        #     bind_sjs.append(skinJnt.split('|')[-1])
+        #     bind_games.append(gameJnt.split('|')[-1])
+
+
 
         # constraining the skn to game joint
-        for skin_joint, game in zip(bind_sj, bind_game):
+        for skin_joint, game in zip(sj.list_joint.values(), sGame.list_joint.values()):
             constraint = rt_utils.parent_scale_constraint(skin_joint, game, mo=1)
             cmds.parent(constraint[0], constraint[1], 'additional_grp')
 

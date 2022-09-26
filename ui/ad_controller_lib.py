@@ -134,12 +134,15 @@ def ad_lib_load_json_controller(file_name):
                     # if it has a shape check whether it curves object
                     if object == 'nurbsCurve':
                         # check item in keys dictionary
-                        if item in keys:
-                            om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
-                            list.append(item)
-                        else:
-                            om.MGlobal.displayWarning(
-                                "Object '%s' is skipped! There is no saving curve in the library." % (item))
+                        print(keys)
+                        for key in shape_dict.keys():
+                            if item == key:
+                                print (item)
+                                om.MGlobal.displayInfo("Object '%s' is loaded!." % (item))
+                                list.append(item)
+                            else:
+                                om.MGlobal.displayWarning(
+                                    "Object '%s' is skipped! There is no saving curve in the library." % (item))
                     else:
                         om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
 

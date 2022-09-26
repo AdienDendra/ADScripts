@@ -22,14 +22,12 @@ LICENSE:
     distributed without the express permission of Adien Dendra
 
 """
-
 from functools import partial
 
 import maya.OpenMaya as om
 import pymel.core as pm
 
 from ui import ad_controller_lib as al
-
 
 layout = 400
 percentage = 0.01 * layout
