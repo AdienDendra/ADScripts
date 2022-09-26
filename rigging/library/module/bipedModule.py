@@ -863,7 +863,7 @@ def build_rig(clavicle_left, clavicle_right, arm_left, arm_right, prefix_spine, 
 
     if leg_left:
         if foot_left:
-            cmds.delete(sj.ball_LFT, ss.ball_LFT, ss.heel_LFT, ss.footIn_LFT, ss.footOut_LFT, ss.toe_LFT)
+            cmds.delete(ss.heel_LFT, ss.footIn_LFT, ss.footOut_LFT, ss.toe_LFT)
 
     if leg_right:
         if foot_right:
