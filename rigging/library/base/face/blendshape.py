@@ -44,7 +44,7 @@ class BuildTwoSide:
                               two_side=True):
 
         ctrl_new = rlu_transform.reposition_side(controller, 'BshRGT', 'BshLFT')
-        list_weight = cmds.listAttr(blendshape_name + '.w', m=True)
+        list_weight = cmds.listAttr(blendshape_name + '.weight', m=True)
 
         # DRIVER VALUE
         mult_double_linear_combined_one = cmds.createNode('multDoubleLinear', n=rt_utils.prefix_name(
@@ -99,7 +99,7 @@ class BuildTwoSide:
 
         # CONNECT TO BSH
         if connect:
-            list_weight = cmds.listAttr(blendshape_name + '.w', m=True)
+            list_weight = cmds.listAttr(blendshape_name + '.weight', m=True)
             self.connect_node_to_bsh(list_weight, clamp_up, 'outputR', blendshape_name=blendshape_name,
                                      side_RGT=side_RGT, side_LFT=side_LFT, side=side, suffix_bsh=suffix_bsh)
             self.connect_node_to_bsh(list_weight, clamp_down, 'outputR', blendshape_name=blendshape_name,

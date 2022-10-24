@@ -204,6 +204,7 @@ def ad_data_skin_weight_export(item, path):
         store_influence = [obj.name() for obj in pm.skinCluster(skin, q=True, inf=True)]
         skin_set = pm.listConnections('%s.message' % skin, d=True, s=False)[0]
 
+
         weight_dict = OrderedDict()
         weight_dict['influences'] = store_influence
         weight_dict['name'] = skin
