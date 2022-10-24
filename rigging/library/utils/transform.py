@@ -3,7 +3,9 @@ add object group parent
 
 """
 from __future__ import absolute_import
+
 import re
+
 import maya.cmds as cmds
 
 from rigging.tools import pythonVersion as rt_pythonVersion, utils as rt_utils
@@ -39,13 +41,13 @@ def create_parent_transform(parent_list, object, match_position, prefix, suffix,
     # get the prefix without number
     prefix_no_number = rt_pythonVersion.translation_string(prefix)
 
-
     if side in prefix_no_number:
         prefix_new_name = prefix_no_number.replace(side, '')
     else:
         prefix_new_name = prefix_no_number
 
-    group = rt_utils.group_parent(groups=parent_list, prefix=rt_utils.prefix_name(prefix_new_name), number=prefix_number,
+    group = rt_utils.group_parent(groups=parent_list, prefix=rt_utils.prefix_name(prefix_new_name),
+                                  number=prefix_number,
                                   suffix=rt_utils.suffix_name(suffix).title(),
                                   side=side)
 
@@ -68,7 +70,8 @@ def create_parent_transform(parent_list, object, match_position, prefix, suffix,
 def create_parent_transform_two(parent_list, object, match_pos, prefix, suffix, side=''):
     list_relatives = cmds.listRelatives(object, ap=1)
 
-    group = rt_utils.group_parent(parent_list, '%s' % rt_utils.prefix_name(prefix), rt_utils.suffix_name(suffix).title(), side)
+    group = rt_utils.group_parent(parent_list, '%s' % rt_utils.prefix_name(prefix),
+                                  rt_utils.suffix_name(suffix).title(), side)
 
     if match_pos:
         rt_utils.match_position(match_pos, group[0])
@@ -120,7 +123,3 @@ def reposition_side(object, side_RGT, side_LFT):
         obj_new_name = object.replace(side_RGT, '')
     elif side_LFT in object:
         obj_new_name = object.replace(side_LFT, '')
-    else:
-        obj_new_name = object
-
-    return obj_new_name
