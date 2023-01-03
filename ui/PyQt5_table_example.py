@@ -503,7 +503,7 @@ class Table(QtWidgets.QTableView):
             if col == 3:
                 geoTarget = self.getCellValue(self.model.index(row, 1))
 
-                for blendBufferDeformers in geoModLiveBls(bindingVar):
+                for blendBufferDeformers in geoModWithLiveBls(bindingVar):
                     bondNodeBls = blendBufferDeformers[1][0]
                     geoMod = blendBufferDeformers[0]
 
@@ -856,7 +856,7 @@ def blendBufferDeformer(geoModTarget):
     return blendBufferDeformers
 
 
-def geoModLiveBls(activeBindingTree):
+def geoModWithLiveBls(activeBindingTree):
     geoModLiveBls = list()
     for geoModTarget in activeBindingTree.iterGeoModifiers():
         blendBufferDeformers = blendBufferDeformer(geoModTarget)
@@ -868,7 +868,7 @@ def geoModLiveBls(activeBindingTree):
 
 def getDataFromBreed(activeBindingTree):
     blendshapeBufferDataList = list()
-    for geoModTarget, blendBufferDeformers in geoModLiveBls(activeBindingTree):
+    for geoModTarget, blendBufferDeformers in geoModWithLiveBls(activeBindingTree):
         for eachDeformer in blendBufferDeformers:
             deformerFn = bmpd_blendshape.LiveBlendshapeFn(deformerNode=eachDeformer)
             weightsNode = deformerFn.blendBufferBeastNode()
