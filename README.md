@@ -1,7 +1,7 @@
 ## [PyQt5_table_example.py](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
 ### Description
-Tool to manage live blendshapes
- : <details>
+Tool to manage live blendshapes: 
+<details>
            <summary>_Status and load selection object to cell_</summary>
            <p>![Status and load selection object to cell](https://user-images.githubusercontent.com/47624392/210292847-f2b7d877-943a-4751-900c-f763d8f3e012.gif)</p>
          </details>
