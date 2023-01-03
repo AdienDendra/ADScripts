@@ -1,4 +1,5 @@
-## PyQt5_table_example.py
+## [PyQt5_table_example.py](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
+
 https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py
 ### Description
 
