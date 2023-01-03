@@ -5,10 +5,10 @@ Tool to manage live blendshapes
            <summary>_Status and load selection object to cell_</summary>
            <p>![Status and load selection object to cell](https://user-images.githubusercontent.com/47624392/210292847-f2b7d877-943a-4751-900c-f763d8f3e012.gif)</p>
          </details>
-<details>
-   <summary>_Sync in breed and run the liveBLS_</summary>
-   <p>![Sync in breed and run the liveBLS](https://user-images.githubusercontent.com/47624392/210292985-fa3bb5b6-b115-4fba-964a-9f8aa0f1db36.gif)</p>
-</details>
+         <details>
+           <summary>_Sync in breed and run the liveBLS_</summary>
+           <p>![Sync in breed and run the liveBLS](https://user-images.githubusercontent.com/47624392/210292985-fa3bb5b6-b115-4fba-964a-9f8aa0f1db36.gif)</p>
+         </details>
          
 : <details>
            <summary>_rebuild break connection liveBLS_</summary>
