@@ -1,4 +1,4 @@
-## [PyQt5_table_example.py](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
+## [PyQt5_table_example (Live Blendshape.py](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
 ### Description
 Tool to manage AL live blendshapes :
           <details>
@@ -32,4 +32,9 @@ Tool to manage AL live blendshapes :
           <details>
             <summary>_delete liveBLS node selected_</summary>
             <p>![delete liveBLS node selected](https://user-images.githubusercontent.com/47624392/210293007-a383a5e0-0ccd-44d1-82ac-02440051f049.gif)</p>
-          </details> 
+          </details>
+          <details>
+            <summary>_Video Link_</summary>
+            <p>https://youtu.be/yRMhfm3uwdk</p>
+          </details>
+          
