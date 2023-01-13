@@ -3,7 +3,7 @@
 Tool to manage AL live blendshapes :
           <details>
             <summary>_connection break_</summary>
-            <p>![connection break](![connection break](https://user-images.githubusercontent.com/47624392/212207913-cab15d3a-25a4-4439-9ae9-83c4e7304c8e.gif))</p>
+            <p>![connection break](https://user-images.githubusercontent.com/47624392/212208019-b7c9f9e6-fc5a-4c19-bfdb-7ef4adb6c132.gif)</p>
           </details>
           <details>
             <summary>_Status and load selection object to cell_</summary>
