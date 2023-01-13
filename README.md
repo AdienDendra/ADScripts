@@ -6,6 +6,18 @@ Tool to manage AL live blendshapes :
             <p>![connection break](https://user-images.githubusercontent.com/47624392/212208019-b7c9f9e6-fc5a-4c19-bfdb-7ef4adb6c132.gif)</p>
           </details>
           <details>
+            <summary>_inactive_</summary>
+            <p>![inActive](https://user-images.githubusercontent.com/47624392/212208154-0d58ca40-5217-482e-9684-5b2701d9cd2c.gif)</p>
+          </details>
+          <details>
+            <summary>_inactive_</summary>
+            <p>![inActive](https://user-images.githubusercontent.com/47624392/212208154-0d58ca40-5217-482e-9684-5b2701d9cd2c.gif)</p>
+          </details>
+          <details>
+            <summary>_inactive_</summary>
+            <p>![invalid](https://user-images.githubusercontent.com/47624392/212208315-648469bb-290d-4e8a-829d-49a2460edaec.gif)</p>
+          </details>
+          <details>
             <summary>_Status and load selection object to cell_</summary>
             <p>![Status and load selection object to cell](https://user-images.githubusercontent.com/47624392/210292847-f2b7d877-943a-4751-900c-f763d8f3e012.gif)</p>
           </details>
