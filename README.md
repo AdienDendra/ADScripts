@@ -1,6 +1,10 @@
 ## [PyQt5_table_example.py](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
 ### Description
-Tool to manage AL live blendshapes :        
+Tool to manage AL live blendshapes :
+          <details>
+            <summary>_connection break_</summary>
+            <p>![connection break](![connection break](https://user-images.githubusercontent.com/47624392/212207913-cab15d3a-25a4-4439-9ae9-83c4e7304c8e.gif))</p>
+          </details>
           <details>
             <summary>_Status and load selection object to cell_</summary>
             <p>![Status and load selection object to cell](https://user-images.githubusercontent.com/47624392/210292847-f2b7d877-943a-4751-900c-f763d8f3e012.gif)</p>
