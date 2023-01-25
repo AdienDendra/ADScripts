@@ -87,8 +87,8 @@ class LiveBStoolCmds(buicmd_base.BaseCommand):
             _application.show()
             _application.setWindowState(QtCore.Qt.WindowState.WindowActive)
             return _application
-        ui = LiveBStoolUI(activeBindingTree)
-        ui.show()
+        self.ui = LiveBStoolUI(activeBindingTree)
+        self.ui.show()
 
 
 class LiveBStoolUI(QtWidgets.QDialog):
