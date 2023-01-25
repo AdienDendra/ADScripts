@@ -1,6 +1,22 @@
-## [PyQt5_table_example.py](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
+## [PyQt5_table_example.py (Live Blendshape)](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
 ### Description
-Tool to manage AL live blendshapes :        
+Tool to manage AL live blendshapes :
+          <details>
+            <summary>_connection break_</summary>
+            <p>![connection break](https://user-images.githubusercontent.com/47624392/212208019-b7c9f9e6-fc5a-4c19-bfdb-7ef4adb6c132.gif)</p>
+          </details>
+          <details>
+            <summary>_inactive_</summary>
+            <p>![inActive](https://user-images.githubusercontent.com/47624392/212208154-0d58ca40-5217-482e-9684-5b2701d9cd2c.gif)</p>
+          </details>
+          <details>
+            <summary>_inactive_</summary>
+            <p>![inActive](https://user-images.githubusercontent.com/47624392/212208154-0d58ca40-5217-482e-9684-5b2701d9cd2c.gif)</p>
+          </details>
+          <details>
+            <summary>_inactive_</summary>
+            <p>![invalid](https://user-images.githubusercontent.com/47624392/212208315-648469bb-290d-4e8a-829d-49a2460edaec.gif)</p>
+          </details>
           <details>
             <summary>_Status and load selection object to cell_</summary>
             <p>![Status and load selection object to cell](https://user-images.githubusercontent.com/47624392/210292847-f2b7d877-943a-4751-900c-f763d8f3e012.gif)</p>
@@ -16,4 +32,9 @@ Tool to manage AL live blendshapes :
           <details>
             <summary>_delete liveBLS node selected_</summary>
             <p>![delete liveBLS node selected](https://user-images.githubusercontent.com/47624392/210293007-a383a5e0-0ccd-44d1-82ac-02440051f049.gif)</p>
-          </details> 
+          </details>
+          <details>
+            <summary>_Video Link_</summary>
+            <p>https://youtu.be/yRMhfm3uwdk</p>
+          </details>
+          
