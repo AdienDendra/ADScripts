@@ -65,17 +65,32 @@ class LiveBStoolCmds(buicmd_base.BaseCommand):
         # exit if not select the thing
         func = bui_public.Functor()
         sel = func.entityEditor_selection()
-        if not sel:
-            logger.warning("Please select one of binding variation")
-            return self.cancelExecution()
 
-        # exit if not selection the binding variation
-        activeBindingTree = sel[0]
-        if not activeBindingTree.nodeType() == bcc_types.BEAST_BINDINGS_DATA_VARIATION:
-            logger.warning(
-                "Invalid selection, aborting. Please select one binding variation and try again"
-            )
-            return self.cancelExecution()
+        # if selection the binding variation
+        if sel:
+            activeBindingTree = sel[0]
+            if (
+                not activeBindingTree.nodeType()
+                == bcc_types.BEAST_BINDINGS_DATA_VARIATION
+            ):
+                logger.warning(
+                    "Invalid selection, aborting. Please select one binding variation and try again"
+                )
+                return self.cancelExecution()
+        else:
+            # condition no selection host in breed
+            entityTree = bui_public.sessionManager().activeBeastCoreBindingTree()
+            # check if there is binding variation
+            host = [n for n in entityTree.iterVariations()]
+            if not host:
+                logger.warning("There is no binding variation in breed!")
+                return self.cancelExecution()
+
+            # host is 'cache_deform_high' if nothing selected
+            activeBindingTree = []
+            for iterVarCache in host:
+                if iterVarCache.name() == "cache_deform_high":
+                    activeBindingTree = iterVarCache
 
         self.setArgumentValue("activeBindingTree", activeBindingTree)
 
@@ -561,7 +576,6 @@ class Table(QtWidgets.QTableView):
                     continue
                 geoTarget = self.getCellValue(self.model.index(row, 1))
                 liveBlsNode = self.getCellValue(self.model.index(row, 3))
-                print(bindingVar, geoTarget, liveBlsNode)
                 removeBondNode(bindingVar, geoTarget, liveBlsNode)
 
         # refresh table
