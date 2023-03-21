@@ -2,6 +2,10 @@
 ### Description
 Tool to manage AL live blendshapes :
           <details>
+            <summary>_select or unselected the host_</summary>
+            <p>![select or unselected the host](https://user-images.githubusercontent.com/47624392/226524032-ac514987-1e71-4ffe-8003-53dba02d03eb.gif)</p>
+          </details>
+          <details>
             <summary>_connection break_</summary>
             <p>![connection break](https://user-images.githubusercontent.com/47624392/212208019-b7c9f9e6-fc5a-4c19-bfdb-7ef4adb6c132.gif)</p>
           </details>
