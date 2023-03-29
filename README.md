@@ -1,4 +1,4 @@
-## [PyQt5_table_example.py (Live Blendshape)](https://github.com/AdienDendra/ADScripts/blob/master/ui/PyQt5_table_example.py)
+## [PyQt5_table_example.py (Live Blendshape)](https://github.com/AdienDendra/ADScripts/blob/misc_example/AL_PyQt5_table_example.py)
 ### Description
 Tool to manage AL live blendshapes :
           <details>
