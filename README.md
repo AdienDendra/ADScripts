@@ -42,3 +42,11 @@ Tool to manage AL live blendshapes :
             <p>https://youtu.be/yRMhfm3uwdk</p>
           </details>
           
+## [AL_PyQt_skinningToolUI.py (Skinning Tool UI)](https://github.com/AdienDendra/ADScripts/blob/master/misc_example/AL_PyQt_skinningToolUI.py)
+### Description
+Tool for compiling the skinning :
+          <details>
+            <summary>_skinning tool compiling_</summary>
+            <p>![skinning tool compiling](https://user-images.githubusercontent.com/47624392/228422801-9b9b77dd-dbee-4dd9-9c06-6df2b5fd758e.gif))</p>
+          </details>
+          
