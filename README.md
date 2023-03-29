@@ -47,6 +47,6 @@ Tool to manage AL live blendshapes :
 Tool for compiling the skinning :
           <details>
             <summary>_skinning tool compiling_</summary>
-            <p>![skinning tool compiling](https://user-images.githubusercontent.com/47624392/228422801-9b9b77dd-dbee-4dd9-9c06-6df2b5fd758e.gif))</p>
+            <p>![skinning tool compiling](https://user-images.githubusercontent.com/47624392/228422801-9b9b77dd-dbee-4dd9-9c06-6df2b5fd758e.gif)</p>
           </details>
           
