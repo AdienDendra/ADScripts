@@ -1,4 +1,4 @@
-## [AL_PyQt5_table_example.py (Live Blendshape)]()
+## PyQt5_table_example.py (Live Blendshape)
 ### Description
 Tool to manage AL live blendshapes :
           <details>
@@ -42,7 +42,7 @@ Tool to manage AL live blendshapes :
             <p>https://youtu.be/yRMhfm3uwdk</p>
           </details>
           
-## [AL_PyQt_skinningToolUI.py (Skinning Tool UI)](https://github.com/AdienDendra/ADScripts/blob/master/misc_example/AL_PyQt_skinningToolUI.py)
+## PyQt_skinningToolUI.py (Skinning Tool UI)
 ### Description
 Tool for compiling the skinning :
           <details>
