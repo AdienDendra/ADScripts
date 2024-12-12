@@ -24,12 +24,14 @@ LICENSE:
 
 import json
 import re
+import sys
 from collections import OrderedDict
 from string import digits
 
 import maya.OpenMaya as om
 import pymel.core as pm
 
+version = sys.version_info
 
 def ad_lib_save_json_controller(file_name):
     if pm.ls(type='nurbsCurve'):
@@ -1158,8 +1160,11 @@ def ad_lib_get_number_main_name(main_name):
     except:
         name_number = ''
 
-    # get the prefix without number
-    ad_main_name = str(ad_lib_main_name(main_name)).translate(None, digits)
+    # check py version version and get the prefix without number
+    if version < (3, 0):
+        ad_main_name = str(ad_lib_main_name(main_name)).translate(None, digits)
+    else:
+        ad_main_name = str(ad_lib_main_name(main_name)).translate(digits)
 
     return name_number, ad_main_name
 

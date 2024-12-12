@@ -15,6 +15,7 @@ CONTACT:
 
 VERSION:
     1.0 - 18 October 2021 - Initial Release
+    2.0 - 12 December 2024 - Migrate to Python 3
 
 LICENSE:
     Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
