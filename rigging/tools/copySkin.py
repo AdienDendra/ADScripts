@@ -73,4 +73,4 @@ def skinAs(source=None, targs=None):
         pm.select(source, targ,r=True)
         pm.copySkinWeights(noMirror=True, surfaceAssociation="closestPoint", smooth=True, influenceAssociation=("name","label","oneToOne"))
 
-skinAs(source=None, targs=None)
+#skinAs(source=None, targs=None)

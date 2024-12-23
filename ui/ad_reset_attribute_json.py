@@ -1,3 +1,55 @@
+"""
+DESCRIPTION:
+
+	The purpose of this tool is for resetting the attribute of your controller. You can use this tool for any commercial or non-commercial work.
+
+USAGE:
+    Drop the script into your Maya script directory :
+    C:\Users\Your Name \Documents\maya\version\scripts
+
+	There are two ways to run this script:
+	 - Run this code below in Maya python script editor:
+	 import ad_reset_attribute
+
+	- Or you can drop that line into your userSetup.py in order to make it run automatically when the maya loads.
+
+	This command is based on the marking menu, this stuff explains how to play this :
+	- ALT + CONTROL + MIDDLE MOUSE BUTTON, I set this hotkey as default for showing the menu (you can change it if you don't like the hotkey).
+
+	- SET DEFAULT ATTRIBUTE
+	  You have to select at least one controller curve/joint. It will store all of the animatable attribute values of your selected object.
+
+	- RESET TO DEFAULT
+     You have to select the controller that you intended to reset the attribute. This is regarding the SET DEFAULT ATTRIBUTE values that you've stored. Also, you can select the spesific attribute for doing reset.
+
+    You can see the demo version 1.0 >>
+	https://youtu.be/0ymF2bgHfeI
+
+	And here for version 2.0 >>
+	https://youtu.be/uf6weAEbiZ0
+
+AUTHOR:
+    Adien Dendra
+
+CONTACT:
+    adprojects.animation@gmail.com | hello@adiendendra.com
+
+VERSION:
+    1.1 - Initial released - 28 January 2022
+	1.2 - Fixing the delete all default attr function - 31 January 2022
+	1.3 - Fixing the way get channel box  - 03 February 2022
+	2.0 - Changing the system work into database JSON file - 24 March 2022
+
+LICENSE:
+    Free license
+
+ADDITIONAL NOTES:
+
+	If you think this is useful and would like to support me to continue developing the upcoming rigging stuff, feel free to buy me a coffe to my paypal >> https://paypal.me/adiendendra :)
+	Have fun with the tool!
+
+"""
+
 import json
 import os
 from collections import OrderedDict
@@ -9,7 +61,7 @@ import maya.cmds as cmds
 MENU_NAME = "markingMenu"
 
 
-class ResetAttrMarkingMenu():
+class markingMenu():
 
     def __init__(self):
         self.removeOld()
@@ -28,7 +80,7 @@ class ResetAttrMarkingMenu():
         cmds.menuItem(p=menu, l="Reset to Default", rp="E", c=partial(reset_to_default))
 
 
-ResetAttrMarkingMenu()
+markingMenu()
 
 
 def get_directory_path(folder):

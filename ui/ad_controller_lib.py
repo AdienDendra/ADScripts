@@ -16,7 +16,7 @@ VERSION:
     2.0 - 12 December 2024 - Migrate to Python 3
 
 LICENSE:
-    Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
+    Copyright (C) 2024 Adien Dendra - hello@adiendendra.com>
     This is commercial license can not be copied and/or
     distributed without the express permission of Adien Dendra
 
@@ -53,22 +53,6 @@ def ad_lib_save_json_controller(file_name):
                     list.append(item.getShape())
                 else:
                     om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
-        # if selection:
-        #     for item in selection:
-        #         try:
-        #             # get type and get the shape
-        #             object = pm.objectType(item.getShape())
-        #         except:
-        #             pass
-        #         else:
-        #             if object == 'nurbsCurve':
-        #                 om.MGlobal.displayInfo("Object '%s' is saved!." % (item))
-        #                 list.append(item.getShape())
-        #             else:
-        #                 om.MGlobal.displayWarning("Object '%s' is skipped! It is not nurbsCurve." % (item))
-        #
-        # else:
-        #     list = pm.ls(type='nurbsCurve')
 
         # all item shape in the list
         for item in list:
@@ -1160,7 +1144,7 @@ def ad_lib_get_number_main_name(main_name):
     except:
         name_number = ''
 
-    # check py version version and get the prefix without number
+    # check py version and get the prefix without number
     if version < (3, 0):
         ad_main_name = str(ad_lib_main_name(main_name)).translate(None, digits)
     else:

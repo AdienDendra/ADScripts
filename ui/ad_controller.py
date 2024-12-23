@@ -18,7 +18,7 @@ VERSION:
     2.0 - 12 December 2024 - Migrate to Python 3
 
 LICENSE:
-    Copyright (C) 2021 Adien Dendra - hello@adiendendra.com>
+    Copyright (C) 2024 Adien Dendra - hello@adiendendra.com>
     This is commercial license can not be copied and/or
     distributed without the express permission of Adien Dendra
 
@@ -299,12 +299,12 @@ def ad_show_ui():
                                   cl3=('left', 'center', 'right'),
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
                                                 (3, 'both', 2 * percentage)]):
-                    pm.text(l='Adien Dendra | 10/2021', al='left')
+                    pm.text(l='Adien Dendra | 10/2024', al='left')
                     pm.text(
                         l='<a href="https://youtu.be/lsG9u-Ld-fQ">find out how to use it! >> </a>',
                         hl=True,
                         al='center')
-                    pm.text(l='Version 1.0', al='right')
+                    pm.text(l='Version 2.0', al='right')
 
             # LAYOUT CONTROLLER UTILITES
             with pm.scrollLayout('Controller Utilities', p='tab'):
@@ -404,12 +404,12 @@ def ad_show_ui():
                                   cl3=('left', 'center', 'right'),
                                   columnAttach=[(1, 'both', 2 * percentage), (2, 'both', 2 * percentage),
                                                 (3, 'both', 2 * percentage)]):
-                    pm.text(l='Adien Dendra | 10/2021', al='left')
+                    pm.text(l='Adien Dendra | 10/2024', al='left')
                     pm.text(
                         l='<a href="https://youtu.be/lsG9u-Ld-fQ">find out how to use it! >> </a>',
                         hl=True,
                         al='center')
-                    pm.text(l='Version 1.0', al='right')
+                    pm.text(l='Version 2.0', al='right')
     pm.showWindow()
 
 
@@ -1171,19 +1171,6 @@ def ad_cu_save_dialog(*args):
         pm.confirmDialog(icon='critical', b='Cancel',
                          title='Object Selection',
                          message='There is no curve selected.\nSelect at least one controller \ncurve to save it!')
-        # pm.confirmDialog(icon='warning',
-        #                  title='Save Confirm',
-        #                  message='There is no object selected.\nAll of the controllers curve in the scene \nwill be saved!')
-    # save = pm.fileDialog2(fileMode=0, fileFilter='*.json', dialogStyle=2,
-    #                       cap='Save AD Controller')
-    # # Check Path
-    # if not save: return
-    # filePath = save[0]
-    #
-    # # export json file
-    # al.ad_lib_save_json_controller(filePath)
-    #
-    # return filePath
 
 
 def ad_cu_load_dialog(*args):
